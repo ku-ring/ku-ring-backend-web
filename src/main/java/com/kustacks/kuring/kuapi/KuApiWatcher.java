@@ -53,6 +53,11 @@ public class KuApiWatcher {
 
             BachelorKuisNoticeRequestBody bachelorNoticeRequestBody,
             ScholarshipKuisNoticeRequestBody scholarshipNoticeRequestBody,
+            EmploymentKuisNoticeRequestBody employmentKuisNoticeRequestBody,
+            NationalKuisNoticeRequestBody nationalKuisNoticeRequestBody,
+            StudentKuisNoticeRequestBody studentKuisNoticeRequestBody,
+            IndustryUnivKuisNoticeRequestBody industryUnivKuisNoticeRequestBody,
+            NormalKuisNoticeRequestBody normalKuisNoticeRequestBody,
 
             NoticeRepository noticeRepository,
             CategoryRepository categoryRepository
@@ -67,6 +72,11 @@ public class KuApiWatcher {
         noticeRequestBodies = new LinkedHashMap<>();
         noticeRequestBodies.put(NoticeCategory.BACHELOR, bachelorNoticeRequestBody);
         noticeRequestBodies.put(NoticeCategory.SCHOLARSHIP, scholarshipNoticeRequestBody);
+        noticeRequestBodies.put(NoticeCategory.EMPLOYMENT, employmentKuisNoticeRequestBody);
+        noticeRequestBodies.put(NoticeCategory.NATIONAL, nationalKuisNoticeRequestBody);
+        noticeRequestBodies.put(NoticeCategory.STUDENT, studentKuisNoticeRequestBody);
+        noticeRequestBodies.put(NoticeCategory.INDUSTRY_UNIV, industryUnivKuisNoticeRequestBody);
+        noticeRequestBodies.put(NoticeCategory.NORMAL, normalKuisNoticeRequestBody);
     }
 
 
