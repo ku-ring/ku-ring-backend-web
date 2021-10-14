@@ -1,22 +1,23 @@
 package com.kustacks.kuring.kuapi;
 
+import lombok.Getter;
+
+@Getter
 public enum NoticeCategory {
 
-    BACHELOR("bachelor"),
-    SCHOLARSHIP("scholarship"),
-    EMPLOYMENT("employment"),
-    NATIONAL("national"),
-    STUDENT("student"),
-    INDUSTRY_UNIV("industry_university"),
-    NORMAL("normal");
+    BACHELOR("bachelor", "bch"),
+    SCHOLARSHIP("scholarship", "sch"),
+    EMPLOYMENT("employment", "emp"),
+    NATIONAL("national", "nat"),
+    STUDENT("student", "stu"),
+    INDUSTRY_UNIV("industry_university", "ind"),
+    NORMAL("normal", "nor");
 
     private String name;
+    private String shortName;
 
-    NoticeCategory(String name) {
+    NoticeCategory(String name, String shortName) {
         this.name = name;
-    }
-
-    public String getValue() {
-        return this.name;
+        this.shortName = shortName;
     }
 }

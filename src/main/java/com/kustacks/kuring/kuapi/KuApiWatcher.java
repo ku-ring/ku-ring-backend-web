@@ -80,7 +80,7 @@ public class KuApiWatcher {
     }
 
 
-    @Scheduled(cron = "* 0/10 * * * *")
+    @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
     public void watchAndUpdateNotice() {
 
         // 로그인 헤더
@@ -106,7 +106,7 @@ public class KuApiWatcher {
         // 공지 요청
         Map<String, KuisNoticeResponseBody> kuisNoticeResponseBodies = new LinkedHashMap<>(); // 수신한 공지 데이터를 저장할 변수
         for (NoticeCategory noticeCategory : noticeRequestBodies.keySet()) {
-            String categoryName = noticeCategory.getValue();
+            String categoryName = noticeCategory.getName();
 
             KuisNoticeRequestBody kuisNoticeRequestBody = noticeRequestBodies.get(noticeCategory);
 
@@ -114,17 +114,20 @@ public class KuApiWatcher {
             HttpEntity<String> noticeRequestEntity = new HttpEntity<>(encodedNoticeRequestBody, noticeRequestHeader);
             ResponseEntity<String> noticeResponse = restTemplate.exchange(noticeUrl, HttpMethod.POST, noticeRequestEntity, String.class);
 
-            log.info("{} response body = {}", noticeCategory, noticeResponse.getBody());
+//            log.info("{} response body = {}", noticeCategory, noticeResponse.getBody());
+            log.info("Receive {} notice response", noticeCategory);
+
 
             try {
                 KuisNoticeResponseBody tmp = objectMapper.readValue(noticeResponse.getBody(), KuisNoticeResponseBody.class);
                 if(tmp == null) {
                     log.warn("JSON Parsing result is null");
-                } else {
-                    for (KuisNoticeDTO kuisNoticeDTO : tmp.getKuisNoticeDTOList()) {
-                        log.info("articleId = {}, postedDt = {}, subject = {}", kuisNoticeDTO.getArticleId(), kuisNoticeDTO.getPostedDate(), kuisNoticeDTO.getSubject());
-                    }
                 }
+//                else {
+//                    for (KuisNoticeDTO kuisNoticeDTO : tmp.getKuisNoticeDTOList()) {
+//                        log.info("articleId = {}, postedDt = {}, subject = {}", kuisNoticeDTO.getArticleId(), kuisNoticeDTO.getPostedDate(), kuisNoticeDTO.getSubject());
+//                    }
+//                }
                 kuisNoticeResponseBodies.put(categoryName, tmp);
             } catch(JsonProcessingException e) {
                 throw new InternalLogicException(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON);

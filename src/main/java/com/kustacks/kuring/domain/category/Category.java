@@ -4,6 +4,8 @@ import com.kustacks.kuring.domain.notice.Notice;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category")
+    @Fetch(FetchMode.JOIN) // TODO: 확인 필요
     private List<Notice> noticeList = new ArrayList<>();
 
     @Builder
