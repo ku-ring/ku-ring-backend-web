@@ -37,7 +37,7 @@ dependencies {
 }
 
 ext {
-	snippetsDir = file '/build/generated-snippets'
+	snippetsDir = file 'build/generated-snippets'
 }
 
 test {
@@ -50,6 +50,7 @@ asciidoctor {
 			"version": version,
 			"stylesheet": "asciitheme/clean.css"
 	inputs.dir snippetsDir
+	outputs.dir snippetsDir
 	dependsOn test
 }
 
