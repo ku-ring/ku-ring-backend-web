@@ -1,0 +1,28 @@
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+
+= KU Ring API 문서
+Doc Writer <todory2002@gmail.com>
+v1.0, 2021-10-16
+
+== 공지 API
+
+=== HTTP 요청
+
+==== 요청 메세지
+include::{snippets}/notice/http-request.adoc[]
+==== 요청 파라미터
+include::{snippets}/notice/request-parameters.adoc[]
+
+=== HTTP 응답
+
+==== 응답 메세지
+include::{snippets}/notice/http-response.adoc[]
+==== 응답 필드
+include::{snippets}/notice/response-fields.adoc[]
