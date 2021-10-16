@@ -37,7 +37,7 @@ dependencies {
 }
 
 ext {
-	snippetsDir = file 'build/generated-snippets' // (2)
+	snippetsDir = file '/build/generated-snippets'
 }
 
 test {
@@ -56,7 +56,7 @@ asciidoctor {
 asciidoctor.doFirst {
 	println "=====start asciidoctor"
 	//asciidoctor 실행전 기존에 생성된 API 문서 삭제
-	delete file('src/main/resources/static/docs')
+	delete file('src/main/resources/static/docs/api-docs.html')
 }
 asciidoctor.doLast {
 	println "=====finish asciidoctor"

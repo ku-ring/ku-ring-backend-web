@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### API docs ###
+src/main/resources/static/docs/*
