@@ -19,7 +19,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping(value = "/api/v1", produces = "application/json")
 public class NoticeController {
 
     @Value("${notice.base-url}")

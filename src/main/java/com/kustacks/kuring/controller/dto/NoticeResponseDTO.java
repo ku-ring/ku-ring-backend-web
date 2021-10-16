@@ -1,6 +1,6 @@
 package com.kustacks.kuring.controller.dto;
 
-import com.kustacks.kuring.domain.notice.Notice;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 import java.util.List;
@@ -8,7 +8,10 @@ import java.util.List;
 @Getter
 public class NoticeResponseDTO extends ResponseDTO {
 
+    @JsonProperty("baseUrl")
     private String baseUrl;
+
+    @JsonProperty("noticeList")
     private List<NoticeDTO> noticeList;
 
     public NoticeResponseDTO(String baseUrl, List<NoticeDTO> noticeList) {
