@@ -79,11 +79,11 @@ bootJar {
 	from("${asciidoctor.outputDir}/html5") {
 		into "static/docs"
 	}
+}
+
+jar {
+	enabled = false
 	manifest {
 		attributes 'Main-Class': 'com.kustacks.kuring.KuringApplication'
 	}
 }
-
-// bootJar로 manifest 옮김
-// 혹시 배포 안되면 여기 체크
-jar.enabled = false
