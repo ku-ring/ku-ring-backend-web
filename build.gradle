@@ -2,7 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.5.5'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
-	id 'org.asciidoctor.convert' version '1.5.6'
+	id 'org.asciidoctor.convert' version '1.5.3'
 }
 
 group = 'com.kustacks'
@@ -21,17 +21,19 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'junit:junit:4.13.1'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	testImplementation 'junit:junit:4.13.1'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
-	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.5.RELEASE'
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc:2.0.5.RELEASE'
+	asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
@@ -42,25 +44,34 @@ ext {
 
 test {
 	outputs.dir snippetsDir
-	useJUnitPlatform()
+	useJUnit()
+
+	testLogging {
+		// test jvm의 standard out and standard error을 console에 출력한다.
+		showStandardStreams = true
+		showCauses = true
+		showExceptions = true
+		showStackTraces = true
+		exceptionFormat = 'full'
+	}
 }
 
 asciidoctor {
-	attributes "snippets": snippetsDir,
-			"version": version,
-			"stylesheet": "asciitheme/clean.css"
 	inputs.dir snippetsDir
-	outputs.dir snippetsDir
 	dependsOn test
-}
+	attributes "snippets": snippetsDir,
+				"version": version,
+				"stylesheet": "asciitheme/clean.css"
 
-asciidoctor.doFirst {
-	println "=====start asciidoctor"
-	//asciidoctor 실행전 기존에 생성된 API 문서 삭제
-	delete file('src/main/resources/static/docs/api-docs.html')
-}
-asciidoctor.doLast {
-	println "=====finish asciidoctor"
+	doFirst {
+		println "=====Start asciidoctor"
+		//asciidoctor 실행전 기존에 생성된 API 문서 삭제
+		delete file('src/main/resources/static/docs/api-docs.html')
+	}
+
+	doLast {
+		println "=====Finish asciidoctor"
+	}
 }
 
 task copyDocument(type: Copy) {
