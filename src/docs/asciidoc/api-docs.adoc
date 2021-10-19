@@ -12,17 +12,32 @@ Doc Writer <todory2002@gmail.com>
 v1.0, 2021-10-16
 
 == 공지 API
+---
 
 === HTTP 요청
 
 ==== 요청 메세지
-include::{snippets}/notice/http-request.adoc[]
+include::{snippets}/notice-success/http-request.adoc[]
 ==== 요청 파라미터
-include::{snippets}/notice/request-parameters.adoc[]
+include::{snippets}/notice-success/request-parameters.adoc[]
+
+{empty} +
 
 === HTTP 응답
 
 ==== 응답 메세지
-include::{snippets}/notice/http-response.adoc[]
+include::{snippets}/notice-success/http-response.adoc[]
 ==== 응답 필드
-include::{snippets}/notice/response-fields.adoc[]
+include::{snippets}/notice-success/response-fields.adoc[]
+
+{empty} +
+
+=== 잘못된 HTTP 요청 예시
+
+==== 1. 잘못된 카테고리 요청
+include::{snippets}/notice-fail-invalid-category/http-request.adoc[]
+include::{snippets}/notice-fail-invalid-category/response-body.adoc[]
+
+==== 2. 잘못된 offset 혹은 max
+include::{snippets}/notice-fail-invalid-param/http-request.adoc[]
+include::{snippets}/notice-fail-invalid-param/response-body.adoc[]

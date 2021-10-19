@@ -77,6 +77,12 @@ video {
 <li><a href="#_응답_필드">응답 필드</a></li>
 </ul>
 </li>
+<li><a href="#_잘못된_http_요청_예시">잘못된 HTTP 요청 예시</a>
+<ul class="sectlevel3">
+<li><a href="#_1_잘못된_카테고리_요청">1. 잘못된 카테고리 요청</a></li>
+<li><a href="#_2_잘못된_offset_혹은_max">2. 잘못된 offset 혹은 max</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -102,30 +108,38 @@ Host: kuring.herokuapp.com</code></pre>
 <h4 id="_요청_파라미터">요청 파라미터</h4>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Parameter</th>
 <th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Constraints</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">공지 카테고리 키워드</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">bch, sch, emp, nat, stu, ind, nor, lib</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>offset</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">가져올 공지의 시작 인덱스</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0 이상의 정수</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>max</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">가져올 공지 최대 개수</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1 이상 30 이하의 정수</p></td>
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p><br></p>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -136,13 +150,13 @@ Host: kuring.herokuapp.com</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 291
+Content-Length: 298
 
 {
   "isSuccess" : true,
   "resultMsg" : "성공",
   "resultCode" : 200,
-  "baseUrl" : "${notice.base-url}",
+  "baseUrl" : "${notice.normal-base-url}",
   "noticeList" : [ {
     "articleId" : "5cw2e1",
     "postedDate" : "20211016",
@@ -211,6 +225,50 @@ Content-Length: 291
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p><br></p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_잘못된_http_요청_예시">잘못된 HTTP 요청 예시</h3>
+<div class="sect3">
+<h4 id="_1_잘못된_카테고리_요청">1. 잘못된 카테고리 요청</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http" data-lang="http">GET /api/v1/notice?type=invalid-type&amp;offset=0&amp;max=20 HTTP/1.1
+Accept: application/json
+Host: kuring.herokuapp.com</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>{
+  "isSuccess" : false,
+  "resultMsg" : "해당 공지 카테고리를 지원하지 않습니다.",
+  "resultCode" : 400
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_2_잘못된_offset_혹은_max">2. 잘못된 offset 혹은 max</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http" data-lang="http">GET /api/v1/notice?type=bch&amp;offset=-1&amp;max=20 HTTP/1.1
+Accept: application/json
+Host: kuring.herokuapp.com</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>{
+  "isSuccess" : false,
+  "resultMsg" : "파라미터 값 중 잘못된 값이 있습니다.",
+  "resultCode" : 400
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -219,7 +277,7 @@ Content-Length: 291
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2021-10-16 23:22:04 +09:00
+Last updated 2021-10-19 22:52:08 +09:00
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
