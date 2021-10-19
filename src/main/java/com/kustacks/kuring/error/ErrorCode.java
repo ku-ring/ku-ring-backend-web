@@ -10,7 +10,7 @@ public enum ErrorCode {
      * ErrorCode about APIException
      */
     API_NOTICE_NOT_EXIST_CATEGORY(HttpStatus.BAD_REQUEST, "해당 공지 카테고리를 지원하지 않습니다."),
-    API_NOTICE_CANNOT_FIND_CATEGORY(HttpStatus.INTERNAL_SERVER_ERROR, "해당 공지 카테고리를 찾을 수 없습니다."),
+//    API_NOTICE_CANNOT_FIND_CATEGORY(HttpStatus.INTERNAL_SERVER_ERROR, "해당 공지 카테고리를 찾을 수 없습니다."),
     API_MISSING_PARAM(HttpStatus.BAD_REQUEST, "필수 파라미터가 없습니다."),
     API_INVALID_PARAM(HttpStatus.BAD_REQUEST, "파라미터 값 중 잘못된 값이 있습니다."),
     API_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),

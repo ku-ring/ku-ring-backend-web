@@ -7,7 +7,7 @@ import lombok.Getter;
 public class ErrorResponse {
 
     @JsonProperty("isSuccess")
-    private final boolean isSuccess = false;
+    private final boolean success = false;
 
     @JsonProperty("resultMsg")
     private String resultMsg;
