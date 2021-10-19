@@ -1,11 +1,13 @@
 package com.kustacks.kuring.service;
 
 import com.kustacks.kuring.controller.dto.NoticeDTO;
+import com.kustacks.kuring.domain.OffsetBasedPageRequest;
 import com.kustacks.kuring.domain.category.Category;
 import com.kustacks.kuring.domain.category.CategoryRepository;
 import com.kustacks.kuring.domain.notice.Notice;
 import com.kustacks.kuring.domain.notice.NoticeRepository;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,7 +29,8 @@ public class NoticeService {
     }
 
     public List<NoticeDTO> getNotices(String type, int offset, int max) {
-        PageRequest pageRequest = PageRequest.of(offset / max, max);
+        OffsetBasedPageRequest pageRequest = new OffsetBasedPageRequest(offset, max, Sort.by(Sort.Direction.DESC, "postedDate"));
+//        PageRequest pageRequest = PageRequest.of(offset / max, max);
 
         Category category = categoryMap.get(type);
         if(category == null) {

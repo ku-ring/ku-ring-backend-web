@@ -35,7 +35,7 @@ public class NoticeController {
     public NoticeResponseDTO getNotices(
             @RequestParam(name = "type") String type,
             @RequestParam(name = "offset") @Min(0) int offset,
-            @RequestParam(name = "max") @Min(1) @Max(10) int max) {
+            @RequestParam(name = "max") @Min(1) @Max(30) int max) {
 
         String categoryName = "";
         for (NoticeCategory noticeCategory : NoticeCategory.values()) {
