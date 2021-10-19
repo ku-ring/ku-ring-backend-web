@@ -18,3 +18,6 @@ SELECT 'industry_university' FROM DUAL WHERE NOT EXISTS(SELECT * FROM category W
 
 INSERT INTO category (name)
 SELECT 'normal' FROM DUAL WHERE NOT EXISTS(SELECT * FROM category WHERE name = 'normal');
+
+INSERT INTO category (name)
+SELECT 'library' FROM DUAL WHERE NOT EXISTS(SELECT * FROM category WHERE name = 'library');

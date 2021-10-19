@@ -20,8 +20,11 @@ public class Notice {
     @Column(name = "article_id", length = 15, nullable = false)
     private String articleId;
 
-    @Column(name = "posted_dt", length = 8, nullable = false)
+    @Column(name = "posted_dt", length = 32, nullable = false)
     private String postedDate;
+
+    @Column(name = "updated_dt", length = 32, nullable = true)
+    private String updatedDate;
 
     @Column(name = "subject", length = 128, nullable = false)
     private String subject;
@@ -31,9 +34,10 @@ public class Notice {
     private Category category;
 
     @Builder
-    public Notice(String articleId, String postedDate, String subject, Category category) {
+    public Notice(String articleId, String postedDate, String updatedDate, String subject, Category category) {
         this.articleId = articleId;
         this.postedDate = postedDate;
+        this.updatedDate = updatedDate;
         this.subject = subject;
         this.category = category;
     }

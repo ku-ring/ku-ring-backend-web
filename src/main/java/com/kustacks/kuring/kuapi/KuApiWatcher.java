@@ -11,12 +11,17 @@ import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.request.*;
 import com.kustacks.kuring.kuapi.response.KuisNoticeDTO;
 import com.kustacks.kuring.kuapi.response.KuisNoticeResponseBody;
+import com.kustacks.kuring.kuapi.response.LibraryNoticeDTO;
+import com.kustacks.kuring.kuapi.response.LibraryNoticeResponseBody;
+import com.kustacks.kuring.kuapi.response.LibraryDataDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 
@@ -29,6 +34,9 @@ public class KuApiWatcher {
 
     @Value("${notice.referer}")
     private String noticeReferer;
+
+    @Value("${library.request-url}")
+    private String libraryUrl;
 
     @Value("${auth.login-url}")
     private String loginUrl;
@@ -83,6 +91,9 @@ public class KuApiWatcher {
     @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
     public void watchAndUpdateNotice() {
 
+        /*
+            학사, 장학, 취창업, 국제, 학생, 산학, 일반 공지 갱신 (from kuis)
+         */
         // 로그인 헤더
         HttpHeaders loginRequestHeader = createLoginRequestHeader();
 
@@ -99,7 +110,6 @@ public class KuApiWatcher {
         updateSession(loginResponse);
 
 
-
         // 공지 요청 헤더
         HttpHeaders noticeRequestHeader = createNoticeRequestHeader();
 
@@ -112,33 +122,82 @@ public class KuApiWatcher {
 
             String encodedNoticeRequestBody = KuisRequestBody.toUrlEncodedString(kuisNoticeRequestBody);
             HttpEntity<String> noticeRequestEntity = new HttpEntity<>(encodedNoticeRequestBody, noticeRequestHeader);
-            ResponseEntity<String> noticeResponse = restTemplate.exchange(noticeUrl, HttpMethod.POST, noticeRequestEntity, String.class);
+            ResponseEntity<KuisNoticeResponseBody> noticeResponse = restTemplate.exchange(noticeUrl, HttpMethod.POST, noticeRequestEntity, KuisNoticeResponseBody.class);
 
-//            log.info("{} response body = {}", noticeCategory, noticeResponse.getBody());
-            log.info("Receive {} notice response", noticeCategory);
-
-
-            try {
-                KuisNoticeResponseBody tmp = objectMapper.readValue(noticeResponse.getBody(), KuisNoticeResponseBody.class);
-                if(tmp == null) {
-                    log.warn("JSON Parsing result is null");
-                }
-//                else {
-//                    for (KuisNoticeDTO kuisNoticeDTO : tmp.getKuisNoticeDTOList()) {
-//                        log.info("articleId = {}, postedDt = {}, subject = {}", kuisNoticeDTO.getArticleId(), kuisNoticeDTO.getPostedDate(), kuisNoticeDTO.getSubject());
-//                    }
-//                }
-                kuisNoticeResponseBodies.put(categoryName, tmp);
-            } catch(JsonProcessingException e) {
+            KuisNoticeResponseBody tmp = noticeResponse.getBody();
+            if(tmp == null) {
                 throw new InternalLogicException(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON);
             }
+            kuisNoticeResponseBodies.put(categoryName, tmp);
         }
-
 
         // DB에 있는 공지 데이터 카테고리별로 꺼내와서
         // kuisNoticeResponseBody에 있는 데이터가 DB에는 없는 경우 -> DB에 공지 추가
         // DB에 있는 데이터가 kuisNoticeResponseBody에는 없는 경우 -> DB에 공지 삭제
         updateNotice(kuisNoticeResponseBodies);
+
+
+        /*
+            도서관 공지 갱신
+         */
+        int offset = 0;
+        int max = 20;
+        int reqIdx = 0;
+        List<LibraryNoticeResponseBody> libraryNoticeResponseBodies = new LinkedList<>();
+        while(reqIdx < 2) {
+            String fullLibraryUrl = UriComponentsBuilder.fromUriString(libraryUrl).queryParam("offset", offset).queryParam("max", max).build().toString();
+            ResponseEntity<LibraryNoticeResponseBody> libraryResponse = restTemplate.getForEntity(fullLibraryUrl, LibraryNoticeResponseBody.class);
+            LibraryNoticeResponseBody libraryNoticeResponseBody = libraryResponse.getBody();
+            if(libraryNoticeResponseBody == null) {
+                throw new InternalLogicException(ErrorCode.LIB_CANNOT_PARSE_JSON);
+            }
+
+            boolean isLibraryRequestSuccess = libraryNoticeResponseBody.isSuccess();
+            if(!isLibraryRequestSuccess) {
+                throw new InternalLogicException(ErrorCode.LIB_BAD_RESPONSE);
+            }
+
+            offset = max;
+            max = libraryNoticeResponseBody.getData().getTotalCount() - max;
+
+            libraryNoticeResponseBodies.add(libraryNoticeResponseBody);
+            ++reqIdx;
+        }
+
+        updateLibrary(libraryNoticeResponseBodies);
+    }
+
+    private void updateLibrary(List<LibraryNoticeResponseBody> libraryNoticeResponseBodies) {
+
+        Map<String, Notice> dbLibraryNotices = noticeRepository.findByCategoryMap(categoryMap.get(NoticeCategory.LIBRARY.getName()));
+        List<Notice> newLibraryNotices = new LinkedList<>();
+
+        for (LibraryNoticeResponseBody libraryNoticeResponseBody : libraryNoticeResponseBodies) {
+            LibraryDataDTO data = libraryNoticeResponseBody.getData();
+            List<LibraryNoticeDTO> libraryNoticeDTOList = data.getList();
+            Iterator<LibraryNoticeDTO> libraryNoticeIterator = libraryNoticeDTOList.iterator();
+
+            Category libraryCategory = categoryMap.get(NoticeCategory.LIBRARY.getName());
+
+            while(libraryNoticeIterator.hasNext()) {
+                LibraryNoticeDTO libraryNotice = libraryNoticeIterator.next();
+                Notice notice = dbLibraryNotices.get(libraryNotice.getId());
+
+                // 새로 받아온 공지가 db에 없거나, db의 updatedDate와 달라졌다면, 새로 삽입해야한다.
+                // TODO: 공지를 UPDATE하는 것과 DELETE -> INSERT 하는 방법 중 어떤것이 성능 상 좋을지 고려해볼 필요가 있음.
+                if(notice == null || !notice.getUpdatedDate().equals(libraryNotice.getLastUpdated())) {
+                    log.info("Library notice insert. articleId = {}, postedDate = {}, subject = {}", libraryNotice.getId(), libraryNotice.getDateCreated(), libraryNotice.getTitle());
+                    newLibraryNotices.add(libraryNotice.toEntity(libraryCategory));
+                } else {
+                    libraryNoticeIterator.remove();
+                    dbLibraryNotices.remove(libraryNotice.getId());
+                }
+            }
+        }
+
+        Collection<Notice> removedLibraryNotices = dbLibraryNotices.values();
+        noticeRepository.deleteAll(removedLibraryNotices);
+        noticeRepository.saveAll(newLibraryNotices);
     }
 
     private void updateNotice(Map<String, KuisNoticeResponseBody> kuisNoticeResponseBodies) {

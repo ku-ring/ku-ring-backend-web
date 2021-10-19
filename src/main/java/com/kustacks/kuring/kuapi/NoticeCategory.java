@@ -11,7 +11,8 @@ public enum NoticeCategory {
     NATIONAL("national", "nat"),
     STUDENT("student", "stu"),
     INDUSTRY_UNIV("industry_university", "ind"),
-    NORMAL("normal", "nor");
+    NORMAL("normal", "nor"),
+    LIBRARY("library", "lib");
 
     private String name;
     private String shortName;

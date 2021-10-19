@@ -21,6 +21,7 @@ public class KuisNoticeDTO {
         return Notice.builder()
                 .articleId(this.articleId)
                 .postedDate(this.postedDate)
+                .updatedDate(null)
                 .subject(this.subject)
                 .category(category)
                 .build();

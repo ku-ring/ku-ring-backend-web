@@ -1,5 +1,7 @@
 package com.kustacks.kuring.error;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -8,6 +10,9 @@ import javax.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class ErrorController {
+
+    private final Logger log = LoggerFactory.getLogger(ErrorController.class);
+
     @ExceptionHandler({MissingServletRequestParameterException.class, ConstraintViolationException.class})
     public ErrorResponse handleBadRequestException(Exception e) {
         if(e instanceof MissingServletRequestParameterException) {
@@ -19,12 +24,13 @@ public class ErrorController {
     }
 
     @ExceptionHandler(InternalLogicException.class)
-    public ErrorResponse handleInternalLogicException(InternalLogicException e) {
-        return new ErrorResponse(e.getErrorCode());
+    public void handleInternalLogicException(InternalLogicException e) {
+        log.error("[InternalLogicException] {}", e.getErrorCode().getMessage());
     }
 
     @ExceptionHandler(APIException.class)
     public ErrorResponse handleAPIException(APIException e) {
+        log.error("[APIException] {}", e.getErrorCode().getMessage());
         return new ErrorResponse(e.getErrorCode());
     }
 }

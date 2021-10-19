@@ -24,8 +24,10 @@ public enum ErrorCode {
     KU_LOGIN_EMPTY_COOKIE("kuis 로그인 요청에 대한 응답 중 Set-Cookie 헤더가 비어 있습니다."),
     KU_LOGIN_NO_JSESSION("kuis 로그인 요청에 대한 응답에 Set-Cookie 헤더값이 있지만, JSESSIONID가 없습니다."),
 
-    KU_NOTICE_CANNOT_PARSE_JSON("kuis 공지를 POJO로 변환할 수 없습니다.");
+    KU_NOTICE_CANNOT_PARSE_JSON("kuis 공지를 POJO로 변환할 수 없습니다."),
 
+    LIB_BAD_RESPONSE("도서관 공지 요청에 대한 응답이 비정상적입니다."),
+    LIB_CANNOT_PARSE_JSON("도서관 공지를 POJO로 변환할 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
