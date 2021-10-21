@@ -10,9 +10,9 @@ import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +21,6 @@ import java.util.Map;
 @Slf4j
 @Component
 public class FirebaseService {
-
-    @Value("${firebase.file-path}")
-    private String filePath;
 
     @Value("notice.normal-base-url")
     private String normalBaseUrl;
@@ -34,14 +31,14 @@ public class FirebaseService {
     private final FirebaseMessaging firebaseMessaging;
     private final ObjectMapper objectMapper;
 
-    FirebaseService(ObjectMapper objectMapper) throws IOException {
+    FirebaseService(ObjectMapper objectMapper,  @Value("${firebase.file-path}") String filePath) throws IOException {
 
         this.objectMapper = objectMapper;
 
-        FileInputStream secretFile = new FileInputStream(filePath);
+        ClassPathResource resource = new ClassPathResource(filePath);
 
         FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(secretFile))
+                .setCredentials(GoogleCredentials.fromStream(resource.getInputStream()))
                 .build();
 
         FirebaseApp firebaseApp = FirebaseApp.initializeApp(options);
