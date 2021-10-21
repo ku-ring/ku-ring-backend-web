@@ -19,8 +19,20 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+
+      - name: Decrypt Secrets
+        # You may pin to the exact commit or the version.
+        # uses: zgosalvez/github-actions-decrypt-secrets@0e09ac52b6c1bf27b687a749cce42a39aaf2fe37
+        uses: zgosalvez/github-actions-decrypt-secrets@v1.1.5
+        with:
+          # The `gpg` file. For example, `.github/workflows/secrets.json.gpg`
+          secrets_file: src/main/resources/third/ku-stack-firebase-adminsdk-87nwq-5ba04dfc12.json.gpg
+          # Describes the map between the environment variables and secret keys. For example, `SECRET_PASSWORD=PASSWORD,PASSPHRASE=passphrase`
+          map: PASSPHRASE=${{ secrets.GPG_PASSPHRASE }}
+
       - name: Deploy to Heroku
         # You may pin to the exact commit or the version.
         # uses: AkhileshNS/heroku-deploy@79ef2ae4ff9b897010907016b268fd0f88561820
