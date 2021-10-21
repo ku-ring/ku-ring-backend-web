@@ -1,7 +1,8 @@
 package com.kustacks.kuring.kuapi;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.kustacks.kuring.controller.dto.NoticeDTO;
 import com.kustacks.kuring.domain.category.Category;
 import com.kustacks.kuring.domain.category.CategoryRepository;
 import com.kustacks.kuring.domain.notice.Notice;
@@ -20,7 +21,6 @@ import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
@@ -44,6 +44,8 @@ public class KuApiWatcher {
     @Value("${auth.user-agent}")
     private String loginUserAgent;
 
+    private final FirebaseService firebaseService;
+
     private final ObjectMapper objectMapper;
 
     private final KuisLoginRequestBody kuisLoginRequestBody;
@@ -56,6 +58,7 @@ public class KuApiWatcher {
     private Map<String, Category> categoryMap;
 
     public KuApiWatcher(
+            FirebaseService firebaseService,
             ObjectMapper objectMapper,
             KuisLoginRequestBody kuisLoginRequestBody,
 
@@ -70,6 +73,7 @@ public class KuApiWatcher {
             NoticeRepository noticeRepository,
             CategoryRepository categoryRepository
     ) {
+        this.firebaseService = firebaseService;
         this.objectMapper = objectMapper;
 
         this.kuisLoginRequestBody = kuisLoginRequestBody;
@@ -86,7 +90,6 @@ public class KuApiWatcher {
         noticeRequestBodies.put(NoticeCategory.INDUSTRY_UNIV, industryUnivKuisNoticeRequestBody);
         noticeRequestBodies.put(NoticeCategory.NORMAL, normalKuisNoticeRequestBody);
     }
-
 
     @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
     public void watchAndUpdateNotice() {
@@ -134,8 +137,7 @@ public class KuApiWatcher {
         // DB에 있는 공지 데이터 카테고리별로 꺼내와서
         // kuisNoticeResponseBody에 있는 데이터가 DB에는 없는 경우 -> DB에 공지 추가
         // DB에 있는 데이터가 kuisNoticeResponseBody에는 없는 경우 -> DB에 공지 삭제
-        updateNotice(kuisNoticeResponseBodies);
-
+        List<Notice> willBeNotiNotices = updateNotice(kuisNoticeResponseBodies);
 
         /*
             도서관 공지 갱신
@@ -164,10 +166,37 @@ public class KuApiWatcher {
             ++reqIdx;
         }
 
-        updateLibrary(libraryNoticeResponseBodies);
+        List<Notice> willBeNotiLibraryNotices = updateLibrary(libraryNoticeResponseBodies);
+        willBeNotiNotices.addAll(willBeNotiLibraryNotices);
+
+        List<NoticeDTO> willBeNotiNoticeDTOList = new ArrayList<>(willBeNotiNotices.size());
+
+        int idx = 0;
+        for (Notice notice : willBeNotiNotices) {
+            willBeNotiNoticeDTOList.add(idx++, NoticeDTO.builder()
+                    .articleId(notice.getArticleId())
+                    .postedDate(notice.getPostedDate())
+                    .subject(notice.getSubject())
+                    .categoryName(notice.getCategory().getName())
+                    .build());
+        }
+        
+        // FCM으로 새롭게 수신한 공지 데이터 전송
+        try {
+            firebaseService.sendMessage(willBeNotiNoticeDTOList);
+            log.info("FCM에 정상적으로 메세지를 전송했습니다.");
+            log.info("전송된 공지 목록은 다음과 같습니다.");
+            for (NoticeDTO noticeDTO : willBeNotiNoticeDTOList) {
+                log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", noticeDTO.getArticleId(), noticeDTO.getPostedDate(), noticeDTO.getCategoryName(), noticeDTO.getSubject());
+            }
+        } catch(FirebaseMessagingException e) {
+            log.error("파이어베이스 오류 발생.", e);
+        } catch(Exception e) {
+            log.error("알 수 없는 오류 발생.", e);
+        }
     }
 
-    private void updateLibrary(List<LibraryNoticeResponseBody> libraryNoticeResponseBodies) {
+    private List<Notice> updateLibrary(List<LibraryNoticeResponseBody> libraryNoticeResponseBodies) {
 
         Map<String, Notice> dbLibraryNotices = noticeRepository.findByCategoryMap(categoryMap.get(NoticeCategory.LIBRARY.getName()));
         List<Notice> newLibraryNotices = new LinkedList<>();
@@ -198,13 +227,16 @@ public class KuApiWatcher {
         Collection<Notice> removedLibraryNotices = dbLibraryNotices.values();
         noticeRepository.deleteAll(removedLibraryNotices);
         noticeRepository.saveAll(newLibraryNotices);
+
+        return newLibraryNotices;
     }
 
-    private void updateNotice(Map<String, KuisNoticeResponseBody> kuisNoticeResponseBodies) {
+    private List<Notice> updateNotice(Map<String, KuisNoticeResponseBody> kuisNoticeResponseBodies) {
         if(categoryMap == null) {
             categoryMap = categoryRepository.findAllMap();
         }
 
+        List<Notice> willBeNotiNotices = new LinkedList<>();
         for (String categoryName : kuisNoticeResponseBodies.keySet()) {
 
             Category noticeCategory = categoryMap.get(categoryName);
@@ -239,7 +271,11 @@ public class KuApiWatcher {
 
             // 업데이트로 인해 새로 생성된 공지 삽입
             noticeRepository.saveAll(newNotices);
+
+            willBeNotiNotices.addAll(newNotices);
         }
+
+        return willBeNotiNotices;
     }
 
     private void updateSession(ResponseEntity<String> loginResponse) {
