@@ -17,17 +17,14 @@ import java.util.List;
 @Table(name = "category")
 public class Category {
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "id", unique = true, nullable = false)
-//    private Long id;
-
     @Id
     @Column(name = "name", length = 20, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "category")
-    @Fetch(FetchMode.JOIN) // TODO: 확인 필요
+    // FetchMode.SELECT와 FetchType.LAZY로 설정해서
+    // noticeList는 실제로 사용될 때 쿼리를 던지도록 함으로써 성능 향상을 꾀했다.
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SELECT)
     private List<Notice> noticeList = new ArrayList<>();
 
     @Builder
