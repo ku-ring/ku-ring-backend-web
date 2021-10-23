@@ -5,14 +5,13 @@ endif::[]
 :icons: font
 :source-highlighter: highlightjs
 :toc: left
-:toclevels: 4
+:toclevels: 5
 
 = KU Ring API 문서
 Doc Writer <todory2002@gmail.com>
 v1.0, 2021-10-16
 
 == 공지 API
----
 
 === HTTP 요청
 
@@ -41,3 +40,62 @@ include::{snippets}/notice-fail-invalid-category/response-body.adoc[]
 ==== 2. 잘못된 offset 혹은 max
 include::{snippets}/notice-fail-invalid-param/http-request.adoc[]
 include::{snippets}/notice-fail-invalid-param/response-body.adoc[]
+
+{empty} +
+{empty} +
+
+== 카테고리 API
+
+=== 서버 지원 카테고리 API
+
+==== HTTP 요청
+
+===== 요청 메세지
+include::{snippets}/category-get-all-success/http-request.adoc[]
+===== 요청 파라미터
+include::{snippets}/category-get-all-success/request-parameters.adoc[]
+
+{empty} +
+
+==== HTTP 응답
+
+===== 응답 메세지
+include::{snippets}/category-get-all-success/http-response.adoc[]
+===== 응답 필드
+include::{snippets}/category-get-all-success/response-fields.adoc[]
+
+{empty} +
+
+==== 잘못된 HTTP 요청 예시
+
+{empty} +
+{empty} +
+
+=== 회원 구독 카테고리 API
+
+==== HTTP 요청
+
+===== 요청 메세지
+include::{snippets}/category-get-user-categories-success/http-request.adoc[]
+===== 요청 파라미터
+include::{snippets}/category-get-user-categories-success/request-parameters.adoc[]
+
+{empty} +
+
+==== HTTP 응답
+
+===== 응답 메세지
+include::{snippets}/category-get-user-categories-success/http-response.adoc[]
+===== 응답 필드
+include::{snippets}/category-get-user-categories-success/response-fields.adoc[]
+
+{empty} +
+
+==== 잘못된 HTTP 요청 예시
+
+===== 1. 유효하지 않은 FCM 토큰
+include::{snippets}/category-get-user-categories-fail-invalid-token/http-request.adoc[]
+include::{snippets}/category-get-user-categories-fail-invalid-token/response-body.adoc[]
+===== 2. 필수 파라미터 누락
+include::{snippets}/category-get-user-categories-fail-missing-param/http-request.adoc[]
+include::{snippets}/category-get-user-categories-fail-missing-param/response-body.adoc[]

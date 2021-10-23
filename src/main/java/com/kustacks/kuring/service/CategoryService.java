@@ -7,4 +7,5 @@ import java.util.List;
 public interface CategoryService {
     List<Category> getCategories();
     List<String> getCategoryNamesFromCategories(List<Category> categories);
+    List<Category> getUserCategories(String token);
 }

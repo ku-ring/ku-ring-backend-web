@@ -15,6 +15,7 @@ import com.kustacks.kuring.kuapi.response.KuisNoticeResponseBody;
 import com.kustacks.kuring.kuapi.response.LibraryNoticeDTO;
 import com.kustacks.kuring.kuapi.response.LibraryNoticeResponseBody;
 import com.kustacks.kuring.kuapi.response.LibraryDataDTO;
+import com.kustacks.kuring.service.FirebaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

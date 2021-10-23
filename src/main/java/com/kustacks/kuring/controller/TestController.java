@@ -2,14 +2,14 @@ package com.kustacks.kuring.controller;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.controller.dto.NoticeDTO;
-import com.kustacks.kuring.kuapi.FirebaseService;
+import com.kustacks.kuring.service.FirebaseService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TestController {
 
-    private FirebaseService firebaseService;
+    private final FirebaseService firebaseService;
 
     public TestController(FirebaseService firebaseService) {
         this.firebaseService = firebaseService;

@@ -1,6 +1,7 @@
 package com.kustacks.kuring.domain.category;
 
 import com.kustacks.kuring.domain.notice.Notice;
+import com.kustacks.kuring.domain.user_category.UserCategory;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,10 @@ public class Category {
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     @Fetch(FetchMode.SELECT)
     private List<Notice> noticeList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SELECT)
+    private List<UserCategory> userCategories = new ArrayList<>();
 
     @Builder
     public Category(String name) {
