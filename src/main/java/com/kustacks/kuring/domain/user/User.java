@@ -30,7 +30,7 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user")
     private List<Feedback> feedbacks;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @Fetch(FetchMode.JOIN)
     private List<UserCategory> userCategories = new ArrayList<>();
 
