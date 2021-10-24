@@ -18,6 +18,9 @@ public enum ErrorCode {
 
     API_FB_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 구독에 실패했습니다."),
     API_FB_INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰입니다."),
+    API_FB_CANNOT_EDIT_CATEGORY(HttpStatus.INTERNAL_SERVER_ERROR, "FCM에서 카테고리 편집을 실패했습니다."),
+
+    UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류"),
 
 
     /**
@@ -35,7 +38,9 @@ public enum ErrorCode {
     LIB_CANNOT_PARSE_JSON("도서관 공지를 POJO로 변환할 수 없습니다."),
 
     FB_FAIL_SUBSCRIBE("카테고리 구독에 실패했습니다."),
-    FB_FAIL_UNSUBSCRIBE("카테고리 구독 해제에 실패했습니다.");
+    FB_FAIL_UNSUBSCRIBE("카테고리 구독 해제에 실패했습니다."),
+    FB_FAIL_ROLLBACK("카테고리 편집 중 transaction fail이 발생했고, 이를 복구하는데 실패했습니다."),
+    FB_FAIL_SEND("FCM 메세지 전송에 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

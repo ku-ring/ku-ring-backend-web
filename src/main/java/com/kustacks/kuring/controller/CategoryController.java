@@ -58,7 +58,7 @@ public class CategoryController {
         try {
             firebaseService.verifyToken(token);
         } catch (FirebaseMessagingException e) {
-            throw new APIException(ErrorCode.API_FB_INVALID_TOKEN);
+            throw new APIException(ErrorCode.API_FB_INVALID_TOKEN, e);
         }
 
         List<Category> categories = categoryService.getUserCategories(token);
@@ -86,7 +86,7 @@ public class CategoryController {
             try {
                 firebaseService.verifyToken(token);
             } catch(FirebaseMessagingException e) {
-                throw new APIException(ErrorCode.API_FB_INVALID_TOKEN);
+                throw new APIException(ErrorCode.API_FB_INVALID_TOKEN, e);
             }
 
             user = userService.insertUserToken(token);

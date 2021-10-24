@@ -2,7 +2,6 @@ package com.kustacks.kuring.error;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,12 +32,12 @@ public class ErrorController {
 
     @ExceptionHandler(InternalLogicException.class)
     public void handleInternalLogicException(InternalLogicException e) {
-        log.error("[InternalLogicException] {}", e.getErrorCode().getMessage());
+        log.error("[InternalLogicException] {}", e.getErrorCode().getMessage(), e);
     }
 
     @ExceptionHandler(APIException.class)
     public ErrorResponse handleAPIException(APIException e) {
-        log.error("[APIException] {}", e.getErrorCode().getMessage());
+        log.error("[APIException] {}", e.getErrorCode().getMessage(), e);
         return new ErrorResponse(e.getErrorCode());
     }
 }

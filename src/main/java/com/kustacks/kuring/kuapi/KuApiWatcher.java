@@ -191,9 +191,9 @@ public class KuApiWatcher {
                 log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", noticeDTO.getArticleId(), noticeDTO.getPostedDate(), noticeDTO.getCategoryName(), noticeDTO.getSubject());
             }
         } catch(FirebaseMessagingException e) {
-            throw new InternalLogicException(ErrorCode.FB_FAIL_SEND);
+            throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
         } catch(Exception e) {
-            throw new InternalLogicException(ErrorCode.UNKNOWN_ERROR);
+            throw new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e);
         }
     }
 

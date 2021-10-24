@@ -2,6 +2,7 @@ package com.kustacks.kuring.domain.user_category;
 
 import com.kustacks.kuring.domain.category.Category;
 import com.kustacks.kuring.domain.user.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,10 @@ public class UserCategory {
     @ManyToOne
     @JoinColumn(name = "category_name", nullable = false)
     private Category category;
+
+    @Builder
+    public UserCategory(User user, Category catgegory) {
+        this.user = user;
+        this.category = catgegory;
+    }
 }
