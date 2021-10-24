@@ -3,7 +3,7 @@ package com.kustacks.kuring.kuapi;
 import lombok.Getter;
 
 @Getter
-public enum NoticeCategory {
+public enum CategoryName {
 
     BACHELOR("bachelor", "bch"),
     SCHOLARSHIP("scholarship", "sch"),
@@ -17,7 +17,7 @@ public enum NoticeCategory {
     private String name;
     private String shortName;
 
-    NoticeCategory(String name, String shortName) {
+    CategoryName(String name, String shortName) {
         this.name = name;
         this.shortName = shortName;
     }

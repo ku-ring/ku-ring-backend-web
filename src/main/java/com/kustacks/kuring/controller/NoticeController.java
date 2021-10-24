@@ -4,8 +4,7 @@ import com.kustacks.kuring.controller.dto.NoticeDTO;
 import com.kustacks.kuring.controller.dto.NoticeResponseDTO;
 import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
-import com.kustacks.kuring.kuapi.NoticeCategory;
+import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.service.NoticeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
@@ -42,7 +41,7 @@ public class NoticeController {
             @RequestParam(name = "max") @Min(1) @Max(30) int max) {
 
         String categoryName = "";
-        for (NoticeCategory noticeCategory : NoticeCategory.values()) {
+        for (CategoryName noticeCategory : CategoryName.values()) {
             if(noticeCategory.getShortName().equals(type)) {
                 categoryName = noticeCategory.getName();
                 break;
@@ -57,6 +56,6 @@ public class NoticeController {
             throw new APIException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY);
         }
 
-        return new NoticeResponseDTO(type.equals(NoticeCategory.LIBRARY.getName()) ? libraryBaseUrl : normalBaseUrl, notices);
+        return new NoticeResponseDTO(type.equals(CategoryName.LIBRARY.getName()) ? libraryBaseUrl : normalBaseUrl, notices);
     }
 }

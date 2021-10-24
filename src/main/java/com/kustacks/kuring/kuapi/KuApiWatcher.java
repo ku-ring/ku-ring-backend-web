@@ -50,7 +50,7 @@ public class KuApiWatcher {
     private final ObjectMapper objectMapper;
 
     private final KuisLoginRequestBody kuisLoginRequestBody;
-    private final Map<NoticeCategory, KuisNoticeRequestBody> noticeRequestBodies;
+    private final Map<CategoryName, KuisNoticeRequestBody> noticeRequestBodies;
 
     private final NoticeRepository noticeRepository;
     private final CategoryRepository categoryRepository;
@@ -83,13 +83,13 @@ public class KuApiWatcher {
         this.categoryRepository = categoryRepository;
 
         noticeRequestBodies = new LinkedHashMap<>();
-        noticeRequestBodies.put(NoticeCategory.BACHELOR, bachelorNoticeRequestBody);
-        noticeRequestBodies.put(NoticeCategory.SCHOLARSHIP, scholarshipNoticeRequestBody);
-        noticeRequestBodies.put(NoticeCategory.EMPLOYMENT, employmentKuisNoticeRequestBody);
-        noticeRequestBodies.put(NoticeCategory.NATIONAL, nationalKuisNoticeRequestBody);
-        noticeRequestBodies.put(NoticeCategory.STUDENT, studentKuisNoticeRequestBody);
-        noticeRequestBodies.put(NoticeCategory.INDUSTRY_UNIV, industryUnivKuisNoticeRequestBody);
-        noticeRequestBodies.put(NoticeCategory.NORMAL, normalKuisNoticeRequestBody);
+        noticeRequestBodies.put(CategoryName.BACHELOR, bachelorNoticeRequestBody);
+        noticeRequestBodies.put(CategoryName.SCHOLARSHIP, scholarshipNoticeRequestBody);
+        noticeRequestBodies.put(CategoryName.EMPLOYMENT, employmentKuisNoticeRequestBody);
+        noticeRequestBodies.put(CategoryName.NATIONAL, nationalKuisNoticeRequestBody);
+        noticeRequestBodies.put(CategoryName.STUDENT, studentKuisNoticeRequestBody);
+        noticeRequestBodies.put(CategoryName.INDUSTRY_UNIV, industryUnivKuisNoticeRequestBody);
+        noticeRequestBodies.put(CategoryName.NORMAL, normalKuisNoticeRequestBody);
     }
 
     @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
@@ -119,7 +119,7 @@ public class KuApiWatcher {
 
         // 공지 요청
         Map<String, KuisNoticeResponseBody> kuisNoticeResponseBodies = new LinkedHashMap<>(); // 수신한 공지 데이터를 저장할 변수
-        for (NoticeCategory noticeCategory : noticeRequestBodies.keySet()) {
+        for (CategoryName noticeCategory : noticeRequestBodies.keySet()) {
             String categoryName = noticeCategory.getName();
 
             KuisNoticeRequestBody kuisNoticeRequestBody = noticeRequestBodies.get(noticeCategory);
@@ -191,15 +191,15 @@ public class KuApiWatcher {
                 log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", noticeDTO.getArticleId(), noticeDTO.getPostedDate(), noticeDTO.getCategoryName(), noticeDTO.getSubject());
             }
         } catch(FirebaseMessagingException e) {
-            log.error("파이어베이스 오류 발생.", e);
+            throw new InternalLogicException(ErrorCode.FB_FAIL_SEND);
         } catch(Exception e) {
-            log.error("알 수 없는 오류 발생.", e);
+            throw new InternalLogicException(ErrorCode.UNKNOWN_ERROR);
         }
     }
 
     private List<Notice> updateLibrary(List<LibraryNoticeResponseBody> libraryNoticeResponseBodies) {
 
-        Map<String, Notice> dbLibraryNotices = noticeRepository.findByCategoryMap(categoryMap.get(NoticeCategory.LIBRARY.getName()));
+        Map<String, Notice> dbLibraryNotices = noticeRepository.findByCategoryMap(categoryMap.get(CategoryName.LIBRARY.getName()));
         List<Notice> newLibraryNotices = new LinkedList<>();
 
         for (LibraryNoticeResponseBody libraryNoticeResponseBody : libraryNoticeResponseBodies) {
@@ -207,7 +207,7 @@ public class KuApiWatcher {
             List<LibraryNoticeDTO> libraryNoticeDTOList = data.getList();
             Iterator<LibraryNoticeDTO> libraryNoticeIterator = libraryNoticeDTOList.iterator();
 
-            Category libraryCategory = categoryMap.get(NoticeCategory.LIBRARY.getName());
+            Category libraryCategory = categoryMap.get(CategoryName.LIBRARY.getName());
 
             while(libraryNoticeIterator.hasNext()) {
                 LibraryNoticeDTO libraryNotice = libraryNoticeIterator.next();
