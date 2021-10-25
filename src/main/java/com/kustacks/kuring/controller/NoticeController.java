@@ -56,6 +56,6 @@ public class NoticeController {
             throw new APIException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY);
         }
 
-        return new NoticeResponseDTO(type.equals(CategoryName.LIBRARY.getName()) ? libraryBaseUrl : normalBaseUrl, notices);
+        return new NoticeResponseDTO(type.equals(CategoryName.LIBRARY.getShortName()) ? libraryBaseUrl : normalBaseUrl, notices);
     }
 }
