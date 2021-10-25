@@ -1,9 +1,12 @@
 package com.kustacks.kuring.controller.dto;
 
-import org.springframework.stereotype.Component;
+import lombok.Builder;
+import lombok.Getter;
 
-@Component
+@Getter
 public class SubscribeCategoriesResponseDTO extends ResponseDTO {
+
+    @Builder
     public SubscribeCategoriesResponseDTO() {
         super(true, "성공", 201);
     }

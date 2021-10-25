@@ -31,7 +31,7 @@ include::{snippets}/notice-success/response-fields.adoc[]
 
 {empty} +
 
-=== 잘못된 HTTP 요청 예시
+=== 잘못된 HTTP 요청/응답 예시
 
 ==== 1. 잘못된 카테고리 요청
 include::{snippets}/notice-fail-invalid-category/http-request.adoc[]
@@ -46,7 +46,7 @@ include::{snippets}/notice-fail-invalid-param/response-body.adoc[]
 
 == 카테고리 API
 
-=== 서버 지원 카테고리 API
+=== 서버가 지원하는 카테고리 제공 API
 
 ==== HTTP 요청
 
@@ -66,12 +66,12 @@ include::{snippets}/category-get-all-success/response-fields.adoc[]
 
 {empty} +
 
-==== 잘못된 HTTP 요청 예시
+==== 잘못된 HTTP 요청/응답 예시
 
 {empty} +
 {empty} +
 
-=== 회원 구독 카테고리 API
+=== 회원이 구독한 카테고리 제공 API
 
 ==== HTTP 요청
 
@@ -91,11 +91,49 @@ include::{snippets}/category-get-user-categories-success/response-fields.adoc[]
 
 {empty} +
 
-==== 잘못된 HTTP 요청 예시
+==== 잘못된 HTTP 요청/응답 예시
 
 ===== 1. 유효하지 않은 FCM 토큰
 include::{snippets}/category-get-user-categories-fail-invalid-token/http-request.adoc[]
 include::{snippets}/category-get-user-categories-fail-invalid-token/response-body.adoc[]
+
 ===== 2. 필수 파라미터 누락
 include::{snippets}/category-get-user-categories-fail-missing-param/http-request.adoc[]
 include::{snippets}/category-get-user-categories-fail-missing-param/response-body.adoc[]
+
+{empty} +
+{empty} +
+
+=== 카테고리 편집 API
+
+==== HTTP 요청
+
+===== 요청 메세지
+include::{snippets}/category-subscribe-categories-success/http-request.adoc[]
+===== 요청 body
+include::{snippets}/category-subscribe-categories-success/request-body.adoc[]
+
+{empty} +
+
+==== HTTP 응답
+
+===== 응답 메세지
+include::{snippets}/category-subscribe-categories-success/http-response.adoc[]
+===== 응답 필드
+include::{snippets}/category-subscribe-categories-success/response-fields.adoc[]
+
+{empty} +
+
+==== 잘못된 HTTP 요청/응답 예시
+
+===== 1. 유효하지 않은 FCM 토큰
+include::{snippets}/category-subscribe-categories-fail-invalid-token/http-request.adoc[]
+include::{snippets}/category-subscribe-categories-fail-invalid-token/response-body.adoc[]
+
+===== 2. 요청 JSON body 필드 누락
+include::{snippets}/category-subscribe-categories-fail-missing-json-field/http-request.adoc[]
+include::{snippets}/category-subscribe-categories-fail-missing-json-field/response-body.adoc[]
+
+===== 3. 파이어베이스 오류
+include::{snippets}/category-subscribe-categories-fail-firebase-error/http-request.adoc[]
+include::{snippets}/category-subscribe-categories-fail-firebase-error/response-body.adoc[]

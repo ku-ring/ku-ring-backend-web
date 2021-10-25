@@ -17,7 +17,7 @@ public enum ErrorCode {
     API_NOT_ACCEPTABLE(HttpStatus.NOT_ACCEPTABLE, "요청한 미디어 타입으로 응답할 수 없습니다."),
 
     API_FB_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 구독에 실패했습니다."),
-    API_FB_INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰입니다."),
+    API_FB_INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
     API_FB_CANNOT_EDIT_CATEGORY(HttpStatus.INTERNAL_SERVER_ERROR, "FCM에서 카테고리 편집을 실패했습니다."),
 
     UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류"),

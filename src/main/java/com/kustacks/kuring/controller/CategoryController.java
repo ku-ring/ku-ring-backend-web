@@ -26,17 +26,14 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final UserService userService;
     private final FirebaseService firebaseService;
-    private final SubscribeCategoriesResponseDTO subscribeCategoriesResponseDTO;
 
     public CategoryController(
             CategoryServiceImpl categoryService,
             FirebaseService firebaseService,
-            UserServiceImpl userService,
-            SubscribeCategoriesResponseDTO subscribeCategoriesResponseDTO) {
+            UserServiceImpl userService) {
         this.categoryService = categoryService;
         this.userService = userService;
         this.firebaseService = firebaseService;
-        this.subscribeCategoriesResponseDTO = subscribeCategoriesResponseDTO;
     }
 
     @GetMapping("/notice/categories")
@@ -85,7 +82,7 @@ public class CategoryController {
         if(user == null) {
             try {
                 firebaseService.verifyToken(token);
-            } catch(FirebaseMessagingException e) {
+            } catch(FirebaseMessagingException | InternalLogicException e) {
                 throw new APIException(ErrorCode.API_FB_INVALID_TOKEN, e);
             }
 
@@ -111,6 +108,6 @@ public class CategoryController {
             }
         }
 
-        return subscribeCategoriesResponseDTO;
+        return SubscribeCategoriesResponseDTO.builder().build();
     }
 }
