@@ -89,7 +89,7 @@ public class CategoryServiceImpl implements CategoryService {
             } else {
                 newUserCategories.add(UserCategory.builder()
                         .user(user)
-                        .catgegory(categoryMap.get(categoryName))
+                        .category(categoryMap.get(categoryName))
                         .build());
             }
         }

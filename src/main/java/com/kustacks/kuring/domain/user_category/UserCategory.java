@@ -28,8 +28,8 @@ public class UserCategory {
     private Category category;
 
     @Builder
-    public UserCategory(User user, Category catgegory) {
+    public UserCategory(User user, Category category) {
         this.user = user;
-        this.category = catgegory;
+        this.category = category;
     }
 }
