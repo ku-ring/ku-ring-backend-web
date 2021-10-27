@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class FirebaseService {
@@ -109,11 +110,11 @@ public class FirebaseService {
 
     public void sendMessageForTest(NoticeDTO newNotice) throws FirebaseMessagingException {
 
+        Map<String, String> noticeMap = noticeDtoToMap(newNotice);
+        noticeMap.put("baseUrl", Objects.equals(newNotice.getCategoryName(), "library") ? libraryBaseUrl : normalBaseUrl);
+
         Message newMessage = Message.builder()
-                .setNotification(Notification.builder()
-                        .setTitle(newNotice.getSubject())
-                        .setBody(newNotice.getCategoryName() + "  " + newNotice.getPostedDate())
-                        .build())
+                .putAllData(noticeMap)
                 .setTopic(newNotice.getCategoryName())
                 .build();
 
