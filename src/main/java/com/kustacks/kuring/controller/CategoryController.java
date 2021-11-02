@@ -53,7 +53,7 @@ public class CategoryController {
         // 유효하면? user-category 테이블 조회해서 카테고리 목록 생성
         // 유효하지 않으면? 401에러 리턴
 
-        if(token == null || token == "") {
+        if(token == null || token.equals("")) {
             throw new APIException(ErrorCode.API_INVALID_PARAM);
         }
 
@@ -77,8 +77,15 @@ public class CategoryController {
         List<String> categories = requestDTO.getCategories();
         String token = requestDTO.getToken();
 
-        if(categories == null || token == null || token == "") {
+        if(categories == null || token == null || token.equals("")) {
             throw new APIException(ErrorCode.API_MISSING_PARAM);
+        }
+
+        // categories에 중복된 카테고리 검사 & 지원하지 않는 카테고리 검사
+        try {
+            categories = categoryService.verifyCategories(categories);
+        } catch(InternalLogicException e) {
+            throw new APIException(ErrorCode.API_INVALID_PARAM, e);
         }
 
         // FCM 토큰이 서버에 등록된 토큰인지 확인

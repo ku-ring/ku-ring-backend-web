@@ -8,6 +8,7 @@ import com.kustacks.kuring.domain.user.User;
 import com.kustacks.kuring.domain.user_category.UserCategory;
 import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
+import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.service.CategoryServiceImpl;
 import com.kustacks.kuring.service.FirebaseService;
 import com.kustacks.kuring.service.UserServiceImpl;
@@ -339,6 +340,39 @@ public class CategoryControllerTest {
                 );
     }
 
+    @DisplayName("특정 회원의 구독 카테고리 편집 API - 실패 - 서버에서 지원하지 않는 카테고리를 수신")
+    @Test
+    public void subscribeCategoriesFailByNotSupportedCategory() throws Exception {
+
+        String token = "TEST_TOKEN";
+
+        List<String> categories = new LinkedList<>();
+        categories.add("bachelor");
+        categories.add("invalid-category");
+
+        SubscribeCategoriesRequestDTO requestDTO = new SubscribeCategoriesRequestDTO(token, categories);
+
+        // given
+        doThrow(new InternalLogicException(ErrorCode.CAT_NOT_EXIST_CATEGORY)).when(categoryService).verifyCategories(categories);
+
+        // when
+        ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestDTO)));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("isSuccess").value(false))
+                .andExpect(jsonPath("resultMsg").value(ErrorCode.API_INVALID_PARAM.getMessage()))
+                .andExpect(jsonPath("resultCode").value(ErrorCode.API_INVALID_PARAM.getHttpStatus().value()))
+                .andDo(document("category-subscribe-categories-fail-not-supported-category",
+                        getDocumentRequest(),
+                        getDocumentResponse())
+                );
+
+    }
+
     @DisplayName("특정 회원의 구독 카테고리 편집 API - 실패 - FCM 오류로 인한 구독 및 구독 취소 실패")
     @Test
     public void subscribeCategoriesFailByFCMError() throws Exception {
@@ -373,6 +407,7 @@ public class CategoryControllerTest {
 
 
         // given
+        given(categoryService.verifyCategories(categories)).willReturn(categories);
         given(userService.getUserByToken(token)).willReturn(null);
         given(userService.insertUserToken(token)).willReturn(user);
         given(categoryService.compareCategories(categories, new LinkedList<>(), user)).willReturn(compareCategoriesResult);

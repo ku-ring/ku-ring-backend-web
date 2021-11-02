@@ -144,7 +144,8 @@ video {
 <ul class="sectlevel4">
 <li><a href="#_1_유효하지_않은_fcm_토큰_2">1. 유효하지 않은 FCM 토큰</a></li>
 <li><a href="#_2_요청_json_body_필드_누락">2. 요청 JSON body 필드 누락</a></li>
-<li><a href="#_3_파이어베이스_오류">3. 파이어베이스 오류</a></li>
+<li><a href="#_3_지원하지_않는_카테고리">3. 지원하지 않는 카테고리</a></li>
+<li><a href="#_4_파이어베이스_오류">4. 파이어베이스 오류</a></li>
 </ul>
 </li>
 </ul>
@@ -747,7 +748,33 @@ Host: kuring.herokuapp.com
 </div>
 </div>
 <div class="sect4">
-<h5 id="_3_파이어베이스_오류">3. 파이어베이스 오류</h5>
+<h5 id="_3_지원하지_않는_카테고리">3. 지원하지 않는 카테고리</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http" data-lang="http">POST /api/v1/notice/subscribe HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+Content-Length: 81
+Host: kuring.herokuapp.com
+
+{
+  "id" : "TEST_TOKEN",
+  "categories" : [ "bachelor", "invalid-category" ]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code>{
+  "isSuccess" : false,
+  "resultMsg" : "파라미터 값 중 잘못된 값이 있습니다.",
+  "resultCode" : 400
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_4_파이어베이스_오류">4. 파이어베이스 오류</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http" data-lang="http">POST /api/v1/notice/subscribe HTTP/1.1
@@ -780,7 +807,7 @@ Host: kuring.herokuapp.com
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2021-10-25 19:32:17 +09:00
+Last updated 2021-11-02 21:19:15 +09:00
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">

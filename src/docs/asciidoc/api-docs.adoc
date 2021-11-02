@@ -134,6 +134,10 @@ include::{snippets}/category-subscribe-categories-fail-invalid-token/response-bo
 include::{snippets}/category-subscribe-categories-fail-missing-json-field/http-request.adoc[]
 include::{snippets}/category-subscribe-categories-fail-missing-json-field/response-body.adoc[]
 
-===== 3. 파이어베이스 오류
+===== 3. 지원하지 않는 카테고리
+include::{snippets}/category-subscribe-categories-fail-not-supported-category/http-request.adoc[]
+include::{snippets}/category-subscribe-categories-fail-not-supported-category/response-body.adoc[]
+
+===== 4. 파이어베이스 오류
 include::{snippets}/category-subscribe-categories-fail-firebase-error/http-request.adoc[]
 include::{snippets}/category-subscribe-categories-fail-firebase-error/response-body.adoc[]

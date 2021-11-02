@@ -8,6 +8,8 @@ import com.kustacks.kuring.domain.user.User;
 import com.kustacks.kuring.domain.user.UserRepository;
 import com.kustacks.kuring.domain.user_category.UserCategory;
 import com.kustacks.kuring.domain.user_category.UserCategoryRepository;
+import com.kustacks.kuring.error.ErrorCode;
+import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.event.RollbackEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -138,6 +140,20 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
+    @Override
+    public List<String> verifyCategories(List<String> categories) {
+        
+        // 카테고리 지원 여부 검사
+        for (String category : categories) {
+            if(categoryMap.get(category) == null) {
+                throw new InternalLogicException(ErrorCode.CAT_NOT_EXIST_CATEGORY);
+            }
+        }
+        
+        // 카테고리 이름 중복 검사
+        HashSet<String> set = new HashSet<>(categories);
+        return new ArrayList<>(set);
+    }
 
     private Map<String, UserCategory> listToMap(List<UserCategory> userCategories) {
 

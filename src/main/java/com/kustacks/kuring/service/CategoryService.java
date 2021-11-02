@@ -16,4 +16,5 @@ public interface CategoryService {
     List<Category> getUserCategories(String token);
     Map<String, List<UserCategory>> compareCategories(List<String> categories, List<UserCategory> dbUserCategories, User user);
     void updateUserCategory(String token, Map<String, List<UserCategory>> userCategories) throws FirebaseMessagingException;
+    List<String> verifyCategories(List<String> categories);
 }
