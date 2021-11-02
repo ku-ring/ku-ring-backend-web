@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Dashboard - SB Admin</title>
+        <link th:href="@{https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css}" rel="stylesheet" />
+        <link th:href="@{/css/styles.css}" rel="stylesheet" />
+        <link th:href="@{/css/loader.css}" rel="stylesheet" />
+        <link th:href="@{/css/loader-dot.css}" rel="stylesheet" />
+        <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js}" crossorigin="anonymous"></script>
+    </head>
+    <body class="sb-nav-fixed">
+        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <!-- Navbar Brand-->
+            <a class="navbar-brand ps-3" href="main.html" th:text="|${title} 관리자 페이지|"></a>
+            <!-- Sidebar Toggle-->
+            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+            <!-- Navbar Search-->
+            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                <div class="input-group">
+                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
+                    <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+            <!-- Navbar-->
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#!">Settings</a></li>
+                        <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="#!">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <div class="sb-sidenav-menu-heading">Core</div>
+                            <a class="nav-link" href="/admin/dashboard">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                대시보드
+                            </a>
+                            <div class="sb-sidenav-menu-heading">서비스</div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseDatatables" aria-expanded="false" aria-controls="collapseDatatables">
+                                <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                                DB 테이블
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseDatatables" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="/admin/user">사용자</a>
+                                    <a class="nav-link" href="/admin/feedback">피드백</a>
+                                    <a class="nav-link" href="/admin/notice">공지</a>
+                                </nav>
+                            </div>
+
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseFCM" aria-expanded="false" aria-controls="collapseFCM">
+                                <div class="sb-nav-link-icon"><i class="fas fa-paper-plane"></i></div>
+                                FCM
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseFCM" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="/admin/service/sub-unsub">카테고리 구독</a>
+                                    <a class="nav-link" href="/admin/service/fake-update">가짜 공지 업데이트</a>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sb-sidenav-footer">
+                        <div class="small">Logged in as:</div>
+                        Start Bootstrap
+                    </div>
+                </nav>
+            </div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div id="contentLoader" class="loader" th:style="${users != null or feedbacks != null or notices != null ? '' : 'display: none;'}"></div>
+                    <div id="contentWrap" class="container-fluid px-4" th:style="${users != null or feedbacks != null or notices != null ? 'display: none;' : ''}">
+                        <div style="margin-top: 20px;"></div>
+
+                        <p th:if="${users != null or feedbacks != null or notices != null}" class="h1 my-4">서버 데이터베이스</p>
+                        <th:block th:if="${users != null}" th:include="thymeleaf/user-datatable :: user-datatable(${users})"></th:block>
+                        <th:block th:if="${feedbacks != null}" th:include="thymeleaf/feedback-datatable :: feedback-datatable(${feedbacks})"></th:block>
+                        <th:block th:if="${notices != null}" th:include="thymeleaf/notice-datatable :: notice-datatable(${notices})"></th:block>
+
+                        <p th:if="${subUnsub or fakeUpdate}" class="h1 mt-lg-5 mb-4">FCM 관련 기능</p>
+                        <th:block th:if="${subUnsub}" th:include="thymeleaf/sub-unsub :: sub-unsub"></th:block>
+                        <th:block th:if="${fakeUpdate}" th:include="thymeleaf/fake-update :: fake-update"></th:block>
+                    </div>
+                </main>
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid px-4">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; KU Ring 2021</div>
+                            <div>
+                                <a href="#">Privacy Policy</a>
+                                &middot;
+                                <a href="#">Terms &amp; Conditions</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <script th:src="@{https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js}" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+        <script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js}" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
+        <script th:src="@{https://unpkg.com/axios@0.24.0/dist/axios.min.js}"></script>
+        <script th:src="@{/js/scripts.js}"></script>
+        <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js}" crossorigin="anonymous"></script>
+        <script th:src="@{https://cdn.jsdelivr.net/npm/simple-datatables@latest}" crossorigin="anonymous"></script>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            const strCategories = /*[[${categories}]]*/ "{}";
+            /*]]>*/
+            const categories = JSON.parse(strCategories);
+        </script>
+        <script th:src="@{/js/alerts.js}"></script>
+        <script th:src="@{/js/common-utils.js}"></script>
+        <script th:if="${users != null} or ${feedbacks != null} or ${notices != null}" th:src="@{/js/custom-datatable.js}"></script>
+        <script th:if="${users != null} or ${feedbacks != null} or ${notices != null}" th:src="@{/js/datatable-utils.js}"></script>
+        <script th:if="${subUnsub}" th:src="@{/js/sub-utils.js}"></script>
+        <script th:if="${fakeUpdate}" th:src="@{/js/fake-update-utils.js}"></script>
+    </body>
+</html>

@@ -4,12 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.validation.ConstraintViolationException;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class ErrorController {
 
     private final Logger log = LoggerFactory.getLogger(ErrorController.class);
@@ -19,7 +20,7 @@ public class ErrorController {
             ConstraintViolationException.class,
             HttpMediaTypeNotAcceptableException.class
     })
-    public ErrorResponse handleBadRequestException(Exception e) {
+    public @ResponseBody ErrorResponse handleBadRequestException(Exception e) {
         if(e instanceof MissingServletRequestParameterException) {
             return new ErrorResponse(ErrorCode.API_MISSING_PARAM);
         } else if(e instanceof ConstraintViolationException) {
@@ -36,7 +37,7 @@ public class ErrorController {
     }
 
     @ExceptionHandler(APIException.class)
-    public ErrorResponse handleAPIException(APIException e) {
+    public @ResponseBody ErrorResponse handleAPIException(APIException e) {
         log.error("[APIException] {}", e.getErrorCode().getMessage(), e);
         return new ErrorResponse(e.getErrorCode());
     }

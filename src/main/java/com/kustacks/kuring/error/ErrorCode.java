@@ -22,6 +22,8 @@ public enum ErrorCode {
 
     API_FD_INVALID_CONTENT(HttpStatus.BAD_REQUEST, "피드백 길이가 유효하지 않습니다."),
 
+    API_AD_UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "관리자가 아닙니다."),
+
     UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류"),
 
 
@@ -42,7 +44,9 @@ public enum ErrorCode {
     FB_FAIL_SUBSCRIBE("카테고리 구독에 실패했습니다."),
     FB_FAIL_UNSUBSCRIBE("카테고리 구독 해제에 실패했습니다."),
     FB_FAIL_ROLLBACK("카테고리 편집 중 transaction fail이 발생했고, 이를 복구하는데 실패했습니다."),
-    FB_FAIL_SEND("FCM 메세지 전송에 실패했습니다.");
+    FB_FAIL_SEND("FCM 메세지 전송에 실패했습니다."),
+
+    AD_UNAUTHENTICATED("관리자가 아닙니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

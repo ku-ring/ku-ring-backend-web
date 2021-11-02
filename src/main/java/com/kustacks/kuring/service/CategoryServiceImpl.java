@@ -1,6 +1,7 @@
 package com.kustacks.kuring.service;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
+import com.kustacks.kuring.controller.dto.CategoryDTO;
 import com.kustacks.kuring.domain.category.Category;
 import com.kustacks.kuring.domain.category.CategoryRepository;
 import com.kustacks.kuring.domain.user.User;
@@ -50,6 +51,16 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> getCategories() {
         return categoryRepository.findAll();
+    }
+
+    @Override
+    public List<CategoryDTO> getCategoryDTOList() {
+
+        List<Category> categories = categoryRepository.findAll();
+
+        return categories.stream()
+                .map(category -> CategoryDTO.builder().name(category.getName()).build())
+                .collect(Collectors.toList());
     }
 
     @Override

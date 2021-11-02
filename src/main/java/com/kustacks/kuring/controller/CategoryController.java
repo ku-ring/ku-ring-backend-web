@@ -51,7 +51,12 @@ public class CategoryController {
     public CategoryListResponseDTO getUserCategories(@RequestParam("id") String token) {
         // FCM에 이 토큰이 유효한지 확인
         // 유효하면? user-category 테이블 조회해서 카테고리 목록 생성
-        // 유효하지 않으면? 404에러 리턴
+        // 유효하지 않으면? 401에러 리턴
+
+        if(token == null || token == "") {
+            throw new APIException(ErrorCode.API_INVALID_PARAM);
+        }
+
         try {
             firebaseService.verifyToken(token);
         } catch (FirebaseMessagingException e) {
@@ -72,7 +77,7 @@ public class CategoryController {
         List<String> categories = requestDTO.getCategories();
         String token = requestDTO.getToken();
 
-        if(categories == null || token == null) {
+        if(categories == null || token == null || token == "") {
             throw new APIException(ErrorCode.API_MISSING_PARAM);
         }
 
