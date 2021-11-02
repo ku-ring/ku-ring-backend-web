@@ -22,7 +22,7 @@ public class HttpSessionConfig {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
         serializer.setCookieName("KURING");
         serializer.setCookiePath("/admin");
-        serializer.setDomainNamePattern("^.+?\\.(\\w+\\.[a-z]+)$");
+//        serializer.setDomainNamePattern("^.+?\\.(\\w+\\.[a-z]+)$");
         serializer.setCookieMaxAge(60 * 120);
         return serializer;
     }
