@@ -22,10 +22,10 @@ import java.util.Objects;
 @Service
 public class FirebaseService {
 
-    @Value("notice.normal-base-url")
+    @Value("${notice.normal-base-url}")
     private String normalBaseUrl;
 
-    @Value("notice.library-base-url")
+    @Value("${notice.library-base-url}")
     private String libraryBaseUrl;
 
     private final FirebaseMessaging firebaseMessaging;
