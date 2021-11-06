@@ -38,6 +38,11 @@ class Alerts {
                 "            <strong>[오류]</strong> 공지 제목은 최소 1자 이상, 128자 이하 길이여야 합니다.\n" +
                 "            <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>\n" +
                 "        </div>\n",
+
+            "noArticleIdAlert": "<div id=\"noArticleIdAlert\" class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">\n" +
+                "            <strong>[오류]</strong> 공지 아이디를 입력해주세요.\n" +
+                "            <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"Close\"></button>\n" +
+                "        </div>\n",
         }
     }
 

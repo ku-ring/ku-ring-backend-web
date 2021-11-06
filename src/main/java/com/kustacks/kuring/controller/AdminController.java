@@ -50,8 +50,6 @@ public class AdminController {
     private final ObjectMapper objectMapper;
     private final Map<String, Category> categoryMap;
 
-    private long fakeNoticeArticleIdNum = 0L;
-
     public AdminController(
             CategoryServiceImpl categoryService,
             FirebaseService firebaseService,
@@ -150,6 +148,7 @@ public class AdminController {
 
         String fakeNoticeCategory = requestBody.get("category");
         String fakeNoticeSubject = requestBody.get("subject");
+        String fakeNoticeArticleId = requestBody.get("articleId");
         if(fakeNoticeCategory == null || fakeNoticeSubject == null) {
             throw new APIException(ErrorCode.API_MISSING_PARAM);
         }
@@ -164,8 +163,6 @@ public class AdminController {
         LocalDateTime now = LocalDateTime.now();
         String fakeNoticePostedDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        String fakeNoticeArticleId = "fake" + fakeNoticeArticleIdNum;
-
         log.info("fake articleId = {}", fakeNoticeArticleId);
         log.info("fake postedDate = {}", fakeNoticePostedDate);
         log.info("fake subject = {}", fakeNoticeSubject);
@@ -178,8 +175,6 @@ public class AdminController {
                     .categoryName(fakeNoticeCategory)
                     .subject(fakeNoticeSubject)
                     .build());
-
-            fakeNoticeArticleIdNum += 1;
         } catch(FirebaseMessagingException e) {
             throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
         }

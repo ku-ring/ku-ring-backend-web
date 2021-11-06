@@ -28,13 +28,23 @@ function onFakeNoticeBtnClick(event) {
         return;
     }
 
+    const noticeArticleIdInput = document.querySelector("#noticeArticleIdInput");
+    const articleId = noticeArticleIdInput.value;
+
+    console.log(articleId);
+
+    if(!articleId || articleId === "") {
+        alerts.create("fakeUpdate", "noArticleIdAlert");
+        return;
+    }
+
     const noticeCategorySelector = document.querySelector("#noticeCategorySelector");
     const selectedCategory = noticeCategorySelector.value;
 
-    sendNotice(selectedCategory, subject);
+    sendNotice(selectedCategory, subject, articleId);
 }
 
-function sendNotice(category, subject) {
+function sendNotice(category, subject, articleId) {
 
     fakeUpdateLoader.setAttribute("style", "display: inline-block");
 
@@ -42,6 +52,7 @@ function sendNotice(category, subject) {
     const body = {
         category,
         subject,
+        articleId,
     };
     const headers = {
         "Content-Type": "application/json",
