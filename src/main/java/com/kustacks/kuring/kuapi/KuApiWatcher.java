@@ -7,9 +7,12 @@ import com.kustacks.kuring.domain.category.Category;
 import com.kustacks.kuring.domain.category.CategoryRepository;
 import com.kustacks.kuring.domain.notice.Notice;
 import com.kustacks.kuring.domain.notice.NoticeRepository;
+import com.kustacks.kuring.domain.staff.Staff;
+import com.kustacks.kuring.domain.staff.StaffRepository;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.request.*;
+import com.kustacks.kuring.kuapi.request.notice.*;
 import com.kustacks.kuring.kuapi.response.KuisNoticeDTO;
 import com.kustacks.kuring.kuapi.response.KuisNoticeResponseBody;
 import com.kustacks.kuring.kuapi.response.LibraryNoticeDTO;
@@ -24,7 +27,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -54,6 +59,9 @@ public class KuApiWatcher {
 
     private final NoticeRepository noticeRepository;
     private final CategoryRepository categoryRepository;
+    private final StaffRepository staffRepository;
+
+    private final StaffScraper staffScraper;
 
     private String cookieValue = "";
     private Map<String, Category> categoryMap;
@@ -72,7 +80,10 @@ public class KuApiWatcher {
             NormalKuisNoticeRequestBody normalKuisNoticeRequestBody,
 
             NoticeRepository noticeRepository,
-            CategoryRepository categoryRepository
+            CategoryRepository categoryRepository,
+            StaffRepository staffRepository,
+
+            StaffScraper staffScraper
     ) {
         this.firebaseService = firebaseService;
         this.objectMapper = objectMapper;
@@ -81,6 +92,9 @@ public class KuApiWatcher {
 
         this.noticeRepository = noticeRepository;
         this.categoryRepository = categoryRepository;
+        this.staffRepository = staffRepository;
+
+        this.staffScraper = staffScraper;
 
         noticeRequestBodies = new LinkedHashMap<>();
         noticeRequestBodies.put(CategoryName.BACHELOR, bachelorNoticeRequestBody);
@@ -92,6 +106,7 @@ public class KuApiWatcher {
         noticeRequestBodies.put(CategoryName.NORMAL, normalKuisNoticeRequestBody);
     }
 
+    // TODO: 서버 시작할 때 실행되는 경우, FCM 알림 보내지 않게 설정하기
     @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
     public void watchAndUpdateNotice() {
 
@@ -351,5 +366,80 @@ public class KuApiWatcher {
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         return httpHeaders;
+    }
+
+
+
+
+
+    @Scheduled(cron = "0 0 0 1 * *", zone = "Asia/Seoul")
+    public void watchAndUpdateStaff() {
+
+        // www.konkuk.ac.kr 에서 스크래핑하므로, kuis 로그인 필요 없음
+
+        // 각 학과별 url로 스크래핑, 교수진 데이터 수집
+        Map<String, KuStaffDTO> kuStaffDTOMap = new HashMap<>();
+        StaffDeptInfo[] values = StaffDeptInfo.values();
+        for (StaffDeptInfo value : values) {
+            
+            // 일단 행정실 Enum은 무시하도록 함
+            if(value.getUrl() == null) {
+                continue;
+            }
+
+            try {
+                List<KuStaffDTO> scrapedStaffDTOList = staffScraper.getStaffInfo(value);
+                for (KuStaffDTO kuStaffDTO : scrapedStaffDTOList) {
+                    KuStaffDTO mapStaffDTO = kuStaffDTOMap.get(kuStaffDTO.getEmail());
+                    if(mapStaffDTO == null) {
+                        kuStaffDTOMap.put(kuStaffDTO.getEmail(), kuStaffDTO);
+                    } else {
+                        mapStaffDTO.setDeptName(mapStaffDTO.getDeptName() + ", " + kuStaffDTO.getDeptName());
+                    }
+                }
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        // 스크래핑으로 수집한 교직원 정보와 비교
+        // 달라진 정보가 있거나, 새로운 교직원 정보이면 db에 추가할 리스트에 저장
+        // db에는 있으나 스크래핑한 리스트에 없는 교직원이라면, 삭제할 리스트에 저장
+
+        // db에 저장되어있는 교직원 정보 조회
+        Map<String, Staff> dbStaffMap = staffRepository.findAllMap();
+        List<Staff> toBeUpdateStaffs = new LinkedList<>();
+        Iterator<KuStaffDTO> kuStaffDTOIterator = kuStaffDTOMap.values().iterator();
+        while(kuStaffDTOIterator.hasNext()) {
+            KuStaffDTO kuStaffDTO = kuStaffDTOIterator.next();
+
+            Staff staff = dbStaffMap.get(kuStaffDTO.getEmail());
+            if(staff != null) {
+                KuStaffDTO dbStaffDTO = KuStaffDTO.entityToDTO(staff);
+
+                if(!kuStaffDTO.equals(dbStaffDTO)) {
+                    updateStaffEntity(kuStaffDTO, staff);
+                    toBeUpdateStaffs.add(staff);
+                }
+
+                dbStaffMap.remove(kuStaffDTO.getEmail());
+                kuStaffDTOIterator.remove();
+            }
+        }
+
+        staffRepository.deleteAll(dbStaffMap.values());
+        staffRepository.saveAll(kuStaffDTOMap.values().stream().map(KuStaffDTO::toEntity).collect(Collectors.toList()));
+        staffRepository.saveAll(toBeUpdateStaffs);
+    }
+
+    private void updateStaffEntity(KuStaffDTO kuStaffDTO, Staff staff) {
+        staff.setName(kuStaffDTO.getName());
+        staff.setMajor(kuStaffDTO.getMajor());
+        staff.setLab(kuStaffDTO.getLab());
+        staff.setPhone(kuStaffDTO.getPhone());
+        staff.setEmail(kuStaffDTO.getEmail());
+        staff.setDept(kuStaffDTO.getDeptName());
+        staff.setCollege(kuStaffDTO.getCollegeName());
     }
 }
