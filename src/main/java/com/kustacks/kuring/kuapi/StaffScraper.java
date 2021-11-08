@@ -1,16 +1,15 @@
 package com.kustacks.kuring.kuapi;
 
+import com.kustacks.kuring.controller.dto.StaffDTO;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,10 +18,10 @@ public class StaffScraper {
 
     public StaffScraper() {}
 
-    public List<KuStaffDTO> getStaffInfo(StaffDeptInfo dept) throws IOException {
+    public List<StaffDTO> getStaffInfo(StaffDeptInfo dept) throws IOException {
 
         Document document = Jsoup.connect(dept.getUrl()).get();
-        List<KuStaffDTO> staffDTOList = null;
+        List<StaffDTO> staffDTOList = null;
 
         // CODE SMELL?
         if(dept.getCollegeName().equals("상허생명과학대학")) {
@@ -55,25 +54,25 @@ public class StaffScraper {
         return staffDTOList;
     }
 
-    public void printStaffDTOList(String title, List<KuStaffDTO> kuStaffDTOList) {
+    public void printStaffDTOList(String title, List<StaffDTO> staffDTOList) {
         System.out.println("===== " + title + " =====");
-        for (KuStaffDTO kuStaffDTO : kuStaffDTOList) {
-            System.out.println("이름 = " + kuStaffDTO.getName());
-            System.out.println("전공 = " + kuStaffDTO.getMajor());
-            System.out.println("랩실 = " + kuStaffDTO.getLab());
-            System.out.println("전번 = " + kuStaffDTO.getPhone());
-            System.out.println("이메일 = " + kuStaffDTO.getEmail());
+        for (StaffDTO staffDTO : staffDTOList) {
+            System.out.println("이름 = " + staffDTO.getName());
+            System.out.println("전공 = " + staffDTO.getMajor());
+            System.out.println("랩실 = " + staffDTO.getLab());
+            System.out.println("전번 = " + staffDTO.getPhone());
+            System.out.println("이메일 = " + staffDTO.getEmail());
             System.out.println();
         }
     }
 
-    private List<KuStaffDTO> getNormalDeptStaffInfo(Document document, String deptName, String collegeName) {
+    private List<StaffDTO> getNormalDeptStaffInfo(Document document, String deptName, String collegeName) {
 
         // 테이블 추출
         Elements tables = document.getElementsByTag("table");
 
         // 이름, 전공, 연구실, 전화번호, 이메일 순 추출
-        List<KuStaffDTO> kuStaffDTOList = new LinkedList<>();
+        List<StaffDTO> staffDTOList = new LinkedList<>();
         String[] oneStaffInfo = new String[5];
         for (Element table : tables) {
 
@@ -118,7 +117,7 @@ public class StaffScraper {
                 }
 
                 if(isEmailNotEmpty) {
-                    addNewKuStaffDTOToList(kuStaffDTOList, oneStaffInfo, deptName, collegeName);
+                    addNewKuStaffDTOToList(staffDTOList, oneStaffInfo, deptName, collegeName);
                 } else {
                     // TODO: 테스트용
                     System.out.println("스킵된 교수 정보. " + deptName + " " + oneStaffInfo[0] + " 교수");
@@ -128,12 +127,12 @@ public class StaffScraper {
             break;
         }
 
-        return kuStaffDTOList;
+        return staffDTOList;
     }
 
-    private List<KuStaffDTO> getSanghuoBiologyDeptStaffInfo(Document document, String deptName, String collegeName) {
+    private List<StaffDTO> getSanghuoBiologyDeptStaffInfo(Document document, String deptName, String collegeName) {
 
-        List<KuStaffDTO> kuStaffDTOList = new LinkedList<>();
+        List<StaffDTO> staffDTOList = new LinkedList<>();
 
         Element table = document.select(".photo_intro").get(0);
         Elements rows = table.getElementsByTag("dl");
@@ -158,15 +157,15 @@ public class StaffScraper {
             oneStaffInfo[3] = infos.get(4).childNodeSize() < 2 ? "" : String.valueOf(infos.get(4).childNode(1));
             oneStaffInfo[4] = infos.get(5).getElementsByTag("a").get(0).text();
 
-            addNewKuStaffDTOToList(kuStaffDTOList, oneStaffInfo, deptName, collegeName);
+            addNewKuStaffDTOToList(staffDTOList, oneStaffInfo, deptName, collegeName);
         }
 
-        return kuStaffDTOList;
+        return staffDTOList;
     }
 
-    private List<KuStaffDTO> getRealEstateScienceDeptStaffInfo(Document document, String deptName, String collegeName) {
+    private List<StaffDTO> getRealEstateScienceDeptStaffInfo(Document document, String deptName, String collegeName) {
 
-        List<KuStaffDTO> kuStaffDTOList = new LinkedList<>();
+        List<StaffDTO> staffDTOList = new LinkedList<>();
 
         Element table = document.select(".sub0201_list").get(0).getElementsByTag("ul").get(0);
         Elements rows = table.getElementsByTag("li");
@@ -184,14 +183,14 @@ public class StaffScraper {
             oneStaffInfo[2] = String.valueOf(textMore.childNode(4)).split(":")[1].replaceFirst("\\s", "").trim();
             oneStaffInfo[3] = String.valueOf(textMore.childNode(6)).split(":")[1].replaceFirst("\\s", "").trim();
 
-            addNewKuStaffDTOToList(kuStaffDTOList, oneStaffInfo, deptName, collegeName);
+            addNewKuStaffDTOToList(staffDTOList, oneStaffInfo, deptName, collegeName);
         }
 
-        return kuStaffDTOList;
+        return staffDTOList;
     }
 
-    private void addNewKuStaffDTOToList(List<KuStaffDTO> kuStaffDTOList, String[] oneStaffInfo, String deptName, String collegeName) {
-        kuStaffDTOList.add(KuStaffDTO.builder()
+    private void addNewKuStaffDTOToList(List<StaffDTO> staffDTOList, String[] oneStaffInfo, String deptName, String collegeName) {
+        staffDTOList.add(StaffDTO.builder()
                 .name(oneStaffInfo[0])
                 .major(oneStaffInfo[1])
                 .lab(oneStaffInfo[2])

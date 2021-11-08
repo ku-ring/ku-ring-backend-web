@@ -3,6 +3,7 @@ package com.kustacks.kuring.kuapi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.controller.dto.NoticeDTO;
+import com.kustacks.kuring.controller.dto.StaffDTO;
 import com.kustacks.kuring.domain.category.Category;
 import com.kustacks.kuring.domain.category.CategoryRepository;
 import com.kustacks.kuring.domain.notice.Notice;
@@ -378,7 +379,7 @@ public class KuApiWatcher {
         // www.konkuk.ac.kr 에서 스크래핑하므로, kuis 로그인 필요 없음
 
         // 각 학과별 url로 스크래핑, 교수진 데이터 수집
-        Map<String, KuStaffDTO> kuStaffDTOMap = new HashMap<>();
+        Map<String, StaffDTO> kuStaffDTOMap = new HashMap<>();
         StaffDeptInfo[] values = StaffDeptInfo.values();
         for (StaffDeptInfo value : values) {
             
@@ -388,13 +389,13 @@ public class KuApiWatcher {
             }
 
             try {
-                List<KuStaffDTO> scrapedStaffDTOList = staffScraper.getStaffInfo(value);
-                for (KuStaffDTO kuStaffDTO : scrapedStaffDTOList) {
-                    KuStaffDTO mapStaffDTO = kuStaffDTOMap.get(kuStaffDTO.getEmail());
+                List<StaffDTO> scrapedStaffDTOList = staffScraper.getStaffInfo(value);
+                for (StaffDTO staffDTO : scrapedStaffDTOList) {
+                    StaffDTO mapStaffDTO = kuStaffDTOMap.get(staffDTO.getEmail());
                     if(mapStaffDTO == null) {
-                        kuStaffDTOMap.put(kuStaffDTO.getEmail(), kuStaffDTO);
+                        kuStaffDTOMap.put(staffDTO.getEmail(), staffDTO);
                     } else {
-                        mapStaffDTO.setDeptName(mapStaffDTO.getDeptName() + ", " + kuStaffDTO.getDeptName());
+                        mapStaffDTO.setDeptName(mapStaffDTO.getDeptName() + ", " + staffDTO.getDeptName());
                     }
                 }
             } catch(IOException e) {
@@ -410,36 +411,36 @@ public class KuApiWatcher {
         // db에 저장되어있는 교직원 정보 조회
         Map<String, Staff> dbStaffMap = staffRepository.findAllMap();
         List<Staff> toBeUpdateStaffs = new LinkedList<>();
-        Iterator<KuStaffDTO> kuStaffDTOIterator = kuStaffDTOMap.values().iterator();
+        Iterator<StaffDTO> kuStaffDTOIterator = kuStaffDTOMap.values().iterator();
         while(kuStaffDTOIterator.hasNext()) {
-            KuStaffDTO kuStaffDTO = kuStaffDTOIterator.next();
+            StaffDTO staffDTO = kuStaffDTOIterator.next();
 
-            Staff staff = dbStaffMap.get(kuStaffDTO.getEmail());
+            Staff staff = dbStaffMap.get(staffDTO.getEmail());
             if(staff != null) {
-                KuStaffDTO dbStaffDTO = KuStaffDTO.entityToDTO(staff);
+                StaffDTO dbStaffDTO = StaffDTO.entityToDTO(staff);
 
-                if(!kuStaffDTO.equals(dbStaffDTO)) {
-                    updateStaffEntity(kuStaffDTO, staff);
+                if(!staffDTO.equals(dbStaffDTO)) {
+                    updateStaffEntity(staffDTO, staff);
                     toBeUpdateStaffs.add(staff);
                 }
 
-                dbStaffMap.remove(kuStaffDTO.getEmail());
+                dbStaffMap.remove(staffDTO.getEmail());
                 kuStaffDTOIterator.remove();
             }
         }
 
         staffRepository.deleteAll(dbStaffMap.values());
-        staffRepository.saveAll(kuStaffDTOMap.values().stream().map(KuStaffDTO::toEntity).collect(Collectors.toList()));
+        staffRepository.saveAll(kuStaffDTOMap.values().stream().map(StaffDTO::toEntity).collect(Collectors.toList()));
         staffRepository.saveAll(toBeUpdateStaffs);
     }
 
-    private void updateStaffEntity(KuStaffDTO kuStaffDTO, Staff staff) {
-        staff.setName(kuStaffDTO.getName());
-        staff.setMajor(kuStaffDTO.getMajor());
-        staff.setLab(kuStaffDTO.getLab());
-        staff.setPhone(kuStaffDTO.getPhone());
-        staff.setEmail(kuStaffDTO.getEmail());
-        staff.setDept(kuStaffDTO.getDeptName());
-        staff.setCollege(kuStaffDTO.getCollegeName());
+    private void updateStaffEntity(StaffDTO staffDTO, Staff staff) {
+        staff.setName(staffDTO.getName());
+        staff.setMajor(staffDTO.getMajor());
+        staff.setLab(staffDTO.getLab());
+        staff.setPhone(staffDTO.getPhone());
+        staff.setEmail(staffDTO.getEmail());
+        staff.setDept(staffDTO.getDeptName());
+        staff.setCollege(staffDTO.getCollegeName());
     }
 }

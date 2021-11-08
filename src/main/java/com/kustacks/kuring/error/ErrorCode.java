@@ -26,7 +26,12 @@ public enum ErrorCode {
 
     UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류"),
 
-
+    /**
+     * ErrorCodes about WebSocket
+     */
+    WS_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."),
+    WS_MISSING_PARAM(HttpStatus.BAD_REQUEST, "웹소켓 메세지의 파라미터가 누락되어있습니다."),
+    WS_INVALID_PARAM(HttpStatus.BAD_REQUEST, "웹소켓 메세지 파라미터 중 유효하지 않은 값이 있습니다."),
     /**
      * ErrorCodes about InternalLogicException
      */

@@ -1,4 +1,4 @@
-package com.kustacks.kuring.kuapi;
+package com.kustacks.kuring.controller.dto;
 
 import com.kustacks.kuring.domain.staff.Staff;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import java.util.Objects;
 @Getter @Setter
 @AllArgsConstructor
 @Builder
-public class KuStaffDTO {
+public class StaffDTO {
 
     private String name;
 
@@ -36,10 +36,10 @@ public class KuStaffDTO {
             return false;
         }
 
-        KuStaffDTO kuStaffDTO = (KuStaffDTO) o;
-        return Objects.equals(kuStaffDTO.getName(), name) && Objects.equals(kuStaffDTO.getMajor(), major) && Objects.equals(kuStaffDTO.getLab(), lab)
-                && Objects.equals(kuStaffDTO.getPhone(), phone) && Objects.equals(kuStaffDTO.getEmail(), email) && Objects.equals(kuStaffDTO.getDeptName(), deptName)
-                && Objects.equals(kuStaffDTO.getCollegeName(), collegeName);
+        StaffDTO staffDTO = (StaffDTO) o;
+        return Objects.equals(staffDTO.getName(), name) && Objects.equals(staffDTO.getMajor(), major) && Objects.equals(staffDTO.getLab(), lab)
+                && Objects.equals(staffDTO.getPhone(), phone) && Objects.equals(staffDTO.getEmail(), email) && Objects.equals(staffDTO.getDeptName(), deptName)
+                && Objects.equals(staffDTO.getCollegeName(), collegeName);
     }
 
     public Staff toEntity() {
@@ -53,8 +53,8 @@ public class KuStaffDTO {
                 .college(collegeName).build();
     }
 
-    public static KuStaffDTO entityToDTO(Staff staff) {
-        return KuStaffDTO.builder()
+    public static StaffDTO entityToDTO(Staff staff) {
+        return StaffDTO.builder()
                 .name(staff.getName())
                 .major(staff.getMajor())
                 .lab(staff.getLab())
