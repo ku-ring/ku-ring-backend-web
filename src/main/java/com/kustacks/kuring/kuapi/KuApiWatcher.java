@@ -501,7 +501,7 @@ public class KuApiWatcher {
                 scrapDeptAndConvertToMap(staffDTOMap, failDept);
             }
 
-            updateStaff(staffDTOMap);
+            staffRepository.saveAll(staffDTOMap.values().stream().map(StaffDTO::toEntity).collect(Collectors.toList()));
         }
     }
 
