@@ -9,6 +9,7 @@ import com.kustacks.kuring.domain.user_category.UserCategory;
 import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.kuapi.KuApiWatcher;
 import com.kustacks.kuring.service.CategoryServiceImpl;
 import com.kustacks.kuring.service.FirebaseService;
 import com.kustacks.kuring.service.UserServiceImpl;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -57,6 +59,9 @@ public class CategoryControllerTest {
     public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     private MockMvc mockMvc;
+
+    @MockBean
+    private KuApiWatcher kuApiWatcher;
 
     @MockBean
     private CategoryServiceImpl categoryService;
