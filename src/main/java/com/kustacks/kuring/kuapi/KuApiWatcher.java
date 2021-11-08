@@ -1,6 +1,5 @@
 package com.kustacks.kuring.kuapi;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.controller.dto.NoticeDTO;
 import com.kustacks.kuring.controller.dto.StaffDTO;
@@ -54,8 +53,6 @@ public class KuApiWatcher {
 
     private final FirebaseService firebaseService;
 
-    private final ObjectMapper objectMapper;
-
     private final KuisLoginRequestBody kuisLoginRequestBody;
     private final Map<CategoryName, KuisNoticeRequestBody> noticeRequestBodies;
 
@@ -66,17 +63,14 @@ public class KuApiWatcher {
     private final StaffScraper staffScraper;
     private final ThreadPoolTaskExecutor executor;
     
-    private final int STAFF_UPDATE_RETRY_TIME = 1000 * 60 * 10; // 10분마다 실패한 크론잡 재시도
+    private final int STAFF_UPDATE_RETRY_TIME = 1000 * 60; // 1분후에 실패한 크론잡 재시도
 //    private final int STAFF_UPDATE_RETRY_TIME = 1000 * 10;
-    private final int STAFF_UPDATE_MAX_TRY = 1;
-    private int STAFF_UPDATE_TRY = 0;
 
     private String cookieValue = "";
     private Map<String, Category> categoryMap;
 
     public KuApiWatcher(
             FirebaseService firebaseService,
-            ObjectMapper objectMapper,
             KuisLoginRequestBody kuisLoginRequestBody,
 
             BachelorKuisNoticeRequestBody bachelorNoticeRequestBody,
@@ -95,7 +89,6 @@ public class KuApiWatcher {
             ThreadPoolTaskExecutor executor
     ) {
         this.firebaseService = firebaseService;
-        this.objectMapper = objectMapper;
 
         this.kuisLoginRequestBody = kuisLoginRequestBody;
 
@@ -106,7 +99,7 @@ public class KuApiWatcher {
         this.staffScraper = staffScraper;
         this.executor = executor;
 
-        noticeRequestBodies = new LinkedHashMap<>();
+        noticeRequestBodies = new HashMap<>();
         noticeRequestBodies.put(CategoryName.BACHELOR, bachelorNoticeRequestBody);
         noticeRequestBodies.put(CategoryName.SCHOLARSHIP, scholarshipNoticeRequestBody);
         noticeRequestBodies.put(CategoryName.EMPLOYMENT, employmentKuisNoticeRequestBody);
@@ -381,8 +374,8 @@ public class KuApiWatcher {
 
 
 
-
-    @Scheduled(cron = "0 0 0 1 * *", zone = "Asia/Seoul")
+    // TODO: 현재 건국대학교 서버 불안정으로 인해 교직원 정보가 제대로 안뜨는 중. 이에 1시간마다 갱신하도록 임시 수정해 둠
+    @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
     public void watchAndUpdateStaff() {
 
         // www.konkuk.ac.kr 에서 스크래핑하므로, kuis 로그인 필요 없음
@@ -396,8 +389,10 @@ public class KuApiWatcher {
          */
 
         List<StaffDeptInfo> failDepts = new LinkedList<>();
+        List<String> successDeptNames = new LinkedList<>();
         Map<String, StaffDTO> kuStaffDTOMap = new HashMap<>();
         StaffDeptInfo[] values = StaffDeptInfo.values();
+
         for (StaffDeptInfo value : values) {
             
             // 일단 행정실 Enum은 무시하도록 함
@@ -406,49 +401,52 @@ public class KuApiWatcher {
             }
 
             try {
+
                 scrapDeptAndConvertToMap(kuStaffDTOMap, value);
+                successDeptNames.add(value.getName());
                 log.info("{} 스크래핑 완료", value.getName());
             } catch(IOException | IndexOutOfBoundsException e) {
+
                 log.error("[ScraperException] 스크래핑 중 문제가 발생했습니다.");
                 log.error("[ScraperException] 문제가 발생한 학과 = {}", value.getName());
                 log.error("[ScraperException] {}", e.getMessage(), e);
                 failDepts.add(value);
             }
         }
-        
-        // 실패한 학과가 하나 이상이면 FALLBACK_RETRY_TIME ms 후에 재시도
+
+        updateStaff(kuStaffDTOMap, successDeptNames);
+
         if(failDepts.size() > 0) {
-            executor.execute(() -> {
-
-                try {
-
-                    log.info("[ThreadExecutor] 교직원 업데이트를 재시도합니다.");
-                    log.info("[ThreadExecutor] 재시도 대상 = {}", failDepts);
-                    retryStaffUpdate(failDepts);
-                    log.info("[ThreadExecutor] 교직원 업데이트 재시도가 성공했습니다.");
-                } catch(IOException | InternalLogicException e) {
-
-                    if(e instanceof InternalLogicException) {
-                        log.error("[ScraperException] 스크래핑 재시도 횟수가 {}회 실패했습니다.", STAFF_UPDATE_MAX_TRY);
-                        log.error("[ScraperException] {}에 대한 스크래핑 재시도를 종료합니다. 수동적인 복구가 필요합니다.", failDepts, e);
-                    } else {
-                        log.error("[ScraperException] 스크래핑 재시도 중 문제가 발생했습니다.", e);
-                    }
-                }
-            }, STAFF_UPDATE_RETRY_TIME);
+            retryStaffUpdateAfterSomeTimes(failDepts);
+        } else {
+            log.info("교직원 정보 업데이트 실패 없이 완료");
         }
-
-        updateStaff(kuStaffDTOMap);
-        log.info("교직원 정보 업데이트 완료");
     }
 
-    private void updateStaff(Map<String, StaffDTO> kuStaffDTOMap) {
+    private void retryStaffUpdateAfterSomeTimes(List<StaffDeptInfo> failDepts) {
+        executor.execute(() -> {
+
+            try {
+
+                Thread.sleep(STAFF_UPDATE_RETRY_TIME);
+
+                log.info("[ThreadExecutor] 교직원 업데이트를 재시도합니다.");
+                log.info("[ThreadExecutor] 재시도 대상 = {}", failDepts);
+                retryStaffUpdate(failDepts);
+                log.info("[ThreadExecutor] 교직원 업데이트 재시도가 성공했습니다.");
+            } catch(IOException | InternalLogicException | InterruptedException e) {
+                log.error("[ScraperException] 스크래핑 재시도 중 문제가 발생했습니다.", e);
+            }
+        });
+    }
+
+    private void updateStaff(Map<String, StaffDTO> kuStaffDTOMap, List<String> successDeptNames) {
         // 스크래핑으로 수집한 교직원 정보와 비교
         // 달라진 정보가 있거나, 새로운 교직원 정보이면 db에 추가할 리스트에 저장
         // db에는 있으나 스크래핑한 리스트에 없는 교직원이라면, 삭제할 리스트에 저장
 
         // db에 저장되어있는 교직원 정보 조회
-        Map<String, Staff> dbStaffMap = staffRepository.findAllMap();
+        Map<String, Staff> dbStaffMap = staffRepository.findByDeptContainingMap(successDeptNames);
         List<Staff> toBeUpdateStaffs = new LinkedList<>();
         Iterator<StaffDTO> kuStaffDTOIterator = kuStaffDTOMap.values().iterator();
         while(kuStaffDTOIterator.hasNext()) {
@@ -466,6 +464,19 @@ public class KuApiWatcher {
                 dbStaffMap.remove(staffDTO.getEmail());
                 kuStaffDTOIterator.remove();
             }
+        }
+        
+        log.info("=== 삭제할 교직원 리스트 ===");
+        for (String key : dbStaffMap.keySet()) {
+            log.info("{} {} {}", dbStaffMap.get(key).getCollege(), dbStaffMap.get(key).getDept(), dbStaffMap.get(key).getName());
+        }
+        log.info("\n=== 업데이트할 교직원 리스트 ===");
+        for (Staff toBeUpdateStaff : toBeUpdateStaffs) {
+            log.info("{} {} {}", toBeUpdateStaff.getCollege(), toBeUpdateStaff.getDept(), toBeUpdateStaff.getName());
+        }
+        log.info("\n=== 추가할 교직원 리스트 ===");
+        for (String key : kuStaffDTOMap.keySet()) {
+            log.info("{} {} {}", kuStaffDTOMap.get(key).getCollegeName(), kuStaffDTOMap.get(key).getDeptName(), kuStaffDTOMap.get(key).getName());
         }
 
         staffRepository.deleteAll(dbStaffMap.values());
@@ -488,21 +499,13 @@ public class KuApiWatcher {
 
     private void retryStaffUpdate(List<StaffDeptInfo> failDepts) throws IOException {
 
-        ++STAFF_UPDATE_TRY;
+        Map<String, StaffDTO> kuStaffDTOMap = new HashMap<>();
 
-        if(STAFF_UPDATE_TRY > STAFF_UPDATE_MAX_TRY) {
-            STAFF_UPDATE_TRY = 0;
-            throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_EXCEED_RETRY_LIMIT);
-        } else {
-
-            Map<String, StaffDTO> staffDTOMap = new HashMap<>();
-
-            for (StaffDeptInfo failDept : failDepts) {
-                scrapDeptAndConvertToMap(staffDTOMap, failDept);
-            }
-
-            staffRepository.saveAll(staffDTOMap.values().stream().map(StaffDTO::toEntity).collect(Collectors.toList()));
+        for (StaffDeptInfo failDept : failDepts) {
+            scrapDeptAndConvertToMap(kuStaffDTOMap, failDept);
         }
+
+        updateStaff(kuStaffDTOMap, failDepts.stream().map(StaffDeptInfo::getName).collect(Collectors.toList()));
     }
 
     private void updateStaffEntity(StaffDTO staffDTO, Staff staff) {

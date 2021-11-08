@@ -20,13 +20,20 @@ public class StaffScraper {
 
     private final String PROXY_IP = "52.78.172.171";
     private final int PROXY_PORT = 80;
-    private final int SCRAP_TIMEOUT = 60000;
+    private final int SCRAP_TIMEOUT = 90000;
 
     public StaffScraper() {}
 
     public List<StaffDTO> getStaffInfo(StaffDeptInfo dept) throws IOException {
 
-        Document document = Jsoup.connect(dept.getUrl()).timeout(SCRAP_TIMEOUT).proxy(PROXY_IP, PROXY_PORT).get();
+        Document document;
+
+        if(dept.equals(StaffDeptInfo.REAL_ESTATE)) {
+            document = Jsoup.connect(dept.getUrl()).timeout(SCRAP_TIMEOUT).proxy(PROXY_IP, PROXY_PORT).get();
+        } else {
+            document = Jsoup.connect(dept.getUrl()).timeout(SCRAP_TIMEOUT).get();
+        }
+
         List<StaffDTO> staffDTOList = null;
 
         // CODE SMELL?
