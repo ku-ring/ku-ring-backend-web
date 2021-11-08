@@ -49,6 +49,7 @@ public enum ErrorCode {
     CAT_NOT_EXIST_CATEGORY("서버에서 지원하지 않는 카테고리입니다."),
 
     STAFF_SCRAPER_TAG_NOT_EXIST("Jsoup - 찾고자 하는 태그가 존재하지 않습니다."),
+    STAFF_SCRAPER_EXCEED_RETRY_LIMIT("교직원 업데이트 재시도 횟수를 초과했습니다."),
 
     FB_FAIL_SUBSCRIBE("카테고리 구독에 실패했습니다."),
     FB_FAIL_UNSUBSCRIBE("카테고리 구독 해제에 실패했습니다."),

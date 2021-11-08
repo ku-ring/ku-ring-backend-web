@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -63,6 +64,12 @@ public class KuApiWatcher {
     private final StaffRepository staffRepository;
 
     private final StaffScraper staffScraper;
+    private final ThreadPoolTaskExecutor executor;
+    
+    private final int STAFF_UPDATE_RETRY_TIME = 1000 * 60 * 10; // 10분마다 실패한 크론잡 재시도
+//    private final int STAFF_UPDATE_RETRY_TIME = 1000 * 10;
+    private final int STAFF_UPDATE_MAX_TRY = 1;
+    private int STAFF_UPDATE_TRY = 0;
 
     private String cookieValue = "";
     private Map<String, Category> categoryMap;
@@ -84,7 +91,8 @@ public class KuApiWatcher {
             CategoryRepository categoryRepository,
             StaffRepository staffRepository,
 
-            StaffScraper staffScraper
+            StaffScraper staffScraper,
+            ThreadPoolTaskExecutor executor
     ) {
         this.firebaseService = firebaseService;
         this.objectMapper = objectMapper;
@@ -96,6 +104,7 @@ public class KuApiWatcher {
         this.staffRepository = staffRepository;
 
         this.staffScraper = staffScraper;
+        this.executor = executor;
 
         noticeRequestBodies = new LinkedHashMap<>();
         noticeRequestBodies.put(CategoryName.BACHELOR, bachelorNoticeRequestBody);
@@ -378,7 +387,15 @@ public class KuApiWatcher {
 
         // www.konkuk.ac.kr 에서 스크래핑하므로, kuis 로그인 필요 없음
 
-        // 각 학과별 url로 스크래핑, 교수진 데이터 수집
+
+        /*
+           각 학과별 url로 스크래핑, 교수진 데이터 수집
+
+           스크래핑 실패한 학과들을 재시도하기 위해 호출된 경우
+           values에 StaffDeptInfo 전체 값이 아닌, 매개변수로 들어온 값을 전달한다.
+         */
+
+        List<StaffDeptInfo> failDepts = new LinkedList<>();
         Map<String, StaffDTO> kuStaffDTOMap = new HashMap<>();
         StaffDeptInfo[] values = StaffDeptInfo.values();
         for (StaffDeptInfo value : values) {
@@ -389,23 +406,43 @@ public class KuApiWatcher {
             }
 
             try {
-                List<StaffDTO> scrapedStaffDTOList = staffScraper.getStaffInfo(value);
-                for (StaffDTO staffDTO : scrapedStaffDTOList) {
-                    StaffDTO mapStaffDTO = kuStaffDTOMap.get(staffDTO.getEmail());
-                    if(mapStaffDTO == null) {
-                        kuStaffDTOMap.put(staffDTO.getEmail(), staffDTO);
-                    } else {
-                        mapStaffDTO.setDeptName(mapStaffDTO.getDeptName() + ", " + staffDTO.getDeptName());
-                    }
-                }
+                scrapDeptAndConvertToMap(kuStaffDTOMap, value);
+                log.info("{} 스크래핑 완료", value.getName());
             } catch(IOException | IndexOutOfBoundsException e) {
                 log.error("[ScraperException] 스크래핑 중 문제가 발생했습니다.");
                 log.error("[ScraperException] 문제가 발생한 학과 = {}", value.getName());
                 log.error("[ScraperException] {}", e.getMessage(), e);
+                failDepts.add(value);
             }
         }
+        
+        // 실패한 학과가 하나 이상이면 FALLBACK_RETRY_TIME ms 후에 재시도
+        if(failDepts.size() > 0) {
+            executor.execute(() -> {
 
+                try {
 
+                    log.info("[ThreadExecutor] 교직원 업데이트를 재시도합니다.");
+                    log.info("[ThreadExecutor] 재시도 대상 = {}", failDepts);
+                    retryStaffUpdate(failDepts);
+                    log.info("[ThreadExecutor] 교직원 업데이트 재시도가 성공했습니다.");
+                } catch(IOException | InternalLogicException e) {
+
+                    if(e instanceof InternalLogicException) {
+                        log.error("[ScraperException] 스크래핑 재시도 횟수가 {}회 실패했습니다.", STAFF_UPDATE_MAX_TRY);
+                        log.error("[ScraperException] {}에 대한 스크래핑 재시도를 종료합니다. 수동적인 복구가 필요합니다.", failDepts, e);
+                    } else {
+                        log.error("[ScraperException] 스크래핑 재시도 중 문제가 발생했습니다.", e);
+                    }
+                }
+            }, STAFF_UPDATE_RETRY_TIME);
+        }
+
+        updateStaff(kuStaffDTOMap);
+        log.info("교직원 정보 업데이트 완료");
+    }
+
+    private void updateStaff(Map<String, StaffDTO> kuStaffDTOMap) {
         // 스크래핑으로 수집한 교직원 정보와 비교
         // 달라진 정보가 있거나, 새로운 교직원 정보이면 db에 추가할 리스트에 저장
         // db에는 있으나 스크래핑한 리스트에 없는 교직원이라면, 삭제할 리스트에 저장
@@ -434,6 +471,38 @@ public class KuApiWatcher {
         staffRepository.deleteAll(dbStaffMap.values());
         staffRepository.saveAll(kuStaffDTOMap.values().stream().map(StaffDTO::toEntity).collect(Collectors.toList()));
         staffRepository.saveAll(toBeUpdateStaffs);
+    }
+
+    private void scrapDeptAndConvertToMap(Map<String, StaffDTO> kuStaffDTOMap, StaffDeptInfo value) throws IOException {
+
+        List<StaffDTO> scrapedStaffDTOList = staffScraper.getStaffInfo(value);
+        for (StaffDTO staffDTO : scrapedStaffDTOList) {
+            StaffDTO mapStaffDTO = kuStaffDTOMap.get(staffDTO.getEmail());
+            if(mapStaffDTO == null) {
+                kuStaffDTOMap.put(staffDTO.getEmail(), staffDTO);
+            } else {
+                mapStaffDTO.setDeptName(mapStaffDTO.getDeptName() + ", " + staffDTO.getDeptName());
+            }
+        }
+    }
+
+    private void retryStaffUpdate(List<StaffDeptInfo> failDepts) throws IOException {
+
+        ++STAFF_UPDATE_TRY;
+
+        if(STAFF_UPDATE_TRY > STAFF_UPDATE_MAX_TRY) {
+            STAFF_UPDATE_TRY = 0;
+            throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_EXCEED_RETRY_LIMIT);
+        } else {
+
+            Map<String, StaffDTO> staffDTOMap = new HashMap<>();
+
+            for (StaffDeptInfo failDept : failDepts) {
+                scrapDeptAndConvertToMap(staffDTOMap, failDept);
+            }
+
+            updateStaff(staffDTOMap);
+        }
     }
 
     private void updateStaffEntity(StaffDTO staffDTO, Staff staff) {

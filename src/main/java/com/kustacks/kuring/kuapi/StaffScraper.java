@@ -18,25 +18,21 @@ import java.util.List;
 @Component
 public class StaffScraper {
 
+    private final String PROXY_IP = "52.78.172.171";
+    private final int PROXY_PORT = 80;
+
     public StaffScraper() {}
 
     public List<StaffDTO> getStaffInfo(StaffDeptInfo dept) throws IOException {
 
-        Document document = Jsoup.connect(dept.getUrl()).get();
+        Document document = Jsoup.connect(dept.getUrl()).proxy(PROXY_IP, PROXY_PORT).get();
         List<StaffDTO> staffDTOList = null;
-
-        // TODO: debug
-        if(dept.equals(StaffDeptInfo.REAL_ESTATE)) {
-            log.info(document.html());
-        }
 
         // CODE SMELL?
         if(dept.getCollegeName().equals("상허생명과학대학")) {
             Element pageNumHiddenInput = document.getElementById("totalPageCount");
             int totalPageNum = Integer.parseInt(pageNumHiddenInput.val());
             int pageNum = 1; // 이미 1페이지를 받아왔으므로 2페이지부터 호출하면됨
-
-            System.out.println(dept.getName() + " 의 페이지사이즈 = " + totalPageNum);
 
             staffDTOList = new LinkedList<>();
 
@@ -126,8 +122,7 @@ public class StaffScraper {
                 if(isEmailNotEmpty) {
                     addNewKuStaffDTOToList(staffDTOList, oneStaffInfo, deptName, collegeName);
                 } else {
-                    // TODO: 테스트용
-                    System.out.println("스킵된 교수 정보. " + deptName + " " + oneStaffInfo[0] + " 교수");
+                    log.info("스크래핑 스킵 -> {} {} 교수", deptName, oneStaffInfo[0]);
                 }
             }
 
