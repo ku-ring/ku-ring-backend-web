@@ -398,8 +398,10 @@ public class KuApiWatcher {
                         mapStaffDTO.setDeptName(mapStaffDTO.getDeptName() + ", " + staffDTO.getDeptName());
                     }
                 }
-            } catch(IOException e) {
-                e.printStackTrace();
+            } catch(IOException | IndexOutOfBoundsException e) {
+                log.error("[ScraperException] 스크래핑 중 문제가 발생했습니다.");
+                log.error("[ScraperException] 문제가 발생한 학과 = {}", value.getName());
+                log.error("[ScraperException] {}", e.getMessage(), e);
             }
         }
 

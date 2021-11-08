@@ -3,6 +3,7 @@ package com.kustacks.kuring.kuapi;
 import com.kustacks.kuring.controller.dto.StaffDTO;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+@Slf4j
 @Component
 public class StaffScraper {
 
@@ -22,6 +24,11 @@ public class StaffScraper {
 
         Document document = Jsoup.connect(dept.getUrl()).get();
         List<StaffDTO> staffDTOList = null;
+
+        // TODO: debug
+        if(dept.equals(StaffDeptInfo.REAL_ESTATE)) {
+            log.info(document.html());
+        }
 
         // CODE SMELL?
         if(dept.getCollegeName().equals("상허생명과학대학")) {
