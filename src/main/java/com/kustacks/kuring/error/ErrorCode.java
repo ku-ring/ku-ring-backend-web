@@ -29,9 +29,10 @@ public enum ErrorCode {
     /**
      * ErrorCodes about WebSocket
      */
-    WS_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."),
     WS_MISSING_PARAM(HttpStatus.BAD_REQUEST, "웹소켓 메세지의 파라미터가 누락되어있습니다."),
     WS_INVALID_PARAM(HttpStatus.BAD_REQUEST, "웹소켓 메세지 파라미터 중 유효하지 않은 값이 있습니다."),
+    WS_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."),
+
     /**
      * ErrorCodes about InternalLogicException
      */
@@ -55,6 +56,9 @@ public enum ErrorCode {
     FB_FAIL_UNSUBSCRIBE("카테고리 구독 해제에 실패했습니다."),
     FB_FAIL_ROLLBACK("카테고리 편집 중 transaction fail이 발생했고, 이를 복구하는데 실패했습니다."),
     FB_FAIL_SEND("FCM 메세지 전송에 실패했습니다."),
+
+    WS_CANNOT_STRINGIFY("객체를 JSON 문자열로 변경하는데 실패했습니다."),
+    WS_CANNOT_SEND("웹소켓이 메세지 전송에 실패했습니다."),
 
     AD_UNAUTHENTICATED("관리자가 아닙니다.");
 
