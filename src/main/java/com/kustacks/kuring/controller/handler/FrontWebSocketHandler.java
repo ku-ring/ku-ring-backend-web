@@ -1,6 +1,8 @@
 package com.kustacks.kuring.controller.handler;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kustacks.kuring.controller.dto.HeartBeatResponseDTO;
 import com.kustacks.kuring.controller.dto.SearchRequestDTO;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.WebSocketExceptionHandler;
@@ -12,6 +14,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +28,7 @@ public class FrontWebSocketHandler extends TextWebSocketHandler {
     private final NoticeWebSocketHandler noticeWebSocketHandler;
     private final StaffWebSocketHandler staffWebSocketHandler;
 
-    private final Map<String, SearchHandler> supportedSearchTarget;
+    private final Map<String, SearchHandler> supportedHandlers;
 
     public FrontWebSocketHandler(
             ObjectMapper objectMapper,
@@ -39,9 +42,9 @@ public class FrontWebSocketHandler extends TextWebSocketHandler {
         this.noticeWebSocketHandler = noticeWebSocketHandler;
         this.staffWebSocketHandler = staffWebSocketHandler;
 
-        this.supportedSearchTarget = new HashMap<>();
-        supportedSearchTarget.put("notice", noticeWebSocketHandler);
-        supportedSearchTarget.put("staff", staffWebSocketHandler);
+        this.supportedHandlers = new HashMap<>();
+        supportedHandlers.put("notice", noticeWebSocketHandler);
+        supportedHandlers.put("staff", staffWebSocketHandler);
     }
 
     @Override
@@ -66,13 +69,34 @@ public class FrontWebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
-        SearchHandler searchHandler = supportedSearchTarget.get(type);
+
+
+        if(type.equals("heartbeat")) {
+            try {
+                handleHeartBeat(session);
+            } catch(IOException e) {
+                log.error("[FrontWebSocketHandler] 클라이언트에게 heartbeat 전송 실패", e);
+            }
+            return;
+        }
+
+        SearchHandler searchHandler = supportedHandlers.get(type);
         if(searchHandler == null) {
             exceptionHandler.sendErrorMessage(session, ErrorCode.WS_INVALID_PARAM);
             return;
         }
 
         searchHandler.handleTextMessage(session, content);
+    }
+
+    private void handleHeartBeat(WebSocketSession session) throws IOException {
+
+        HeartBeatResponseDTO responseDTO = HeartBeatResponseDTO.builder()
+                .type("heartbeat")
+                .content(LocalDateTime.now().toString()).build();
+
+        String responseString = objectMapper.writeValueAsString(responseDTO);
+        session.sendMessage(new TextMessage(responseString));
     }
 
     /* Client가 접속 시 호출되는 메서드 */
