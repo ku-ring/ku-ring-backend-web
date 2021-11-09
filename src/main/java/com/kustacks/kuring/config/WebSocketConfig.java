@@ -1,10 +1,8 @@
 package com.kustacks.kuring.config;
 
-import com.kustacks.kuring.controller.NoticeWebSocketHandler;
-import com.kustacks.kuring.controller.StaffWebSocketHandler;
+import com.kustacks.kuring.controller.handler.FrontWebSocketHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.*;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 
@@ -12,23 +10,16 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    private final WebSocketHandler staffWebSocketHandler;
-    private final WebSocketHandler noticeWebSocketHandler;
+    private final FrontWebSocketHandler frontWebSocketHandler;
 
-    public WebSocketConfig(StaffWebSocketHandler staffWebSocketHandler, NoticeWebSocketHandler noticeWebSocketHandler) {
-        this.staffWebSocketHandler = staffWebSocketHandler;
-        this.noticeWebSocketHandler = noticeWebSocketHandler;
+    public WebSocketConfig(FrontWebSocketHandler frontWebSocketHandler) {
+        this.frontWebSocketHandler = frontWebSocketHandler;
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 
-        registry.addHandler(staffWebSocketHandler, "/kuring/staff")
-                .setAllowedOrigins("https://kuring-dev.herokuapp.com")
-                .setAllowedOrigins("https://kuring.herokuapp.com")
-                .setAllowedOrigins("http://localhost:8080");
-
-        registry.addHandler(noticeWebSocketHandler, "/kuring/notice")
+        registry.addHandler(frontWebSocketHandler, "/kuring/search")
                 .setAllowedOrigins("https://kuring-dev.herokuapp.com")
                 .setAllowedOrigins("https://kuring.herokuapp.com")
                 .setAllowedOrigins("http://localhost:8080");

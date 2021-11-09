@@ -38,8 +38,8 @@ public class KuringApplication {
 	@Bean
 	public ApplicationRunner startApiWatcher() {
 		return args -> {
-			kuApiWatcher.watchAndUpdateNotice();
-			kuApiWatcher.watchAndUpdateStaff();
+//			kuApiWatcher.watchAndUpdateNotice();
+//			kuApiWatcher.watchAndUpdateStaff();
 		};
 	}
 }

@@ -57,6 +57,7 @@ public enum ErrorCode {
     FB_FAIL_ROLLBACK("카테고리 편집 중 transaction fail이 발생했고, 이를 복구하는데 실패했습니다."),
     FB_FAIL_SEND("FCM 메세지 전송에 실패했습니다."),
 
+    WS_CANNOT_PARSE_JSON("JSON 문자열을 객체로 변환하는데 실패했습니다."),
     WS_CANNOT_STRINGIFY("객체를 JSON 문자열로 변경하는데 실패했습니다."),
     WS_CANNOT_SEND("웹소켓이 메세지 전송에 실패했습니다."),
 
