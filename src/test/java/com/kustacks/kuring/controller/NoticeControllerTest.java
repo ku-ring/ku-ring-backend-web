@@ -3,14 +3,13 @@ package com.kustacks.kuring.controller;
 import com.kustacks.kuring.controller.dto.NoticeDTO;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.kuapi.KuApiWatcher;
-import com.kustacks.kuring.service.NoticeService;
+import com.kustacks.kuring.service.NoticeServiceImpl;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -55,7 +54,7 @@ public class NoticeControllerTest {
     private KuApiWatcher kuApiWatcher;
 
     @MockBean
-    private NoticeService noticeService;
+    private NoticeServiceImpl noticeService;
 
     @Autowired
     private WebApplicationContext webApplicationContext;

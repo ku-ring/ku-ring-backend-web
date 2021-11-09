@@ -46,10 +46,17 @@ public class StaffWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) {
 
         String payload = message.getPayload();
-        StaffWebSocketRequestDTO requestDTO = objectMapper.readValue(payload, StaffWebSocketRequestDTO.class);
+        StaffWebSocketRequestDTO requestDTO;
+
+        try {
+            requestDTO = objectMapper.readValue(payload, StaffWebSocketRequestDTO.class);
+        } catch(IOException e) {
+            exceptionHandler.sendErrorMessage(session, ErrorCode.WS_SERVER_ERROR);
+            return;
+        }
 
         String type = requestDTO.getType();
         String keywords = requestDTO.getContent();
@@ -62,17 +69,18 @@ public class StaffWebSocketHandler extends TextWebSocketHandler {
         if(!supportedTypes.contains(type) || keywords.length() == 0) {
             exceptionHandler.sendErrorMessage(session, ErrorCode.WS_INVALID_PARAM);
         } else {
+
+            List<Staff> searchResult = staffService.handleSearchRequest(keywords);
+
+            List<StaffDTO> searchResultDTOList = new LinkedList<>();
+            for (Staff staff : searchResult) {
+                searchResultDTOList.add(StaffDTO.entityToDTO(staff));
+            }
+
+            StaffWebSocketResponseDTO responseObject = StaffWebSocketResponseDTO.builder()
+                    .staffDTOList(searchResultDTOList).build();
+
             try {
-                List<Staff> searchResult = staffService.handleSearchRequest(keywords);
-
-                List<StaffDTO> searchResultDTOList = new LinkedList<>();
-                for (Staff staff : searchResult) {
-                    searchResultDTOList.add(StaffDTO.entityToDTO(staff));
-                }
-
-                StaffWebSocketResponseDTO responseObject = StaffWebSocketResponseDTO.builder()
-                        .staffDTOList(searchResultDTOList).build();
-
                 String responseString = objectMapper.writeValueAsString(responseObject);
                 session.sendMessage(new TextMessage(responseString));
             } catch(IOException e) {

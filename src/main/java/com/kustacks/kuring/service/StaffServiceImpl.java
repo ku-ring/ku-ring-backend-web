@@ -1,6 +1,5 @@
 package com.kustacks.kuring.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.kustacks.kuring.domain.staff.Staff;
 import com.kustacks.kuring.domain.staff.StaffRepository;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public List<Staff> handleSearchRequest(String keywords) throws JsonProcessingException {
+    public List<Staff> handleSearchRequest(String keywords) {
 
         keywords = keywords.trim();
         String[] splitedKeywords = keywords.split("[\\s+]");
