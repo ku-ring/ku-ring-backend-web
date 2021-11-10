@@ -8,13 +8,13 @@ import java.util.List;
 
 @Getter
 @Builder
-public class NoticeWebSocketResponseDTO extends ResponseDTO {
+public class NoticeWebSocketResponseDTO extends WebSocketResponseDTO {
 
     @JsonProperty("noticeList")
     private List<NoticeSearchDTO> noticeList;
 
     public NoticeWebSocketResponseDTO(List<NoticeSearchDTO> noticeList) {
-        super(true, "성공", 200);
+        super(true, "성공", 200, "notice");
         this.noticeList = noticeList;
     }
 }
