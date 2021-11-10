@@ -22,6 +22,8 @@ import java.util.List;
 @Component
 public class StaffWebSocketHandler implements SearchHandler {
 
+    private final String ERROR_TYPE = "staff";
+
     private final StaffService staffService;
     private final ObjectMapper objectMapper;
     private final WebSocketExceptionHandler exceptionHandler;
@@ -40,7 +42,7 @@ public class StaffWebSocketHandler implements SearchHandler {
     public void handleTextMessage(WebSocketSession session, String keywords) {
 
         if(keywords.length() == 0) {
-            exceptionHandler.sendErrorMessage(session, ErrorCode.WS_INVALID_PARAM);
+            exceptionHandler.sendErrorMessage(session, ErrorCode.WS_INVALID_PARAM, ERROR_TYPE);
             return;
         }
 
@@ -59,9 +61,9 @@ public class StaffWebSocketHandler implements SearchHandler {
             session.sendMessage(new TextMessage(responseString));
         } catch(IOException e) {
             if(e instanceof JsonProcessingException) {
-                exceptionHandler.sendErrorMessage(session, ErrorCode.WS_CANNOT_STRINGIFY);
+                exceptionHandler.sendErrorMessage(session, ErrorCode.WS_CANNOT_STRINGIFY, ERROR_TYPE);
             } else {
-                exceptionHandler.sendErrorMessage(session, ErrorCode.WS_SERVER_ERROR);
+                exceptionHandler.sendErrorMessage(session, ErrorCode.WS_SERVER_ERROR, ERROR_TYPE);
             }
             log.error("", e);
         }

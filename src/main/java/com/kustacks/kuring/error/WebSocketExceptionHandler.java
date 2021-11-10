@@ -19,15 +19,15 @@ public class WebSocketExceptionHandler {
         this.objectMapper = objectMapper;
     }
 
-    public void sendErrorMessage(WebSocketSession session, ErrorCode errorCode) {
+    public void sendErrorMessage(WebSocketSession session, ErrorCode errorCode, String type) {
 
         log.error("[WebSocketExceptionHandler] {}", errorCode.getMessage());
 
         ErrorResponse errorResponse;
         if(errorCode.equals(ErrorCode.WS_CANNOT_STRINGIFY) || errorCode.equals(ErrorCode.WS_CANNOT_SEND)) {
-            errorResponse = new ErrorResponse(ErrorCode.WS_SERVER_ERROR);
+            errorResponse = new WebSocketErrorResponse(ErrorCode.WS_SERVER_ERROR, type);
         } else {
-            errorResponse = new ErrorResponse(errorCode);
+            errorResponse = new WebSocketErrorResponse(errorCode, type);
         }
 
         try {

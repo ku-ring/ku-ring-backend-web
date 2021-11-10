@@ -22,6 +22,8 @@ import java.util.Map;
 @Component
 public class FrontWebSocketHandler extends TextWebSocketHandler {
 
+    private final String ERROR_TYPE = "unknown";
+
     private final ObjectMapper objectMapper;
     private final WebSocketExceptionHandler exceptionHandler;
 
@@ -56,7 +58,7 @@ public class FrontWebSocketHandler extends TextWebSocketHandler {
         try {
             requestDTO = objectMapper.readValue(payload, SearchRequestDTO.class);
         } catch(IOException e) {
-            exceptionHandler.sendErrorMessage(session, ErrorCode.WS_CANNOT_PARSE_JSON);
+            exceptionHandler.sendErrorMessage(session, ErrorCode.WS_CANNOT_PARSE_JSON, ERROR_TYPE);
             log.error("", e);
             return;
         }
@@ -65,7 +67,7 @@ public class FrontWebSocketHandler extends TextWebSocketHandler {
         String content = requestDTO.getContent();
 
         if(type == null || content == null) {
-            exceptionHandler.sendErrorMessage(session, ErrorCode.WS_MISSING_PARAM);
+            exceptionHandler.sendErrorMessage(session, ErrorCode.WS_MISSING_PARAM, ERROR_TYPE);
             return;
         }
 
@@ -82,7 +84,7 @@ public class FrontWebSocketHandler extends TextWebSocketHandler {
 
         SearchHandler searchHandler = supportedHandlers.get(type);
         if(searchHandler == null) {
-            exceptionHandler.sendErrorMessage(session, ErrorCode.WS_INVALID_PARAM);
+            exceptionHandler.sendErrorMessage(session, ErrorCode.WS_INVALID_PARAM, ERROR_TYPE);
             return;
         }
 

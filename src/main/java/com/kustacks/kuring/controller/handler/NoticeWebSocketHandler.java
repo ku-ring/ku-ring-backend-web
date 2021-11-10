@@ -29,9 +29,12 @@ public class NoticeWebSocketHandler implements SearchHandler {
     @Value("${notice.library-base-url}")
     private String libraryBaseUrl;
 
+    private final String ERROR_TYPE = "notice";
+
     private final NoticeService noticeService;
     private final ObjectMapper objectMapper;
     private final WebSocketExceptionHandler exceptionHandler;
+
 
     public NoticeWebSocketHandler(
             NoticeServiceImpl noticeService,
@@ -47,7 +50,7 @@ public class NoticeWebSocketHandler implements SearchHandler {
     public void handleTextMessage(WebSocketSession session, String keywords) {
 
         if(keywords.length() == 0) {
-            exceptionHandler.sendErrorMessage(session, ErrorCode.WS_INVALID_PARAM);
+            exceptionHandler.sendErrorMessage(session, ErrorCode.WS_INVALID_PARAM, ERROR_TYPE);
             return;
         }
 
@@ -66,9 +69,9 @@ public class NoticeWebSocketHandler implements SearchHandler {
             session.sendMessage(new TextMessage(responseString));
         } catch(IOException e) {
             if(e instanceof JsonProcessingException) {
-                exceptionHandler.sendErrorMessage(session, ErrorCode.WS_CANNOT_STRINGIFY);
+                exceptionHandler.sendErrorMessage(session, ErrorCode.WS_CANNOT_STRINGIFY, ERROR_TYPE);
             } else {
-                exceptionHandler.sendErrorMessage(session, ErrorCode.WS_CANNOT_SEND);
+                exceptionHandler.sendErrorMessage(session, ErrorCode.WS_CANNOT_SEND, ERROR_TYPE);
             }
             log.error("", e);
         }
