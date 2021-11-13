@@ -10,8 +10,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 
 @Slf4j
@@ -38,8 +36,8 @@ public class KuringApplication {
 	@Bean
 	public ApplicationRunner startApiWatcher() {
 		return args -> {
-//			kuApiWatcher.watchAndUpdateNotice();
-//			kuApiWatcher.watchAndUpdateStaff();
+			kuApiWatcher.watchAndUpdateNotice();
+			kuApiWatcher.watchAndUpdateStaff();
 		};
 	}
 }

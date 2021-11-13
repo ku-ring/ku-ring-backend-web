@@ -24,6 +24,8 @@ public enum ErrorCode {
 
     API_AD_UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "관리자가 아닙니다."),
 
+    API_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),
+
     UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류"),
 
     /**
