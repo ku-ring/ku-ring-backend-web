@@ -29,6 +29,9 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
+	implementation 'io.sentry:sentry-spring-boot-starter:5.4.0'
+	implementation 'io.sentry:sentry-logback:5.4.0'
+
 	testImplementation 'junit:junit:4.13.1'
 
 	compileOnly 'org.projectlombok:lombok'

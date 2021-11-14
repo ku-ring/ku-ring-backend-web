@@ -19,6 +19,7 @@ import com.kustacks.kuring.kuapi.response.LibraryNoticeDTO;
 import com.kustacks.kuring.kuapi.response.LibraryNoticeResponseBody;
 import com.kustacks.kuring.kuapi.response.LibraryDataDTO;
 import com.kustacks.kuring.service.FirebaseService;
+import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -111,7 +112,11 @@ public class KuApiWatcher {
 
     // TODO: 서버 시작할 때 실행되는 경우, FCM 알림 보내지 않게 설정하기
     @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
-    public void watchAndUpdateNotice() {
+    public void noticeCronJob() {
+        watchAndUpdateNotice(false);
+    }
+
+    public void watchAndUpdateNotice(boolean isInit) {
 
         /*
             학사, 장학, 취창업, 국제, 학생, 산학, 일반 공지 갱신 (from kuis)
@@ -200,6 +205,11 @@ public class KuApiWatcher {
                     .build());
         }
         
+        // 서버가 처음 실행될 땐 FCM에 메세지 보내지 않아야됨
+        if(isInit) {
+            return;
+        }
+
         // FCM으로 새롭게 수신한 공지 데이터 전송
         try {
             firebaseService.sendMessage(willBeNotiNoticeDTOList);
@@ -375,7 +385,7 @@ public class KuApiWatcher {
 
 
     // TODO: 현재 건국대학교 서버 불안정으로 인해 교직원 정보가 제대로 안뜨는 중. 이에 1시간마다 갱신하도록 임시 수정해 둠
-    @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "@monthly", zone = "Asia/Seoul")
     public void watchAndUpdateStaff() {
 
         // www.konkuk.ac.kr 에서 스크래핑하므로, kuis 로그인 필요 없음
@@ -409,7 +419,6 @@ public class KuApiWatcher {
 
                 log.error("[ScraperException] 스크래핑 중 문제가 발생했습니다.");
                 log.error("[ScraperException] 문제가 발생한 학과 = {}", value.getName());
-                log.error("[ScraperException] {}", e.getMessage(), e);
                 failDepts.add(value);
             }
         }
@@ -436,6 +445,7 @@ public class KuApiWatcher {
                 log.info("[ThreadExecutor] 교직원 업데이트 재시도가 성공했습니다.");
             } catch(IOException | InternalLogicException | InterruptedException e) {
                 log.error("[ScraperException] 스크래핑 재시도 중 문제가 발생했습니다.", e);
+                Sentry.captureException(e);
             }
         });
     }
@@ -470,11 +480,11 @@ public class KuApiWatcher {
         for (String key : dbStaffMap.keySet()) {
             log.info("{} {} {}", dbStaffMap.get(key).getCollege(), dbStaffMap.get(key).getDept(), dbStaffMap.get(key).getName());
         }
-        log.info("\n=== 업데이트할 교직원 리스트 ===");
+        log.info("=== 업데이트할 교직원 리스트 ===");
         for (Staff toBeUpdateStaff : toBeUpdateStaffs) {
             log.info("{} {} {}", toBeUpdateStaff.getCollege(), toBeUpdateStaff.getDept(), toBeUpdateStaff.getName());
         }
-        log.info("\n=== 추가할 교직원 리스트 ===");
+        log.info("=== 추가할 교직원 리스트 ===");
         for (String key : kuStaffDTOMap.keySet()) {
             log.info("{} {} {}", kuStaffDTOMap.get(key).getCollegeName(), kuStaffDTOMap.get(key).getDeptName(), kuStaffDTOMap.get(key).getName());
         }

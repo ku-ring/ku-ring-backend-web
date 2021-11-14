@@ -1,5 +1,6 @@
 package com.kustacks.kuring.error;
 
+import io.sentry.Sentry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -23,6 +24,9 @@ public class ErrorController {
     })
     public @ResponseBody ErrorResponse handleBadRequestException(Exception e) {
 
+        log.error("[BadAccessException] {}", e.getMessage(), e);
+        Sentry.captureException(e);
+
         if(e instanceof MissingServletRequestParameterException) {
             return new ErrorResponse(ErrorCode.API_MISSING_PARAM);
         } else if(e instanceof ConstraintViolationException) {
@@ -37,17 +41,20 @@ public class ErrorController {
     @ExceptionHandler(SQLException.class)
     public @ResponseBody ErrorResponse handleSQLException(SQLException e) {
         log.error("[SQLException] {}", e.getMessage());
+        Sentry.captureException(e);
         return new ErrorResponse(ErrorCode.API_SERVER_ERROR);
     }
 
     @ExceptionHandler(InternalLogicException.class)
     public void handleInternalLogicException(InternalLogicException e) {
         log.error("[InternalLogicException] {}", e.getErrorCode().getMessage(), e);
+        Sentry.captureException(e);
     }
 
     @ExceptionHandler(APIException.class)
     public @ResponseBody ErrorResponse handleAPIException(APIException e) {
         log.error("[APIException] {}", e.getErrorCode().getMessage(), e);
+        Sentry.captureException(e);
         return new ErrorResponse(e.getErrorCode());
     }
 }
