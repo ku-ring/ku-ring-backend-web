@@ -6,9 +6,9 @@ name: Deploy to prod
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -21,6 +21,21 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+
+      - name: Decrypt Secrets
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          sh .github/workflows/decrypt.sh
+
+      - name: Ready to deploy
+        run: |
+          rm .gitignore
+          git config user.email "todory2002@gmail.com"
+          git config user.name "ngwoon"
+          git add .
+          git commit -m "Build Ready"
+
       - name: Deploy to Heroku
         # You may pin to the exact commit or the version.
         # uses: AkhileshNS/heroku-deploy@79ef2ae4ff9b897010907016b268fd0f88561820
@@ -31,6 +46,6 @@ jobs:
           # Email that you use with heroku
           heroku_email: ${{ secrets.heroku_email }}
           # The appname to use for deploying/updating
-          heroku_app_name: ${{ secrets.heroku_app_name }}
+          heroku_app_name: ${{ secrets.dev_heroku_app_name }}
 
       

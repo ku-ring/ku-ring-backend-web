@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### API docs ###
+**/src/main/resources/static/docs/*
+
+**/ku-stack-firebase-adminsdk-87nwq-5ba04dfc12.json
