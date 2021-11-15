@@ -9,28 +9,31 @@ import com.kustacks.kuring.domain.notice.Notice;
 import com.kustacks.kuring.domain.notice.NoticeRepository;
 import com.kustacks.kuring.domain.staff.Staff;
 import com.kustacks.kuring.domain.staff.StaffRepository;
+import com.kustacks.kuring.domain.user.User;
+import com.kustacks.kuring.domain.user.UserRepository;
+import com.kustacks.kuring.domain.user_category.UserCategory;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
-import com.kustacks.kuring.kuapi.request.*;
+import com.kustacks.kuring.kuapi.request.KuisLoginRequestBody;
+import com.kustacks.kuring.kuapi.request.KuisRequestBody;
 import com.kustacks.kuring.kuapi.request.notice.*;
-import com.kustacks.kuring.kuapi.response.KuisNoticeDTO;
-import com.kustacks.kuring.kuapi.response.KuisNoticeResponseBody;
-import com.kustacks.kuring.kuapi.response.LibraryNoticeDTO;
-import com.kustacks.kuring.kuapi.response.LibraryNoticeResponseBody;
-import com.kustacks.kuring.kuapi.response.LibraryDataDTO;
+import com.kustacks.kuring.kuapi.response.*;
+import com.kustacks.kuring.kuapi.scrap.StaffScraper;
+import com.kustacks.kuring.kuapi.scrap.deptinfo.StaffDeptInfo;
 import com.kustacks.kuring.service.FirebaseService;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -60,12 +63,13 @@ public class KuApiWatcher {
     private final NoticeRepository noticeRepository;
     private final CategoryRepository categoryRepository;
     private final StaffRepository staffRepository;
+    private final UserRepository userRepository;
 
     private final StaffScraper staffScraper;
-    private final ThreadPoolTaskExecutor executor;
-    
-    private final int STAFF_UPDATE_RETRY_TIME = 1000 * 60; // 1분후에 실패한 크론잡 재시도
-//    private final int STAFF_UPDATE_RETRY_TIME = 1000 * 10;
+    private final List<StaffDeptInfo> deptInfos;
+
+    private final int STAFF_UPDATE_RETRY_PERIOD = 1000 * 60; // 1분후에 실패한 크론잡 재시도
+//    private final int STAFF_UPDATE_RETRY_PERIOD = 1000 * 10;
 
     private String cookieValue = "";
     private Map<String, Category> categoryMap;
@@ -85,9 +89,10 @@ public class KuApiWatcher {
             NoticeRepository noticeRepository,
             CategoryRepository categoryRepository,
             StaffRepository staffRepository,
+            UserRepository userRepository,
 
             StaffScraper staffScraper,
-            ThreadPoolTaskExecutor executor
+            List<StaffDeptInfo> deptInfos
     ) {
         this.firebaseService = firebaseService;
 
@@ -96,9 +101,10 @@ public class KuApiWatcher {
         this.noticeRepository = noticeRepository;
         this.categoryRepository = categoryRepository;
         this.staffRepository = staffRepository;
+        this.userRepository = userRepository;
 
         this.staffScraper = staffScraper;
-        this.executor = executor;
+        this.deptInfos = deptInfos;
 
         noticeRequestBodies = new HashMap<>();
         noticeRequestBodies.put(CategoryName.BACHELOR, bachelorNoticeRequestBody);
@@ -110,17 +116,24 @@ public class KuApiWatcher {
         noticeRequestBodies.put(CategoryName.NORMAL, normalKuisNoticeRequestBody);
     }
 
-    // TODO: 서버 시작할 때 실행되는 경우, FCM 알림 보내지 않게 설정하기
-    @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
-    public void noticeCronJob() {
-        watchAndUpdateNotice(false);
-    }
+    /*
+        서버 구동 시 처음 실행되는 상황을 고려해보면
+        1. 서비스 시작 전에 서버가 처음 초기화되는 상황
+            -> 등록된 FCM 토큰이 없으므로 상관없음
+           
+        2. 서비스 중간에 코드 수정이 있었고, 이를 반영하기 위해 prod 서버에 배포하는 상황
+            -> 공지 데이터는 DB에 그대로 있을 것이고, 서버 재배포 중 새로히 추가된 공지만 알림이 갈 것이므로 문제없음
 
-    public void watchAndUpdateNotice(boolean isInit) {
+        즉, isInit 플래그는 필요 없다.
+     */
+
+//    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES, zone = "Asia/Seoul")
+    public void watchAndUpdateNotice() {
 
         /*
             학사, 장학, 취창업, 국제, 학생, 산학, 일반 공지 갱신 (from kuis)
          */
+
         // 로그인 헤더
         HttpHeaders loginRequestHeader = createLoginRequestHeader();
 
@@ -131,10 +144,24 @@ public class KuApiWatcher {
         HttpEntity<String> loginRequestEntity = new HttpEntity<>(loginRequestBody, loginRequestHeader);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> loginResponse = restTemplate.exchange(loginUrl, HttpMethod.POST, loginRequestEntity, String.class);
+        ResponseEntity<String> loginResponse;
+
+        try {
+            loginResponse = restTemplate.exchange(loginUrl, HttpMethod.POST, loginRequestEntity, String.class);
+        } catch(RestClientException e) {
+            log.error("[KuLoginException] 건국대학교 KUIS 로그인 시도가 실패했습니다.");
+            Sentry.captureException(e);
+            return;
+        }
 
         // 세션 업데이트
-        updateSession(loginResponse);
+        try {
+            updateSession(loginResponse);
+        } catch(InternalLogicException e) {
+            log.error("[KuLoginException] KUIS 로그인 응답 메세지를 파싱하는 중 오류가 발생했습니다.");
+            Sentry.captureException(e);
+            return;
+        }
 
 
         // 공지 요청 헤더
@@ -151,11 +178,12 @@ public class KuApiWatcher {
             HttpEntity<String> noticeRequestEntity = new HttpEntity<>(encodedNoticeRequestBody, noticeRequestHeader);
             ResponseEntity<KuisNoticeResponseBody> noticeResponse = restTemplate.exchange(noticeUrl, HttpMethod.POST, noticeRequestEntity, KuisNoticeResponseBody.class);
 
-            KuisNoticeResponseBody tmp = noticeResponse.getBody();
-            if(tmp == null) {
-                throw new InternalLogicException(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON);
+            KuisNoticeResponseBody body = noticeResponse.getBody();
+            if(body == null) {
+                log.error("{} 공지 요청에 대한 응답의 body가 없습니다.", noticeCategory.getName());
+                Sentry.captureException(new InternalLogicException(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON));
             }
-            kuisNoticeResponseBodies.put(categoryName, tmp);
+            kuisNoticeResponseBodies.put(categoryName, body);
         }
 
         // DB에 있는 공지 데이터 카테고리별로 꺼내와서
@@ -175,12 +203,16 @@ public class KuApiWatcher {
             ResponseEntity<LibraryNoticeResponseBody> libraryResponse = restTemplate.getForEntity(fullLibraryUrl, LibraryNoticeResponseBody.class);
             LibraryNoticeResponseBody libraryNoticeResponseBody = libraryResponse.getBody();
             if(libraryNoticeResponseBody == null) {
-                throw new InternalLogicException(ErrorCode.LIB_CANNOT_PARSE_JSON);
+                log.error("도서관 공지 {}번째 요청에 대한 응답의 body가 없습니다.", reqIdx + 1);
+                Sentry.captureException(new InternalLogicException(ErrorCode.LIB_CANNOT_PARSE_JSON));
+                return;
             }
 
             boolean isLibraryRequestSuccess = libraryNoticeResponseBody.isSuccess();
             if(!isLibraryRequestSuccess) {
-                throw new InternalLogicException(ErrorCode.LIB_BAD_RESPONSE);
+                log.error("도서관 공지 {}번째 요청에 대한 응답이 fail입니다.", reqIdx + 1);
+                Sentry.captureException(new InternalLogicException(ErrorCode.LIB_BAD_RESPONSE));
+                return;
             }
 
             offset = max;
@@ -204,11 +236,6 @@ public class KuApiWatcher {
                     .categoryName(notice.getCategory().getName())
                     .build());
         }
-        
-        // 서버가 처음 실행될 땐 FCM에 메세지 보내지 않아야됨
-        if(isInit) {
-            return;
-        }
 
         // FCM으로 새롭게 수신한 공지 데이터 전송
         try {
@@ -219,9 +246,11 @@ public class KuApiWatcher {
                 log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", noticeDTO.getArticleId(), noticeDTO.getPostedDate(), noticeDTO.getCategoryName(), noticeDTO.getSubject());
             }
         } catch(FirebaseMessagingException e) {
-            throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
+            log.error("새로운 공지의 FCM 전송에 실패했습니다.");
+            Sentry.captureException(new InternalLogicException(ErrorCode.FB_FAIL_SEND, e));
         } catch(Exception e) {
-            throw new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e);
+            log.error("새로운 공지를 FCM에 보내는 중 알 수 없는 오류가 발생했습니다.");
+            Sentry.captureException(new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e));
         }
     }
 
@@ -318,7 +347,7 @@ public class KuApiWatcher {
                 HttpHeaders responseHeaders = loginResponse.getHeaders();
 
                 if(responseHeaders.containsKey("Set-Cookie")) {
-                    List<String> setCookieValues = responseHeaders.get("Set-Cookie"); // TODO: 고쳐야됨
+                    List<String> setCookieValues = responseHeaders.get("Set-Cookie");
 
                     for (String setCookieValue : setCookieValues) {
                         log.info("setCookieValue = {}", setCookieValue);
@@ -383,9 +412,7 @@ public class KuApiWatcher {
 
 
 
-
-    // TODO: 현재 건국대학교 서버 불안정으로 인해 교직원 정보가 제대로 안뜨는 중. 이에 1시간마다 갱신하도록 임시 수정해 둠
-    @Scheduled(cron = "@monthly", zone = "Asia/Seoul")
+//    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS, zone = "Asia/Seoul")
     public void watchAndUpdateStaff() {
 
         // www.konkuk.ac.kr 에서 스크래핑하므로, kuis 로그인 필요 없음
@@ -401,25 +428,19 @@ public class KuApiWatcher {
         List<StaffDeptInfo> failDepts = new LinkedList<>();
         List<String> successDeptNames = new LinkedList<>();
         Map<String, StaffDTO> kuStaffDTOMap = new HashMap<>();
-        StaffDeptInfo[] values = StaffDeptInfo.values();
 
-        for (StaffDeptInfo value : values) {
-            
-            // 일단 행정실 Enum은 무시하도록 함
-            if(value.getUrl() == null) {
-                continue;
-            }
+        for (StaffDeptInfo deptInfo : deptInfos) {
 
             try {
 
-                scrapDeptAndConvertToMap(kuStaffDTOMap, value);
-                successDeptNames.add(value.getName());
-                log.info("{} 스크래핑 완료", value.getName());
-            } catch(IOException | IndexOutOfBoundsException e) {
+                scrapDeptAndConvertToMap(kuStaffDTOMap, deptInfo);
+                successDeptNames.add(deptInfo.getDeptName());
+                log.info("{} 스크래핑 완료", deptInfo.getDeptName());
+            } catch(IOException | IndexOutOfBoundsException | InternalLogicException e) {
 
-                log.error("[ScraperException] 스크래핑 중 문제가 발생했습니다.");
-                log.error("[ScraperException] 문제가 발생한 학과 = {}", value.getName());
-                failDepts.add(value);
+                log.error("[ScraperException] 스크래핑 중 문제가 발생했습니다.", e);
+                log.error("[ScraperException] 문제가 발생한 학과 = {}", deptInfo.getDeptName());
+                failDepts.add(deptInfo);
             }
         }
 
@@ -433,21 +454,25 @@ public class KuApiWatcher {
     }
 
     private void retryStaffUpdateAfterSomeTimes(List<StaffDeptInfo> failDepts) {
-        executor.execute(() -> {
 
-            try {
+        try {
+            Thread.sleep(STAFF_UPDATE_RETRY_PERIOD);
+        } catch(InterruptedException e) {
+            log.warn("[RetryStaffUpdate] 스크래핑 재시도 쓰레드 sleep 오류. 스크래핑 재시도를 즉시 시작합니다.");
+        }
 
-                Thread.sleep(STAFF_UPDATE_RETRY_TIME);
+        log.info("[RetryStaffUpdate] 교직원 업데이트를 재시도합니다.");
+        log.info("[RetryStaffUpdate] 재시도 대상 = {}", failDepts);
 
-                log.info("[ThreadExecutor] 교직원 업데이트를 재시도합니다.");
-                log.info("[ThreadExecutor] 재시도 대상 = {}", failDepts);
-                retryStaffUpdate(failDepts);
-                log.info("[ThreadExecutor] 교직원 업데이트 재시도가 성공했습니다.");
-            } catch(IOException | InternalLogicException | InterruptedException e) {
-                log.error("[ScraperException] 스크래핑 재시도 중 문제가 발생했습니다.", e);
-                Sentry.captureException(e);
-            }
-        });
+        List<StaffDeptInfo> retryFailDepts = retryStaffUpdate(failDepts);
+
+        if(retryFailDepts.size() > 0) {
+
+            log.error("[RetryStaffUpdate] 교직원 업데이트 재시도에 실패한 학과가 존재합니다.");
+            log.error("[RetryStaffUpdate] 재시도 실패 학과 = {}", retryFailDepts);
+        } else {
+            log.info("[RetryStaffUpdate] 교직원 업데이트 재시도가 성공했습니다.");
+        }
     }
 
     private void updateStaff(Map<String, StaffDTO> kuStaffDTOMap, List<String> successDeptNames) {
@@ -494,9 +519,10 @@ public class KuApiWatcher {
         staffRepository.saveAll(toBeUpdateStaffs);
     }
 
-    private void scrapDeptAndConvertToMap(Map<String, StaffDTO> kuStaffDTOMap, StaffDeptInfo value) throws IOException {
+    private void scrapDeptAndConvertToMap(Map<String, StaffDTO> kuStaffDTOMap, StaffDeptInfo deptInfo) throws IOException {
 
-        List<StaffDTO> scrapedStaffDTOList = staffScraper.getStaffInfo(value);
+        List<StaffDTO> scrapedStaffDTOList = staffScraper.getStaffInfo(deptInfo);
+
         for (StaffDTO staffDTO : scrapedStaffDTOList) {
             StaffDTO mapStaffDTO = kuStaffDTOMap.get(staffDTO.getEmail());
             if(mapStaffDTO == null) {
@@ -507,15 +533,24 @@ public class KuApiWatcher {
         }
     }
 
-    private void retryStaffUpdate(List<StaffDeptInfo> failDepts) throws IOException {
+    private List<StaffDeptInfo> retryStaffUpdate(List<StaffDeptInfo> failDepts) {
 
         Map<String, StaffDTO> kuStaffDTOMap = new HashMap<>();
+        List<StaffDeptInfo> retryFailDepts = new LinkedList<>();
+        List<StaffDeptInfo> successDepts = new LinkedList<>();
 
         for (StaffDeptInfo failDept : failDepts) {
-            scrapDeptAndConvertToMap(kuStaffDTOMap, failDept);
+            try {
+                scrapDeptAndConvertToMap(kuStaffDTOMap, failDept);
+                successDepts.add(failDept);
+            } catch(IOException | IndexOutOfBoundsException | InternalLogicException e) {
+                retryFailDepts.add(failDept);
+            }
         }
 
-        updateStaff(kuStaffDTOMap, failDepts.stream().map(StaffDeptInfo::getName).collect(Collectors.toList()));
+        updateStaff(kuStaffDTOMap, successDepts.stream().map(StaffDeptInfo::getDeptName).collect(Collectors.toList()));
+
+        return retryFailDepts;
     }
 
     private void updateStaffEntity(StaffDTO staffDTO, Staff staff) {
@@ -526,5 +561,34 @@ public class KuApiWatcher {
         staff.setEmail(staffDTO.getEmail());
         staff.setDept(staffDTO.getDeptName());
         staff.setCollege(staffDTO.getCollegeName());
+    }
+
+
+
+
+//    @Scheduled(cron = "0 30 0 1 * ?", zone = "Asia/Seoul")
+    @Scheduled(cron = "0/10 * * * * *", zone = "Asia/Seoul")
+    public void verifyFCMTokens() {
+
+        List<User> users = userRepository.findAll();
+
+        for (User user : users) {
+            try {
+                firebaseService.verifyToken(user.getToken());
+            } catch(FirebaseMessagingException e) {
+
+                for (UserCategory userCategory : user.getUserCategories()) {
+                    try {
+                        firebaseService.unsubscribe(user.getToken(), userCategory.getCategory().getName());
+                    } catch (FirebaseMessagingException | InternalLogicException ex) {
+                        log.error("유효하지 않은 토큰의 구독 해제 중 오류가 발생했습니다.");
+                        log.error("토큰 = {}, 카테고리 = {}", user.getToken(), userCategory.getCategory().getName());
+                        Sentry.captureException(new InternalLogicException(ErrorCode.FB_FAIL_UNSUBSCRIBE, ex));
+                    }
+                }
+
+                userRepository.delete(user);
+            }
+        }
     }
 }

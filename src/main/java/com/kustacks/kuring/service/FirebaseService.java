@@ -28,6 +28,11 @@ public class FirebaseService {
     @Value("${notice.library-base-url}")
     private String libraryBaseUrl;
 
+    @Value("${server.deploy.environment}")
+    private String deployEnv;
+
+    private final String DEV_SUFFIX = ".dev";
+
     private final FirebaseMessaging firebaseMessaging;
     private final ObjectMapper objectMapper;
 
@@ -59,6 +64,10 @@ public class FirebaseService {
         ArrayList<String> tokens = new ArrayList<>(1);
         tokens.add(token);
 
+        if(deployEnv.equals("dev")) {
+            topic = topic + DEV_SUFFIX;
+        }
+
         TopicManagementResponse response = firebaseMessaging.subscribeToTopic(tokens, topic);
 
         if(response.getFailureCount() > 0) {
@@ -70,6 +79,10 @@ public class FirebaseService {
 
         ArrayList<String> tokens = new ArrayList<>(1);
         tokens.add(token);
+
+        if(deployEnv.equals("dev")) {
+            topic = topic + DEV_SUFFIX;
+        }
 
         TopicManagementResponse response = firebaseMessaging.unsubscribeFromTopic(tokens, topic);
 
@@ -100,22 +113,14 @@ public class FirebaseService {
                 "baseUrl",
                 newNotice.getCategoryName().equals(CategoryName.LIBRARY.getName()) ? libraryBaseUrl : normalBaseUrl);
 
-        Message newMessage = Message.builder()
-                .putAllData(noticeMap)
-                .setTopic(newNotice.getCategoryName())
-                .build();
-
-        firebaseMessaging.send(newMessage);
-    }
-
-    public void sendMessageForTest(NoticeDTO newNotice) throws FirebaseMessagingException {
-
-        Map<String, String> noticeMap = noticeDtoToMap(newNotice);
-        noticeMap.put("baseUrl", Objects.equals(newNotice.getCategoryName(), "library") ? libraryBaseUrl : normalBaseUrl);
+        StringBuilder topic = new StringBuilder(newNotice.getCategoryName());
+        if(deployEnv.equals("dev")) {
+            topic.append(DEV_SUFFIX);
+        }
 
         Message newMessage = Message.builder()
                 .putAllData(noticeMap)
-                .setTopic(newNotice.getCategoryName())
+                .setTopic(topic.toString())
                 .build();
 
         firebaseMessaging.send(newMessage);
