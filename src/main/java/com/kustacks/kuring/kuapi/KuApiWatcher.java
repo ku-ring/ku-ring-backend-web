@@ -5,6 +5,7 @@ import com.kustacks.kuring.controller.dto.NoticeDTO;
 import com.kustacks.kuring.controller.dto.StaffDTO;
 import com.kustacks.kuring.domain.category.Category;
 import com.kustacks.kuring.domain.category.CategoryRepository;
+import com.kustacks.kuring.domain.feedback.FeedbackRepository;
 import com.kustacks.kuring.domain.notice.Notice;
 import com.kustacks.kuring.domain.notice.NoticeRepository;
 import com.kustacks.kuring.domain.staff.Staff;
@@ -127,7 +128,7 @@ public class KuApiWatcher {
         즉, isInit 플래그는 필요 없다.
      */
 
-//    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES, zone = "Asia/Seoul")
+    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES, zone = "Asia/Seoul")
     public void watchAndUpdateNotice() {
 
         /*
@@ -412,7 +413,7 @@ public class KuApiWatcher {
 
 
 
-//    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS, zone = "Asia/Seoul")
+    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS, zone = "Asia/Seoul")
     public void watchAndUpdateStaff() {
 
         // www.konkuk.ac.kr 에서 스크래핑하므로, kuis 로그인 필요 없음
@@ -566,8 +567,8 @@ public class KuApiWatcher {
 
 
 
-//    @Scheduled(cron = "0 30 0 1 * ?", zone = "Asia/Seoul")
-    @Scheduled(cron = "0/10 * * * * *", zone = "Asia/Seoul")
+//    @Scheduled(cron = "0/10 * * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 30 0 1 * ?", zone = "Asia/Seoul")
     public void verifyFCMTokens() {
 
         List<User> users = userRepository.findAll();

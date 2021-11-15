@@ -27,10 +27,10 @@ public class User implements Serializable {
     @Column(name = "token", unique = true, length = 256, nullable = false)
     private String token;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Feedback> feedbacks;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Fetch(FetchMode.JOIN)
     private List<UserCategory> userCategories = new ArrayList<>();
 
