@@ -1,14 +1,20 @@
-package com.kustacks.kuring.kuapi;
+package com.kustacks.kuring.kuapi.scrap;
 
 import com.kustacks.kuring.controller.dto.StaffDTO;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.kuapi.scrap.deptinfo.StaffDeptInfo;
+import com.kustacks.kuring.kuapi.scrap.deptinfo.art_design.CommunicationDesignDept;
+import com.kustacks.kuring.kuapi.scrap.deptinfo.art_design.LivingDesignDept;
+import com.kustacks.kuring.kuapi.scrap.deptinfo.engineering.ChemicalDivisionDept;
+import com.kustacks.kuring.kuapi.scrap.deptinfo.real_estate.RealEstateDept;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -27,39 +33,57 @@ public class StaffScraper {
     public List<StaffDTO> getStaffInfo(StaffDeptInfo dept) throws IOException {
 
         Document document;
+        String url;
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(dept.getUrl().getBaseUrl());
+        List<StaffDTO> staffDTOList;
 
-        if(dept.equals(StaffDeptInfo.REAL_ESTATE)) {
-            document = Jsoup.connect(dept.getUrl()).timeout(SCRAP_TIMEOUT).proxy(PROXY_IP, PROXY_PORT).get();
+        if(dept instanceof RealEstateDept) {
+
+            url = urlBuilder.toUriString();
+            document = Jsoup.connect(url).timeout(SCRAP_TIMEOUT).proxy(PROXY_IP, PROXY_PORT).get();
+            staffDTOList = getStaffInfoFromRealEstateScienceDept(document, dept.getDeptName(), dept.getCollegeName());
+
+        } else if(dept instanceof LivingDesignDept || dept instanceof CommunicationDesignDept) {
+
+            url = urlBuilder.toUriString();
+            document = Jsoup.connect(url).timeout(SCRAP_TIMEOUT).get();
+            staffDTOList = getStaffInfoFromKuHomepage(document, dept.getDeptName(), dept.getCollegeName());
+
         } else {
-            document = Jsoup.connect(dept.getUrl()).timeout(SCRAP_TIMEOUT).get();
-        }
-
-        List<StaffDTO> staffDTOList = null;
-
-        // CODE SMELL?
-        if(dept.getCollegeName().equals("상허생명과학대학")) {
-            Element pageNumHiddenInput = document.getElementById("totalPageCount");
-            int totalPageNum = Integer.parseInt(pageNumHiddenInput.val());
-            int pageNum = 1; // 이미 1페이지를 받아왔으므로 2페이지부터 호출하면됨
 
             staffDTOList = new LinkedList<>();
 
-            while(true) {
-                staffDTOList.addAll(getSanghuoBiologyDeptStaffInfo(document, dept.getName(), dept.getCollegeName()));
-                ++pageNum;
+            for (String pfForumId : dept.getUrl().getPfForumId()) {
+                url = urlBuilder.queryParam("pfForumId", pfForumId).toUriString();
+                document = Jsoup.connect(url).timeout(SCRAP_TIMEOUT).get();
 
-                if(pageNum > totalPageNum) {
-                    break;
+                Element pageNumHiddenInput = document.getElementById("totalPageCount");
+                int totalPageNum = Integer.parseInt(pageNumHiddenInput.val());
+                int pageNum = 1; // 이미 1페이지를 받아왔으므로 2페이지부터 호출하면됨
+
+                while(true) {
+
+                    if(dept instanceof ChemicalDivisionDept) {
+                        log.info("{} 페이지 파싱 중..", pageNum);
+                    }
+
+                    staffDTOList.addAll(getStaffInfoFromEachHomepage(document, dept.getDeptName(), dept.getCollegeName()));
+                    ++pageNum;
+
+                    if(pageNum > totalPageNum) {
+                        break;
+                    }
+
+                    document = Jsoup.connect(url)
+                            .data("pageNum", String.valueOf(pageNum))
+                            .post();
                 }
-
-                document = Jsoup.connect(dept.getUrl())
-                        .data("pageNum", String.valueOf(pageNum))
-                        .post();
             }
-        } else if(dept.getCollegeName().equals("부동산과학원")) {
-            staffDTOList = getRealEstateScienceDeptStaffInfo(document, dept.getName(), dept.getCollegeName());
-        } else {
-            staffDTOList = getNormalDeptStaffInfo(document, dept.getName(), dept.getCollegeName());
+
+        }
+
+        if(staffDTOList.size() == 0) {
+            throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP);
         }
 
         return staffDTOList;
@@ -77,7 +101,7 @@ public class StaffScraper {
         }
     }
 
-    private List<StaffDTO> getNormalDeptStaffInfo(Document document, String deptName, String collegeName) {
+    private List<StaffDTO> getStaffInfoFromKuHomepage(Document document, String deptName, String collegeName) {
 
         // 테이블 추출
         Elements tables = document.getElementsByTag("table");
@@ -140,7 +164,7 @@ public class StaffScraper {
         return staffDTOList;
     }
 
-    private List<StaffDTO> getSanghuoBiologyDeptStaffInfo(Document document, String deptName, String collegeName) {
+    private List<StaffDTO> getStaffInfoFromEachHomepage(Document document, String deptName, String collegeName) {
 
         List<StaffDTO> staffDTOList = new LinkedList<>();
 
@@ -155,14 +179,14 @@ public class StaffScraper {
             // 연구실, 연락처 정보는 없는 경우가 종종 있으므로, childNode접근 전 인덱스 체크하는 로직을 넣었음
             oneStaffInfo[0] = infos.get(0).getElementsByTag("span").get(1).text();
 
-            String jobPosition = String.valueOf(infos.get(2).childNode(1));
-            if(jobPosition.contains("명예") || jobPosition.contains("대우")) {
+            String jobPosition = String.valueOf(infos.get(1).childNodeSize() < 2 ? "" : infos.get(1).childNode(1));
+            if(jobPosition.contains("명예") || jobPosition.contains("대우") || jobPosition.contains("휴직")) {
                 // TODO: 테스트용
                 System.out.println("스킵된 교수 정보. " + deptName + " " + oneStaffInfo[0] + " 교수");
                 continue;
             }
 
-            oneStaffInfo[1] = jobPosition;
+            oneStaffInfo[1] = infos.get(2).childNodeSize() < 2 ? "" : String.valueOf(infos.get(2).childNode(1));
             oneStaffInfo[2] = infos.get(3).childNodeSize() < 2 ? "" : String.valueOf(infos.get(3).childNode(1));
             oneStaffInfo[3] = infos.get(4).childNodeSize() < 2 ? "" : String.valueOf(infos.get(4).childNode(1));
             oneStaffInfo[4] = infos.get(5).getElementsByTag("a").get(0).text();
@@ -173,7 +197,7 @@ public class StaffScraper {
         return staffDTOList;
     }
 
-    private List<StaffDTO> getRealEstateScienceDeptStaffInfo(Document document, String deptName, String collegeName) {
+    private List<StaffDTO> getStaffInfoFromRealEstateScienceDept(Document document, String deptName, String collegeName) {
 
         List<StaffDTO> staffDTOList = new LinkedList<>();
 
