@@ -18,7 +18,7 @@ public class Staff {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "name", length = 32, nullable = false)
+    @Column(name = "name", length = 64, nullable = false)
     private String name;
 
     @Column(name = "major", length = 128, nullable = false)
