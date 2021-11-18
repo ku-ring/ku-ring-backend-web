@@ -38,6 +38,7 @@ public enum ErrorCode {
     /**
      * ErrorCodes about InternalLogicException
      */
+    KU_LOGIN_CANNOT_LOGIN("kuis 로그인 요청이 실패했습니다."),
     KU_LOGIN_NO_RESPONSE_BODY("kuis 로그인 요청에 대한 응답 body를 찾을 수 없습니다."),
     KU_LOGIN_BAD_RESPONSE("kuis 로그인 요청에 대한 응답이 비정상적입니다."),
     KU_LOGIN_NO_COOKIE_HEADER("kuis 로그인 요청에 대한 응답에 Set-Cookie 헤더가 없습니다."),
