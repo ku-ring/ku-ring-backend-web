@@ -460,7 +460,6 @@ public class KuApiWatcher {
 
                 scrapDeptAndConvertToMap(kuStaffDTOMap, deptInfo);
                 successDeptNames.add(deptInfo.getDeptName());
-                log.info("{} 스크래핑 완료", deptInfo.getDeptName());
             } catch(IOException | IndexOutOfBoundsException | InternalLogicException e) {
 
                 log.error("[ScraperException] 스크래핑 중 문제가 발생했습니다.", e);
