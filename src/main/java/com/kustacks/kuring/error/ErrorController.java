@@ -53,8 +53,16 @@ public class ErrorController {
 
     @ExceptionHandler(APIException.class)
     public @ResponseBody ErrorResponse handleAPIException(APIException e) {
+
         log.error("[APIException] {}", e.getErrorCode().getMessage(), e);
-        Sentry.captureException(e);
+
+        ErrorCode errorCode = e.getErrorCode();
+        if(errorCode.equals(ErrorCode.API_AD_UNAUTHENTICATED)) {
+
+        } else {
+            Sentry.captureException(e);
+        }
+
         return new ErrorResponse(e.getErrorCode());
     }
 }

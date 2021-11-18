@@ -72,6 +72,9 @@ public class KuApiWatcher {
     private final int STAFF_UPDATE_RETRY_PERIOD = 1000 * 60; // 1분후에 실패한 크론잡 재시도
 //    private final int STAFF_UPDATE_RETRY_PERIOD = 1000 * 10;
 
+    private final int MAX_KU_LOGIN_TRY = 3;
+    private final int LOGIN_RETRY_PERIOD = 1000 * 10;
+
     private String cookieValue = "";
     private Map<String, Category> categoryMap;
 
@@ -131,6 +134,8 @@ public class KuApiWatcher {
     @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES, zone = "Asia/Seoul")
     public void watchAndUpdateNotice() {
 
+        log.info("========== 공지 업데이트 시작 ==========");
+
         /*
             학사, 장학, 취창업, 국제, 학생, 산학, 일반 공지 갱신 (from kuis)
          */
@@ -145,14 +150,28 @@ public class KuApiWatcher {
         HttpEntity<String> loginRequestEntity = new HttpEntity<>(loginRequestBody, loginRequestHeader);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> loginResponse;
+        ResponseEntity<String> loginResponse = null; // 응답 제대로 받지 못하면 아래 로직에서 처리하므로, 세션 업데이트에서 null일 확률은 없음
 
-        try {
-            loginResponse = restTemplate.exchange(loginUrl, HttpMethod.POST, loginRequestEntity, String.class);
-        } catch(RestClientException e) {
-            log.error("[KuLoginException] 건국대학교 KUIS 로그인 시도가 실패했습니다.");
-            Sentry.captureException(e);
-            return;
+        int kuLoginTryCount = 0;
+        while(kuLoginTryCount < MAX_KU_LOGIN_TRY) {
+            ++kuLoginTryCount;
+            try {
+                loginResponse = restTemplate.exchange(loginUrl, HttpMethod.POST, loginRequestEntity, String.class);
+                break;
+            } catch(RestClientException e) {
+                log.error("[KuLoginException] 건국대학교 KUIS 로그인 시도가 {}회 실패했습니다.", kuLoginTryCount);
+                if(kuLoginTryCount == MAX_KU_LOGIN_TRY) {
+                    Sentry.captureException(new InternalLogicException(ErrorCode.KU_LOGIN_CANNOT_LOGIN, e));
+                    return;
+                }
+
+                try {
+                    Thread.sleep(LOGIN_RETRY_PERIOD);
+                } catch(InterruptedException ex) {
+                    log.warn("[KuLoginException] 건국대학교 KUIS 로그인 재시도 대기 쓰레드 sleep에 문제가 생겼습니다. 즉시 재시도합니다.");
+                    Sentry.captureException(ex);
+                }
+            }
         }
 
         // 세션 업데이트
@@ -183,8 +202,9 @@ public class KuApiWatcher {
             if(body == null) {
                 log.error("{} 공지 요청에 대한 응답의 body가 없습니다.", noticeCategory.getName());
                 Sentry.captureException(new InternalLogicException(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON));
+            } else {
+                kuisNoticeResponseBodies.put(categoryName, body);
             }
-            kuisNoticeResponseBodies.put(categoryName, body);
         }
 
         // DB에 있는 공지 데이터 카테고리별로 꺼내와서
@@ -253,6 +273,8 @@ public class KuApiWatcher {
             log.error("새로운 공지를 FCM에 보내는 중 알 수 없는 오류가 발생했습니다.");
             Sentry.captureException(new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e));
         }
+
+        log.info("========== 공지 업데이트 종료 ==========");
     }
 
     private List<Notice> updateLibrary(List<LibraryNoticeResponseBody> libraryNoticeResponseBodies) {
@@ -416,6 +438,8 @@ public class KuApiWatcher {
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS, zone = "Asia/Seoul")
     public void watchAndUpdateStaff() {
 
+        log.info("========== 교직원 업데이트 시작 ==========");
+
         // www.konkuk.ac.kr 에서 스크래핑하므로, kuis 로그인 필요 없음
 
 
@@ -436,7 +460,6 @@ public class KuApiWatcher {
 
                 scrapDeptAndConvertToMap(kuStaffDTOMap, deptInfo);
                 successDeptNames.add(deptInfo.getDeptName());
-                log.info("{} 스크래핑 완료", deptInfo.getDeptName());
             } catch(IOException | IndexOutOfBoundsException | InternalLogicException e) {
 
                 log.error("[ScraperException] 스크래핑 중 문제가 발생했습니다.", e);
@@ -452,6 +475,8 @@ public class KuApiWatcher {
         } else {
             log.info("교직원 정보 업데이트 실패 없이 완료");
         }
+
+        log.info("========== 교직원 업데이트 종료 ==========");
     }
 
     private void retryStaffUpdateAfterSomeTimes(List<StaffDeptInfo> failDepts) {
@@ -571,6 +596,8 @@ public class KuApiWatcher {
     @Scheduled(cron = "0 30 0 1 * ?", zone = "Asia/Seoul")
     public void verifyFCMTokens() {
 
+        log.info("========== 토큰 유효성 필터링 시작 ==========");
+
         List<User> users = userRepository.findAll();
 
         for (User user : users) {
@@ -591,5 +618,7 @@ public class KuApiWatcher {
                 userRepository.delete(user);
             }
         }
+
+        log.info("========== 토큰 유효성 필터링 종료 ==========");
     }
 }

@@ -63,10 +63,6 @@ public class StaffScraper {
 
                 while(true) {
 
-                    if(dept instanceof ChemicalDivisionDept) {
-                        log.info("{} 페이지 파싱 중..", pageNum);
-                    }
-
                     staffDTOList.addAll(getStaffInfoFromEachHomepage(document, dept.getDeptName(), dept.getCollegeName()));
                     ++pageNum;
 
@@ -119,7 +115,7 @@ public class StaffScraper {
                 throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_TAG_NOT_EXIST);
             }
 
-            // TODO: 컬럼 개수 6개인 학과도 있음.
+            // 컬럼 개수 6개인 학과도 있음. 컬럼 개수 6개인 학과가 스킵되지 않게 비교문 추가
             Element colgroup = colgroups.get(0);
             int colgroupSize = colgroup.childrenSize();
             if(colgroupSize != 5 && colgroupSize != 6) {
@@ -181,8 +177,7 @@ public class StaffScraper {
 
             String jobPosition = String.valueOf(infos.get(1).childNodeSize() < 2 ? "" : infos.get(1).childNode(1));
             if(jobPosition.contains("명예") || jobPosition.contains("대우") || jobPosition.contains("휴직")) {
-                // TODO: 테스트용
-                System.out.println("스킵된 교수 정보. " + deptName + " " + oneStaffInfo[0] + " 교수");
+                log.info("스크래핑 스킵 -> {} {} 교수", deptName, oneStaffInfo[0]);
                 continue;
             }
 
