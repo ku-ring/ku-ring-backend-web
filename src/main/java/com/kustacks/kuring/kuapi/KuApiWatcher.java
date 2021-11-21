@@ -5,7 +5,6 @@ import com.kustacks.kuring.controller.dto.NoticeDTO;
 import com.kustacks.kuring.controller.dto.StaffDTO;
 import com.kustacks.kuring.domain.category.Category;
 import com.kustacks.kuring.domain.category.CategoryRepository;
-import com.kustacks.kuring.domain.feedback.FeedbackRepository;
 import com.kustacks.kuring.domain.notice.Notice;
 import com.kustacks.kuring.domain.notice.NoticeRepository;
 import com.kustacks.kuring.domain.staff.Staff;
@@ -13,6 +12,7 @@ import com.kustacks.kuring.domain.staff.StaffRepository;
 import com.kustacks.kuring.domain.user.User;
 import com.kustacks.kuring.domain.user.UserRepository;
 import com.kustacks.kuring.domain.user_category.UserCategory;
+import com.kustacks.kuring.domain.user_category.UserCategoryRepository;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.request.KuisLoginRequestBody;
@@ -65,6 +65,7 @@ public class KuApiWatcher {
     private final CategoryRepository categoryRepository;
     private final StaffRepository staffRepository;
     private final UserRepository userRepository;
+    private final UserCategoryRepository userCategoryRepository;
 
     private final StaffScraper staffScraper;
     private final List<StaffDeptInfo> deptInfos;
@@ -94,6 +95,7 @@ public class KuApiWatcher {
             CategoryRepository categoryRepository,
             StaffRepository staffRepository,
             UserRepository userRepository,
+            UserCategoryRepository userCategoryRepository,
 
             StaffScraper staffScraper,
             List<StaffDeptInfo> deptInfos
@@ -106,6 +108,7 @@ public class KuApiWatcher {
         this.categoryRepository = categoryRepository;
         this.staffRepository = staffRepository;
         this.userRepository = userRepository;
+        this.userCategoryRepository = userCategoryRepository;
 
         this.staffScraper = staffScraper;
         this.deptInfos = deptInfos;
@@ -613,9 +616,11 @@ public class KuApiWatcher {
                         log.error("토큰 = {}, 카테고리 = {}", user.getToken(), userCategory.getCategory().getName());
                         Sentry.captureException(new InternalLogicException(ErrorCode.FB_FAIL_UNSUBSCRIBE, ex));
                     }
+
+                    userCategoryRepository.deleteAll(user.getUserCategories());
                 }
 
-                userRepository.delete(user);
+                userRepository.deleteByToken(user.getToken());
             }
         }
 

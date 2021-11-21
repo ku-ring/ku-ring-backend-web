@@ -125,18 +125,18 @@ public class CategoryServiceImpl implements CategoryService {
 
         List<UserCategory> newUserCategories = userCategories.get("new");
         for (UserCategory newUserCategory : newUserCategories) {
-            userCategoryRepository.save(newUserCategory);
             firebaseService.subscribe(newUserCategory.getUser().getToken(), newUserCategory.getCategory().getName());
+            userCategoryRepository.save(newUserCategory);
             transactionHistory.get("new").add(newUserCategory);
-            log.debug("구독 요청 = {}", newUserCategory.getCategory().getName());
+            log.info("구독 요청 = {}", newUserCategory.getCategory().getName());
         }
 
         List<UserCategory> removeUserCategories = userCategories.get("remove");
         for (UserCategory removeUserCategory : removeUserCategories) {
-            userCategoryRepository.delete(removeUserCategory);
             firebaseService.unsubscribe(removeUserCategory.getUser().getToken(), removeUserCategory.getCategory().getName());
+            userCategoryRepository.delete(removeUserCategory);
             transactionHistory.get("remove").add(removeUserCategory);
-            log.debug("구독 취소 = {}", removeUserCategory.getCategory().getName());
+            log.info("구독 취소 = {}", removeUserCategory.getCategory().getName());
         }
     }
 
