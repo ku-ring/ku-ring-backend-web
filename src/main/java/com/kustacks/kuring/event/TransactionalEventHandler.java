@@ -32,13 +32,13 @@ public class TransactionalEventHandler {
         List<UserCategory> removedUserCategories = transactionHistory.get("remove");
 
         try {
-            log.debug("=== 신청한 구독 롤백 ===");
+            log.info("=== 신청한 구독 롤백 ===");
             for (UserCategory newUserCategory : newUserCategories) {
                 firebaseService.unsubscribe(token, newUserCategory.getCategory().getName());
                 log.info(newUserCategory.getCategory().getName());
             }
 
-            log.debug("=== 취소한 구독 롤백 ===");
+            log.info("=== 취소한 구독 롤백 ===");
             for (UserCategory removeUserCategory : removedUserCategories) {
                 firebaseService.subscribe(token, removeUserCategory.getCategory().getName());
                 log.info(removeUserCategory.getCategory().getName());
