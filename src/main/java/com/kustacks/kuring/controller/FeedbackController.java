@@ -37,7 +37,7 @@ public class FeedbackController {
             throw new APIException(ErrorCode.API_MISSING_PARAM);
         }
 
-        if(content.length() < 5 || content.length() > 60) {
+        if(content.length() < 5 || content.length() > 256) {
             throw new APIException(ErrorCode.API_FD_INVALID_CONTENT);
         }
 

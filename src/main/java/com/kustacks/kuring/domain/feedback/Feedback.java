@@ -18,7 +18,7 @@ public class Feedback {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "content", length = 60, nullable = false)
+    @Column(name = "content", length = 256, nullable = false)
     private String content;
 
     @ManyToOne
