@@ -19,16 +19,13 @@ public class FeedbackController {
 
     private final FirebaseService firebaseService;
     private final FeedbackService feedbackService;
-    private final UserService userService;
 
     public FeedbackController(
             FirebaseService firebaseService,
-            FeedbackServiceImpl feedbackService,
-            UserServiceImpl userService) {
+            FeedbackServiceImpl feedbackService) {
 
         this.firebaseService = firebaseService;
         this.feedbackService = feedbackService;
-        this.userService = userService;
     }
 
     @PostMapping("/feedback")

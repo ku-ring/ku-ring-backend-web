@@ -178,6 +178,7 @@ public class CategoryControllerTest {
     }
 
     @DisplayName("특정 회원이 구독한 카테고리 목록 제공 API - 실패 - 유효하지 않은 FCM 토큰")
+    @Test
     public void getUserCategoriesFailByInvalidTokenTest() throws Exception {
         String token = "INVALID_TOKEN";
 

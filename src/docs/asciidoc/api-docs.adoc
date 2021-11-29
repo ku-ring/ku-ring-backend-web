@@ -141,3 +141,40 @@ include::{snippets}/category-subscribe-categories-fail-not-supported-category/re
 ===== 4. 파이어베이스 오류
 include::{snippets}/category-subscribe-categories-fail-firebase-error/http-request.adoc[]
 include::{snippets}/category-subscribe-categories-fail-firebase-error/response-body.adoc[]
+
+{empty} +
+{empty} +
+
+== 피드백 API
+
+=== 피드백 저장 API
+
+==== HTTP 요청
+
+===== 요청 메세지
+include::{snippets}/save-feedback-success/http-request.adoc[]
+===== 요청 body
+include::{snippets}/save-feedback-success/request-body.adoc[]
+===== 요청 필드 설명
+include::{snippets}/save-feedback-success/request-fields.adoc[]
+
+{empty} +
+
+==== HTTP 응답
+
+===== 응답 메세지
+include::{snippets}/save-feedback-success/http-response.adoc[]
+===== 응답 필드
+include::{snippets}/save-feedback-success/response-fields.adoc[]
+
+{empty} +
+
+==== 잘못된 HTTP 요청/응답 예시
+
+===== 1. 유효하지 않은 FCM 토큰
+include::{snippets}/save-feedback-fail-invalid-token/http-request.adoc[]
+include::{snippets}/save-feedback-fail-invalid-token/response-body.adoc[]
+
+===== 2. 잘못된 피드백 내용 길이
+include::{snippets}/save-feedback-fail-invalid-content-length/http-request.adoc[]
+include::{snippets}/save-feedback-fail-invalid-content-length/response-body.adoc[]
