@@ -10,7 +10,7 @@ public class StaffDeptInfo {
     private final String deptName;
     private final String collegeName;
 
-    public StaffDeptInfo(String code, String deptName, String collegeName, String ...pfForumIds) {
+    public StaffDeptInfo(String code, String deptName, String collegeName, String[] pfForumIds) {
 
         this.code = code;
         this.deptName = deptName;
