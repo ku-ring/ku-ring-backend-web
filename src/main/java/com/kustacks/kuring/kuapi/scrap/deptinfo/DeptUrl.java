@@ -11,10 +11,10 @@ public class DeptUrl {
     private final String baseUrl;
     private final List<String> pfForumId;
 
-    public DeptUrl(String deptName, String ...pfForumIds) {
+    public DeptUrl(String deptName, String[] pfForumIds) {
         this.pfForumId = Arrays.asList(pfForumIds);
 
-        if(pfForumIds.length > 0) {
+        if(pfForumId.size() > 0) {
             this.baseUrl = "http://home.konkuk.ac.kr/cms/Common/Professor/ProfessorList.do";
         } else {
             if(deptName.equals("리빙디자인학과")) {

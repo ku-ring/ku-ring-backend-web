@@ -6,7 +6,6 @@ import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.scrap.deptinfo.StaffDeptInfo;
 import com.kustacks.kuring.kuapi.scrap.deptinfo.art_design.CommunicationDesignDept;
 import com.kustacks.kuring.kuapi.scrap.deptinfo.art_design.LivingDesignDept;
-import com.kustacks.kuring.kuapi.scrap.deptinfo.engineering.ChemicalDivisionDept;
 import com.kustacks.kuring.kuapi.scrap.deptinfo.real_estate.RealEstateDept;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -54,7 +53,9 @@ public class StaffScraper {
             staffDTOList = new LinkedList<>();
 
             for (String pfForumId : dept.getUrl().getPfForumId()) {
+                urlBuilder = UriComponentsBuilder.fromUriString(dept.getUrl().getBaseUrl());
                 url = urlBuilder.queryParam("pfForumId", pfForumId).toUriString();
+
                 document = Jsoup.connect(url).timeout(SCRAP_TIMEOUT).get();
 
                 Element pageNumHiddenInput = document.getElementById("totalPageCount");
@@ -75,7 +76,6 @@ public class StaffScraper {
                             .post();
                 }
             }
-
         }
 
         if(staffDTOList.size() == 0) {
@@ -176,7 +176,7 @@ public class StaffScraper {
             oneStaffInfo[0] = infos.get(0).getElementsByTag("span").get(1).text();
 
             String jobPosition = String.valueOf(infos.get(1).childNodeSize() < 2 ? "" : infos.get(1).childNode(1));
-            if(jobPosition.contains("명예") || jobPosition.contains("대우") || jobPosition.contains("휴직")) {
+            if(jobPosition.contains("명예") || jobPosition.contains("대우") || jobPosition.contains("휴직") || !jobPosition.contains("교수")) {
                 log.info("스크래핑 스킵 -> {} {} 교수", deptName, oneStaffInfo[0]);
                 continue;
             }

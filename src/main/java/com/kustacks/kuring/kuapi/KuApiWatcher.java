@@ -11,7 +11,6 @@ import com.kustacks.kuring.domain.staff.Staff;
 import com.kustacks.kuring.domain.staff.StaffRepository;
 import com.kustacks.kuring.domain.user.User;
 import com.kustacks.kuring.domain.user.UserRepository;
-import com.kustacks.kuring.domain.user_category.UserCategory;
 import com.kustacks.kuring.domain.user_category.UserCategoryRepository;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
@@ -134,7 +133,7 @@ public class KuApiWatcher {
         즉, isInit 플래그는 필요 없다.
      */
 
-    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES, zone = "Asia/Seoul")
+    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
     public void watchAndUpdateNotice() {
 
         log.info("========== 공지 업데이트 시작 ==========");
@@ -299,7 +298,6 @@ public class KuApiWatcher {
                 // 새로 받아온 공지가 db에 없거나, db의 updatedDate와 달라졌다면, 새로 삽입해야한다.
                 // TODO: 공지를 UPDATE하는 것과 DELETE -> INSERT 하는 방법 중 어떤것이 성능 상 좋을지 고려해볼 필요가 있음.
                 if(notice == null || !notice.getUpdatedDate().equals(libraryNotice.getLastUpdated())) {
-                    log.info("Library notice insert. articleId = {}, postedDate = {}, subject = {}", libraryNotice.getId(), libraryNotice.getDateCreated(), libraryNotice.getTitle());
                     newLibraryNotices.add(libraryNotice.toEntity(libraryCategory));
                 } else {
                     libraryNoticeIterator.remove();
@@ -438,7 +436,7 @@ public class KuApiWatcher {
 
 
 
-    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS, zone = "Asia/Seoul")
+    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
     public void watchAndUpdateStaff() {
 
         log.info("========== 교직원 업데이트 시작 ==========");
@@ -594,9 +592,7 @@ public class KuApiWatcher {
 
 
 
-
-//    @Scheduled(cron = "0/10 * * * * *", zone = "Asia/Seoul")
-    @Scheduled(cron = "0 30 0 1 * ?", zone = "Asia/Seoul")
+    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
     public void verifyFCMTokens() {
 
         log.info("========== 토큰 유효성 필터링 시작 ==========");
@@ -604,23 +600,13 @@ public class KuApiWatcher {
         List<User> users = userRepository.findAll();
 
         for (User user : users) {
+            String token = user.getToken();
             try {
-                firebaseService.verifyToken(user.getToken());
+                firebaseService.verifyToken(token);
             } catch(FirebaseMessagingException e) {
-
-                for (UserCategory userCategory : user.getUserCategories()) {
-                    try {
-                        firebaseService.unsubscribe(user.getToken(), userCategory.getCategory().getName());
-                    } catch (FirebaseMessagingException | InternalLogicException ex) {
-                        log.error("유효하지 않은 토큰의 구독 해제 중 오류가 발생했습니다.");
-                        log.error("토큰 = {}, 카테고리 = {}", user.getToken(), userCategory.getCategory().getName());
-                        Sentry.captureException(new InternalLogicException(ErrorCode.FB_FAIL_UNSUBSCRIBE, ex));
-                    }
-
-                    userCategoryRepository.deleteAll(user.getUserCategories());
-                }
-
-                userRepository.deleteByToken(user.getToken());
+                userCategoryRepository.deleteAll(user.getUserCategories());
+                userRepository.deleteByToken(token);
+                log.info("삭제한 토큰 = {}", token);
             }
         }
 
