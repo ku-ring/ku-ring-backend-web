@@ -1,9 +1,11 @@
-package com.kustacks.kuring.kuapi.request.staff;
+package com.kustacks.kuring.kuapi.notice.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.kustacks.kuring.kuapi.request.KuisRequestBody;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-public class KuisStaffRequestBody extends KuisRequestBody {
+@Component
+public class KuisLoginRequestBody extends KuisRequestBody {
     @JsonProperty("Wke8,1")
     private final String v1 = "Ie3,jd";
 
@@ -31,25 +33,26 @@ public class KuisStaffRequestBody extends KuisRequestBody {
     @JsonProperty("3Y2&2e")
     private final String v9 = "2=3%37";
 
-    @JsonProperty("(3hj2D#")
-    private final String v10 = ")8ne_=12";
+    @JsonProperty("@d1#tp")
+    private final String v10 = "dm";
 
-    @JsonProperty("@d#")
-    private final String v11 = "@d1#";
+    @JsonProperty("@d1#SINGLE_ID")
+    @Value("${auth.id}")
+    private String id;
 
+    @JsonProperty("@d1#PWD")
+    @Value("${auth.password}")
+    private String password;
+
+    @JsonProperty("@d1#default.locale")
+    private final String v11 = "ko";
+    
     @JsonProperty("@d1#")
     private final String v12 = "dsParam";
 
-    @JsonProperty("@d1#tp")
-    private final String v13 = "dm";
+    @JsonProperty("@d#")
+    private final String v13 = "@d1#";
 
-    @JsonProperty("@d1#strHoofFg")
-    private final String v14 = "1";
-
-    @JsonProperty("@d1#strDeptCd")
-    private String v15;
-
-    public KuisStaffRequestBody(String deptCode) {
-        this.v15 = deptCode;
-    }
+    @JsonProperty("(3hj2D#")
+    private final String v14 = ")8ne_=12";
 }

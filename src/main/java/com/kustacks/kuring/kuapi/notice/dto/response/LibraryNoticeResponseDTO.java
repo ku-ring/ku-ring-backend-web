@@ -1,10 +1,10 @@
-package com.kustacks.kuring.kuapi.response;
+package com.kustacks.kuring.kuapi.notice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-public class LibraryNoticeResponseBody {
+public class LibraryNoticeResponseDTO extends NoticeResponseDTO {
     @JsonProperty("success")
     private boolean success;
 

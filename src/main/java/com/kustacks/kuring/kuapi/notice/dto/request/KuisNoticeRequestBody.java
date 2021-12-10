@@ -1,7 +1,6 @@
-package com.kustacks.kuring.kuapi.request.notice;
+package com.kustacks.kuring.kuapi.notice.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.kustacks.kuring.kuapi.request.KuisRequestBody;
 
 public class KuisNoticeRequestBody extends KuisRequestBody {
     @JsonProperty("@d1#forum_id")

@@ -1,8 +1,6 @@
-package com.kustacks.kuring.kuapi.response;
+package com.kustacks.kuring.kuapi.notice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;

@@ -1,7 +1,6 @@
-package com.kustacks.kuring.kuapi.request;
+package com.kustacks.kuring.kuapi.notice.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.kustacks.kuring.kuapi.request.notice.KuisNoticeRequestBody;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;

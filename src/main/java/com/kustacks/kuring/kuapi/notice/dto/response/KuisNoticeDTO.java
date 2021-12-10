@@ -1,4 +1,4 @@
-package com.kustacks.kuring.kuapi.response;
+package com.kustacks.kuring.kuapi.notice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kustacks.kuring.domain.category.Category;
@@ -15,14 +15,4 @@ public class KuisNoticeDTO {
 
     @JsonProperty("SUBJECT")
     private String subject;
-
-    public Notice toEntity(Category category) {
-        return Notice.builder()
-                .articleId(this.articleId)
-                .postedDate(this.postedDate)
-                .updatedDate(null)
-                .subject(this.subject)
-                .category(category)
-                .build();
-    }
 }

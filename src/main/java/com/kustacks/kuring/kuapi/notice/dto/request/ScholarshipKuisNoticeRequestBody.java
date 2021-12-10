@@ -1,4 +1,4 @@
-package com.kustacks.kuring.kuapi.request.notice;
+package com.kustacks.kuring.kuapi.notice.dto.request;
 
 import org.springframework.stereotype.Component;
 

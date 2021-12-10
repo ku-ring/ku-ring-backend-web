@@ -1,4 +1,4 @@
-package com.kustacks.kuring.kuapi.response;
+package com.kustacks.kuring.kuapi.notice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kustacks.kuring.domain.category.Category;
@@ -62,14 +62,4 @@ public class LibraryNoticeDTO {
 
     @JsonProperty("isMyLike")
     private boolean isMyLike;
-
-    public Notice toEntity(Category category) {
-        return Notice.builder()
-                .articleId(this.id)
-                .postedDate(this.dateCreated)
-                .updatedDate(this.lastUpdated)
-                .subject(this.title)
-                .category(category)
-                .build();
-    }
 }
