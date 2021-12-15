@@ -2,7 +2,7 @@ package com.kustacks.kuring.controller;
 
 import com.kustacks.kuring.controller.dto.NoticeDTO;
 import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.kuapi.KuApiWatcher;
+import com.kustacks.kuring.kuapi.user.UserUpdater;
 import com.kustacks.kuring.service.NoticeServiceImpl;
 import org.junit.Before;
 import org.junit.Rule;
@@ -49,9 +49,6 @@ public class NoticeControllerTest {
     public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     private MockMvc mockMvc;
-
-    @MockBean
-    private KuApiWatcher kuApiWatcher;
 
     @MockBean
     private NoticeServiceImpl noticeService;
