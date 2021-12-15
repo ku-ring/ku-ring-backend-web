@@ -1,10 +1,9 @@
 package com.kustacks.kuring;
 
-import com.kustacks.kuring.kuapi.notice.NoticeUpdater;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.annotation.PostConstruct;
@@ -12,11 +11,9 @@ import java.util.TimeZone;
 
 @Slf4j
 @EnableScheduling
+@EnableRetry
 @SpringBootApplication
 public class KuringApplication {
-
-	@Autowired
-	NoticeUpdater noticeUpdater;
 
 	public static void main(String[] args) {
 		SpringApplication.run(KuringApplication.class, args);

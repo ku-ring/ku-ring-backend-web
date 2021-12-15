@@ -10,6 +10,9 @@ import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.kuapi.Updater;
+import com.kustacks.kuring.kuapi.api.notice.KuisNoticeAPIClient;
+import com.kustacks.kuring.kuapi.api.notice.LibraryNoticeAPIClient;
+import com.kustacks.kuring.kuapi.api.notice.NoticeAPIClient;
 import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;
 import com.kustacks.kuring.service.FirebaseService;
 import com.kustacks.kuring.util.converter.DTOConverter;
@@ -76,6 +79,7 @@ public class NoticeUpdater implements Updater {
                 }
                 apiNoticesMap.put(categoryName, commonNoticeFormatDTO);
             } catch (InterruptedException e) {
+                // TODO: 공지 수신 제대로 못했을 때 대책 필요
                 e.printStackTrace();
             }
         }
