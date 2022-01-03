@@ -4,14 +4,20 @@ import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.notice.dto.request.KuisLoginRequestBody;
 import com.kustacks.kuring.kuapi.notice.dto.request.KuisRequestBody;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Component
 public class RenewSessionKuisAuthManager implements KuisAuthManager {
 
@@ -24,23 +30,49 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
     @Value("${auth.referer}")
     private String loginReferer;
 
+    private final KuisLoginRequestBody kuisLoginRequestBody;
+    private final RestTemplate restTemplate;
+
+    private final int LOGIN_RETRY_PERIOD = 1000 * 10;
+//    private final int SESSION_DURATION = 5400; // 1시간 30분
+    private final int SESSION_DURATION = 30;
+
+    private boolean needToBeRenew; // 세션 유효기간이 남아있어야 하지만, 알 수 없는 오류로 인해 세션이 유효하지 않은 경우 true로 설정됨
+    private LocalDateTime updatedDateTime;
     private String sessionId;
 
-    private final KuisLoginRequestBody kuisLoginRequestBody;
+    public RenewSessionKuisAuthManager(
+            @Value("${auth.login-url}") String loginUrl,
+            @Value("${auth.user-agent}") String loginUserAgent,
+            @Value("${auth.referer}") String loginReferer,
+            KuisLoginRequestBody kuisLoginRequestBody,
+            RestTemplate restTemplate) {
 
-    private final int MAX_KU_LOGIN_TRY = 3;
-    private final int LOGIN_RETRY_PERIOD = 1000 * 10;
+        this.loginUrl = loginUrl;
+        this.loginUserAgent = loginUserAgent;
+        this.loginReferer = loginReferer;
 
-    public RenewSessionKuisAuthManager(KuisLoginRequestBody kuisLoginRequestBody) {
-
+        this.restTemplate = restTemplate;
         this.kuisLoginRequestBody = kuisLoginRequestBody;
-
-        sessionId = null;
+        this.updatedDateTime = null;
+        this.sessionId = null;
+        this.needToBeRenew = true;
     }
 
     @Override
-    public String getSessionId() throws InterruptedException {
+    @Retryable(value = {InternalLogicException.class}, backoff = @Backoff(delay = LOGIN_RETRY_PERIOD))
+    public String getSessionId() {
 
+        if(!needToBeRenew
+                && updatedDateTime != null
+                && Duration.between(updatedDateTime, LocalDateTime.now()).getSeconds() <= SESSION_DURATION
+                && sessionId != null) {
+
+            log.info("세션아이디 갱신 안하고 바로 리턴");
+            return sessionId;
+        }
+
+        log.info("세션아이디 갱신시작");
         // 로그인 헤더
         HttpHeaders loginRequestHeader = createLoginRequestHeader();
 
@@ -50,29 +82,33 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
         // 로그인 요청
         HttpEntity<String> loginRequestEntity = new HttpEntity<>(loginRequestBody, loginRequestHeader);
 
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> loginResponse = null; // 응답 제대로 받지 못하면 아래 로직에서 처리하므로, 세션 업데이트에서 null일 확률은 없음
+        ResponseEntity<String> loginResponse; // 응답 제대로 받지 못하면 아래 로직에서 처리하므로, 세션 업데이트에서 null일 확률은 없음
 
-        int kuLoginTryCount = 0;
-        while(kuLoginTryCount < MAX_KU_LOGIN_TRY) {
-            ++kuLoginTryCount;
-            try {
-                loginResponse = restTemplate.exchange(loginUrl, HttpMethod.POST, loginRequestEntity, String.class);
-                break;
-            } catch(RestClientException e) {
-                if(kuLoginTryCount == MAX_KU_LOGIN_TRY) {
-                    throw new InternalLogicException(ErrorCode.KU_LOGIN_CANNOT_LOGIN, e);
-                }
-
-                Thread.sleep(LOGIN_RETRY_PERIOD);
-            }
+        try {
+//            RestTemplate restTemplate = new RestTemplate();
+            loginResponse = restTemplate.exchange(loginUrl, HttpMethod.POST, loginRequestEntity, String.class);
+        } catch(RestClientException e) {
+            needToBeRenew = true;
+            throw new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE, e);
         }
 
         // 로그인 요청에 대한 응답 메세지의 Set-Cookie 헤더 파싱
-        return parseCookieHeader(loginResponse);
-//            log.error("[KuLoginException] KUIS 로그인 응답 메세지를 파싱하는 중 오류가 발생했습니다.");
-//            Sentry.captureException(e);
-//            return;
+        try {
+            sessionId = parseCookieHeader(loginResponse);
+        } catch(InternalLogicException e) {
+            needToBeRenew = true;
+            throw e;
+        }
+
+        updatedDateTime = LocalDateTime.now();
+        needToBeRenew = false;
+
+        log.info("세션아이디 갱신완료");
+        return sessionId;
+    }
+
+    public void forceRenewing() {
+        this.needToBeRenew = true;
     }
 
     private String parseCookieHeader(ResponseEntity<String> loginResponse) {

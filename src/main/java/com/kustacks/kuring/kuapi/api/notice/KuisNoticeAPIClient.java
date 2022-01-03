@@ -6,15 +6,17 @@ import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.kuapi.notice.KuisAuthManager;
 import com.kustacks.kuring.kuapi.notice.RenewSessionKuisAuthManager;
 import com.kustacks.kuring.kuapi.notice.dto.request.*;
-import com.kustacks.kuring.kuapi.notice.dto.request.KuisRequestBody;
 import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;
 import com.kustacks.kuring.kuapi.notice.dto.response.KuisNoticeDTO;
 import com.kustacks.kuring.kuapi.notice.dto.response.KuisNoticeResponseDTO;
 import com.kustacks.kuring.util.converter.DTOConverter;
 import com.kustacks.kuring.util.converter.KuisNoticeDTOToCommonFormatDTOConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class KuisNoticeAPIClient implements NoticeAPIClient {
 
@@ -31,6 +34,7 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
     @Value("${notice.request-url}")
     private String noticeUrl;
 
+    private final RestTemplate restTemplate;
     private final DTOConverter dtoConverter;
     private final KuisAuthManager kuisAuthManager;
     private final Map<CategoryName, KuisNoticeRequestBody> noticeRequestBodies;
@@ -44,10 +48,14 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
                                NationalKuisNoticeRequestBody nationalKuisNoticeRequestBody,
                                StudentKuisNoticeRequestBody studentKuisNoticeRequestBody,
                                IndustryUnivKuisNoticeRequestBody industryUnivKuisNoticeRequestBody,
-                               NormalKuisNoticeRequestBody normalKuisNoticeRequestBody) {
+                               NormalKuisNoticeRequestBody normalKuisNoticeRequestBody,
+
+                               RestTemplate restTemplate) {
 
         this.dtoConverter = dtoConverter;
         this.kuisAuthManager = kuisAuthManager;
+
+        this.restTemplate = restTemplate;
 
         noticeRequestBodies = new HashMap<>();
         noticeRequestBodies.put(CategoryName.BACHELOR, bachelorNoticeRequestBody);
@@ -60,36 +68,39 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
     }
 
     @Override
-    public List<CommonNoticeFormatDTO> getNotices(CategoryName categoryName) throws InternalLogicException, InterruptedException {
+    @Retryable(value = {RestClientException.class, InternalLogicException.class})
+    public List<CommonNoticeFormatDTO> getNotices(CategoryName categoryName) throws InternalLogicException {
 
         // sessionId 획득
-        String sessionId;
-        try {
-            sessionId = kuisAuthManager.getSessionId();
-        } catch (InternalLogicException | InterruptedException e) {
-            throw e;
-        }
+        String sessionId = kuisAuthManager.getSessionId();
 
         // 공지 요청 헤더
         HttpHeaders noticeRequestHeader = createKuisNoticeRequestHeader(sessionId);
-
-        RestTemplate restTemplate = new RestTemplate();
 
         // 공지 요청
         KuisNoticeRequestBody kuisNoticeRequestBody = noticeRequestBodies.get(categoryName);
 
         String encodedNoticeRequestBody = KuisRequestBody.toUrlEncodedString(kuisNoticeRequestBody);
         HttpEntity<String> noticeRequestEntity = new HttpEntity<>(encodedNoticeRequestBody, noticeRequestHeader);
-        ResponseEntity<KuisNoticeResponseDTO> noticeResponse = restTemplate.exchange(noticeUrl, HttpMethod.POST, noticeRequestEntity, KuisNoticeResponseDTO.class);
+        ResponseEntity<KuisNoticeResponseDTO> noticeResponse;
+        try {
+            noticeResponse = restTemplate.exchange(noticeUrl, HttpMethod.POST, noticeRequestEntity, KuisNoticeResponseDTO.class);
+        } catch(RestClientException e) {
+//            log.warn("세션 갱신이 필요합니다.");
+            kuisAuthManager.forceRenewing();
+            throw new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE, e);
+        }
 
         KuisNoticeResponseDTO body = noticeResponse.getBody();
         if(body == null) {
 //                log.error("{} 공지 요청에 대한 응답의 body가 없습니다.", noticeCategory.getName());
+            kuisAuthManager.forceRenewing();
             throw new InternalLogicException(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON);
         }
 
-        List<KuisNoticeDTO> kuisNoticeDTOList = noticeResponse.getBody().getKuisNoticeDTOList();
+        List<KuisNoticeDTO> kuisNoticeDTOList = body.getKuisNoticeDTOList();
         if(kuisNoticeDTOList == null) {
+            kuisAuthManager.forceRenewing();
             throw new InternalLogicException(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON);
         } else {
             // common format으로 변환
