@@ -6,32 +6,32 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class KuisLoginRequestBody extends KuisRequestBody {
-    @JsonProperty("Wke8,1")
-    private final String v1 = "Ie3,jd";
+    @JsonProperty("Imu^42d")
+    private final String v1 = "kn@#\u000c2";
 
-    @JsonProperty("s=83_41")
-    private final String v2 = "83+38";
+    @JsonProperty("!wen%3d=")
+    private final String v2 = "%[YrN7";
 
-    @JsonProperty("n23,@d")
-    private final String v3 = "H_3h,e";
+    @JsonProperty("O$e8;E-")
+    private final String v3 = "-83 ,3)";
 
-    @JsonProperty("Lwu3=d")
-    private final String v4 = "2gd$73";
+    @JsonProperty("ie&ke(W")
+    private final String v4 = "Ke\b'eh3";
 
-    @JsonProperty("kd93#!c")
-    private final String v5 = "KI&3jh";
+    @JsonProperty("Pd?w4r")
+    private final String v5 = "Ne*W_";
 
-    @JsonProperty("Hem=7_w$")
-    private final String v6 = "mi2e_>";
+    @JsonProperty("Je\r8<3")
+    private final String v6 = "ue>vei";
 
-    @JsonProperty("G=e %37")
-    private final String v7 = "Jd 338#";
+    @JsonProperty("jkel|eg")
+    private final String v7 = "Le<n3:";
 
-    @JsonProperty("D37=!f3")
-    private final String v8 = "K#f8kf4M";
+    @JsonProperty("Mi&L,yo")
+    private final String v8 = "Ser/t7";
 
-    @JsonProperty("3Y2&2e")
-    private final String v9 = "2=3%37";
+    @JsonProperty("Le83';hg")
+    private final String v9 = "Ek^]ey!";
 
     @JsonProperty("@d1#tp")
     private final String v10 = "dm";
@@ -53,6 +53,6 @@ public class KuisLoginRequestBody extends KuisRequestBody {
     @JsonProperty("@d#")
     private final String v13 = "@d1#";
 
-    @JsonProperty("(3hj2D#")
-    private final String v14 = ")8ne_=12";
+    @JsonProperty("@93jdq")
+    private final String v14 = "+20Xdu)";
 }
