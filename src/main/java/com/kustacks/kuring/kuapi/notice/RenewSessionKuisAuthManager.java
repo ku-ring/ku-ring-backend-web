@@ -38,7 +38,6 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
     private final int SESSION_DURATION = 30;
 
     private boolean needToBeRenew; // 세션 유효기간이 남아있어야 하지만, 알 수 없는 오류로 인해 세션이 유효하지 않은 경우 true로 설정됨
-    private LocalDateTime updatedDateTime;
     private String sessionId;
 
     public RenewSessionKuisAuthManager(
@@ -54,8 +53,7 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
 
         this.restTemplate = restTemplate;
         this.kuisLoginRequestBody = kuisLoginRequestBody;
-        this.updatedDateTime = null;
-        this.sessionId = null;
+        this.sessionId = "JSESSIONID=0001HbzQTEBflW3MnJ5yO-r8tdq:2RS3TUFQG7";
         this.needToBeRenew = true;
     }
 
@@ -63,16 +61,13 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
     @Retryable(value = {InternalLogicException.class}, backoff = @Backoff(delay = LOGIN_RETRY_PERIOD))
     public String getSessionId() {
 
-        if(!needToBeRenew
-                && updatedDateTime != null
-                && Duration.between(updatedDateTime, LocalDateTime.now()).getSeconds() <= SESSION_DURATION
-                && sessionId != null) {
-
+        if(!needToBeRenew) {
             log.info("세션아이디 갱신 안하고 바로 리턴");
             return sessionId;
         }
 
         log.info("세션아이디 갱신시작");
+
         // 로그인 헤더
         HttpHeaders loginRequestHeader = createLoginRequestHeader();
 
@@ -85,7 +80,6 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
         ResponseEntity<String> loginResponse; // 응답 제대로 받지 못하면 아래 로직에서 처리하므로, 세션 업데이트에서 null일 확률은 없음
 
         try {
-//            RestTemplate restTemplate = new RestTemplate();
             loginResponse = restTemplate.exchange(loginUrl, HttpMethod.POST, loginRequestEntity, String.class);
         } catch(RestClientException e) {
             needToBeRenew = true;
@@ -93,72 +87,66 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
         }
 
         // 로그인 요청에 대한 응답 메세지의 Set-Cookie 헤더 파싱
-        try {
-            sessionId = parseCookieHeader(loginResponse);
-        } catch(InternalLogicException e) {
+        boolean isLoginSuccess = checkLoginResponseBody(loginResponse);
+        if(!isLoginSuccess) {
             needToBeRenew = true;
-            throw e;
+            throw new InternalLogicException(ErrorCode.KU_LOGIN_CANNOT_LOGIN);
         }
 
-        updatedDateTime = LocalDateTime.now();
         needToBeRenew = false;
 
         log.info("세션아이디 갱신완료");
-        return sessionId;
+        return this.sessionId;
     }
 
     public void forceRenewing() {
         this.needToBeRenew = true;
     }
 
-    private String parseCookieHeader(ResponseEntity<String> loginResponse) {
+    private boolean checkLoginResponseBody(ResponseEntity<String> loginResponse) {
 
         String body = loginResponse.getBody();
-        String sessionId = null;
-
         if(body == null) {
             throw new InternalLogicException(ErrorCode.KU_LOGIN_NO_RESPONSE_BODY);
         } else {
-            if(body.contains("success")) {
-                HttpHeaders responseHeaders = loginResponse.getHeaders();
+            return body.contains("success");
+        }
+    }
 
-                if(responseHeaders.containsKey("Set-Cookie")) {
-                    List<String> setCookieValues = responseHeaders.get("Set-Cookie");
+    private String parseCookieHeader(ResponseEntity<String> indexResponse) {
 
-                    if(setCookieValues == null || setCookieValues.isEmpty()) {
-                        throw new InternalLogicException(ErrorCode.KU_LOGIN_EMPTY_COOKIE);
-                    }
+        String sessionId = null;
+        HttpHeaders responseHeaders = indexResponse.getHeaders();
 
-                    String setCookieValue = null;
-                    for (String s : setCookieValues) {
-                        if(s.contains("JSESSIONID")) {
-                            setCookieValue = s;
-                            break;
-                        }
-                    }
-                    if(setCookieValue == null) {
-                        throw new InternalLogicException(ErrorCode.KU_LOGIN_NO_JSESSION);
-                    }
+        if(responseHeaders.containsKey("Set-Cookie")) {
+            List<String> setCookieValues = responseHeaders.get("Set-Cookie");
 
-                    // 위 조건문에서 JSESSIONID 문자열 포함 여부를 확인했으므로
-                    // 여기서는 별다른 예외 체크 없이 그 값을 sessionId에 담기만 한다.
-                    String[] cookieValues = setCookieValue.split(";");
-                    for (String value : cookieValues) {
-                        if(value.contains("JSESSIONID")) {
-                            sessionId = value;
-                            break;
-                        }
-                    }
-                } else {
-                    log.error(body);
-                    throw new InternalLogicException(ErrorCode.KU_LOGIN_NO_COOKIE_HEADER);
+            if(setCookieValues == null || setCookieValues.isEmpty()) {
+                throw new InternalLogicException(ErrorCode.KU_LOGIN_EMPTY_COOKIE);
+            }
+
+            String setCookieValue = null;
+            for (String s : setCookieValues) {
+                if(s.contains("JSESSIONID")) {
+                    setCookieValue = s;
+                    break;
                 }
             }
-            // 로그인 응답의 body를 가져올 수 없는 상태
-            // 로그를 남기고 개발자에게 알람을 따로 주는 방안이 좋을듯
-            else {
-                throw new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE);
+            if(setCookieValue == null) {
+                throw new InternalLogicException(ErrorCode.KU_LOGIN_NO_JSESSION);
             }
+
+            // 위 조건문에서 JSESSIONID 문자열 포함 여부를 확인했으므로
+            // 여기서는 별다른 예외 체크 없이 그 값을 sessionId에 담기만 한다.
+            String[] cookieValues = setCookieValue.split(";");
+            for (String value : cookieValues) {
+                if(value.contains("JSESSIONID")) {
+                    sessionId = value;
+                    break;
+                }
+            }
+        } else {
+            throw new InternalLogicException(ErrorCode.KU_LOGIN_NO_COOKIE_HEADER);
         }
 
         return sessionId;
@@ -170,6 +158,7 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
         httpHeaders.add("Accept", "*/*");
         httpHeaders.add("Accept-Encoding", "gzip, deflate, br");
         httpHeaders.add("User-Agent", loginUserAgent);
+        httpHeaders.add("Cookie", sessionId);
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         return httpHeaders;

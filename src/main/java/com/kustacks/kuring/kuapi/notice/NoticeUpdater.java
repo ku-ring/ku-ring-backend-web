@@ -62,6 +62,7 @@ public class NoticeUpdater implements Updater {
     @Override
     @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
     public void update() {
+
         log.info("========== 공지 업데이트 시작 ==========");
 
         /*
@@ -78,9 +79,9 @@ public class NoticeUpdater implements Updater {
                     commonNoticeFormatDTO = kuisNoticeAPIClient.getNotices(categoryName);
                 }
                 apiNoticesMap.put(categoryName, commonNoticeFormatDTO);
-            } catch (InterruptedException e) {
+            } catch (InternalLogicException e) {
                 // TODO: 공지 수신 제대로 못했을 때 대책 필요
-                e.printStackTrace();
+                Sentry.captureException(e);
             }
         }
 
@@ -113,6 +114,7 @@ public class NoticeUpdater implements Updater {
     }
 
     private List<Notice> compareAndUpdateDB(Map<CategoryName, List<CommonNoticeFormatDTO>> apiNoticesMap) {
+
         if(categoryMap == null) {
             categoryMap = categoryRepository.findAllMap();
         }

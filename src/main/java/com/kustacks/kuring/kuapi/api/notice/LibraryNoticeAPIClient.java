@@ -24,9 +24,11 @@ public class LibraryNoticeAPIClient implements NoticeAPIClient {
     private String libraryUrl;
 
     private final DTOConverter dtoConverter;
+    private final RestTemplate restTemplate;
 
-    public LibraryNoticeAPIClient(LibraryNoticeDTOToCommonFormatDTOConverter dtoConverter) {
+    public LibraryNoticeAPIClient(LibraryNoticeDTOToCommonFormatDTOConverter dtoConverter, RestTemplate restTemplate) {
         this.dtoConverter = dtoConverter;
+        this.restTemplate = restTemplate;
     }
 
     /*
@@ -34,9 +36,7 @@ public class LibraryNoticeAPIClient implements NoticeAPIClient {
      */
 
     @Override
-    public List<CommonNoticeFormatDTO> getNotices(CategoryName categoryName) {
-
-        RestTemplate restTemplate = new RestTemplate();
+    public List<CommonNoticeFormatDTO> getNotices(CategoryName categoryName) throws InternalLogicException {
 
         int offset = 0;
         int max = 20;
