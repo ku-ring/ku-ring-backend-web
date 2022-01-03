@@ -6,6 +6,7 @@ import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.api.staff.StaffAPIClient;
 import com.kustacks.kuring.kuapi.scrap.parser.HTMLParser;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
+import com.kustacks.kuring.kuapi.staff.deptinfo.real_estate.RealEstateDept;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.springframework.retry.annotation.Backoff;
@@ -29,15 +30,17 @@ public class StaffScraper implements KuScraper<StaffDTO> {
         this.htmlParsers = htmlParsers;
     }
 
-    @Retryable(value = {IOException.class}, backoff = @Backoff(delay = RETRY_PERIOD))
-    public List<StaffDTO> scrap(DeptInfo deptInfo) throws IOException {
+    @Retryable(value = {InternalLogicException.class}, backoff = @Backoff(delay = RETRY_PERIOD))
+    public List<StaffDTO> scrap(DeptInfo deptInfo) throws InternalLogicException {
 
         List<Document> documents = null;
         List<StaffDTO> staffDTOList = new LinkedList<>();
 
         for (StaffAPIClient staffAPIClient : staffAPIClients) {
             if(staffAPIClient.support(deptInfo)) {
+                log.info("{} HTML 요청", deptInfo.getDeptName());
                 documents = staffAPIClient.getHTML(deptInfo);
+                log.info("{} HTML 수신", deptInfo.getDeptName());
             }
         }
 
@@ -45,9 +48,11 @@ public class StaffScraper implements KuScraper<StaffDTO> {
         List<String[]> parseResult = new LinkedList<>();
         for (HTMLParser htmlParser : htmlParsers) {
             if(htmlParser.support(deptInfo)) {
+                log.info("{} HTML 파싱 시작", deptInfo.getDeptName());
                 for (Document document : documents) {
                     parseResult.addAll(htmlParser.parse(document));
                 }
+                log.info("{} HTML 파싱 완료", deptInfo.getDeptName());
             }
         }
 

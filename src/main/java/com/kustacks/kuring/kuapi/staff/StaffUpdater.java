@@ -8,6 +8,7 @@ import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.Updater;
 import com.kustacks.kuring.kuapi.scrap.StaffScraper;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
+import com.kustacks.kuring.kuapi.staff.deptinfo.real_estate.RealEstateDept;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -64,16 +65,18 @@ public class StaffUpdater implements Updater {
         List<String> successDeptNames = new LinkedList<>();
         InternalLogicException scrapException = null;
         for (DeptInfo deptInfo : deptInfos) {
-            boolean isSuccess = deptScrapingSuccessList.contains(deptInfo.getDeptName());
-            try {
-                if(!isSuccess) {
-                    scrapDeptAndConvertToMap(kuStaffDTOMap, deptInfo);
-                    deptScrapingSuccessList.add(deptInfo.getDeptName());
-                    successDeptNames.add(deptInfo.getDeptName());
+            if(deptInfo instanceof RealEstateDept) {
+                boolean isSuccess = deptScrapingSuccessList.contains(deptInfo.getDeptName());
+                try {
+                    if(!isSuccess) {
+                        scrapDeptAndConvertToMap(kuStaffDTOMap, deptInfo);
+                        deptScrapingSuccessList.add(deptInfo.getDeptName());
+                        successDeptNames.add(deptInfo.getDeptName());
+                    }
+                } catch(InternalLogicException e) {
+                    log.error("[ScraperException] 스크래핑 문제 발생. 문제가 발생한 학과 = {}", deptInfo.getDeptName());
+                    scrapException = new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);
                 }
-            } catch(IOException | IndexOutOfBoundsException | InternalLogicException e) {
-                log.error("[ScraperException] 스크래핑 문제 발생. 문제가 발생한 학과 = {}", deptInfo.getDeptName());
-                scrapException = new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);
             }
         }
 
@@ -88,7 +91,7 @@ public class StaffUpdater implements Updater {
         log.info("========== 교직원 업데이트 종료 ==========");
     }
 
-    private void scrapDeptAndConvertToMap(Map<String, StaffDTO> kuStaffDTOMap, DeptInfo deptInfo) throws IOException {
+    private void scrapDeptAndConvertToMap(Map<String, StaffDTO> kuStaffDTOMap, DeptInfo deptInfo) throws InternalLogicException {
 
         List<StaffDTO> scrapedStaffDTOList = staffScraper.scrap(deptInfo);
 
@@ -103,6 +106,7 @@ public class StaffUpdater implements Updater {
     }
 
     private void compareAndUpdateDB(Map<String, StaffDTO> kuStaffDTOMap, List<String> successDeptNames) {
+
         // 스크래핑으로 수집한 교직원 정보와 비교
         // 달라진 정보가 있거나, 새로운 교직원 정보이면 db에 추가할 리스트에 저장
         // db에는 있으나 스크래핑한 리스트에 없는 교직원이라면, 삭제할 리스트에 저장

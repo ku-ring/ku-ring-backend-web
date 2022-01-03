@@ -1,9 +1,11 @@
 package com.kustacks.kuring.kuapi.api.staff;
 
+import com.kustacks.kuring.error.ErrorCode;
+import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
 import com.kustacks.kuring.kuapi.staff.deptinfo.real_estate.RealEstateDept;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -14,8 +16,14 @@ import java.util.List;
 @Component
 public class RealEstateStaffAPIClient implements StaffAPIClient {
 
-    private final String PROXY_IP = "52.78.172.171";
-    private final int PROXY_PORT = 80;
+    @Value("${staff.real-estate-url}")
+    private String baseUrl;
+
+    private final JsoupClient jsoupClient;
+
+    public RealEstateStaffAPIClient(JsoupClient proxyJsoupClient) {
+        jsoupClient = proxyJsoupClient;
+    }
 
     @Override
     public boolean support(DeptInfo deptInfo) {
@@ -23,11 +31,17 @@ public class RealEstateStaffAPIClient implements StaffAPIClient {
     }
 
     @Override
-    public List<Document> getHTML(DeptInfo deptInfo) throws IOException {
+    public List<Document> getHTML(DeptInfo deptInfo) throws InternalLogicException {
 
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(deptInfo.getStaffScrapInfo().getBaseUrl());
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(baseUrl);
         String url = urlBuilder.toUriString();
-        Document document = Jsoup.connect(url).timeout(SCRAP_TIMEOUT).proxy(PROXY_IP, PROXY_PORT).get();
+
+        Document document;
+        try {
+            document = jsoupClient.get(url, SCRAP_TIMEOUT);
+        } catch(IOException e) {
+            throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);
+        }
 
         List<Document> documents = new LinkedList<>();
         documents.add(document);

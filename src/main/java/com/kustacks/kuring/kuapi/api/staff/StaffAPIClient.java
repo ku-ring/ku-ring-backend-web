@@ -1,5 +1,6 @@
 package com.kustacks.kuring.kuapi.api.staff;
 
+import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.api.APIClient;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
 import org.jsoup.nodes.Document;
@@ -13,5 +14,5 @@ public interface StaffAPIClient extends APIClient {
 
     boolean support(DeptInfo deptInfo);
 
-    List<Document> getHTML(DeptInfo deptInfo) throws IOException;
+    List<Document> getHTML(DeptInfo deptInfo) throws InternalLogicException;
 }
