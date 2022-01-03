@@ -38,6 +38,8 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
     private final int SESSION_DURATION = 30;
 
     private boolean needToBeRenew; // 세션 유효기간이 남아있어야 하지만, 알 수 없는 오류로 인해 세션이 유효하지 않은 경우 true로 설정됨
+
+    @Value("${auth.session}")
     private String sessionId;
 
     public RenewSessionKuisAuthManager(
@@ -53,7 +55,6 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
 
         this.restTemplate = restTemplate;
         this.kuisLoginRequestBody = kuisLoginRequestBody;
-        this.sessionId = "JSESSIONID=0001HbzQTEBflW3MnJ5yO-r8tdq:2RS3TUFQG7";
         this.needToBeRenew = true;
     }
 
@@ -83,14 +84,14 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
             loginResponse = restTemplate.exchange(loginUrl, HttpMethod.POST, loginRequestEntity, String.class);
         } catch(RestClientException e) {
             needToBeRenew = true;
-            throw new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE, e);
+            throw new InternalLogicException(ErrorCode.KU_LOGIN_CANNOT_LOGIN, e);
         }
 
-        // 로그인 요청에 대한 응답 메세지의 Set-Cookie 헤더 파싱
+        // 로그인 요청에 대한 응답 메세지의 body 확인
         boolean isLoginSuccess = checkLoginResponseBody(loginResponse);
         if(!isLoginSuccess) {
             needToBeRenew = true;
-            throw new InternalLogicException(ErrorCode.KU_LOGIN_CANNOT_LOGIN);
+            throw new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE);
         }
 
         needToBeRenew = false;

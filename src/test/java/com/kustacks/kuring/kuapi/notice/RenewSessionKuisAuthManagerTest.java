@@ -29,6 +29,9 @@ public class RenewSessionKuisAuthManagerTest {
     @Value("${auth.login-url}")
     private String loginUrl;
 
+    @Value("${auth.session}")
+    private String TEST_COOKIE;
+
     @SpyBean
     RestTemplate restTemplate;
 
@@ -63,7 +66,6 @@ public class RenewSessionKuisAuthManagerTest {
     
             // given
             String successResponseBody = "success";
-            String TEST_COOKIE = "JSESSIONID=TEST_SESSION_ID";
             HttpHeaders responseHttpHeaders = new HttpHeaders();
             List<String> cookies = new LinkedList<>();
             cookies.add(TEST_COOKIE);
@@ -109,42 +111,42 @@ public class RenewSessionKuisAuthManagerTest {
             assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
         }
 
-        @Test
-        @Order(4)
-        @DisplayName("실패 - Set-Cookie 헤더가 없음")
-        void failByNoSetCookieHeader() {
-
-            // given
-            String badResponseBody = "success";
-            server.expect(requestTo(loginUrl)).andRespond(withSuccess().body(badResponseBody));
-
-            // when
-            InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
-
-            // then
-            assertEquals(ErrorCode.KU_LOGIN_NO_COOKIE_HEADER, e.getErrorCode());
-        }
-
-        @Test
-        @Order(5)
-        @DisplayName("실패 - Set-Cookie 헤더에 JSESSIONID 쿠키가 없음")
-        void failByNoJsessionId() {
-
-            // given
-            String successResponseBody = "success";
-            String TEST_COOKIE = "WIRED_COOKIE=FAIL_TEST";
-            HttpHeaders responseHttpHeaders = new HttpHeaders();
-            List<String> cookies = new LinkedList<>();
-            cookies.add(TEST_COOKIE);
-            responseHttpHeaders.put("Set-Cookie", cookies);
-
-            server.expect(requestTo(loginUrl)).andRespond(withSuccess().headers(responseHttpHeaders).body(successResponseBody));
-
-            // when
-            InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
-
-            // then
-            assertEquals(ErrorCode.KU_LOGIN_NO_JSESSION, e.getErrorCode());
-        }
+//        @Test
+//        @Order(4)
+//        @DisplayName("실패 - Set-Cookie 헤더가 없음")
+//        void failByNoSetCookieHeader() {
+//
+//            // given
+//            String badResponseBody = "success";
+//            server.expect(requestTo(loginUrl)).andRespond(withSuccess().body(badResponseBody));
+//
+//            // when
+//            InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
+//
+//            // then
+//            assertEquals(ErrorCode.KU_LOGIN_NO_COOKIE_HEADER, e.getErrorCode());
+//        }
+//
+//        @Test
+//        @Order(5)
+//        @DisplayName("실패 - Set-Cookie 헤더에 JSESSIONID 쿠키가 없음")
+//        void failByNoJsessionId() {
+//
+//            // given
+//            String successResponseBody = "success";
+//            String TEST_COOKIE = "WIRED_COOKIE=FAIL_TEST";
+//            HttpHeaders responseHttpHeaders = new HttpHeaders();
+//            List<String> cookies = new LinkedList<>();
+//            cookies.add(TEST_COOKIE);
+//            responseHttpHeaders.put("Set-Cookie", cookies);
+//
+//            server.expect(requestTo(loginUrl)).andRespond(withSuccess().headers(responseHttpHeaders).body(successResponseBody));
+//
+//            // when
+//            InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
+//
+//            // then
+//            assertEquals(ErrorCode.KU_LOGIN_NO_JSESSION, e.getErrorCode());
+//        }
     }
 }

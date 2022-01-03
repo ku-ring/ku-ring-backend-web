@@ -66,6 +66,6 @@ public class RenewSessionKuisAuthManagerRetryTest {
 
         // when, then
         InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
-        assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
+        assertEquals(ErrorCode.KU_LOGIN_CANNOT_LOGIN, e.getErrorCode());
     }
 }
