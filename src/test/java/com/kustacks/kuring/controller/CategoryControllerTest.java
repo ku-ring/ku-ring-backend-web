@@ -13,18 +13,24 @@ import com.kustacks.kuring.kuapi.user.UserUpdater;
 import com.kustacks.kuring.service.CategoryServiceImpl;
 import com.kustacks.kuring.service.FirebaseService;
 import com.kustacks.kuring.service.UserServiceImpl;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+//import org.junit.Before;
+//import org.junit.Rule;
+//import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+//import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -50,12 +56,12 @@ import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@RunWith(SpringRunner.class)
+@ExtendWith({RestDocumentationExtension.class})
 @WebMvcTest(CategoryController.class)
 public class CategoryControllerTest {
     // gradle을 기반으로 디렉토리로 자동 구성 하는 역할
-    @Rule
-    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
+//    @Rule
+//    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     private MockMvc mockMvc;
 
@@ -77,11 +83,11 @@ public class CategoryControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    public void setUp(RestDocumentationContextProvider restDocumentation) {
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
-                .apply(documentationConfiguration(this.restDocumentation))
+                .apply(documentationConfiguration(restDocumentation))
                 .build();
     }
 
