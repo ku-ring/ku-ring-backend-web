@@ -5,12 +5,11 @@ import com.kustacks.kuring.kuapi.api.APIClient;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
 import org.jsoup.nodes.Document;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface StaffAPIClient extends APIClient {
 
-    int SCRAP_TIMEOUT = 90000;
+    int SCRAP_TIMEOUT = 30000;
 
     boolean support(DeptInfo deptInfo);
 

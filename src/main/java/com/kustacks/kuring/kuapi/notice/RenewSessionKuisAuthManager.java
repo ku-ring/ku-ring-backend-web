@@ -150,6 +150,7 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
                         }
                     }
                 } else {
+                    log.error(body);
                     throw new InternalLogicException(ErrorCode.KU_LOGIN_NO_COOKIE_HEADER);
                 }
             }

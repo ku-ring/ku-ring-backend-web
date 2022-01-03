@@ -86,7 +86,7 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
         try {
             noticeResponse = restTemplate.exchange(noticeUrl, HttpMethod.POST, noticeRequestEntity, KuisNoticeResponseDTO.class);
         } catch(RestClientException e) {
-//            log.warn("세션 갱신이 필요합니다.");
+            log.warn("세션 갱신이 필요합니다.");
             kuisAuthManager.forceRenewing();
             throw new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE, e);
         }
