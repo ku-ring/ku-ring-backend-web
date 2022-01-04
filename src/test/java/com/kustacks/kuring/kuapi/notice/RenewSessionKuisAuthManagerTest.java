@@ -1,47 +1,65 @@
 package com.kustacks.kuring.kuapi.notice;
 
+import com.kustacks.kuring.config.JsonConfig;
+import com.kustacks.kuring.config.RestConfig;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.notice.dto.request.KuisLoginRequestBody;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.http.HttpHeaders;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@SpringJUnitConfig({RenewSessionKuisAuthManager.class, KuisLoginRequestBody.class})
-@TestPropertySource("classpath:constants.properties")
+@SpringJUnitConfig({
+    RenewSessionKuisAuthManager.class, KuisLoginRequestBody.class,
+    RestConfig.class, JsonConfig.class
+})
+@TestPropertySource(locations = "classpath:test-constants.properties")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class RenewSessionKuisAuthManagerTest {
 
     @Value("${auth.login-url}")
     private String loginUrl;
 
-    @Value("${auth.session}")
-    private String TEST_COOKIE;
+    @Value("${auth.api-skeleton-producer-url}")
+    private String apiSkeletonProducerUrl;
 
-    @SpyBean
+    @Value("${auth.session}")
+    private String testCookie;
+
     RestTemplate restTemplate;
 
     private final KuisAuthManager renewSessionKuisAuthManager;
+    private final String testApiSkeleton;
+    private final String successResponseBody = "{\"META\": \"success\"}";
+    private final String failResponseBody = "{\"ERRCODE\": \"허용되지 않은 접근입니다.\"}";
     private MockRestServiceServer server;
 
-    public RenewSessionKuisAuthManagerTest(KuisAuthManager renewSessionKuisAuthManager, RestTemplate restTemplate) {
+    public RenewSessionKuisAuthManagerTest(
+            KuisAuthManager renewSessionKuisAuthManager,
+            RestTemplate restTemplate,
+            @Value("${auth.api-skeleton-file-path}") String apiSkeletonFilePath) throws IOException {
 
         this.renewSessionKuisAuthManager = renewSessionKuisAuthManager;
         this.restTemplate = restTemplate;
+
+        testApiSkeleton = readApiSkeleton(apiSkeletonFilePath);
     }
 
     @AfterEach
@@ -52,101 +70,64 @@ public class RenewSessionKuisAuthManagerTest {
     @BeforeEach
     void setUpBefore() {
         server = MockRestServiceServer.createServer(restTemplate);
+        renewSessionKuisAuthManager.forceRenewing();
     }
 
-    @Nested
-    @DisplayName("세션 갱신 - 일반 시나리오")
-    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    class NormalSenario {
+    @Test
+    @Order(1)
+    @DisplayName("성공")
+    void success() {
 
-        @Test
-        @Order(1)
-        @DisplayName("성공")
-        void success() {
-    
-            // given
-            String successResponseBody = "success";
-            HttpHeaders responseHttpHeaders = new HttpHeaders();
-            List<String> cookies = new LinkedList<>();
-            cookies.add(TEST_COOKIE);
-            responseHttpHeaders.put("Set-Cookie", cookies);
+        // given
+        server.expect(requestTo(apiSkeletonProducerUrl)).andRespond(withSuccess().body(testApiSkeleton));
+        server.expect(requestTo(loginUrl)).andExpect(method(HttpMethod.POST)).andRespond(withSuccess().body(successResponseBody));
 
-            server.expect(requestTo(loginUrl)).andRespond(withSuccess().headers(responseHttpHeaders).body(successResponseBody));
-    
-            // when
-            String sessionId = renewSessionKuisAuthManager.getSessionId();
-    
-            // then
-            assertEquals(TEST_COOKIE, sessionId);
-        }
+        // when
+        String sessionId = renewSessionKuisAuthManager.getSessionId();
 
-        @Test
-        @Order(2)
-        @DisplayName("실패 - 응답 body가 없음")
-        void failByNoBody() {
+        // then
+        assertEquals(testCookie, sessionId);
+    }
 
-            // given
-            server.expect(requestTo(loginUrl)).andRespond(withSuccess());
+    @Test
+    @Order(2)
+    @DisplayName("실패 - 응답 body가 없음")
+    void failByNoBody() {
 
-            // when
-            InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
+        // given
+        server.expect(requestTo(apiSkeletonProducerUrl)).andRespond(withSuccess().body(testApiSkeleton));
+        server.expect(requestTo(loginUrl)).andExpect(method(HttpMethod.POST)).andRespond(withSuccess());
 
-            // then
-            assertEquals(ErrorCode.KU_LOGIN_NO_RESPONSE_BODY, e.getErrorCode());
-        }
+        // when
+        InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
 
-        @Test
-        @Order(3)
-        @DisplayName("실패 - 응답 body에 success 문자열이 없음 (잘못된 아이디 혹은 비밀번호)")
-        void failByNoSuccessStringInBody() {
+        // then
+        assertEquals(ErrorCode.KU_LOGIN_NO_RESPONSE_BODY, e.getErrorCode());
+    }
 
-            // given
-            String badResponseBody = "fail";
-            server.expect(requestTo(loginUrl)).andRespond(withSuccess().body(badResponseBody));
+    @Test
+    @Order(3)
+    @DisplayName("실패 - 응답 body에 success 문자열이 없음 (kuis 로그인 방식이 바뀜 or api skeleton 최신화 안됨)")
+    void failByNoSuccessStringInBody() {
 
-            // when
-            InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
+        // given
+        server.expect(requestTo(apiSkeletonProducerUrl)).andRespond(withSuccess().body(testApiSkeleton));
+        server.expect(requestTo(loginUrl)).andExpect(method(HttpMethod.POST)).andRespond(withSuccess().body(failResponseBody));
 
-            // then
-            assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
-        }
+        // when
+        InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
 
-//        @Test
-//        @Order(4)
-//        @DisplayName("실패 - Set-Cookie 헤더가 없음")
-//        void failByNoSetCookieHeader() {
-//
-//            // given
-//            String badResponseBody = "success";
-//            server.expect(requestTo(loginUrl)).andRespond(withSuccess().body(badResponseBody));
-//
-//            // when
-//            InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
-//
-//            // then
-//            assertEquals(ErrorCode.KU_LOGIN_NO_COOKIE_HEADER, e.getErrorCode());
-//        }
-//
-//        @Test
-//        @Order(5)
-//        @DisplayName("실패 - Set-Cookie 헤더에 JSESSIONID 쿠키가 없음")
-//        void failByNoJsessionId() {
-//
-//            // given
-//            String successResponseBody = "success";
-//            String TEST_COOKIE = "WIRED_COOKIE=FAIL_TEST";
-//            HttpHeaders responseHttpHeaders = new HttpHeaders();
-//            List<String> cookies = new LinkedList<>();
-//            cookies.add(TEST_COOKIE);
-//            responseHttpHeaders.put("Set-Cookie", cookies);
-//
-//            server.expect(requestTo(loginUrl)).andRespond(withSuccess().headers(responseHttpHeaders).body(successResponseBody));
-//
-//            // when
-//            InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
-//
-//            // then
-//            assertEquals(ErrorCode.KU_LOGIN_NO_JSESSION, e.getErrorCode());
-//        }
+        // then
+        assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
+    }
+
+    private String readApiSkeleton(String path) throws IOException {
+        System.out.println(path);
+        ClassPathResource resource = new ClassPathResource(path);
+        return resourceToString(resource.getInputStream());
+    }
+
+    private String resourceToString(InputStream inputStream) throws IOException {
+        return FileCopyUtils.copyToString(new InputStreamReader(inputStream));
     }
 }

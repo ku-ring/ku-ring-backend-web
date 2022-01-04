@@ -40,7 +40,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
         IndustryUnivKuisNoticeRequestBody.class,
         NormalKuisNoticeRequestBody.class,
         JsonConfig.class})
-@TestPropertySource("classpath:constants.properties")
+@TestPropertySource("classpath:test-constants.properties")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class KuisNoticeAPIClientTest {
 

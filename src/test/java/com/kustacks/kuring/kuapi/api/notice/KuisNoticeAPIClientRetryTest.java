@@ -32,7 +32,7 @@ import static org.mockito.BDDMockito.given;
         IndustryUnivKuisNoticeRequestBody.class,
         NormalKuisNoticeRequestBody.class,
         JsonConfig.class, RetryConfig.class})
-@TestPropertySource("classpath:constants.properties")
+@TestPropertySource("classpath:test-constants.properties")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class KuisNoticeAPIClientRetryTest {
 

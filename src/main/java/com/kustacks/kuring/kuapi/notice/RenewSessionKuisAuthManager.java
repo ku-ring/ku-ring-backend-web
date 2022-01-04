@@ -1,5 +1,7 @@
 package com.kustacks.kuring.kuapi.notice;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.notice.dto.request.KuisLoginRequestBody;
@@ -13,9 +15,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -30,78 +33,96 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
     @Value("${auth.referer}")
     private String loginReferer;
 
-    private final KuisLoginRequestBody kuisLoginRequestBody;
-    private final RestTemplate restTemplate;
-
-    private final int LOGIN_RETRY_PERIOD = 1000 * 10;
-//    private final int SESSION_DURATION = 5400; // 1시간 30분
-    private final int SESSION_DURATION = 30;
-
-    private boolean needToBeRenew; // 세션 유효기간이 남아있어야 하지만, 알 수 없는 오류로 인해 세션이 유효하지 않은 경우 true로 설정됨
+    @Value("${auth.api-skeleton-producer-url}")
+    private String apiSkeletonProducerUrl;
 
     @Value("${auth.session}")
     private String sessionId;
 
+    private final KuisLoginRequestBody kuisLoginRequestBody;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
+
+    private final int LOGIN_RETRY_PERIOD = 1000 * 10;
+
+    private String loginRequestBody;
+    private boolean sessionNeedToBeRenew; // 세션 유효기간이 남아있어야 하지만, 알 수 없는 오류로 인해 세션이 유효하지 않은 경우 true로 설정됨
+    private boolean apiSkeletonNeedToBeRenew;
+
     public RenewSessionKuisAuthManager(
-            @Value("${auth.login-url}") String loginUrl,
-            @Value("${auth.user-agent}") String loginUserAgent,
-            @Value("${auth.referer}") String loginReferer,
             KuisLoginRequestBody kuisLoginRequestBody,
-            RestTemplate restTemplate) {
+            RestTemplate restTemplate,
+            ObjectMapper objectMapper) {
 
-        this.loginUrl = loginUrl;
-        this.loginUserAgent = loginUserAgent;
-        this.loginReferer = loginReferer;
-
+        this.objectMapper = objectMapper;
         this.restTemplate = restTemplate;
         this.kuisLoginRequestBody = kuisLoginRequestBody;
-        this.needToBeRenew = true;
+        this.sessionNeedToBeRenew = true;
+        this.apiSkeletonNeedToBeRenew = true;
+        this.loginRequestBody = null;
     }
 
     @Override
     @Retryable(value = {InternalLogicException.class}, backoff = @Backoff(delay = LOGIN_RETRY_PERIOD))
     public String getSessionId() {
 
-        if(!needToBeRenew) {
+        if(!sessionNeedToBeRenew && !apiSkeletonNeedToBeRenew) {
             log.info("세션아이디 갱신 안하고 바로 리턴");
             return sessionId;
         }
 
         log.info("세션아이디 갱신시작");
 
+        // request body api skeleton 갱신
+        StringBuilder loginRequestBodyStringBuilder = null;
+        if(apiSkeletonNeedToBeRenew) {
+            try {
+                String apiSkeletonStr = restTemplate.getForObject(apiSkeletonProducerUrl, String.class);
+                loginRequestBodyStringBuilder = renewApiSkeleton(apiSkeletonStr);
+                apiSkeletonNeedToBeRenew = false;
+            } catch(RestClientException e) {
+                throw new InternalLogicException(ErrorCode.KU_LOGIN_CANNOT_GET_API_SKELETON, e);
+            } catch(JsonProcessingException e) {
+                throw new InternalLogicException(ErrorCode.KU_LOGIN_CANNOT_PARSE_API_SKELETON, e);
+            }
+        }
+
         // 로그인 헤더
         HttpHeaders loginRequestHeader = createLoginRequestHeader();
 
         // 로그인 본문
-        String loginRequestBody = KuisRequestBody.toUrlEncodedString(kuisLoginRequestBody);
+        // 로그인 요청 바디가 갱신되었을 경우에만 요청 바디를 새로 만든다.
+        if(loginRequestBodyStringBuilder != null) {
+            loginRequestBody = loginRequestBodyStringBuilder.append(KuisRequestBody.toUrlEncodedString(kuisLoginRequestBody)).toString();
+        }
 
         // 로그인 요청
         HttpEntity<String> loginRequestEntity = new HttpEntity<>(loginRequestBody, loginRequestHeader);
-
-        ResponseEntity<String> loginResponse; // 응답 제대로 받지 못하면 아래 로직에서 처리하므로, 세션 업데이트에서 null일 확률은 없음
-
+        ResponseEntity<String> loginResponse;
         try {
             loginResponse = restTemplate.exchange(loginUrl, HttpMethod.POST, loginRequestEntity, String.class);
         } catch(RestClientException e) {
-            needToBeRenew = true;
+            sessionNeedToBeRenew = true; // loginUrl이 틀리지 않는 이상 발생할 일이 없어보이는 오류
             throw new InternalLogicException(ErrorCode.KU_LOGIN_CANNOT_LOGIN, e);
         }
 
         // 로그인 요청에 대한 응답 메세지의 body 확인
         boolean isLoginSuccess = checkLoginResponseBody(loginResponse);
         if(!isLoginSuccess) {
-            needToBeRenew = true;
+            sessionNeedToBeRenew = true;
+            apiSkeletonNeedToBeRenew = true;
             throw new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE);
+        } else {
+            sessionNeedToBeRenew = false;
         }
-
-        needToBeRenew = false;
 
         log.info("세션아이디 갱신완료");
         return this.sessionId;
     }
 
     public void forceRenewing() {
-        this.needToBeRenew = true;
+        this.sessionNeedToBeRenew = true;
+        this.apiSkeletonNeedToBeRenew = true;
     }
 
     private boolean checkLoginResponseBody(ResponseEntity<String> loginResponse) {
@@ -110,8 +131,40 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
         if(body == null) {
             throw new InternalLogicException(ErrorCode.KU_LOGIN_NO_RESPONSE_BODY);
         } else {
+            log.info(body);
             return body.contains("success");
         }
+    }
+
+    private HttpHeaders createLoginRequestHeader() {
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Referer", loginReferer);
+        httpHeaders.add("Accept", "*/*");
+        httpHeaders.add("Accept-Encoding", "gzip, deflate, br");
+        httpHeaders.add("User-Agent", loginUserAgent);
+        httpHeaders.add("Cookie", sessionId);
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        return httpHeaders;
+    }
+
+    private StringBuilder renewApiSkeleton(String responseBody) throws JsonProcessingException {
+
+        Map<String, List<Map<String, String>>> apiSkeletonMap = objectMapper.readValue(responseBody, Map.class);
+        List<Map<String, String>> fields = apiSkeletonMap.get("fields");
+        StringBuilder sb = new StringBuilder();
+        for (Map<String, String> keyValue : fields) {
+            String encodedKey = URLEncoder.encode(keyValue.get("key"), StandardCharsets.UTF_8);
+            String encodedValue = URLEncoder.encode(keyValue.get("value"), StandardCharsets.UTF_8);
+
+            encodedKey = encodedKey.replaceAll("\\+", "%20");
+            encodedValue = encodedValue.replaceAll("\\+", "%20");
+
+            sb.append(encodedKey).append("=").append(encodedValue).append("&");
+        }
+
+        return sb;
     }
 
     private String parseCookieHeader(ResponseEntity<String> indexResponse) {
@@ -151,17 +204,5 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
         }
 
         return sessionId;
-    }
-
-    private HttpHeaders createLoginRequestHeader() {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Referer", loginReferer);
-        httpHeaders.add("Accept", "*/*");
-        httpHeaders.add("Accept-Encoding", "gzip, deflate, br");
-        httpHeaders.add("User-Agent", loginUserAgent);
-        httpHeaders.add("Cookie", sessionId);
-        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        return httpHeaders;
     }
 }

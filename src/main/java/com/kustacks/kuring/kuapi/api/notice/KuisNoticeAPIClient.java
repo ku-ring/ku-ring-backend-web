@@ -93,7 +93,6 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
 
         KuisNoticeResponseDTO body = noticeResponse.getBody();
         if(body == null) {
-//                log.error("{} 공지 요청에 대한 응답의 body가 없습니다.", noticeCategory.getName());
             kuisAuthManager.forceRenewing();
             throw new InternalLogicException(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON);
         }
@@ -103,7 +102,6 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
             kuisAuthManager.forceRenewing();
             throw new InternalLogicException(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON);
         } else {
-            // common format으로 변환
             return convertToCommonFormatDTO(kuisNoticeDTOList);
         }
     }
