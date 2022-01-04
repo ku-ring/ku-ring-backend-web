@@ -60,7 +60,7 @@ public class ProxyJsoupClient implements JsoupClient {
                 log.info("{} 으로 성공!", proxyInfo.ip);
                 break;
             } catch(IOException e) {
-                log.info("", e);
+                log.error("Jsoup 오류 발생. {}", e.getMessage());
                 jsoupException = e;
                 ++idx;
             }

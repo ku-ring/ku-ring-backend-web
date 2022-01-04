@@ -48,7 +48,7 @@ import static org.mockserver.model.HttpResponse.response;
         NormalJsoupClient.class,
         KoreanDept.class, LivingDesignDept.class, CommunicationDesignDept.class, RealEstateDept.class,
         ObjectMapper.class})
-@TestPropertySource("classpath:constants.properties")
+@TestPropertySource("classpath:test-constants.properties")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class StaffScraperTest {
 

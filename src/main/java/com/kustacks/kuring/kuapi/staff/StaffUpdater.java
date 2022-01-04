@@ -46,7 +46,6 @@ public class StaffUpdater implements Updater {
     }
 
     @Override
-    @Retryable(value = {InternalLogicException.class}, backoff = @Backoff(delay = STAFF_UPDATE_RETRY_PERIOD))
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
     public void update() {
 
@@ -63,7 +62,6 @@ public class StaffUpdater implements Updater {
 
         Map<String, StaffDTO> kuStaffDTOMap = new HashMap<>();
         List<String> successDeptNames = new LinkedList<>();
-        InternalLogicException scrapException = null;
         for (DeptInfo deptInfo : deptInfos) {
             if(deptInfo instanceof RealEstateDept) {
                 boolean isSuccess = deptScrapingSuccessList.contains(deptInfo.getDeptName());
@@ -75,18 +73,12 @@ public class StaffUpdater implements Updater {
                     }
                 } catch(InternalLogicException e) {
                     log.error("[ScraperException] 스크래핑 문제 발생. 문제가 발생한 학과 = {}", deptInfo.getDeptName());
-                    scrapException = new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);
                 }
             }
         }
 
         compareAndUpdateDB(kuStaffDTOMap, successDeptNames);
-
-        if(scrapException != null) {
-            throw scrapException;
-        } else {
-            deptScrapingSuccessList.clear();
-        }
+        deptScrapingSuccessList.clear();
 
         log.info("========== 교직원 업데이트 종료 ==========");
     }
