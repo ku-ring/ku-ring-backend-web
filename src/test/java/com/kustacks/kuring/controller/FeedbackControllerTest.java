@@ -6,18 +6,24 @@ import com.kustacks.kuring.controller.dto.SaveFeedbackRequestDTO;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.service.FeedbackServiceImpl;
 import com.kustacks.kuring.service.FirebaseService;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+//import org.junit.Before;
+//import org.junit.Rule;
+//import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+//import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -34,12 +40,12 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
+@ExtendWith({RestDocumentationExtension.class})
 @WebMvcTest(FeedbackController.class)
 public class FeedbackControllerTest {
 
-    @Rule
-    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
+//    @Rule
+//    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -58,11 +64,11 @@ public class FeedbackControllerTest {
     @Mock
     private FirebaseMessagingException firebaseMessagingException;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    public void setUp(RestDocumentationContextProvider restDocumentation) {
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
-                .apply(documentationConfiguration(this.restDocumentation))
+                .apply(documentationConfiguration(restDocumentation))
                 .build();
     }
     

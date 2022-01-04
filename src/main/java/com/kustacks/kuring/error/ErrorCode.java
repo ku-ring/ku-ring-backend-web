@@ -44,6 +44,8 @@ public enum ErrorCode {
     KU_LOGIN_NO_COOKIE_HEADER("kuis 로그인 요청에 대한 응답에 Set-Cookie 헤더가 없습니다."),
     KU_LOGIN_EMPTY_COOKIE("kuis 로그인 요청에 대한 응답 중 Set-Cookie 헤더가 비어 있습니다."),
     KU_LOGIN_NO_JSESSION("kuis 로그인 요청에 대한 응답에 Set-Cookie 헤더값이 있지만, JSESSIONID가 없습니다."),
+    KU_LOGIN_CANNOT_GET_API_SKELETON("ku-boost에서 제공하는 api skeleton을 가져올 수 없습니다."),
+    KU_LOGIN_CANNOT_PARSE_API_SKELETON("ku-boost에서 제공하는 api skeleton을 파싱에서 오류가 발생했습니다."),
 
     KU_NOTICE_CANNOT_PARSE_JSON("kuis 공지를 POJO로 변환할 수 없습니다."),
 
@@ -52,9 +54,10 @@ public enum ErrorCode {
 
     CAT_NOT_EXIST_CATEGORY("서버에서 지원하지 않는 카테고리입니다."),
 
-    STAFF_SCRAPER_TAG_NOT_EXIST("Jsoup - 찾고자 하는 태그가 존재하지 않습니다."),
+//    STAFF_SCRAPER_TAG_NOT_EXIST("Jsoup - 찾고자 하는 태그가 존재하지 않습니다."),
     STAFF_SCRAPER_EXCEED_RETRY_LIMIT("교직원 업데이트 재시도 횟수를 초과했습니다."),
     STAFF_SCRAPER_CANNOT_SCRAP("건국대학교 홈페이지가 불안정합니다. 교직원 정보를 가져올 수 없습니다."),
+    STAFF_SCRAPER_CANNOT_PARSE("교직원 페이지 HTML 파싱에 실패했습니다."),
 
     FB_FAIL_SUBSCRIBE("카테고리 구독에 실패했습니다."),
     FB_FAIL_UNSUBSCRIBE("카테고리 구독 해제에 실패했습니다."),
