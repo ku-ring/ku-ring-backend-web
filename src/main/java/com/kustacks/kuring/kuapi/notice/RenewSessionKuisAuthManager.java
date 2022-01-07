@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -63,7 +64,7 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
     }
 
     @Override
-    @Retryable(value = {InternalLogicException.class}, backoff = @Backoff(delay = LOGIN_RETRY_PERIOD))
+//    @Retryable(value = {InternalLogicException.class}, backoff = @Backoff(delay = LOGIN_RETRY_PERIOD))
     public String getSessionId() {
 
         if(!sessionNeedToBeRenew && !apiSkeletonNeedToBeRenew) {
@@ -122,7 +123,7 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
 
     public void forceRenewing() {
         this.sessionNeedToBeRenew = true;
-        this.apiSkeletonNeedToBeRenew = true;
+//        this.apiSkeletonNeedToBeRenew = true;
     }
 
     private boolean checkLoginResponseBody(ResponseEntity<String> loginResponse) {

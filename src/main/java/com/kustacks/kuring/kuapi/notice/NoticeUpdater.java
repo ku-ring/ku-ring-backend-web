@@ -82,6 +82,7 @@ public class NoticeUpdater implements Updater {
             } catch (InternalLogicException e) {
                 // TODO: 공지 수신 제대로 못했을 때 대책 필요
                 Sentry.captureException(e);
+                return;
             }
         }
 

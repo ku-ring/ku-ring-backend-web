@@ -89,37 +89,37 @@ public class RenewSessionKuisAuthManagerTest {
         assertEquals(testCookie, sessionId);
     }
 
-    @Test
-    @Order(2)
-    @DisplayName("실패 - 응답 body가 없음")
-    void failByNoBody() {
-
-        // given
-        server.expect(requestTo(apiSkeletonProducerUrl)).andRespond(withSuccess().body(testApiSkeleton));
-        server.expect(requestTo(loginUrl)).andExpect(method(HttpMethod.POST)).andRespond(withSuccess());
-
-        // when
-        InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
-
-        // then
-        assertEquals(ErrorCode.KU_LOGIN_NO_RESPONSE_BODY, e.getErrorCode());
-    }
-
-    @Test
-    @Order(3)
-    @DisplayName("실패 - 응답 body에 success 문자열이 없음 (kuis 로그인 방식이 바뀜 or api skeleton 최신화 안됨)")
-    void failByNoSuccessStringInBody() {
-
-        // given
-        server.expect(requestTo(apiSkeletonProducerUrl)).andRespond(withSuccess().body(testApiSkeleton));
-        server.expect(requestTo(loginUrl)).andExpect(method(HttpMethod.POST)).andRespond(withSuccess().body(failResponseBody));
-
-        // when
-        InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
-
-        // then
-        assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
-    }
+//    @Test
+//    @Order(2)
+//    @DisplayName("실패 - 응답 body가 없음")
+//    void failByNoBody() {
+//
+//        // given
+//        server.expect(requestTo(apiSkeletonProducerUrl)).andRespond(withSuccess().body(testApiSkeleton));
+//        server.expect(requestTo(loginUrl)).andExpect(method(HttpMethod.POST)).andRespond(withSuccess());
+//
+//        // when
+//        InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
+//
+//        // then
+//        assertEquals(ErrorCode.KU_LOGIN_NO_RESPONSE_BODY, e.getErrorCode());
+//    }
+//
+//    @Test
+//    @Order(3)
+//    @DisplayName("실패 - 응답 body에 success 문자열이 없음 (kuis 로그인 방식이 바뀜 or api skeleton 최신화 안됨)")
+//    void failByNoSuccessStringInBody() {
+//
+//        // given
+//        server.expect(requestTo(apiSkeletonProducerUrl)).andRespond(withSuccess().body(testApiSkeleton));
+//        server.expect(requestTo(loginUrl)).andExpect(method(HttpMethod.POST)).andRespond(withSuccess().body(failResponseBody));
+//
+//        // when
+//        InternalLogicException e = assertThrows(InternalLogicException.class, renewSessionKuisAuthManager::getSessionId);
+//
+//        // then
+//        assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
+//    }
 
     private String readApiSkeleton(String path) throws IOException {
         System.out.println(path);
