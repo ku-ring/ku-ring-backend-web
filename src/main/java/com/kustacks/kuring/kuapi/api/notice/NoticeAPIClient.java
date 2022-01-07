@@ -11,4 +11,5 @@ import java.util.List;
 public interface NoticeAPIClient extends APIClient {
 
     List<CommonNoticeFormatDTO> getNotices(CategoryName categoryName) throws InternalLogicException;
+    void blockLogin();
 }

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +39,8 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
     private final DTOConverter dtoConverter;
     private final KuisAuthManager kuisAuthManager;
     private final Map<CategoryName, KuisNoticeRequestBody> noticeRequestBodies;
+
+    private boolean canLogin;
 
     public KuisNoticeAPIClient(RenewSessionKuisAuthManager kuisAuthManager,
                                KuisNoticeDTOToCommonFormatDTOConverter dtoConverter,
@@ -65,11 +68,22 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
         noticeRequestBodies.put(CategoryName.STUDENT, studentKuisNoticeRequestBody);
         noticeRequestBodies.put(CategoryName.INDUSTRY_UNIV, industryUnivKuisNoticeRequestBody);
         noticeRequestBodies.put(CategoryName.NORMAL, normalKuisNoticeRequestBody);
+
+        this.canLogin = true;
+    }
+
+    @PostConstruct
+    private void observeKuisAuthManager() {
+        kuisAuthManager.observe(this);
     }
 
     @Override
     @Retryable(value = {RestClientException.class, InternalLogicException.class})
     public List<CommonNoticeFormatDTO> getNotices(CategoryName categoryName) throws InternalLogicException {
+
+        if(!canLogin) {
+            throw new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE);
+        }
 
         // sessionId 획득
         String sessionId = kuisAuthManager.getSessionId();
@@ -104,6 +118,11 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
         } else {
             return convertToCommonFormatDTO(kuisNoticeDTOList);
         }
+    }
+
+    @Override
+    public void blockLogin() {
+        this.canLogin = false;
     }
 
     private HttpHeaders createKuisNoticeRequestHeader(String sessionId) {
