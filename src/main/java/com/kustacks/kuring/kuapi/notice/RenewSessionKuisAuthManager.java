@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.kuapi.api.notice.NoticeAPIClient;
 import com.kustacks.kuring.kuapi.notice.dto.request.KuisLoginRequestBody;
 import com.kustacks.kuring.kuapi.notice.dto.request.KuisRequestBody;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +52,8 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
     private boolean sessionNeedToBeRenew; // 세션 유효기간이 남아있어야 하지만, 알 수 없는 오류로 인해 세션이 유효하지 않은 경우 true로 설정됨
     private boolean apiSkeletonNeedToBeRenew;
 
+    private final List<NoticeAPIClient> observers;
+
     public RenewSessionKuisAuthManager(
             KuisLoginRequestBody kuisLoginRequestBody,
             RestTemplate restTemplate,
@@ -61,6 +65,8 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
         this.sessionNeedToBeRenew = true;
         this.apiSkeletonNeedToBeRenew = true;
         this.loginRequestBody = null;
+
+        observers = new LinkedList<>();
     }
 
     @Override
@@ -112,6 +118,7 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
         if(!isLoginSuccess) {
             sessionNeedToBeRenew = true;
             apiSkeletonNeedToBeRenew = true;
+            alertLoginIsBlocked();
             throw new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE);
         } else {
             sessionNeedToBeRenew = false;
@@ -124,6 +131,11 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
     public void forceRenewing() {
         this.sessionNeedToBeRenew = true;
 //        this.apiSkeletonNeedToBeRenew = true;
+    }
+
+    @Override
+    public void observe(NoticeAPIClient noticeAPIClient) {
+        observers.add(noticeAPIClient);
     }
 
     private boolean checkLoginResponseBody(ResponseEntity<String> loginResponse) {
@@ -166,6 +178,12 @@ public class RenewSessionKuisAuthManager implements KuisAuthManager {
         }
 
         return sb;
+    }
+
+    private void alertLoginIsBlocked() {
+        for (NoticeAPIClient observer : observers) {
+            observer.blockLogin();
+        }
     }
 
     private String parseCookieHeader(ResponseEntity<String> indexResponse) {
