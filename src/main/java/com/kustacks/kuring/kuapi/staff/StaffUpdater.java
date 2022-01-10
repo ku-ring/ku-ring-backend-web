@@ -3,19 +3,15 @@ package com.kustacks.kuring.kuapi.staff;
 import com.kustacks.kuring.controller.dto.StaffDTO;
 import com.kustacks.kuring.domain.staff.Staff;
 import com.kustacks.kuring.domain.staff.StaffRepository;
-import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.Updater;
 import com.kustacks.kuring.kuapi.scrap.StaffScraper;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
-import com.kustacks.kuring.kuapi.staff.deptinfo.real_estate.RealEstateDept;
+import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -31,8 +27,6 @@ public class StaffUpdater implements Updater {
 
     private final int STAFF_UPDATE_RETRY_PERIOD = 1000 * 60; // 1분후에 실패한 크론잡 재시도
 
-    private final Set<String> deptScrapingSuccessList;
-
     public StaffUpdater(StaffRepository staffRepository,
                         StaffScraper staffScraper,
                         List<DeptInfo> deptInfos) {
@@ -41,8 +35,6 @@ public class StaffUpdater implements Updater {
 
         this.staffScraper = staffScraper;
         this.deptInfos = deptInfos;
-
-        deptScrapingSuccessList = new HashSet<>();
     }
 
     @Override
@@ -63,22 +55,16 @@ public class StaffUpdater implements Updater {
         Map<String, StaffDTO> kuStaffDTOMap = new HashMap<>();
         List<String> successDeptNames = new LinkedList<>();
         for (DeptInfo deptInfo : deptInfos) {
-            if(deptInfo instanceof RealEstateDept) {
-                boolean isSuccess = deptScrapingSuccessList.contains(deptInfo.getDeptName());
-                try {
-                    if(!isSuccess) {
-                        scrapDeptAndConvertToMap(kuStaffDTOMap, deptInfo);
-                        deptScrapingSuccessList.add(deptInfo.getDeptName());
-                        successDeptNames.add(deptInfo.getDeptName());
-                    }
-                } catch(InternalLogicException e) {
-                    log.error("[ScraperException] 스크래핑 문제 발생. 문제가 발생한 학과 = {}", deptInfo.getDeptName());
-                }
+            try {
+                scrapDeptAndConvertToMap(kuStaffDTOMap, deptInfo);
+                successDeptNames.add(deptInfo.getDeptName());
+            } catch(InternalLogicException e) {
+                log.error("[ScraperException] 스크래핑 문제 발생. 문제가 발생한 학과 = {}", deptInfo.getDeptName());
+                Sentry.captureException(e);
             }
         }
 
         compareAndUpdateDB(kuStaffDTOMap, successDeptNames);
-        deptScrapingSuccessList.clear();
 
         log.info("========== 교직원 업데이트 종료 ==========");
     }

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface StaffAPIClient extends APIClient {
 
-    int SCRAP_TIMEOUT = 30000;
+    int SCRAP_TIMEOUT = 10000;
 
     boolean support(DeptInfo deptInfo);
 

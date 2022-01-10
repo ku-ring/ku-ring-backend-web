@@ -67,10 +67,6 @@ public class LibraryNoticeAPIClient implements NoticeAPIClient {
         return convertToCommonFormatDTO(libraryNoticeDTOList);
     }
 
-    @Override
-    public void blockLogin() {
-    }
-
     private List<CommonNoticeFormatDTO> convertToCommonFormatDTO(List<LibraryNoticeDTO> libraryNoticeDTOList) {
 
         List<CommonNoticeFormatDTO> ret = new LinkedList<>();
