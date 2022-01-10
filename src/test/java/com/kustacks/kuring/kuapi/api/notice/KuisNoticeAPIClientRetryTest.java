@@ -5,7 +5,6 @@ import com.kustacks.kuring.config.RetryConfig;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
-import com.kustacks.kuring.kuapi.notice.RenewSessionKuisAuthManager;
 import com.kustacks.kuring.kuapi.notice.dto.request.*;
 import com.kustacks.kuring.util.converter.KuisNoticeDTOToCommonFormatDTOConverter;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +39,7 @@ public class KuisNoticeAPIClientRetryTest {
     private final RestTemplate restTemplate;
 
     @MockBean
-    private RenewSessionKuisAuthManager renewSessionKuisAuthManager;
+    private KuisAuthManager kuisAuthManager;
 
     private MockRestServiceServer server;
 
@@ -60,7 +59,7 @@ public class KuisNoticeAPIClientRetryTest {
     void failAfterRetry() {
 
         // given
-        given(renewSessionKuisAuthManager.getSessionId()).willThrow(new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE, new RestClientException("로그인 세션 획득 실패")));
+        given(kuisAuthManager.getSessionId()).willThrow(new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE, new RestClientException("로그인 세션 획득 실패")));
 
         // when, then
         InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.getNotices(CategoryName.BACHELOR));

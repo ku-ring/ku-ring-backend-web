@@ -29,8 +29,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class NoticeUpdater implements Updater {
 
-    private final NoticeAPIClient kuisNoticeAPIClient;
-    private final NoticeAPIClient libraryNoticeAPIClient;
+    private final Map<CategoryName, NoticeAPIClient> noticeAPIClientMap;
     private final DTOConverter dtoConverter;
     private final FirebaseService firebaseService;
     private final NoticeRepository noticeRepository;
@@ -41,17 +40,13 @@ public class NoticeUpdater implements Updater {
     public NoticeUpdater(FirebaseService firebaseService,
 
                          NoticeEntityToNoticeDTOConverter dtoConverter,
-
-                         KuisNoticeAPIClient kuisNoticeAPIClient,
-                         LibraryNoticeAPIClient libraryNoticeAPIClient,
+                         Map<CategoryName, NoticeAPIClient> noticeAPIClientMap,
 
                          NoticeRepository noticeRepository,
                          CategoryRepository categoryRepository) {
 
         this.dtoConverter = dtoConverter;
-
-        this.kuisNoticeAPIClient = kuisNoticeAPIClient;
-        this.libraryNoticeAPIClient = libraryNoticeAPIClient;
+        this.noticeAPIClientMap = noticeAPIClientMap;
 
         this.firebaseService = firebaseService;
 
@@ -73,17 +68,12 @@ public class NoticeUpdater implements Updater {
             List<CommonNoticeFormatDTO> commonNoticeFormatDTO;
 
             try {
-                if(categoryName.equals(CategoryName.LIBRARY)) {
-                    commonNoticeFormatDTO = libraryNoticeAPIClient.getNotices(categoryName);
-                } else {
-                    commonNoticeFormatDTO = kuisNoticeAPIClient.getNotices(categoryName);
-                }
+                commonNoticeFormatDTO = noticeAPIClientMap.get(categoryName).getNotices(categoryName);
                 apiNoticesMap.put(categoryName, commonNoticeFormatDTO);
             } catch (InternalLogicException e) {
-                // TODO: 공지 수신 제대로 못했을 때 대책 필요
-                Sentry.captureException(e);
+                log.info("{}", e.getErrorCode().getMessage());
                 if(ErrorCode.KU_LOGIN_BAD_RESPONSE.equals(e.getErrorCode())) {
-                    return;
+                    Sentry.captureException(e);
                 }
             }
         }

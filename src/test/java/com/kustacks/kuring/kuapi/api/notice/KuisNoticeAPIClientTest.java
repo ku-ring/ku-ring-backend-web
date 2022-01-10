@@ -4,7 +4,6 @@ import com.kustacks.kuring.config.JsonConfig;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
-import com.kustacks.kuring.kuapi.notice.RenewSessionKuisAuthManager;
 import com.kustacks.kuring.kuapi.notice.dto.request.*;
 import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;
 import com.kustacks.kuring.util.converter.KuisNoticeDTOToCommonFormatDTOConverter;
@@ -51,7 +50,7 @@ public class KuisNoticeAPIClientTest {
     private final RestTemplate restTemplate;
 
     @MockBean
-    private RenewSessionKuisAuthManager renewSessionKuisAuthManager;
+    private KuisAuthManager kuisAuthManager;
 
     private MockRestServiceServer server;
     private String testSession;
@@ -101,7 +100,7 @@ public class KuisNoticeAPIClientTest {
                 "{\"POSTED_DT\":\"" + notice2PostedDate + "\",\"SUBJECT\":\"" + notice2Subject + "\",\"ARTICLE_ID\":\"" + notice2ArticleId + "\"}" +
                 "]}";
 
-        given(renewSessionKuisAuthManager.getSessionId()).willReturn(testSession);
+        given(kuisAuthManager.getSessionId()).willReturn(testSession);
         server.expect(requestTo(noticeUrl)).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(expectedResponseBody));
 
         // when
@@ -121,7 +120,7 @@ public class KuisNoticeAPIClientTest {
     void failByBadResponse() {
 
         // given
-        given(renewSessionKuisAuthManager.getSessionId()).willReturn(testSession);
+        given(kuisAuthManager.getSessionId()).willReturn(testSession);
         server.expect(requestTo(noticeUrl)).andRespond(withUnauthorizedRequest());
 
         // when, then
@@ -134,7 +133,7 @@ public class KuisNoticeAPIClientTest {
     void failByNoResponseBody() {
 
         // given
-        given(renewSessionKuisAuthManager.getSessionId()).willReturn(testSession);
+        given(kuisAuthManager.getSessionId()).willReturn(testSession);
         server.expect(requestTo(noticeUrl)).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON));
 
         //when, then
@@ -148,7 +147,7 @@ public class KuisNoticeAPIClientTest {
 
         // given
         String badResponseBody = "{\"UNKNOWN\": []}";
-        given(renewSessionKuisAuthManager.getSessionId()).willReturn(testSession);
+        given(kuisAuthManager.getSessionId()).willReturn(testSession);
         server.expect(requestTo(noticeUrl)).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(badResponseBody));
 
         //when, then

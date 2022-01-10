@@ -3,8 +3,6 @@ package com.kustacks.kuring.kuapi.api.notice;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
-import com.kustacks.kuring.kuapi.notice.KuisAuthManager;
-import com.kustacks.kuring.kuapi.notice.RenewSessionKuisAuthManager;
 import com.kustacks.kuring.kuapi.notice.dto.request.*;
 import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;
 import com.kustacks.kuring.kuapi.notice.dto.response.KuisNoticeDTO;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,9 +37,7 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
     private final KuisAuthManager kuisAuthManager;
     private final Map<CategoryName, KuisNoticeRequestBody> noticeRequestBodies;
 
-    private boolean canLogin;
-
-    public KuisNoticeAPIClient(RenewSessionKuisAuthManager kuisAuthManager,
+    public KuisNoticeAPIClient(KuisAuthManager parsingKuisAuthManager,
                                KuisNoticeDTOToCommonFormatDTOConverter dtoConverter,
 
                                BachelorKuisNoticeRequestBody bachelorNoticeRequestBody,
@@ -56,7 +51,7 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
                                RestTemplate restTemplate) {
 
         this.dtoConverter = dtoConverter;
-        this.kuisAuthManager = kuisAuthManager;
+        this.kuisAuthManager = parsingKuisAuthManager;
 
         this.restTemplate = restTemplate;
 
@@ -68,22 +63,11 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
         noticeRequestBodies.put(CategoryName.STUDENT, studentKuisNoticeRequestBody);
         noticeRequestBodies.put(CategoryName.INDUSTRY_UNIV, industryUnivKuisNoticeRequestBody);
         noticeRequestBodies.put(CategoryName.NORMAL, normalKuisNoticeRequestBody);
-
-        this.canLogin = true;
-    }
-
-    @PostConstruct
-    private void observeKuisAuthManager() {
-        kuisAuthManager.observe(this);
     }
 
     @Override
-    @Retryable(value = {RestClientException.class, InternalLogicException.class})
+    @Retryable(value = {InternalLogicException.class})
     public List<CommonNoticeFormatDTO> getNotices(CategoryName categoryName) throws InternalLogicException {
-
-        if(!canLogin) {
-            throw new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE);
-        }
 
         // sessionId 획득
         String sessionId = kuisAuthManager.getSessionId();
@@ -118,11 +102,6 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
         } else {
             return convertToCommonFormatDTO(kuisNoticeDTOList);
         }
-    }
-
-    @Override
-    public void blockLogin() {
-        this.canLogin = false;
     }
 
     private HttpHeaders createKuisNoticeRequestHeader(String sessionId) {
