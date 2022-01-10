@@ -158,7 +158,7 @@ public class ParsingKuisAuthManager implements KuisAuthManager {
             key = encoder.encode(key);
             value = encoder.encode(value);
 
-            sb.append(key).append("1").append("=").append(value).append("&");
+            sb.append(key).append("=").append(value).append("&");
             log.info("key = {}, value = {}", matcher.group(1), matcher.group(2));
         }
 
