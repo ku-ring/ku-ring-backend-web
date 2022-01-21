@@ -21,8 +21,8 @@ public class RealEstateStaffAPIClient implements StaffAPIClient {
 
     private final JsoupClient jsoupClient;
 
-    public RealEstateStaffAPIClient(JsoupClient normalJsoupClient) {
-        this.jsoupClient = normalJsoupClient;
+    public RealEstateStaffAPIClient(JsoupClient proxyJsoupClient) {
+        this.jsoupClient = proxyJsoupClient;
     }
 
     @Override
