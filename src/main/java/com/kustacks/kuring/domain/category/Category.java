@@ -19,7 +19,7 @@ import java.util.List;
 public class Category {
 
     @Id
-    @Column(name = "name", length = 20, nullable = false)
+    @Column(name = "name", length = 45, nullable = false)
     private String name;
 
     // FetchMode.SELECT와 FetchType.LAZY로 설정해서

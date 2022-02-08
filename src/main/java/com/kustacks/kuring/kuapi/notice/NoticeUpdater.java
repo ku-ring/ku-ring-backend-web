@@ -11,14 +11,15 @@ import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.kuapi.Updater;
-import com.kustacks.kuring.kuapi.api.notice.KuisNoticeAPIClient;
-import com.kustacks.kuring.kuapi.api.notice.LibraryNoticeAPIClient;
 import com.kustacks.kuring.kuapi.api.notice.NoticeAPIClient;
+import com.kustacks.kuring.kuapi.deptinfo.DeptInfo;
 import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;
+import com.kustacks.kuring.kuapi.scrap.KuScraper;
 import com.kustacks.kuring.service.FirebaseService;
 import com.kustacks.kuring.util.converter.DTOConverter;
 import com.kustacks.kuring.util.converter.DateConverter;
 import com.kustacks.kuring.util.converter.NoticeEntityToNoticeDTOConverter;
+import com.kustacks.kuring.util.converter.YYYYMMDDConverter;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,9 +32,11 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class NoticeUpdater implements Updater {
 
-    private final Map<CategoryName, NoticeAPIClient> noticeAPIClientMap;
+    private final Map<CategoryName, NoticeAPIClient<CommonNoticeFormatDTO, CategoryName>> noticeAPIClientMap;
+    private final Map<CategoryName, DeptInfo> categoryNameDeptInfoMap;
+    private final KuScraper<CommonNoticeFormatDTO> scraper;
     private final DTOConverter dtoConverter;
-    private final DateConverter dateConverter;
+    private final DateConverter<String, String> dateConverter;
     private final FirebaseService firebaseService;
     private final NoticeRepository noticeRepository;
     private final CategoryRepository categoryRepository;
@@ -42,16 +45,20 @@ public class NoticeUpdater implements Updater {
 
     public NoticeUpdater(FirebaseService firebaseService,
 
+                         Map<CategoryName, NoticeAPIClient<CommonNoticeFormatDTO, CategoryName>> noticeAPIClientMap,
+                         Map<CategoryName, DeptInfo> categoryNameDeptInfoMap,
+                         KuScraper<CommonNoticeFormatDTO> noticeScraper,
                          DTOConverter noticeEntityToNoticeMessageDTOConverter,
-                         DateConverter ymdhmsToYmdConverter,
-                         Map<CategoryName, NoticeAPIClient> noticeAPIClientMap,
+                         YYYYMMDDConverter dateConverter,
 
                          NoticeRepository noticeRepository,
                          CategoryRepository categoryRepository) {
 
-        this.dtoConverter = noticeEntityToNoticeMessageDTOConverter;
-        this.dateConverter = ymdhmsToYmdConverter;
         this.noticeAPIClientMap = noticeAPIClientMap;
+        this.categoryNameDeptInfoMap = categoryNameDeptInfoMap;
+        this.scraper = noticeScraper;
+        this.dtoConverter = noticeEntityToNoticeMessageDTOConverter;
+        this.dateConverter = dateConverter;
 
         this.firebaseService = firebaseService;
 
@@ -66,19 +73,54 @@ public class NoticeUpdater implements Updater {
         log.info("========== 공지 업데이트 시작 ==========");
 
         /*
-            학사, 장학, 취창업, 국제, 학생, 산학, 일반, 도서관 공지 갱신
+            학사, 장학, 취창업, 국제, 학생, 산학, 일반, 도서관 카테고리
+            +
+            각 학과 공지 업데이트
          */
         Map<CategoryName, List<CommonNoticeFormatDTO>> apiNoticesMap = new HashMap<>(); // 수신한 공지 데이터를 저장할 변수
         for (CategoryName categoryName : CategoryName.values()) {
-            List<CommonNoticeFormatDTO> commonNoticeFormatDTO;
+            List<CommonNoticeFormatDTO> commonNoticeFormatDTOList;
 
             try {
-                commonNoticeFormatDTO = noticeAPIClientMap.get(categoryName).getNotices(categoryName);
-                apiNoticesMap.put(categoryName, commonNoticeFormatDTO);
+                if(CategoryName.BACHELOR.equals(categoryName) ||
+                        CategoryName.SCHOLARSHIP.equals(categoryName) ||
+                        CategoryName.EMPLOYMENT.equals(categoryName) ||
+                        CategoryName.NATIONAL.equals(categoryName) ||
+                        CategoryName.STUDENT.equals(categoryName) ||
+                        CategoryName.INDUSTRY_UNIV.equals(categoryName) ||
+                        CategoryName.NORMAL.equals(categoryName) ||
+                        CategoryName.LIBRARY.equals(categoryName)
+                ) {
+                    commonNoticeFormatDTOList = noticeAPIClientMap.get(categoryName).request(categoryName);
+                } else {
+                    commonNoticeFormatDTOList = scraper.scrap(categoryNameDeptInfoMap.get(categoryName));
+                }
+                apiNoticesMap.put(categoryName, commonNoticeFormatDTOList);
             } catch (InternalLogicException e) {
-                log.info("{}", e.getErrorCode().getMessage());
-                if(ErrorCode.KU_LOGIN_BAD_RESPONSE.equals(e.getErrorCode())) {
-                    Sentry.captureException(e);
+                log.info("{} 업데이트 오류", categoryName.getKorName());
+                log.info("", e);
+//                if(ErrorCode.KU_LOGIN_BAD_RESPONSE.equals(e.getErrorCode()) || ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE.equals()) {
+//                    Sentry.captureException(e);
+//                }
+            }
+        }
+
+        // 공지 postedDateFormat이 카테고리마다 다르다. 이를 yyMMdd로 통일해주는 작업
+        // 단, 도서관 카테고리는 이미 프로덕션에서 yyyy-MM-dd 형태를 사용중이므로 차후 변경한다.
+        for (CategoryName categoryName : apiNoticesMap.keySet()) {
+            if(!CategoryName.LIBRARY.equals(categoryName)) {
+                List<CommonNoticeFormatDTO> commonNoticeFormatDTOList = apiNoticesMap.get(categoryName);
+                for (CommonNoticeFormatDTO notice : commonNoticeFormatDTOList) {
+                    try {
+                        String converted = dateConverter.convert(notice.getPostedDate());
+                        notice.setPostedDate(converted);
+                    } catch(Exception e) {
+                        log.info("에러 발생 공지 내용");
+                        log.info("아이디 = {}", notice.getArticleId());
+                        log.info("게시일 = {}", notice.getPostedDate());
+                        log.info("제목 = {}", notice.getSubject());
+                        log.info("카테고리 = {}", categoryName.getKorName());
+                    }
                 }
             }
         }
@@ -128,7 +170,7 @@ public class NoticeUpdater implements Updater {
             String categoryFullName = categoryName.getName();
             Category noticeCategory = categoryMap.get(categoryFullName);
 
-            // categoryName에 대응하는, ku api로 받아온 공지 데이터
+            // categoryName에 대응하는, ku api 혹은 스크래핑으로 받아온 공지 데이터
             List<CommonNoticeFormatDTO> commonNoticeFormatDTOList = apiNoticesMap.get(categoryName);
 
             // categoryName에 대응하는, DB에 존재하는 공지 데이터
@@ -142,8 +184,9 @@ public class NoticeUpdater implements Updater {
             Iterator<CommonNoticeFormatDTO> noticeIterator = commonNoticeFormatDTOList.iterator();
             while(noticeIterator.hasNext()) {
                 CommonNoticeFormatDTO apiNotice = noticeIterator.next();
-                Notice notice = dbNoticeMap.get(apiNotice.getArticleId());
-                if(notice == null) {
+                Notice dbNotice = dbNoticeMap.get(apiNotice.getArticleId());
+                // TODO: postedDate가 잘못 들어가서 임의로 postedDate를 비교하는 코드를 넣음. 배포할 때 빼야됨.
+                if(dbNotice == null) {
                     newNotices.add(Notice.builder()
                             .articleId(apiNotice.getArticleId())
                             .postedDate(apiNotice.getPostedDate())
@@ -162,7 +205,7 @@ public class NoticeUpdater implements Updater {
             noticeRepository.deleteAll(removedNotices);
 
             // 업데이트로 인해 새로 생성된 공지 삽입
-            noticeRepository.saveAllAndFlush(newNotices);
+            noticeRepository.saveAll(newNotices);
 
             willBeNotiNotices.addAll(newNotices);
         }

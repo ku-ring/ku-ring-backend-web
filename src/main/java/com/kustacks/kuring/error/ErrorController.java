@@ -48,7 +48,7 @@ public class ErrorController {
     @ExceptionHandler(InternalLogicException.class)
     public void handleInternalLogicException(InternalLogicException e) {
         log.error("[InternalLogicException] {}", e.getErrorCode().getMessage(), e);
-        Sentry.captureException(e);
+//        Sentry.captureException(e);
     }
 
     @ExceptionHandler(APIException.class)

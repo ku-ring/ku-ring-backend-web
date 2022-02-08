@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Component
-public class LibraryNoticeAPIClient implements NoticeAPIClient {
+public class LibraryNoticeAPIClient implements NoticeAPIClient<CommonNoticeFormatDTO, CategoryName> {
 
     @Value("${library.request-url}")
     private String libraryUrl;
@@ -36,7 +36,7 @@ public class LibraryNoticeAPIClient implements NoticeAPIClient {
      */
 
     @Override
-    public List<CommonNoticeFormatDTO> getNotices(CategoryName categoryName) throws InternalLogicException {
+    public List<CommonNoticeFormatDTO> request(CategoryName categoryName) throws InternalLogicException {
 
         int offset = 0;
         int max = 20;

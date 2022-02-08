@@ -104,7 +104,7 @@ public class KuisNoticeAPIClientTest {
         server.expect(requestTo(noticeUrl)).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(expectedResponseBody));
 
         // when
-        List<CommonNoticeFormatDTO> notices = kuisNoticeAPIClient.getNotices(CategoryName.BACHELOR);
+        List<CommonNoticeFormatDTO> notices = kuisNoticeAPIClient.request(CategoryName.BACHELOR);
 
         // then
         for(int i=0; i<2 ;++i) {
@@ -124,7 +124,7 @@ public class KuisNoticeAPIClientTest {
         server.expect(requestTo(noticeUrl)).andRespond(withUnauthorizedRequest());
 
         // when, then
-        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.getNotices(CategoryName.BACHELOR));
+        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.request(CategoryName.BACHELOR));
         assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
     }
 
@@ -137,7 +137,7 @@ public class KuisNoticeAPIClientTest {
         server.expect(requestTo(noticeUrl)).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON));
 
         //when, then
-        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.getNotices(CategoryName.BACHELOR));
+        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.request(CategoryName.BACHELOR));
         assertEquals(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON, e.getErrorCode());
     }
 
@@ -151,7 +151,7 @@ public class KuisNoticeAPIClientTest {
         server.expect(requestTo(noticeUrl)).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(badResponseBody));
 
         //when, then
-        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.getNotices(CategoryName.BACHELOR));
+        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.request(CategoryName.BACHELOR));
         assertEquals(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON, e.getErrorCode());
     }
 }

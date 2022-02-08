@@ -1,9 +1,8 @@
 package com.kustacks.kuring.kuapi.notice.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.Objects;
 
 @Getter
 @NoArgsConstructor
@@ -18,4 +17,15 @@ public class CommonNoticeFormatDTO {
     private String updatedDate;
 
     private String subject;
+
+    public boolean isEquals(CommonNoticeFormatDTO c) {
+        return Objects.equals(this.articleId, c.articleId) &&
+                Objects.equals(this.postedDate, c.postedDate) &&
+                Objects.equals(this.updatedDate, c.updatedDate) &&
+                Objects.equals(this.subject, c.subject);
+    }
+
+    public void setPostedDate(String postedDate) {
+        this.postedDate = postedDate;
+    }
 }

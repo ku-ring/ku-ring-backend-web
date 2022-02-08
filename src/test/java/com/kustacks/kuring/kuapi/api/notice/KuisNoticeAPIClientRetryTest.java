@@ -6,6 +6,7 @@ import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.kuapi.notice.dto.request.*;
+import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;
 import com.kustacks.kuring.util.converter.KuisNoticeDTOToCommonFormatDTOConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +36,7 @@ import static org.mockito.BDDMockito.given;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class KuisNoticeAPIClientRetryTest {
 
-    private final NoticeAPIClient kuisNoticeAPIClient;
+    private final NoticeAPIClient<CommonNoticeFormatDTO, CategoryName> kuisNoticeAPIClient;
     private final RestTemplate restTemplate;
 
     @MockBean
@@ -43,7 +44,7 @@ public class KuisNoticeAPIClientRetryTest {
 
     private MockRestServiceServer server;
 
-    public KuisNoticeAPIClientRetryTest(NoticeAPIClient kuisNoticeAPIClient, RestTemplate restTemplate) {
+    public KuisNoticeAPIClientRetryTest(NoticeAPIClient<CommonNoticeFormatDTO, CategoryName> kuisNoticeAPIClient, RestTemplate restTemplate) {
 
         this.kuisNoticeAPIClient = kuisNoticeAPIClient;
         this.restTemplate = restTemplate;
@@ -62,7 +63,7 @@ public class KuisNoticeAPIClientRetryTest {
         given(kuisAuthManager.getSessionId()).willThrow(new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE, new RestClientException("로그인 세션 획득 실패")));
 
         // when, then
-        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.getNotices(CategoryName.BACHELOR));
+        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.request(CategoryName.BACHELOR));
         assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
     }
 }

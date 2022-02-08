@@ -24,7 +24,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class KuisNoticeAPIClient implements NoticeAPIClient {
+public class KuisNoticeAPIClient implements NoticeAPIClient<CommonNoticeFormatDTO, CategoryName> {
 
     @Value("${notice.referer}")
     private String noticeReferer;
@@ -67,7 +67,7 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
 
     @Override
     @Retryable(value = {InternalLogicException.class})
-    public List<CommonNoticeFormatDTO> getNotices(CategoryName categoryName) throws InternalLogicException {
+    public List<CommonNoticeFormatDTO> request(CategoryName categoryName) throws InternalLogicException {
 
         // sessionId 획득
         String sessionId = kuisAuthManager.getSessionId();

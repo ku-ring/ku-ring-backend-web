@@ -2,8 +2,8 @@ package com.kustacks.kuring.kuapi.api.staff;
 
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
-import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
-import com.kustacks.kuring.kuapi.staff.deptinfo.real_estate.RealEstateDept;
+import com.kustacks.kuring.kuapi.deptinfo.DeptInfo;
+import com.kustacks.kuring.kuapi.deptinfo.real_estate.RealEstateDept;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Component
-public class RealEstateStaffAPIClient implements StaffAPIClient {
+public class RealEstateStaffAPIClient implements StaffAPIClient<Document, DeptInfo> {
 
     @Value("${staff.real-estate-url}")
     private String baseUrl;
@@ -26,12 +26,7 @@ public class RealEstateStaffAPIClient implements StaffAPIClient {
     }
 
     @Override
-    public boolean support(DeptInfo deptInfo) {
-        return deptInfo instanceof RealEstateDept;
-    }
-
-    @Override
-    public List<Document> getHTML(DeptInfo deptInfo) throws InternalLogicException {
+    public List<Document> request(DeptInfo deptInfo) throws InternalLogicException {
 
         UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(baseUrl);
         String url = urlBuilder.toUriString();

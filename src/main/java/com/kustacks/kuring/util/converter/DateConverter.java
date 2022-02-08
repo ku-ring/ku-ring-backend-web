@@ -1,4 +1,7 @@
 package com.kustacks.kuring.util.converter;
 
-public interface DateConverter extends Converter<String, String> {
+import java.text.ParseException;
+
+public interface DateConverter<T, K> {
+    T convert(K k);
 }

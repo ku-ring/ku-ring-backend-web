@@ -2,9 +2,7 @@ package com.kustacks.kuring.kuapi.api.staff;
 
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
-import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
-import com.kustacks.kuring.kuapi.staff.deptinfo.art_design.CommunicationDesignDept;
-import com.kustacks.kuring.kuapi.staff.deptinfo.art_design.LivingDesignDept;
+import com.kustacks.kuring.kuapi.deptinfo.DeptInfo;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class KuStaffAPIClient implements StaffAPIClient {
+public class KuStaffAPIClient implements StaffAPIClient<Document, DeptInfo> {
 
     private final Map<DeptInfo, String> urlMap;
     private final JsoupClient jsoupClient;
@@ -37,12 +35,7 @@ public class KuStaffAPIClient implements StaffAPIClient {
     }
 
     @Override
-    public boolean support(DeptInfo deptInfo) {
-        return deptInfo instanceof LivingDesignDept || deptInfo instanceof CommunicationDesignDept;
-    }
-
-    @Override
-    public List<Document> getHTML(DeptInfo deptInfo) throws InternalLogicException {
+    public List<Document> request(DeptInfo deptInfo) throws InternalLogicException {
 
         UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(urlMap.get(deptInfo));
         String url = urlBuilder.toUriString();

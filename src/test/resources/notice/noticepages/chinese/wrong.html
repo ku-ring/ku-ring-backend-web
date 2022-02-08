@@ -1,0 +1,1552 @@
+
+<!-- saved from url=(0087)http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&p=0&p_rel=-1 -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script language="JavaScript">
+</script>
+
+
+
+
+<!--meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /-->
+<meta http-equiv="X-UA-Compatible" content="IE=8">
+<title>CMS</title>
+<link href="./page_files/board.css" rel="stylesheet" type="text/css">
+<script language="javascript" type="text/javascript" src="./page_files/validator.js.다운로드"></script>
+<script src="./page_files/AC_RunActiveContent.js.다운로드" language="javascript"></script>
+<script language="javascript">
+
+function printNow(){
+	rptWin = window.open("../../jsp/MessageBoard/ArticlePrint.jsp", "print",
+			"width=800,height=800,status=yes,scrolbar=auto,resizable=yes");
+	var interval = setInterval(function() {
+		if (rptWin.document && document.getElementById('content')) {
+			clearInterval(interval);
+			rptWin.document.getElementById('printContent').innerHTML = document.getElementById('content').innerHTML;
+			rptWin.print();
+		}
+	}, 200);
+}
+
+function stage_open(target) {
+	top_gnb.height= target;
+}
+
+function body_onLoad() {
+	var frameContent = document.getElementById('frameContent');
+}
+
+</script>
+</head>
+
+<body onload="body_onLoad()">
+<!--  Top Start -->
+<!--  Top End-->
+<table id="body" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tbody><tr> 
+
+			<!-- ##################################### Contents Start ########################################### -->
+
+
+
+		<td width="600px" align="left">
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script language="JavaScript" type="text/JavaScript" src="./page_files/util.js.다운로드"></script>
+
+<script language="JavaScript" type="text/JavaScript" src="./page_files/DateFormat.js.다운로드"></script>
+
+<script language="JavaScript" type="text/JavaScript" src="./page_files/DatePicker.js.다운로드"></script>
+
+<script language="JavaScript" type="text/JavaScript">
+
+
+
+  var df1 = new DateFormat( "yyyy년 M월 d일", "java" );
+
+  var df2 = new DateFormat( "yyyy-MM-dd", "java" );
+
+  
+
+	  function DatePicker_onDatePick(d, el) {
+
+	  	var str = df1.format(d);
+
+	  	el.value = df2.format(d);
+
+	  	return true;
+
+	  }
+
+
+
+		function searchList() {
+
+/*
+
+		with ( document.articleForm ) {
+
+			if ( s_from.value.search(/^\d{4}-\d{2}-\d{2}$/) < 0 && s_to.value.search(/^\d{4}-\d{2}-\d{2}$/) < 0
+
+					&& s_v.value.search( /\S/ ) < 0 ) {
+
+				alert( "검색 기간이나 검색어를 지정해주세요." );
+
+				return false;
+
+			}
+
+		}
+
+*/
+
+
+
+			return true;
+
+		}
+
+			
+
+	function confirmDelete() {
+
+	        var count = getCheckedElements( document.articleForm, 'article_id' ).length;
+
+	        
+
+	        if ( count<=0 ) {
+
+	                alert( "삭제할 항목을 선택해주세요." );
+
+	                return false;
+
+	        }
+
+
+
+	        return confirm( "선택 항목 " + count + "개를 삭제하시겠습니까?" );
+
+	}
+
+	//비밀글의 경우 비밀번호 확인
+	function pwdConfirm(e, strParam, articleId){
+		//비밀번호가 있는 경우에만 확인창을 띄운다. 
+		document.getElementById('txtPwd').value = "";
+		var eventLeft=  e.pageX ? e.pageX : Math.max(document.documentElement.scrollLeft, document.body.scrollLeft) + e.clientX;
+		var eventTop = e.pageY ? e.pageY : Math.max(document.documentElement.scrollTop, document.body.scrollTop) + e.clientY;
+		document.articleForm.strParam.value = strParam;
+		document.articleForm.articleId.value = articleId;
+
+		document.getElementById("pwdCom").style.display="inline";
+		document.getElementById("pwdCom").style.left = eventLeft;
+		document.getElementById("pwdCom").style.top =eventTop;
+		document.articleForm.txtPwd.focus();
+	}
+
+	function confirmPassword(){
+		var strPass = document.articleForm.txtPwd.value;
+		location.href = "ArticleRead.do?" + document.articleForm.strParam.value + "&ipip=" + strPass + "&id=" + document.articleForm.articleId.value;
+		
+        return false;
+	}
+
+	function cancelPassword(){
+		document.articleForm.txtPwd.value = "";
+		document.getElementById("pwdCom").style.display="none";
+	}
+
+	window.onload=function(){
+
+		dp = new DatePicker();
+
+		if ( OBJ$('btnSearch2') )
+
+			OBJ$('btnSearch2').onclick = searchList;
+
+		if ( OBJ$('btnDelete') )
+
+			OBJ$('btnDelete').onclick = confirmDelete;
+
+	}
+
+
+
+		function invertCheck( f, n, state ) {
+
+		    var o = f.elements;
+
+
+
+		    for (var i = 0; i < o.length; i++) {
+
+			if ( o[i].name.indexOf( n ) == 0 && ( o[i].type=='checkbox' || o[i].type=='radio' ) && !o[i].disabled ) {
+
+			    o[i].checked = typeof(state)=='undefined' ? !o[i].checked
+
+					: ( state ? true : false );
+
+			}
+
+		    }
+
+		}
+
+		
+
+		// 체크박스 전체선택/해제
+
+		function selectAll(trueOrFalse){
+
+			invertCheck( document.articleForm, "article_id", trueOrFalse);
+
+		}
+
+	
+
+	
+
+</script>
+
+
+
+<div id="content" style="width:600px">
+
+	<form onsubm8it="return false" name="articleForm" method="post" action="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do">
+
+	<input type="hidden" name="orderBy" value="null">
+
+	<input type="hidden" name="forum" value="5335">
+
+	<div class="t_box04"> 
+
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding:10px 5px 10px 5px;">
+
+			<colgroup>
+
+			<col width="">
+
+			<col width="">
+
+			</colgroup>
+
+			<tbody><tr> 
+
+				<td><img src="./page_files/txt_period.gif" alt="기간검색"> 
+
+					<input name="s_from" type="text" class="input" style="width:74px" size="10" value="">
+
+					<a href="javascript:dp.show(document.articleForm.s_from)"><img src="./page_files/btn_calendar.gif" alt="달력" border="0" align="absmiddle"></a> 
+
+					~ 
+
+					<input name="s_to" type="text" class="input" style="width:74px" value="">
+
+					<a href="javascript:dp.show(document.articleForm.s_to)"><img src="./page_files/btn_calendar.gif" alt="달력" border="0" align="absmiddle"></a> 
+
+				</td>
+
+				
+
+				<td align="right"> 
+
+					<select name="s_f" class="input">
+
+						<option value="subject">제목</option>
+
+						<option value="body">내용</option>
+
+						<option value="writer_name">작성자</option>
+
+					</select>
+					
+					
+
+					
+						<input name="s_v" type="text" class="input" style="width:150px" size="20" value="">
+					
+					
+					
+
+					<input name="btnSearch2" type="image" src="./page_files/btn_search.gif" align="absmiddle" alt="검색">
+
+				</td>
+
+			</tr>
+
+		</tbody></table>
+
+	</div>
+
+	<div class="tm12 clr"></div>
+
+	
+
+	<div class="tm12 clr"></div>
+	
+		
+
+					
+						<div class="txt_totalnum right">
+					
+					
+					
+
+	
+
+		<div id="left_500w" class="txt_totalnum">
+
+Total <span class="txt_bold">636</span> 
+
+		&nbsp;&nbsp; Page <span class="txt_bold txt_orange">1</span> / <span class="txt_bold">32</span>
+
+		</div>
+
+		<div id="right_226w"> 
+
+			 
+
+			
+
+			 
+
+			<img src="./page_files/board_blet_sort_down.gif" align="absmiddle"><span class="txt_size11" onclick="location.href = &#39;?forum=5335&amp;p_rel=-1&amp;sort=8&#39;" style="cursor: pointer;">조회수</span>
+
+			 
+
+			<img src="./page_files/board_blet_sort_down.gif" align="absmiddle"><span class="txt_size11" onclick="location.href = &#39;?forum=5335&amp;p_rel=-1&amp;sort=6&#39;" style="cursor: pointer;">등록순</span> 
+
+			
+
+		</div>
+
+	</div>
+
+	<div class="clr"></div>
+
+		
+
+	
+
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="board">
+
+		<colgroup>
+
+		<col width="50">
+
+			
+
+		<col width="">
+
+		
+
+		<col width="40"><!-- 첨부파일 -->
+
+		
+
+	
+
+		<col width="70">
+
+		<col width="60">
+
+		
+
+		<col width="50">
+
+		
+
+		</colgroup>
+
+		<thead>
+
+			<tr>
+
+				 
+
+				<th class="td_title" scope="row" onclick="location.href = &#39;?forum=5335&amp;p_rel=-1&amp;sort=0&#39;" style="cursor: pointer;">번호</th>
+
+				
+
+				<th class="td_title" onclick="location.href = &#39;?forum=5335&amp;p_rel=-1&amp;sort=2&#39;" style="cursor: pointer;">제목</th>
+
+				
+
+				<th class="td_title">첨부<br>파일</th><!-- 첨부파일 -->
+
+				
+
+			
+
+				<th class="td_title" onclick="location.href = &#39;?forum=5335&amp;p_rel=-1&amp;sort=4&#39;" style="cursor: pointer;">글쓴이</th>
+
+				<th class="td_title" onclick="location.href = &#39;?forum=5335&amp;p_rel=-1&amp;sort=6&#39;" style="cursor: pointer;">등록일</th>
+
+				
+
+				<th class="td_title" onclick="location.href = &#39;?forum=5335&amp;p_rel=-1&amp;sort=8&#39;" style="cursor: pointer;">조회수</th>
+
+				
+
+				
+
+			</tr>
+
+		</thead>
+
+		<tbody>
+
+				
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		636
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=6144a2a3">
+
+				
+
+					
+
+					
+
+					2022학년도 1학기 장학신청 안내(건국사랑, 건국희망)
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.12.17</td>
+
+				
+
+				<td class="center">58</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		635
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=6143d9bf">
+
+				
+
+					
+
+					
+
+					『2022년도 두산연강재단 장학생 선발 공고』
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.11.03</td>
+
+				
+
+				<td class="center">32</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		634
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=6143d683">
+
+				
+
+					
+
+					
+
+					교원자격증 발급신청 안내
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.11.02</td>
+
+				
+
+				<td class="center">41</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		633
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=6143bc3e">
+
+				
+
+					
+
+					
+
+					2021학년도 교원양성과정 성인지교육 안내
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.10.27</td>
+
+				
+
+				<td class="center">14</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		632
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=61438227">
+
+				
+
+					
+
+					
+
+					   2021학년도 2학기 3차 교직 적？인성  정기검...
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.10.13</td>
+
+				
+
+				<td class="center">10</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		631
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=61438226">
+
+				
+
+					
+
+					
+
+					2021학년도 2학기 2차 교직 응급처치 및 심폐소생술...
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.10.13</td>
+
+				
+
+				<td class="center">6</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		630
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=61438225">
+
+				
+
+					
+
+					
+
+					2021학년도 2학기 졸업요건 제출 안내
+					
+					</a>
+
+			  	
+
+			  		<img src="./page_files/blet_hit.gif" align="absmiddle">
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.10.13</td>
+
+				
+
+				<td class="center">121</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		629
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=6142d585">
+
+				
+
+					
+
+					
+
+					삼성 「기회균등 특별채용」 모집
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.09.07</td>
+
+				
+
+				<td class="center">42</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		628
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=6142d064">
+
+				
+
+					
+
+					
+
+					[NCS 직업기초능력 표준문항 개발을 위한 2차 온라인...
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.09.06</td>
+
+				
+
+				<td class="center">13</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		627
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=6142c406">
+
+				
+
+					
+
+					
+
+					한중언어와 문화교류 동영상 콘텐츠 공모전 수상작
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">CMS관리자</td> 
+
+				<td class="center">2021.09.03</td>
+
+				
+
+				<td class="center">28</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		626
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=6142b7a5">
+
+				
+
+					
+
+					
+
+					2021학년도 교직과정 추가선발 신청 안내 
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.09.01</td>
+
+				
+
+				<td class="center">24</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		625
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=6142b1a3">
+
+				
+
+					
+
+					
+
+					제 14회 전국 대학생 중국어 PRESENTATION ...
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.08.31</td>
+
+				
+
+				<td class="center">20</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		624
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=6142b1a1">
+
+				
+
+					
+
+					
+
+					SK Careers Fair(온라인 채용 설명회) 안내
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.08.31</td>
+
+				
+
+				<td class="center">10</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		623
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=61426a81">
+
+				
+
+					
+
+					
+
+					한국국제 교류재단 주최「2021 한중청년이야기회 행사 ...
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.08.17</td>
+
+				
+
+				<td class="center">22</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		622
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=614268dd">
+
+				
+
+					
+
+					
+
+					[추천요청] 중어중문학과 졸업예정자 또는 졸업생 모집_...
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.08.17</td>
+
+				
+
+				<td class="center">66</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		621
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=6141da45">
+
+				
+
+					
+
+					
+
+					[어드밴텍케이알(주)] RMA사무지원(중국어 능통자) ...
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.07.16</td>
+
+				
+
+				<td class="center">41</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		620
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=6141bccb">
+
+				
+
+					
+
+					
+
+					2021학년도 2학기 캠퍼스간 다전공 신청안내
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.07.09</td>
+
+				
+
+				<td class="center">39</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		619
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=614194b0">
+
+				
+
+					
+
+					
+
+					2021학년도 후기 석사예약입학제 신입학 및 예비선발 ...
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.06.30</td>
+
+				
+
+				<td class="center">19</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		618
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=614178dc">
+
+				
+
+					
+
+					
+
+					NCS 직업기초능력 모의시험 응시자 모집 안내
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.06.24</td>
+
+				
+
+				<td class="center">13</td>
+
+				
+
+			</tr>
+
+			  	
+
+			 
+
+			<tr>
+
+			  	<td class="first center">
+
+			  		
+
+			  		617
+
+			  	
+
+			  	</td>
+
+			  	<td>
+
+			  		<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleRead.do?forum=5335&amp;p_rel=-1&amp;id=61416006">
+
+				
+
+					
+
+					
+
+					2021년 제7회 한일중 3국 협력 논문경진대회
+					
+					</a>
+
+			  	
+
+			  	</td>
+
+			  	
+
+				<td class="center"><img src="./page_files/icon_attached_file.gif" align="absmiddle" alt="첨부">&nbsp;</td><!-- 첨부파일 -->
+
+				
+
+			  	<td class="center">관리자</td> 
+
+				<td class="center">2021.06.18</td>
+
+				
+
+				<td class="center">21</td>
+
+				
+
+			</tr>
+
+			  	
+
+		</tbody>
+
+	</table> 
+
+	
+
+
+
+	
+
+	<div class="clr tm12"></div>
+
+	<div class="center"> 
+
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+			<tbody><tr> 
+
+				<td align="center">
+
+ <a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=0&amp;p_rel=0"><img src="./page_files/btn_list_prev02.gif" align="absmiddle"></a> <b>1</b> 
+
+                <img src="./page_files/btn_list_slash.gif" align="absmiddle"> <a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=1&amp;p_rel=1">2</a> 
+
+                <img src="./page_files/btn_list_slash.gif" align="absmiddle"> <a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=2&amp;p_rel=2">3</a> 
+
+                <img src="./page_files/btn_list_slash.gif" align="absmiddle"> <a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=3&amp;p_rel=3">4</a> 
+
+                <img src="./page_files/btn_list_slash.gif" align="absmiddle"> <a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=4&amp;p_rel=4">5</a> 
+
+                <img src="./page_files/btn_list_slash.gif" align="absmiddle"> <a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=5&amp;p_rel=5">6</a> 
+
+                <img src="./page_files/btn_list_slash.gif" align="absmiddle"> <a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=6&amp;p_rel=6">7</a> 
+
+                <img src="./page_files/btn_list_slash.gif" align="absmiddle"> <a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=7&amp;p_rel=7">8</a> 
+
+                <img src="./page_files/btn_list_slash.gif" align="absmiddle"> <a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=8&amp;p_rel=8">9</a> 
+
+                <img src="./page_files/btn_list_slash.gif" align="absmiddle"> <a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=9&amp;p_rel=9">10</a> 
+
+                 <a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=10&amp;p_rel=10"><img src="./page_files/btn_list_next01.gif" align="absmiddle" <="" a="">  </a><a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=0&amp;p_rel=1"><img src="./page_files/btn_list_next03.gif" align="absmiddle"></a>
+
+				</td>
+
+			</tr>
+
+			<tr style="text-align:right; padding-top:.5em">
+
+				<td>
+
+				
+
+				</td>
+
+			</tr>
+
+		</tbody></table>
+
+	</div>
+
+	
+	<!--  Password Popup Start -->
+	<input type="hidden" name="strParam">
+	<input type="hidden" name="articleId">
+	<div id="pwdCom" style="left:-50px; top:0px; POSITION:absolute; DISPLAY:none;z-index:1;">
+			<table bordercolor="#D8E2C7" style="cursor:move; width:100px; background:#ffffff; border:solid 7px; float:left; font-size:12px;"> 
+			<tbody><tr style="background:#ffffff;font-style: black">
+				<td align="center" style="padding:5 0 5 0"><img src="./page_files/tt.gif"></td>
+			</tr>
+			<tr>
+				<td style="padding:0 7 0 7"><input type="text" name="txtPwd" maxlength="15" onkeypress="if (event.keyCode==13) { confirmPassword(); return false; }"></td>
+			</tr>
+			<tr>
+				<td align="center" style="padding:5 0 5 0">
+					<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=0&amp;p_rel=-1#" id="okPwd" alt="확인" onclick="confirmPassword(); return false;"><img src="./page_files/ok.gif"></a>
+					<a href="http://home.konkuk.ac.kr/cms/Common/MessageBoard/ArticleList.do?forum=5335&amp;p=0&amp;p_rel=-1#" id="canclePwd" alt="취소" onclick="cancelPassword(); return false;"><img src="./page_files/cancell.gif"></a>
+				</td>
+			</tr>
+		</tbody></table>
+	
+	</div>
+	<!--  Password Popup End -->
+
+	</form>
+
+</div>
+
+
+
+
+		</td>
+
+			<!-- ##################################### Contents End ########################################### -->
+			<!--  Contbody End -->
+	</tr>
+</tbody></table>
+
+
+</body></html>

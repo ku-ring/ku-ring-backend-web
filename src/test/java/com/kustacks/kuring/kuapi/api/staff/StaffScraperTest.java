@@ -6,14 +6,14 @@ import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.api.staff.dto.TestStaffDTO;
 import com.kustacks.kuring.kuapi.scrap.StaffScraper;
-import com.kustacks.kuring.kuapi.scrap.parser.EachDeptHTMLParser;
-import com.kustacks.kuring.kuapi.scrap.parser.KuHTMLParser;
-import com.kustacks.kuring.kuapi.scrap.parser.RealEstateHTMLParser;
-import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
-import com.kustacks.kuring.kuapi.staff.deptinfo.art_design.CommunicationDesignDept;
-import com.kustacks.kuring.kuapi.staff.deptinfo.art_design.LivingDesignDept;
-import com.kustacks.kuring.kuapi.staff.deptinfo.liberal_art.KoreanDept;
-import com.kustacks.kuring.kuapi.staff.deptinfo.real_estate.RealEstateDept;
+import com.kustacks.kuring.kuapi.scrap.parser.EachDeptStaffHTMLParser;
+import com.kustacks.kuring.kuapi.scrap.parser.KuStaffHTMLParser;
+import com.kustacks.kuring.kuapi.scrap.parser.RealEstateStaffHTMLParser;
+import com.kustacks.kuring.kuapi.deptinfo.DeptInfo;
+import com.kustacks.kuring.kuapi.deptinfo.art_design.CommunicationDesignDept;
+import com.kustacks.kuring.kuapi.deptinfo.art_design.LivingDesignDept;
+import com.kustacks.kuring.kuapi.deptinfo.liberal_art.KoreanDept;
+import com.kustacks.kuring.kuapi.deptinfo.real_estate.RealEstateDept;
 import org.junit.jupiter.api.*;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
@@ -44,7 +44,7 @@ import static org.mockserver.model.HttpResponse.response;
 @SpringJUnitConfig({
         StaffScraper.class,
         EachDeptStaffAPIClient.class, KuStaffAPIClient.class, RealEstateStaffAPIClient.class,
-        EachDeptHTMLParser.class, KuHTMLParser.class, RealEstateHTMLParser.class,
+        EachDeptStaffHTMLParser.class, KuStaffHTMLParser.class, RealEstateStaffHTMLParser.class,
         NormalJsoupClient.class,
         KoreanDept.class, LivingDesignDept.class, CommunicationDesignDept.class, RealEstateDept.class,
         ObjectMapper.class})
@@ -194,13 +194,13 @@ public class StaffScraperTest {
     @DisplayName("실패")
     class Fail {
 
-        /*
-            HTMLParser 실패 테스트
-        */
         @Nested
         @DisplayName("HTML 구조 달라짐")
         class HTMLDiff {
 
+            /*
+                HTMLParser 실패 테스트
+            */
             // 두 번째 교수님 (정의철) 연락처 div 삭제함
             @Test
             @DisplayName("RealEstate")

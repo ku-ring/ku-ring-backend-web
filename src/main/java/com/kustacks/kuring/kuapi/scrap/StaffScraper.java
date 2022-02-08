@@ -5,56 +5,49 @@ import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.api.staff.StaffAPIClient;
 import com.kustacks.kuring.kuapi.scrap.parser.HTMLParser;
-import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
-import com.kustacks.kuring.kuapi.staff.deptinfo.real_estate.RealEstateDept;
+import com.kustacks.kuring.kuapi.deptinfo.DeptInfo;
+import com.kustacks.kuring.kuapi.scrap.parser.StaffHTMLParser;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
 public class StaffScraper implements KuScraper<StaffDTO> {
 
-    private final List<StaffAPIClient> staffAPIClients;
-    private final List<HTMLParser> htmlParsers;
+    private final Map<DeptInfo, StaffAPIClient<Document, DeptInfo>> deptInfoStaffAPIClientMap;
+    private final Map<DeptInfo, StaffHTMLParser> deptInfoStaffHTMLParserMap;
 
-    public StaffScraper(List<HTMLParser> htmlParsers, List<StaffAPIClient> staffAPIClients) {
+    public StaffScraper(Map<DeptInfo, StaffAPIClient<Document, DeptInfo>> deptInfoStaffAPIClientMap,
+                        Map<DeptInfo, StaffHTMLParser> deptInfoStaffHTMLParserMap) {
 
-        this.staffAPIClients = staffAPIClients;
-        this.htmlParsers = htmlParsers;
+        this.deptInfoStaffAPIClientMap = deptInfoStaffAPIClientMap;
+        this.deptInfoStaffHTMLParserMap = deptInfoStaffHTMLParserMap;
     }
 
     @Retryable(value = {InternalLogicException.class}, backoff = @Backoff(delay = RETRY_PERIOD))
     public List<StaffDTO> scrap(DeptInfo deptInfo) throws InternalLogicException {
 
-        List<Document> documents = null;
+        List<Document> documents;
         List<StaffDTO> staffDTOList = new LinkedList<>();
 
-        for (StaffAPIClient staffAPIClient : staffAPIClients) {
-            if(staffAPIClient.support(deptInfo)) {
-                log.info("{} HTML 요청", deptInfo.getDeptName());
-                documents = staffAPIClient.getHTML(deptInfo);
-                log.info("{} HTML 수신", deptInfo.getDeptName());
-            }
-        }
+        log.info("{} HTML 요청", deptInfo.getDeptName());
+        documents = deptInfoStaffAPIClientMap.get(deptInfo).request(deptInfo);
+        log.info("{} HTML 수신", deptInfo.getDeptName());
 
         // 수신한 documents HTML 파싱
         List<String[]> parseResult = new LinkedList<>();
-        for (HTMLParser htmlParser : htmlParsers) {
-            if(htmlParser.support(deptInfo)) {
-                log.info("{} HTML 파싱 시작", deptInfo.getDeptName());
-                for (Document document : documents) {
-                    parseResult.addAll(htmlParser.parse(document));
-                }
-                log.info("{} HTML 파싱 완료", deptInfo.getDeptName());
-            }
+        log.info("{} HTML 파싱 시작", deptInfo.getDeptName());
+        for (Document document : documents) {
+            parseResult.addAll(deptInfoStaffHTMLParserMap.get(deptInfo).parse(document));
         }
+        log.info("{} HTML 파싱 완료", deptInfo.getDeptName());
 
         // 파싱 결과를 staffDTO로 변환
         for (String[] oneStaffInfo : parseResult) {
