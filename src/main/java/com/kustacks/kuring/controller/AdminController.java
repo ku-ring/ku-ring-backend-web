@@ -161,7 +161,7 @@ public class AdminController {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        String fakeNoticePostedDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String fakeNoticePostedDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         log.info("fake articleId = {}", fakeNoticeArticleId);
         log.info("fake postedDate = {}", fakeNoticePostedDate);
