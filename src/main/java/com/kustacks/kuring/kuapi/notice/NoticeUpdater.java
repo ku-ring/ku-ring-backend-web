@@ -16,6 +16,7 @@ import com.kustacks.kuring.kuapi.api.notice.NoticeAPIClient;
 import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;
 import com.kustacks.kuring.service.FirebaseService;
 import com.kustacks.kuring.util.converter.DTOConverter;
+import com.kustacks.kuring.util.converter.DateConverter;
 import com.kustacks.kuring.util.converter.NoticeEntityToNoticeDTOConverter;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ public class NoticeUpdater implements Updater {
 
     private final Map<CategoryName, NoticeAPIClient> noticeAPIClientMap;
     private final DTOConverter dtoConverter;
+    private final DateConverter dateConverter;
     private final FirebaseService firebaseService;
     private final NoticeRepository noticeRepository;
     private final CategoryRepository categoryRepository;
@@ -40,12 +42,14 @@ public class NoticeUpdater implements Updater {
     public NoticeUpdater(FirebaseService firebaseService,
 
                          NoticeEntityToNoticeDTOConverter dtoConverter,
+                         DateConverter ymdhmsToYmdConverter,
                          Map<CategoryName, NoticeAPIClient> noticeAPIClientMap,
 
                          NoticeRepository noticeRepository,
                          CategoryRepository categoryRepository) {
 
         this.dtoConverter = dtoConverter;
+        this.dateConverter = ymdhmsToYmdConverter;
         this.noticeAPIClientMap = noticeAPIClientMap;
 
         this.firebaseService = firebaseService;
@@ -84,6 +88,12 @@ public class NoticeUpdater implements Updater {
         List<Notice> willBeNotiNotices = compareAndUpdateDB(apiNoticesMap);
         List<NoticeDTO> willBeNotiNoticeDTOList = new ArrayList<>(willBeNotiNotices.size());
         for (Notice notice : willBeNotiNotices) {
+            if(CategoryName.LIBRARY.getName().equals(notice.getCategory().getName())) {
+                // TODO: notice entity 내용을 변경해서 사용하는게 좋은 방법인지는 생각을 해봐야함
+                // 혹시나 compareAndUpdateDB에서 영속성 컨텍스트에 남아있는 notice entity의 내용이 변경되어서 저장될까봐
+                // compareAndUpdateDB에서 saveAndFlush 메서드를 사용함.
+                notice.setPostedDate(dateConverter.convert(notice.getPostedDate()));
+            }
             willBeNotiNoticeDTOList.add((NoticeDTO) dtoConverter.convert(notice));
         }
 
@@ -151,7 +161,7 @@ public class NoticeUpdater implements Updater {
             noticeRepository.deleteAll(removedNotices);
 
             // 업데이트로 인해 새로 생성된 공지 삽입
-            noticeRepository.saveAll(newNotices);
+            noticeRepository.saveAllAndFlush(newNotices);
 
             willBeNotiNotices.addAll(newNotices);
         }
