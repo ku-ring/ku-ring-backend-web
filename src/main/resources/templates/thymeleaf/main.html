@@ -71,7 +71,7 @@
                             <div class="collapse" id="collapseFCM" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="/admin/service/sub-unsub">카테고리 구독</a>
-                                    <a class="nav-link" href="/admin/service/fake-update">가짜 공지 업데이트</a>
+                                    <a th:if="${fakeUpdate}" class="nav-link" href="/admin/service/fake-update">가짜 공지 업데이트</a>
                                 </nav>
                             </div>
                         </div>

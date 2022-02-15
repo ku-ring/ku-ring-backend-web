@@ -21,6 +21,7 @@ import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,6 +50,9 @@ public class AdminController {
 
     private final ObjectMapper objectMapper;
     private final Map<String, Category> categoryMap;
+
+    @Value("${server.deploy.environment}")
+    private String deployEnv;
 
     public AdminController(
             CategoryServiceImpl categoryService,
@@ -105,8 +109,8 @@ public class AdminController {
 
         model.addAttribute("users", users);
 
-        model.addAttribute("subUnsub", type.equals("dashboard"));
-        model.addAttribute("fakeUpdate", type.equals("dashboard"));
+        model.addAttribute("subUnsub", true);
+        model.addAttribute("fakeUpdate", "dev".equals(deployEnv));
 
         return "thymeleaf/main";
     }
@@ -129,6 +133,10 @@ public class AdminController {
     @CheckSession
     @GetMapping("/service/fake-update")
     public String fakeUpdatePage(Model model) throws JsonProcessingException {
+
+        if(!"dev".equals(deployEnv)) {
+            return "thymeleaf/404";
+        }
 
         List<CategoryDTO> categoryDTOList = categoryService.getCategoryDTOList();
 
