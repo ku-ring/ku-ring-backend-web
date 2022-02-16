@@ -57,7 +57,12 @@ public class ErrorController {
         log.error("[APIException] {}", e.getErrorCode().getMessage(), e);
 
         ErrorCode errorCode = e.getErrorCode();
-        if(errorCode.equals(ErrorCode.API_AD_UNAUTHENTICATED)) {
+        if(errorCode.equals(ErrorCode.API_ADMIN_UNAUTHENTICATED) ||
+            errorCode.equals(ErrorCode.API_ADMIN_INVALID_CATEGORY) ||
+                errorCode.equals(ErrorCode.API_ADMIN_INVALID_FCM) ||
+                errorCode.equals(ErrorCode.API_ADMIN_INVALID_POSTED_DATE) ||
+                errorCode.equals(ErrorCode.API_ADMIN_INVALID_SUBJECT) ||
+                errorCode.equals(ErrorCode.API_ADMIN_MISSING_PARAM)) {
 
         } else {
             Sentry.captureException(e);

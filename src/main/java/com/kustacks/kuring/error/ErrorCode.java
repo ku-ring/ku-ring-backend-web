@@ -9,6 +9,13 @@ public enum ErrorCode {
     /**
      * ErrorCode about APIException
      */
+    API_ADMIN_MISSING_PARAM(HttpStatus.BAD_REQUEST, "관리자 요청 - 필수 파라미터가 없습니다."),
+    API_ADMIN_UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "관리자 요청 - 유효한 인증 토큰이 아닙니다."),
+    API_ADMIN_INVALID_FCM(HttpStatus.BAD_REQUEST, "관리자 요청 - 유효한 FCM 토큰이 아닙니다."),
+    API_ADMIN_INVALID_SUBJECT(HttpStatus.BAD_REQUEST, "관리자 요청 - 제목 길이가 유효하지 않습니다."),
+    API_ADMIN_INVALID_CATEGORY(HttpStatus.BAD_REQUEST, "관리자 요청 - 지원하지 않는 카테고리입니다."),
+    API_ADMIN_INVALID_POSTED_DATE(HttpStatus.BAD_REQUEST, "관리자 요청 - 잘못된 형식의 게시일입니다. yyyyMMdd 형식만 지원합니다."),
+
     API_NOTICE_NOT_EXIST_CATEGORY(HttpStatus.BAD_REQUEST, "해당 공지 카테고리를 지원하지 않습니다."),
 //    API_NOTICE_CANNOT_FIND_CATEGORY(HttpStatus.INTERNAL_SERVER_ERROR, "해당 공지 카테고리를 찾을 수 없습니다."),
     API_MISSING_PARAM(HttpStatus.BAD_REQUEST, "필수 파라미터가 없습니다."),
@@ -21,8 +28,6 @@ public enum ErrorCode {
     API_FB_CANNOT_EDIT_CATEGORY(HttpStatus.INTERNAL_SERVER_ERROR, "FCM에서 카테고리 편집을 실패했습니다."),
 
     API_FD_INVALID_CONTENT(HttpStatus.BAD_REQUEST, "피드백 길이가 유효하지 않습니다."),
-
-    API_AD_UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "관리자가 아닙니다."),
 
     API_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),
 

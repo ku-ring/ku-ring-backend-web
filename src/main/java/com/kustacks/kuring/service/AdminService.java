@@ -16,5 +16,8 @@ public interface AdminService {
     List<User> getUsers();
     HashMap<String, Category> getCategoryMap();
 
-    void checkToken(String token);
+    boolean checkToken(String token);
+    boolean checkSubject(String subject);
+    boolean checkCategory(String category);
+    boolean checkPostedDate(String postedDate);
 }

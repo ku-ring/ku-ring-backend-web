@@ -4,18 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.annotation.CheckSession;
-import com.kustacks.kuring.controller.dto.CategoryDTO;
-import com.kustacks.kuring.controller.dto.LoginResponseDTO;
-import com.kustacks.kuring.controller.dto.NoticeDTO;
-import com.kustacks.kuring.controller.dto.ResponseDTO;
+import com.kustacks.kuring.controller.dto.*;
 import com.kustacks.kuring.domain.category.Category;
-import com.kustacks.kuring.domain.category.CategoryRepository;
 import com.kustacks.kuring.domain.feedback.Feedback;
-import com.kustacks.kuring.domain.feedback.FeedbackRepository;
 import com.kustacks.kuring.domain.notice.Notice;
-import com.kustacks.kuring.domain.notice.NoticeRepository;
 import com.kustacks.kuring.domain.user.User;
-import com.kustacks.kuring.domain.user.UserRepository;
 import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
@@ -158,14 +151,14 @@ public class AdminController {
         String fakeNoticeSubject = requestBody.get("subject");
         String fakeNoticeArticleId = requestBody.get("articleId");
         if(fakeNoticeCategory == null || fakeNoticeSubject == null) {
-            throw new APIException(ErrorCode.API_MISSING_PARAM);
+            throw new APIException(ErrorCode.API_ADMIN_MISSING_PARAM);
         }
 
         fakeNoticeSubject = URLDecoder.decode(fakeNoticeSubject, StandardCharsets.UTF_8);
 
         Category dbCategory = categoryMap.get(fakeNoticeCategory);
         if(dbCategory == null || fakeNoticeSubject.equals("") || fakeNoticeSubject.length() > 128) {
-            throw new APIException(ErrorCode.API_INVALID_PARAM);
+            throw new APIException(ErrorCode.API_ADMIN_INVALID_SUBJECT);
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -210,7 +203,7 @@ public class AdminController {
         try {
             adminService.checkToken(token);
         } catch(InternalLogicException e) {
-            throw new APIException(ErrorCode.API_AD_UNAUTHENTICATED, e);
+            throw new APIException(ErrorCode.API_ADMIN_UNAUTHENTICATED, e);
         }
 
         HttpSession session = request.getSession(true);
@@ -220,5 +213,63 @@ public class AdminController {
                 .isSuccess(true)
                 .resultMsg("성공")
                 .resultCode(200).build();
+    }
+
+    @ResponseBody
+    @PostMapping("/api/fake-update/fcm")
+    public FakeUpdateResponseDTO enrollFakeUpdate(@RequestBody FakeUpdateRequestDTO requestDTO) {
+
+        String articleId = requestDTO.getArticleId();
+        String postedDate = requestDTO.getPostedDate();
+        String subject = requestDTO.getSubject();
+        String category = requestDTO.getCategory();
+        String token = requestDTO.getToken();
+        String auth = requestDTO.getAuth();
+
+        boolean isAuthenticated = adminService.checkToken(auth);
+        if(!isAuthenticated) {
+            throw new APIException(ErrorCode.API_ADMIN_UNAUTHENTICATED);
+        }
+
+        try {
+            firebaseService.verifyToken(token);
+        } catch(FirebaseMessagingException e) {
+            throw new APIException(ErrorCode.API_ADMIN_INVALID_FCM, e);
+        }
+
+        boolean isCategorySupported = adminService.checkCategory(category);
+        if(!isCategorySupported) {
+            throw new APIException(ErrorCode.API_ADMIN_INVALID_CATEGORY);
+        }
+
+        boolean isSubjectValid = adminService.checkSubject(subject);
+        if(!isSubjectValid) {
+            throw new APIException(ErrorCode.API_ADMIN_INVALID_SUBJECT);
+        }
+
+        boolean isPostedDateValid = adminService.checkPostedDate(postedDate);
+        if(!isPostedDateValid) {
+            throw new APIException(ErrorCode.API_ADMIN_INVALID_POSTED_DATE);
+        }
+        
+        log.info("제목 = {}", subject);
+        log.info("아이디 = {}", articleId);
+        log.info("게시일 = {}", postedDate);
+        log.info("카테고리 = {}", category);
+        log.info("fcm 토큰 = {}", token);
+        log.info("인증 토큰 = {}\n", auth);
+
+        try {
+            firebaseService.sendMessage(token, NoticeDTO.builder()
+                    .articleId(articleId)
+                    .postedDate(postedDate)
+                    .subject(subject)
+                    .categoryName(category)
+                    .build());
+        } catch (FirebaseMessagingException e) {
+            throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
+        }
+
+        return new FakeUpdateResponseDTO();
     }
 }
