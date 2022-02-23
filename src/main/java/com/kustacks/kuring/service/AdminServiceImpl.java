@@ -10,10 +10,11 @@ import com.kustacks.kuring.domain.notice.Notice;
 import com.kustacks.kuring.domain.notice.NoticeRepository;
 import com.kustacks.kuring.domain.user.User;
 import com.kustacks.kuring.domain.user.UserRepository;
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.kuapi.CategoryName;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 
@@ -66,10 +67,39 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void checkToken(String token) {
+    public boolean checkToken(String token) {
         Admin admin = adminRepository.findByToken(token);
-        if(admin == null) {
-            throw new InternalLogicException(ErrorCode.AD_UNAUTHENTICATED);
+        return admin != null;
+    }
+
+    @Override
+    public boolean checkSubject(String subject) {
+        return subject.length() > 0 && subject.length() <= 128;
+    }
+
+    @Override
+    public boolean checkCategory(String category) {
+        boolean isSupported = false;
+        for (CategoryName categoryName : CategoryName.values()) {
+            if(categoryName.getName().equals(category) || categoryName.getKorName().equals(category)) {
+                isSupported = true;
+                break;
+            }
         }
+        return isSupported;
+    }
+
+    @Override
+    public boolean checkPostedDate(String postedDate) {
+        SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyyMMdd");
+        dateFormat.setLenient(false);
+
+        try {
+            dateFormat.parse(postedDate);
+        } catch(ParseException e) {
+            return false;
+        }
+
+        return true;
     }
 }

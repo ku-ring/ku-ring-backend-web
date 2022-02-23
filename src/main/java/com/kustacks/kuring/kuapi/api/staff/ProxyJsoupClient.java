@@ -21,10 +21,10 @@ public class ProxyJsoupClient implements JsoupClient {
     public ProxyJsoupClient() {
 
         proxyList = new LinkedList<>();
-        proxyList.add(new ProxyInfo("211.237.5.73", 	8899));
-        proxyList.add(new ProxyInfo("175.125.23.246", 	8000));
+        proxyList.add(new ProxyInfo("121.156.109.108", 	8080));
+        proxyList.add(new ProxyInfo("59.21.84.108", 	80));
         proxyList.add(new ProxyInfo("61.255.239.33", 	8008));
-        proxyList.add(new ProxyInfo("222.231.47.230", 	3128));
+        proxyList.add(new ProxyInfo("58.75.126.235", 	4145));
     }
 
     @Override

@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.messaging.*;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.TopicManagementResponse;
 import com.kustacks.kuring.controller.dto.NoticeDTO;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
@@ -17,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 public class FirebaseService {
@@ -130,6 +132,21 @@ public class FirebaseService {
         for (NoticeDTO noticeDTO : newNoticeDTOList) {
             sendMessage(noticeDTO);
         }
+    }
+
+    public void sendMessage(String token, NoticeDTO newNotice) throws FirebaseMessagingException {
+
+        Map<String, String> noticeMap = noticeDtoToMap(newNotice);
+        noticeMap.put(
+                "baseUrl",
+                newNotice.getCategoryName().equals(CategoryName.LIBRARY.getName()) ? libraryBaseUrl : normalBaseUrl);
+
+        Message newMessage = Message.builder()
+                .putAllData(noticeMap)
+                .setToken(token)
+                .build();
+
+        firebaseMessaging.send(newMessage);
     }
 
     private Map<String, String> noticeDtoToMap(NoticeDTO newNotice) {
