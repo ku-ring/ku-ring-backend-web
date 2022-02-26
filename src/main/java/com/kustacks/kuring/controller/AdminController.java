@@ -12,6 +12,7 @@ import com.kustacks.kuring.domain.user.User;
 import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +47,12 @@ public class AdminController {
 
     @Value("${server.deploy.environment}")
     private String deployEnv;
+
+    @Value("${notice.normal-base-url}")
+    private String normalBaseUrl;
+
+    @Value("${notice.library-base-url}")
+    private String libraryBaseUrl;
 
     public AdminController(
             CategoryServiceImpl categoryService,
@@ -217,14 +224,14 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/api/fake-update/fcm")
-    public FakeUpdateResponseDTO enrollFakeUpdate(@RequestBody FakeUpdateRequestDTO requestDTO) {
+    public FakeUpdateResponseDTO enrollFakeUpdate(@RequestBody Map<String, String> reqBody) {
 
-        String articleId = requestDTO.getArticleId();
-        String postedDate = requestDTO.getPostedDate();
-        String subject = requestDTO.getSubject();
-        String category = requestDTO.getCategory();
-        String token = requestDTO.getToken();
-        String auth = requestDTO.getAuth();
+        String token = reqBody.get("token");
+        String auth = reqBody.get("auth");
+        String type = reqBody.get("type");
+
+        log.info("fcm 토큰 = {}", token);
+        log.info("인증 토큰 = {}\n", auth);
 
         boolean isAuthenticated = adminService.checkToken(auth);
         if(!isAuthenticated) {
@@ -237,37 +244,70 @@ public class AdminController {
             throw new APIException(ErrorCode.API_ADMIN_INVALID_FCM, e);
         }
 
-        boolean isCategorySupported = adminService.checkCategory(category);
-        if(!isCategorySupported) {
-            throw new APIException(ErrorCode.API_ADMIN_INVALID_CATEGORY);
-        }
+        if("notice".equals(type)) {
+            String articleId = reqBody.get("articleId");
+            String postedDate = reqBody.get("postedDate");
+            String subject = reqBody.get("subject");
+            String category = reqBody.get("category");
 
-        boolean isSubjectValid = adminService.checkSubject(subject);
-        if(!isSubjectValid) {
-            throw new APIException(ErrorCode.API_ADMIN_INVALID_SUBJECT);
-        }
+            log.info("제목 = {}", subject);
+            log.info("아이디 = {}", articleId);
+            log.info("게시일 = {}", postedDate);
+            log.info("카테고리 = {}", category);
 
-        boolean isPostedDateValid = adminService.checkPostedDate(postedDate);
-        if(!isPostedDateValid) {
-            throw new APIException(ErrorCode.API_ADMIN_INVALID_POSTED_DATE);
-        }
-        
-        log.info("제목 = {}", subject);
-        log.info("아이디 = {}", articleId);
-        log.info("게시일 = {}", postedDate);
-        log.info("카테고리 = {}", category);
-        log.info("fcm 토큰 = {}", token);
-        log.info("인증 토큰 = {}\n", auth);
+            boolean isCategorySupported = adminService.checkCategory(category);
+            if(!isCategorySupported) {
+                throw new APIException(ErrorCode.API_ADMIN_INVALID_CATEGORY);
+            }
 
-        try {
-            firebaseService.sendMessage(token, NoticeDTO.builder()
-                    .articleId(articleId)
-                    .postedDate(postedDate)
-                    .subject(subject)
-                    .categoryName(category)
-                    .build());
-        } catch (FirebaseMessagingException e) {
-            throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
+            boolean isSubjectValid = adminService.checkSubject(subject);
+            if(!isSubjectValid) {
+                throw new APIException(ErrorCode.API_ADMIN_INVALID_SUBJECT);
+            }
+
+            boolean isPostedDateValid = adminService.checkPostedDate(postedDate);
+            if(!isPostedDateValid) {
+                throw new APIException(ErrorCode.API_ADMIN_INVALID_POSTED_DATE);
+            }
+
+            try {
+                firebaseService.sendMessage(token, NoticeMessageDTO.builder()
+                        .articleId(articleId)
+                        .postedDate(postedDate)
+                        .subject(subject)
+                        .category(category)
+                        .baseUrl(CategoryName.LIBRARY.getName().equals(category) ? libraryBaseUrl : normalBaseUrl)
+                        .build());
+            } catch (FirebaseMessagingException e) {
+                throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
+            }
+        } else if("admin".equals(type)) {
+            String title = reqBody.get("title");
+            String body = reqBody.get("body");
+            
+            log.info("제목 = {}", title);
+            log.info("내용 = {}", body);
+
+            boolean isTitleValid = adminService.checkTitle(title);
+            if(!isTitleValid) {
+                throw new APIException(ErrorCode.API_ADMIN_INVALID_TITLE);
+            }
+
+            boolean isBodyValid = adminService.checkBody(body);
+            if(!isBodyValid) {
+                throw new APIException(ErrorCode.API_ADMIN_INVALID_BODY);
+            }
+
+            try {
+                firebaseService.sendMessage(token, AdminMessageDTO.builder()
+                        .title(title)
+                        .body(body)
+                        .build());
+            } catch (FirebaseMessagingException e) {
+                throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
+            }
+        } else {
+            throw new APIException(ErrorCode.API_ADMIN_INVALID_TYPE);
         }
 
         return new FakeUpdateResponseDTO();

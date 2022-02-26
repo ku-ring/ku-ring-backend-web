@@ -31,7 +31,8 @@ public class AdminServiceImpl implements AdminService {
                             FeedbackRepository feedbackRepository,
                             NoticeRepository noticeRepository,
                             UserRepository userRepository,
-                            CategoryRepository categoryRepository) {
+                            CategoryRepository categoryRepository
+    ) {
 
         this.adminRepository = adminRepository;
         this.feedbackRepository = feedbackRepository;
@@ -101,5 +102,15 @@ public class AdminServiceImpl implements AdminService {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean checkTitle(String title) {
+        return title != null && title.length() > 0;
+    }
+
+    @Override
+    public boolean checkBody(String body) {
+        return body != null && body.length() > 0;
     }
 }

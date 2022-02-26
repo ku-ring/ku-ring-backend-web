@@ -8,7 +8,9 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.TopicManagementResponse;
+import com.kustacks.kuring.controller.dto.AdminMessageDTO;
 import com.kustacks.kuring.controller.dto.NoticeDTO;
+import com.kustacks.kuring.controller.dto.NoticeMessageDTO;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
@@ -38,7 +40,7 @@ public class FirebaseService {
     private final FirebaseMessaging firebaseMessaging;
     private final ObjectMapper objectMapper;
 
-    FirebaseService(ObjectMapper objectMapper,  @Value("${firebase.file-path}") String filePath) throws IOException {
+    FirebaseService(ObjectMapper objectMapper, @Value("${firebase.file-path}") String filePath) throws IOException {
 
         this.objectMapper = objectMapper;
 
@@ -49,7 +51,7 @@ public class FirebaseService {
                 .build();
 
         FirebaseApp firebaseApp = FirebaseApp.initializeApp(options);
-        firebaseMessaging = FirebaseMessaging.getInstance(firebaseApp);
+        this.firebaseMessaging = FirebaseMessaging.getInstance(firebaseApp);
     }
 
     public void verifyToken(String token) throws FirebaseMessagingException {
@@ -134,22 +136,31 @@ public class FirebaseService {
         }
     }
 
-    public void sendMessage(String token, NoticeDTO newNotice) throws FirebaseMessagingException {
+    private Map<String, String> noticeDtoToMap(NoticeDTO newNotice) {
+        return objectMapper.convertValue(newNotice, Map.class);
+    }
 
-        Map<String, String> noticeMap = noticeDtoToMap(newNotice);
-        noticeMap.put(
-                "baseUrl",
-                newNotice.getCategoryName().equals(CategoryName.LIBRARY.getName()) ? libraryBaseUrl : normalBaseUrl);
+    public void sendMessage(String token, NoticeMessageDTO messageDTO) throws FirebaseMessagingException {
+
+        Map<String, String> messageMap = objectMapper.convertValue(messageDTO, Map.class);
 
         Message newMessage = Message.builder()
-                .putAllData(noticeMap)
+                .putAllData(messageMap)
                 .setToken(token)
                 .build();
 
         firebaseMessaging.send(newMessage);
     }
 
-    private Map<String, String> noticeDtoToMap(NoticeDTO newNotice) {
-        return objectMapper.convertValue(newNotice, Map.class);
+    public void sendMessage(String token, AdminMessageDTO messageDTO) throws FirebaseMessagingException {
+
+        Map<String, String> messageMap = objectMapper.convertValue(messageDTO, Map.class);
+
+        Message newMessage = Message.builder()
+                .putAllData(messageMap)
+                .setToken(token)
+                .build();
+
+        firebaseMessaging.send(newMessage);
     }
 }

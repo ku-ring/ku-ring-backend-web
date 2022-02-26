@@ -15,6 +15,10 @@ public enum ErrorCode {
     API_ADMIN_INVALID_SUBJECT(HttpStatus.BAD_REQUEST, "관리자 요청 - 제목 길이가 유효하지 않습니다."),
     API_ADMIN_INVALID_CATEGORY(HttpStatus.BAD_REQUEST, "관리자 요청 - 지원하지 않는 카테고리입니다."),
     API_ADMIN_INVALID_POSTED_DATE(HttpStatus.BAD_REQUEST, "관리자 요청 - 잘못된 형식의 게시일입니다. yyyyMMdd 형식만 지원합니다."),
+    API_ADMIN_INVALID_TYPE(HttpStatus.BAD_REQUEST, "지원하지 않는 type입니다."),
+    API_ADMIN_INVALID_TITLE(HttpStatus.BAD_REQUEST, "title은 최소 1자 이상이어야 합니다."),
+    API_ADMIN_INVALID_BODY(HttpStatus.BAD_REQUEST, "body는 최소 1자 이상이어야 합니다."),
+
 
     API_NOTICE_NOT_EXIST_CATEGORY(HttpStatus.BAD_REQUEST, "해당 공지 카테고리를 지원하지 않습니다."),
 //    API_NOTICE_CANNOT_FIND_CATEGORY(HttpStatus.INTERNAL_SERVER_ERROR, "해당 공지 카테고리를 찾을 수 없습니다."),
