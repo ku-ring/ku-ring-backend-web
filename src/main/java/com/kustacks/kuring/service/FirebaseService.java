@@ -106,18 +106,15 @@ public class FirebaseService {
      *
      * 따라서 여기선 putData를 사용하여 보내고, 클라이언트가 푸쉬 알람을 만들어 띄운다.
      *
-     * @param newNotice
+     * @param messageDTO
      * @throws FirebaseMessagingException
      */
 
-    public void sendMessage(NoticeDTO newNotice) throws FirebaseMessagingException {
+    public void sendMessage(NoticeMessageDTO messageDTO) throws FirebaseMessagingException {
 
-        Map<String, String> noticeMap = noticeDtoToMap(newNotice);
-        noticeMap.put(
-                "baseUrl",
-                newNotice.getCategoryName().equals(CategoryName.LIBRARY.getName()) ? libraryBaseUrl : normalBaseUrl);
+        Map<String, String> noticeMap = objectMapper.convertValue(messageDTO, Map.class);
 
-        StringBuilder topic = new StringBuilder(newNotice.getCategoryName());
+        StringBuilder topic = new StringBuilder(messageDTO.getCategory());
         if(deployEnv.equals("dev")) {
             topic.append(DEV_SUFFIX);
         }
@@ -130,14 +127,10 @@ public class FirebaseService {
         firebaseMessaging.send(newMessage);
     }
 
-    public void sendMessage(List<NoticeDTO> newNoticeDTOList) throws FirebaseMessagingException {
-        for (NoticeDTO noticeDTO : newNoticeDTOList) {
-            sendMessage(noticeDTO);
+    public void sendMessage(List<NoticeMessageDTO> messageDTOList) throws FirebaseMessagingException {
+        for (NoticeMessageDTO messageDTO : messageDTOList) {
+            sendMessage(messageDTO);
         }
-    }
-
-    private Map<String, String> noticeDtoToMap(NoticeDTO newNotice) {
-        return objectMapper.convertValue(newNotice, Map.class);
     }
 
     public void sendMessage(String token, NoticeMessageDTO messageDTO) throws FirebaseMessagingException {

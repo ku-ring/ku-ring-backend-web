@@ -2,6 +2,7 @@ package com.kustacks.kuring.kuapi.notice;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.controller.dto.NoticeDTO;
+import com.kustacks.kuring.controller.dto.NoticeMessageDTO;
 import com.kustacks.kuring.domain.category.Category;
 import com.kustacks.kuring.domain.category.CategoryRepository;
 import com.kustacks.kuring.domain.notice.Notice;
@@ -41,14 +42,14 @@ public class NoticeUpdater implements Updater {
 
     public NoticeUpdater(FirebaseService firebaseService,
 
-                         NoticeEntityToNoticeDTOConverter dtoConverter,
+                         DTOConverter noticeEntityToNoticeMessageDTOConverter,
                          DateConverter ymdhmsToYmdConverter,
                          Map<CategoryName, NoticeAPIClient> noticeAPIClientMap,
 
                          NoticeRepository noticeRepository,
                          CategoryRepository categoryRepository) {
 
-        this.dtoConverter = dtoConverter;
+        this.dtoConverter = noticeEntityToNoticeMessageDTOConverter;
         this.dateConverter = ymdhmsToYmdConverter;
         this.noticeAPIClientMap = noticeAPIClientMap;
 
@@ -86,7 +87,7 @@ public class NoticeUpdater implements Updater {
         // kuisNoticeResponseBody에 있는 데이터가 DB에는 없는 경우 -> DB에 공지 추가
         // DB에 있는 데이터가 kuisNoticeResponseBody에는 없는 경우 -> DB에 공지 삭제
         List<Notice> willBeNotiNotices = compareAndUpdateDB(apiNoticesMap);
-        List<NoticeDTO> willBeNotiNoticeDTOList = new ArrayList<>(willBeNotiNotices.size());
+        List<NoticeMessageDTO> willBeNotiNoticeDTOList = new ArrayList<>(willBeNotiNotices.size());
         for (Notice notice : willBeNotiNotices) {
             if(CategoryName.LIBRARY.getName().equals(notice.getCategory().getName())) {
                 // TODO: notice entity 내용을 변경해서 사용하는게 좋은 방법인지는 생각을 해봐야함
@@ -94,7 +95,7 @@ public class NoticeUpdater implements Updater {
                 // compareAndUpdateDB에서 saveAndFlush 메서드를 사용함.
                 notice.setPostedDate(dateConverter.convert(notice.getPostedDate()));
             }
-            willBeNotiNoticeDTOList.add((NoticeDTO) dtoConverter.convert(notice));
+            willBeNotiNoticeDTOList.add((NoticeMessageDTO) dtoConverter.convert(notice));
         }
 
         // FCM으로 새롭게 수신한 공지 데이터 전송
@@ -102,15 +103,15 @@ public class NoticeUpdater implements Updater {
             firebaseService.sendMessage(willBeNotiNoticeDTOList);
             log.info("FCM에 정상적으로 메세지를 전송했습니다.");
             log.info("전송된 공지 목록은 다음과 같습니다.");
-            for (NoticeDTO noticeDTO : willBeNotiNoticeDTOList) {
-                log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", noticeDTO.getArticleId(), noticeDTO.getPostedDate(), noticeDTO.getCategoryName(), noticeDTO.getSubject());
+            for (NoticeMessageDTO messageDTO : willBeNotiNoticeDTOList) {
+                log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", messageDTO.getArticleId(), messageDTO.getPostedDate(), messageDTO.getCategory(), messageDTO.getSubject());
             }
         } catch(FirebaseMessagingException e) {
             log.error("새로운 공지의 FCM 전송에 실패했습니다.");
-            Sentry.captureException(new InternalLogicException(ErrorCode.FB_FAIL_SEND, e));
+            throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
         } catch(Exception e) {
             log.error("새로운 공지를 FCM에 보내는 중 알 수 없는 오류가 발생했습니다.");
-            Sentry.captureException(new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e));
+            throw new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e);
         }
 
         log.info("========== 공지 업데이트 종료 ==========");

@@ -177,11 +177,12 @@ public class AdminController {
         log.info("fake category = {}", fakeNoticeCategory);
 
         try {
-            firebaseService.sendMessage(NoticeDTO.builder()
+            firebaseService.sendMessage(NoticeMessageDTO.builder()
                     .articleId(fakeNoticeArticleId)
                     .postedDate(fakeNoticePostedDate)
-                    .categoryName(fakeNoticeCategory)
+                    .category(fakeNoticeCategory)
                     .subject(fakeNoticeSubject)
+                    .baseUrl(CategoryName.LIBRARY.getName().equals(fakeNoticeCategory) ? libraryBaseUrl : normalBaseUrl)
                     .build());
         } catch(FirebaseMessagingException e) {
             throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
