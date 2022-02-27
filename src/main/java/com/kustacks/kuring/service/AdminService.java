@@ -20,4 +20,6 @@ public interface AdminService {
     boolean checkSubject(String subject);
     boolean checkCategory(String category);
     boolean checkPostedDate(String postedDate);
+    boolean checkTitle(String title);
+    boolean checkBody(String body);
 }

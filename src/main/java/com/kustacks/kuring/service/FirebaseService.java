@@ -8,7 +8,9 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.TopicManagementResponse;
+import com.kustacks.kuring.controller.dto.AdminMessageDTO;
 import com.kustacks.kuring.controller.dto.NoticeDTO;
+import com.kustacks.kuring.controller.dto.NoticeMessageDTO;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
@@ -38,7 +40,7 @@ public class FirebaseService {
     private final FirebaseMessaging firebaseMessaging;
     private final ObjectMapper objectMapper;
 
-    FirebaseService(ObjectMapper objectMapper,  @Value("${firebase.file-path}") String filePath) throws IOException {
+    FirebaseService(ObjectMapper objectMapper, @Value("${firebase.file-path}") String filePath) throws IOException {
 
         this.objectMapper = objectMapper;
 
@@ -49,7 +51,7 @@ public class FirebaseService {
                 .build();
 
         FirebaseApp firebaseApp = FirebaseApp.initializeApp(options);
-        firebaseMessaging = FirebaseMessaging.getInstance(firebaseApp);
+        this.firebaseMessaging = FirebaseMessaging.getInstance(firebaseApp);
     }
 
     public void verifyToken(String token) throws FirebaseMessagingException {
@@ -104,18 +106,15 @@ public class FirebaseService {
      *
      * 따라서 여기선 putData를 사용하여 보내고, 클라이언트가 푸쉬 알람을 만들어 띄운다.
      *
-     * @param newNotice
+     * @param messageDTO
      * @throws FirebaseMessagingException
      */
 
-    public void sendMessage(NoticeDTO newNotice) throws FirebaseMessagingException {
+    public void sendMessage(NoticeMessageDTO messageDTO) throws FirebaseMessagingException {
 
-        Map<String, String> noticeMap = noticeDtoToMap(newNotice);
-        noticeMap.put(
-                "baseUrl",
-                newNotice.getCategoryName().equals(CategoryName.LIBRARY.getName()) ? libraryBaseUrl : normalBaseUrl);
+        Map<String, String> noticeMap = objectMapper.convertValue(messageDTO, Map.class);
 
-        StringBuilder topic = new StringBuilder(newNotice.getCategoryName());
+        StringBuilder topic = new StringBuilder(messageDTO.getCategory());
         if(deployEnv.equals("dev")) {
             topic.append(DEV_SUFFIX);
         }
@@ -128,28 +127,33 @@ public class FirebaseService {
         firebaseMessaging.send(newMessage);
     }
 
-    public void sendMessage(List<NoticeDTO> newNoticeDTOList) throws FirebaseMessagingException {
-        for (NoticeDTO noticeDTO : newNoticeDTOList) {
-            sendMessage(noticeDTO);
+    public void sendMessage(List<NoticeMessageDTO> messageDTOList) throws FirebaseMessagingException {
+        for (NoticeMessageDTO messageDTO : messageDTOList) {
+            sendMessage(messageDTO);
         }
     }
 
-    public void sendMessage(String token, NoticeDTO newNotice) throws FirebaseMessagingException {
+    public void sendMessage(String token, NoticeMessageDTO messageDTO) throws FirebaseMessagingException {
 
-        Map<String, String> noticeMap = noticeDtoToMap(newNotice);
-        noticeMap.put(
-                "baseUrl",
-                newNotice.getCategoryName().equals(CategoryName.LIBRARY.getName()) ? libraryBaseUrl : normalBaseUrl);
+        Map<String, String> messageMap = objectMapper.convertValue(messageDTO, Map.class);
 
         Message newMessage = Message.builder()
-                .putAllData(noticeMap)
+                .putAllData(messageMap)
                 .setToken(token)
                 .build();
 
         firebaseMessaging.send(newMessage);
     }
 
-    private Map<String, String> noticeDtoToMap(NoticeDTO newNotice) {
-        return objectMapper.convertValue(newNotice, Map.class);
+    public void sendMessage(String token, AdminMessageDTO messageDTO) throws FirebaseMessagingException {
+
+        Map<String, String> messageMap = objectMapper.convertValue(messageDTO, Map.class);
+
+        Message newMessage = Message.builder()
+                .putAllData(messageMap)
+                .setToken(token)
+                .build();
+
+        firebaseMessaging.send(newMessage);
     }
 }
