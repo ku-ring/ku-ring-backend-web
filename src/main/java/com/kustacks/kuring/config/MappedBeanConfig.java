@@ -28,6 +28,7 @@ import com.kustacks.kuring.kuapi.scrap.parser.StaffHTMLParser;
 import org.jsoup.nodes.Document;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +58,14 @@ public class MappedBeanConfig {
             for (CategoryName categoryName : CategoryName.values()) {
                 if(categoryName.equals(CategoryName.LIBRARY)) {
                     map.put(categoryName, libraryNoticeAPIClient);
-                } else {
+                } else if(CategoryName.BACHELOR.equals(categoryName) ||
+                        CategoryName.SCHOLARSHIP.equals(categoryName) ||
+                        CategoryName.EMPLOYMENT.equals(categoryName) ||
+                        CategoryName.NATIONAL.equals(categoryName) ||
+                        CategoryName.STUDENT.equals(categoryName) ||
+                        CategoryName.INDUSTRY_UNIV.equals(categoryName) ||
+                        CategoryName.NORMAL.equals(categoryName)
+                ) {
                     map.put(categoryName, kuisNoticeAPIClient);
                 }
             }
@@ -222,6 +230,43 @@ public class MappedBeanConfig {
                     map.put(deptInfo, eachDeptStaffHTMLParser);
                 }
             }
+            return map;
+        }
+    }
+
+    @Configuration
+    public static class CategoryNameThreadPoolMappedBeanConfig {
+
+        private final ThreadPoolTaskExecutor kuisNoticeUpdaterThreadTaskExecutor;
+        private final ThreadPoolTaskExecutor etcNoticeUpdaterThreadTaskExecutor;
+
+        public CategoryNameThreadPoolMappedBeanConfig(
+                ThreadPoolTaskExecutor kuisNoticeUpdaterThreadTaskExecutor,
+                ThreadPoolTaskExecutor etcNoticeUpdaterThreadTaskExecutor
+        ) {
+            this.kuisNoticeUpdaterThreadTaskExecutor = kuisNoticeUpdaterThreadTaskExecutor;
+            this.etcNoticeUpdaterThreadTaskExecutor = etcNoticeUpdaterThreadTaskExecutor;
+        }
+
+        @Bean
+        public Map<CategoryName, ThreadPoolTaskExecutor> categoryNameThreadPoolTaskExecutorMap() {
+            HashMap<CategoryName, ThreadPoolTaskExecutor> map = new HashMap<>();
+
+            for (CategoryName categoryName : CategoryName.values()) {
+                if(CategoryName.BACHELOR.equals(categoryName) ||
+                        CategoryName.SCHOLARSHIP.equals(categoryName) ||
+                        CategoryName.EMPLOYMENT.equals(categoryName) ||
+                        CategoryName.NATIONAL.equals(categoryName) ||
+                        CategoryName.STUDENT.equals(categoryName) ||
+                        CategoryName.INDUSTRY_UNIV.equals(categoryName) ||
+                        CategoryName.NORMAL.equals(categoryName)
+                ) {
+                    map.put(categoryName, kuisNoticeUpdaterThreadTaskExecutor);
+                } else {
+                    map.put(categoryName, etcNoticeUpdaterThreadTaskExecutor);
+                }
+            }
+
             return map;
         }
     }

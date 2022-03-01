@@ -1,6 +1,8 @@
 package com.kustacks.kuring.kuapi.api.staff;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kustacks.kuring.config.JsonConfig;
+import com.kustacks.kuring.config.MappedBeanConfig;
 import com.kustacks.kuring.controller.dto.StaffDTO;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
@@ -47,7 +49,8 @@ import static org.mockserver.model.HttpResponse.response;
         EachDeptStaffHTMLParser.class, KuStaffHTMLParser.class, RealEstateStaffHTMLParser.class,
         NormalJsoupClient.class,
         KoreanDept.class, LivingDesignDept.class, CommunicationDesignDept.class, RealEstateDept.class,
-        ObjectMapper.class})
+        MappedBeanConfig.StaffMappedBeanConfig.class, JsonConfig.class
+})
 @TestPropertySource("classpath:test-constants.properties")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class StaffScraperTest {
@@ -75,7 +78,6 @@ public class StaffScraperTest {
     private final String realEstateFolderName = "real_estate";
     private final String livingDesignFolderName = "living_design";
     private final String koreanFolderName = "korean";
-
 
     public StaffScraperTest(
             StaffScraper staffScraper,

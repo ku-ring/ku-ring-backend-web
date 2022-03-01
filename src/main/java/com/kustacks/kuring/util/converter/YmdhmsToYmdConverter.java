@@ -3,7 +3,7 @@ package com.kustacks.kuring.util.converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class YmdhmsToYmdConverter implements DateConverter {
+public class YmdhmsToYmdConverter implements DateConverter<String, String> {
 
     @Override
     public String convert(String ymdhms) {

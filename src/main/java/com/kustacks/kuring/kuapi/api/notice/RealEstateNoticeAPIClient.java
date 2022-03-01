@@ -26,8 +26,8 @@ public class RealEstateNoticeAPIClient implements NoticeAPIClient<Document, Dept
     private final JsoupClient jsoupClient;
     private final int UNKNOWN_PAGE_NUM = 100000;
 
-    public RealEstateNoticeAPIClient(JsoupClient normalJsoupClient) {
-        this.jsoupClient = normalJsoupClient;
+    public RealEstateNoticeAPIClient(JsoupClient proxyJsoupClient) {
+        this.jsoupClient = proxyJsoupClient;
     }
 
     @Override
