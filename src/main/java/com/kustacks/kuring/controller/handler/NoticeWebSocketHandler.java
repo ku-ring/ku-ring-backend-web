@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kustacks.kuring.controller.dto.NoticeSearchDTO;
 import com.kustacks.kuring.controller.dto.NoticeWebSocketResponseDTO;
-import com.kustacks.kuring.domain.notice.Notice;
+import com.kustacks.kuring.persistence.notice.Notice;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.WebSocketExceptionHandler;
 import com.kustacks.kuring.service.NoticeService;

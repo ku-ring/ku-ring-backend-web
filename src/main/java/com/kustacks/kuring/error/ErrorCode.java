@@ -33,6 +33,9 @@ public enum ErrorCode {
 
     API_FD_INVALID_CONTENT(HttpStatus.BAD_REQUEST, "피드백 길이가 유효하지 않습니다."),
 
+    API_TRIG_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "잘못된 Authorization 헤더 값입니다."),
+    API_TRIG_INVALID_TYPE(HttpStatus.BAD_REQUEST, "type 경로 파라미터가 올바르지 않습니다."),
+
     API_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),
 
     UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류"),
@@ -81,7 +84,11 @@ public enum ErrorCode {
     WS_CANNOT_STRINGIFY("객체를 JSON 문자열로 변경하는데 실패했습니다."),
     WS_CANNOT_SEND("웹소켓이 메세지 전송에 실패했습니다."),
 
-    AD_UNAUTHENTICATED("관리자가 아닙니다.");
+    AD_UNAUTHENTICATED("관리자가 아닙니다."),
+
+    MQ_CANNOT_CONVERT_OBJECT_TO_STRING("NewNoticeMQMessageDTO를 String으로 변환하는데 실패했습니다."),
+    MQ_CANNOT_PUBLISH("MQ메세지를 전송하는데 실패했습니다."),
+    MQ_CANNOT_CONNECT("MQ서버와의 커넥션 생성에 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

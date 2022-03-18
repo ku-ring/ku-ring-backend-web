@@ -3,7 +3,6 @@ package com.kustacks.kuring.controller;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.controller.dto.InsertFeedbackResponseDTO;
 import com.kustacks.kuring.controller.dto.SaveFeedbackRequestDTO;
-import com.kustacks.kuring.domain.user.User;
 import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.service.*;

@@ -1,7 +1,7 @@
 package com.kustacks.kuring.service;
 
-import com.kustacks.kuring.domain.staff.Staff;
-import com.kustacks.kuring.domain.staff.StaffRepository;
+import com.kustacks.kuring.persistence.staff.Staff;
+import com.kustacks.kuring.persistence.staff.StaffRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Iterator;

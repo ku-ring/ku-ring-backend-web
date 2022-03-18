@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/*.jar
+web: java $JAVA_OPTS -Xms250m -Xmx300m -Dspring.profiles.active=$DEPLOY_ENV -Dspring.server=$PORT -jar build/libs/*.jar

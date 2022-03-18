@@ -5,14 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.annotation.CheckSession;
 import com.kustacks.kuring.controller.dto.*;
-import com.kustacks.kuring.domain.category.Category;
-import com.kustacks.kuring.domain.feedback.Feedback;
-import com.kustacks.kuring.domain.notice.Notice;
-import com.kustacks.kuring.domain.user.User;
+import com.kustacks.kuring.mq.dto.AdminMQMessageDTO;
+import com.kustacks.kuring.mq.dto.NewNoticeMQMessageDTO;
+import com.kustacks.kuring.persistence.category.Category;
+import com.kustacks.kuring.persistence.feedback.Feedback;
+import com.kustacks.kuring.persistence.notice.Notice;
+import com.kustacks.kuring.persistence.user.User;
 import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
-import com.kustacks.kuring.kuapi.CategoryName;
+import com.kustacks.kuring.CategoryName;
 import com.kustacks.kuring.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +60,7 @@ public class AdminController {
             CategoryServiceImpl categoryService,
             FirebaseService firebaseService,
             AdminServiceImpl adminService,
+            Map<String, Category> categoryMap,
             ObjectMapper objectMapper) {
 
         this.categoryService = categoryService;
@@ -65,7 +68,7 @@ public class AdminController {
         this.adminService = adminService;
 
         this.objectMapper = objectMapper;
-        this.categoryMap = adminService.getCategoryMap();
+        this.categoryMap = categoryMap;
     }
 
 
@@ -176,25 +179,21 @@ public class AdminController {
         log.info("fake subject = {}", fakeNoticeSubject);
         log.info("fake category = {}", fakeNoticeCategory);
 
-        try {
-            firebaseService.sendMessage(NoticeMessageDTO.builder()
-                    .articleId(fakeNoticeArticleId)
-                    .postedDate(fakeNoticePostedDate)
-                    .category(fakeNoticeCategory)
-                    .subject(fakeNoticeSubject)
-                    .baseUrl(CategoryName.LIBRARY.getName().equals(fakeNoticeCategory) ? libraryBaseUrl : normalBaseUrl)
-                    .build());
-        } catch(FirebaseMessagingException e) {
-            throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
-        }
+        adminService.sendFBMessage(NewNoticeMQMessageDTO.builder()
+                .articleId(fakeNoticeArticleId)
+                .postedDate(fakeNoticePostedDate)
+                .category(fakeNoticeCategory)
+                .subject(fakeNoticeSubject)
+                .baseUrl(CategoryName.LIBRARY.getName().equals(fakeNoticeCategory) ? libraryBaseUrl : normalBaseUrl)
+                .fullUrl("")
+                .build());
 
         return new ResponseDTO(true, "성공", 200);
     }
 
     @CheckSession(isSessionRequired = false)
     @GetMapping("/login")
-    public String loginPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
+    public String loginPage(HttpServletRequest request, HttpServletResponse response) {
         return "thymeleaf/login";
     }
 
@@ -225,7 +224,7 @@ public class AdminController {
 
     @ResponseBody
     @PostMapping("/api/fake-update/fcm")
-    public FakeUpdateResponseDTO enrollFakeUpdate(@RequestBody Map<String, String> reqBody) {
+    public FakeUpdateResponseDTO enrollFakeUpdateByToken(@RequestBody Map<String, String> reqBody) {
 
         String token = reqBody.get("token");
         String auth = reqBody.get("auth");
@@ -271,17 +270,14 @@ public class AdminController {
                 throw new APIException(ErrorCode.API_ADMIN_INVALID_POSTED_DATE);
             }
 
-            try {
-                firebaseService.sendMessage(token, NoticeMessageDTO.builder()
-                        .articleId(articleId)
-                        .postedDate(postedDate)
-                        .subject(subject)
-                        .category(category)
-                        .baseUrl(CategoryName.LIBRARY.getName().equals(category) ? libraryBaseUrl : normalBaseUrl)
-                        .build());
-            } catch (FirebaseMessagingException e) {
-                throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
-            }
+            adminService.sendFBMessage(token, NewNoticeMQMessageDTO.builder()
+                    .articleId(articleId)
+                    .postedDate(postedDate)
+                    .subject(subject)
+                    .category(category)
+                    .baseUrl(CategoryName.LIBRARY.getName().equals(category) ? libraryBaseUrl : normalBaseUrl)
+                    .fullUrl("")
+                    .build());
         } else if("admin".equals(type)) {
             String title = reqBody.get("title");
             String body = reqBody.get("body");
@@ -299,14 +295,10 @@ public class AdminController {
                 throw new APIException(ErrorCode.API_ADMIN_INVALID_BODY);
             }
 
-            try {
-                firebaseService.sendMessage(token, AdminMessageDTO.builder()
-                        .title(title)
-                        .body(body)
-                        .build());
-            } catch (FirebaseMessagingException e) {
-                throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
-            }
+            adminService.sendFBMessage(token, AdminMQMessageDTO.builder()
+                    .title(title)
+                    .body(body)
+                    .build());
         } else {
             throw new APIException(ErrorCode.API_ADMIN_INVALID_TYPE);
         }

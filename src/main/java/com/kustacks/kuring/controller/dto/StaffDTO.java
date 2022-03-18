@@ -1,6 +1,6 @@
 package com.kustacks.kuring.controller.dto;
 
-import com.kustacks.kuring.domain.staff.Staff;
+import com.kustacks.kuring.persistence.staff.Staff;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

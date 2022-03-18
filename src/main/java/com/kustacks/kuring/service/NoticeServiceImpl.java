@@ -1,34 +1,35 @@
 package com.kustacks.kuring.service;
 
 import com.kustacks.kuring.controller.dto.NoticeDTO;
-import com.kustacks.kuring.domain.OffsetBasedPageRequest;
-import com.kustacks.kuring.domain.category.Category;
-import com.kustacks.kuring.domain.category.CategoryRepository;
-import com.kustacks.kuring.domain.notice.Notice;
-import com.kustacks.kuring.domain.notice.NoticeRepository;
-import com.kustacks.kuring.kuapi.CategoryName;
+import com.kustacks.kuring.persistence.OffsetBasedPageRequest;
+import com.kustacks.kuring.persistence.category.Category;
+import com.kustacks.kuring.persistence.category.CategoryRepository;
+import com.kustacks.kuring.persistence.notice.Notice;
+import com.kustacks.kuring.persistence.notice.NoticeRepository;
+import com.kustacks.kuring.CategoryName;
 import com.kustacks.kuring.service.utils.ObjectComparator;
+import com.kustacks.kuring.util.converter.DTOConverter;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
 public class NoticeServiceImpl implements NoticeService {
 
     private final NoticeRepository noticeRepository;
-    private final CategoryRepository categoryRepository;
     private final Map<String, Category> categoryMap;
+    private final DTOConverter<NoticeDTO, Notice> noticeEntityToNoticeDTOConverter;
     private final CategoryName[] categoryNames;
 
-    public NoticeServiceImpl(NoticeRepository noticeRepository, CategoryRepository categoryRepository) {
+    public NoticeServiceImpl(NoticeRepository noticeRepository,
+                             DTOConverter<NoticeDTO, Notice> noticeEntityToNoticeDTOConverter,
+                             Map<String, Category> categoryMap
+    ) {
         this.noticeRepository = noticeRepository;
-        this.categoryRepository = categoryRepository;
-
-        categoryMap = categoryRepository.findAllMap();
-        categoryNames = CategoryName.values();
+        this.noticeEntityToNoticeDTOConverter = noticeEntityToNoticeDTOConverter;
+        this.categoryMap = categoryMap;
+        this.categoryNames = CategoryName.values();
     }
 
     public List<NoticeDTO> getNotices(String type, int offset, int max) {
@@ -42,7 +43,11 @@ public class NoticeServiceImpl implements NoticeService {
 
         List<Notice> notices = noticeRepository.findByCategory(category, pageRequest);
 
-        return noticeEntityToDTO(notices);
+        List<NoticeDTO> noticeDTOList = new LinkedList<>();
+        for (Notice notice : notices) {
+            noticeDTOList.add(noticeEntityToNoticeDTOConverter.convert(notice));
+        }
+        return noticeDTOList;
     }
 
     public List<Notice> handleSearchRequest(String keywords) {
@@ -85,22 +90,5 @@ public class NoticeServiceImpl implements NoticeService {
         notices.sort(ObjectComparator.NoticeDateComparator);
 
         return notices;
-    }
-
-
-
-    // TODO: noticeDTO 클래스에 위치하는게 맞는듯?
-    private List<NoticeDTO> noticeEntityToDTO(List<Notice> notices) {
-        List<NoticeDTO> noticeDTOList = new ArrayList<>(notices.size());
-        for (Notice notice : notices) {
-            noticeDTOList.add(NoticeDTO.builder()
-                    .articleId(notice.getArticleId())
-                    .postedDate(notice.getPostedDate())
-                    .subject(notice.getSubject())
-                    .categoryName(notice.getCategory().getName())
-                    .build());
-        }
-
-        return noticeDTOList;
     }
 }

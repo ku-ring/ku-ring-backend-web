@@ -1,5 +1,5 @@
 package com.kustacks.kuring.util.converter;
 
-public interface DTOConverter {
-    Object convert(Object target);
+public interface DTOConverter<T, K> {
+    T convert(K target);
 }

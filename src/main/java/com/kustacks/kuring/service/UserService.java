@@ -1,6 +1,6 @@
 package com.kustacks.kuring.service;
 
-import com.kustacks.kuring.domain.user.User;
+import com.kustacks.kuring.persistence.user.User;
 
 public interface UserService {
     User getUserByToken(String token);

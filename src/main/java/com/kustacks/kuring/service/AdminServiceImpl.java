@@ -1,22 +1,28 @@
 package com.kustacks.kuring.service;
 
-import com.kustacks.kuring.domain.admin.Admin;
-import com.kustacks.kuring.domain.admin.AdminRepository;
-import com.kustacks.kuring.domain.category.Category;
-import com.kustacks.kuring.domain.category.CategoryRepository;
-import com.kustacks.kuring.domain.feedback.Feedback;
-import com.kustacks.kuring.domain.feedback.FeedbackRepository;
-import com.kustacks.kuring.domain.notice.Notice;
-import com.kustacks.kuring.domain.notice.NoticeRepository;
-import com.kustacks.kuring.domain.user.User;
-import com.kustacks.kuring.domain.user.UserRepository;
-import com.kustacks.kuring.kuapi.CategoryName;
+import com.kustacks.kuring.error.ErrorCode;
+import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.mq.MQNotifierProducer;
+import com.kustacks.kuring.mq.dto.AdminMQMessageDTO;
+import com.kustacks.kuring.mq.dto.NewNoticeMQMessageDTO;
+import com.kustacks.kuring.persistence.admin.Admin;
+import com.kustacks.kuring.persistence.admin.AdminRepository;
+import com.kustacks.kuring.persistence.category.Category;
+import com.kustacks.kuring.persistence.category.CategoryRepository;
+import com.kustacks.kuring.persistence.feedback.Feedback;
+import com.kustacks.kuring.persistence.feedback.FeedbackRepository;
+import com.kustacks.kuring.persistence.notice.Notice;
+import com.kustacks.kuring.persistence.notice.NoticeRepository;
+import com.kustacks.kuring.persistence.user.User;
+import com.kustacks.kuring.persistence.user.UserRepository;
+import com.kustacks.kuring.CategoryName;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -26,12 +32,16 @@ public class AdminServiceImpl implements AdminService {
     private final NoticeRepository noticeRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final MQNotifierProducer<NewNoticeMQMessageDTO> mqNoticeNotifierProducer;
+    private final MQNotifierProducer<AdminMQMessageDTO> mqAdminNotifierProducer;
 
     public AdminServiceImpl(AdminRepository adminRepository,
                             FeedbackRepository feedbackRepository,
                             NoticeRepository noticeRepository,
                             UserRepository userRepository,
-                            CategoryRepository categoryRepository
+                            CategoryRepository categoryRepository,
+                            MQNotifierProducer<NewNoticeMQMessageDTO> rabbitMQNoticeNotifierProducer,
+                            MQNotifierProducer<AdminMQMessageDTO> rabbitMQAdminNotifierProducer
     ) {
 
         this.adminRepository = adminRepository;
@@ -39,6 +49,8 @@ public class AdminServiceImpl implements AdminService {
         this.noticeRepository = noticeRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
+        this.mqNoticeNotifierProducer = rabbitMQNoticeNotifierProducer;
+        this.mqAdminNotifierProducer = rabbitMQAdminNotifierProducer;
     }
 
 
@@ -60,11 +72,6 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<User> getUsers() {
         return userRepository.findAll();
-    }
-
-    @Override
-    public HashMap<String, Category> getCategoryMap() {
-        return (HashMap<String, Category>) categoryRepository.findAllMap();
     }
 
     @Override
@@ -112,5 +119,27 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public boolean checkBody(String body) {
         return body != null && body.length() > 0;
+    }
+
+    @Override
+    public void sendFBMessage(NewNoticeMQMessageDTO messageDTO) {
+        mqNoticeNotifierProducer.publish(messageDTO);
+    }
+
+    @Override
+    public void sendFBMessage(String token, NewNoticeMQMessageDTO messageDTO) {
+        messageDTO.setToken(token);
+        mqNoticeNotifierProducer.publish(messageDTO);
+    }
+
+    @Override
+    public void sendFBMessage(AdminMQMessageDTO messageDTO) {
+        mqAdminNotifierProducer.publish(messageDTO);
+    }
+
+    @Override
+    public void sendFBMessage(String token, AdminMQMessageDTO messageDTO) {
+        messageDTO.setToken(token);
+        mqAdminNotifierProducer.publish(messageDTO);
     }
 }

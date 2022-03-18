@@ -1,10 +1,10 @@
 package com.kustacks.kuring.controller;
 
+import com.kustacks.kuring.CategoryName;
 import com.kustacks.kuring.controller.dto.NoticeDTO;
 import com.kustacks.kuring.controller.dto.NoticeResponseDTO;
 import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.service.NoticeService;
 import com.kustacks.kuring.service.NoticeServiceImpl;
 import org.springframework.beans.factory.annotation.Value;

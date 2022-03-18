@@ -1,7 +1,7 @@
 package com.kustacks.kuring.service;
 
 import com.kustacks.kuring.controller.dto.NoticeDTO;
-import com.kustacks.kuring.domain.notice.Notice;
+import com.kustacks.kuring.persistence.notice.Notice;
 
 import java.util.List;
 

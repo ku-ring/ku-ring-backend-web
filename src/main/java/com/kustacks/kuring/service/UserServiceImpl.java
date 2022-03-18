@@ -1,7 +1,7 @@
 package com.kustacks.kuring.service;
 
-import com.kustacks.kuring.domain.user.User;
-import com.kustacks.kuring.domain.user.UserRepository;
+import com.kustacks.kuring.persistence.user.User;
+import com.kustacks.kuring.persistence.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service

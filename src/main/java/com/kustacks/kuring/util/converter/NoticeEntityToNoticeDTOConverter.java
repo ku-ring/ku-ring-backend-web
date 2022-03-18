@@ -1,21 +1,19 @@
 package com.kustacks.kuring.util.converter;
 
 import com.kustacks.kuring.controller.dto.NoticeDTO;
-import com.kustacks.kuring.domain.notice.Notice;
+import com.kustacks.kuring.persistence.notice.Notice;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NoticeEntityToNoticeDTOConverter implements DTOConverter {
+public class NoticeEntityToNoticeDTOConverter implements DTOConverter<NoticeDTO, Notice> {
 
     @Override
-    public Object convert(Object target) {
-
-        Notice notice = (Notice) target;
+    public NoticeDTO convert(Notice target) {
         return NoticeDTO.builder()
-                .articleId(notice.getArticleId())
-                .postedDate(notice.getPostedDate())
-                .subject(notice.getSubject())
-                .categoryName(notice.getCategory().getName())
+                .articleId(target.getArticleId())
+                .postedDate(target.getPostedDate())
+                .subject(target.getSubject())
+                .categoryName(target.getCategory().getName())
                 .build();
     }
 }

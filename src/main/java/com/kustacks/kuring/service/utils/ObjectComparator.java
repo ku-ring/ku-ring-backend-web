@@ -1,6 +1,6 @@
 package com.kustacks.kuring.service.utils;
 
-import com.kustacks.kuring.domain.notice.Notice;
+import com.kustacks.kuring.persistence.notice.Notice;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -44,6 +44,6 @@ public class ObjectComparator {
 
                 }
 
-                return bdt.isAfter(adt) ? 1 : -1;
+                return bdt.isAfter(adt) ? 1 : 0;
             };
 }
