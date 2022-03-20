@@ -1,5 +1,6 @@
 package com.kustacks.kuring.persistence.notice;
 
+import com.kustacks.kuring.persistence.audit.BaseEntity;
 import com.kustacks.kuring.persistence.category.Category;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "notice")
-public class Notice {
+public class Notice extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -28,6 +29,12 @@ public class Notice {
 
     @Column(name = "subject", length = 128, nullable = false)
     private String subject;
+
+    @Column(name = "base_url", length = 255, nullable = false)
+    private String baseUrl;
+
+    @Column(name = "full_url", length = 255, nullable = false)
+    private String fullUrl;
 
     @ManyToOne
     @JoinColumn(name = "category_name", nullable = false)
