@@ -22,6 +22,9 @@ public class TriggerController {
                                                     @PathVariable String type
     ) {
         String[] authValues = authHeader.split(" ");
+        if(authValues.length != 2) {
+            throw new APIException(ErrorCode.API_TRIG_UNAUTHORIZED);
+        }
         if(!("Bearer".equals(authValues[0]) && triggerService.checkAuth(authValues[1]))) {
             throw new APIException(ErrorCode.API_TRIG_UNAUTHORIZED);
         } else if(!("new".equals(type) || "modify-remove".equals(type))) {
@@ -37,6 +40,9 @@ public class TriggerController {
                                                     @PathVariable String type
     ) {
         String[] authValues = authHeader.split(" ");
+        if(authValues.length != 2) {
+            throw new APIException(ErrorCode.API_TRIG_UNAUTHORIZED);
+        }
         if(!("Bearer".equals(authValues[0]) && triggerService.checkAuth(authValues[1]))) {
             throw new APIException(ErrorCode.API_TRIG_UNAUTHORIZED);
         } else if(!"all".equals(type)) {
@@ -51,6 +57,9 @@ public class TriggerController {
     public StaffTriggerResponseDTO triggerUser(@RequestHeader("Authorization") String authHeader,
                                                 @PathVariable String type) {
         String[] authValues = authHeader.split(" ");
+        if(authValues.length != 2) {
+            throw new APIException(ErrorCode.API_TRIG_UNAUTHORIZED);
+        }
         if(!("Bearer".equals(authValues[0]) && triggerService.checkAuth(authValues[1]))) {
             throw new APIException(ErrorCode.API_TRIG_UNAUTHORIZED);
         } else if(!"validation".equals(type)) {
