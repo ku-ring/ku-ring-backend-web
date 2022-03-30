@@ -2,7 +2,7 @@ package com.kustacks.kuring.controller;
 
 import com.kustacks.kuring.controller.dto.NoticeDTO;
 import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.service.NoticeServiceImpl;
+import com.kustacks.kuring.service.NoticeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -40,24 +41,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(RestDocumentationExtension.class)
 @WebMvcTest(NoticeController.class)
+@TestPropertySource("classpath:test-constants.properties")
 public class NoticeControllerTest {
-
-    // gradle을 기반으로 디렉토리로 자동 구성 하는 역할
-//    @Rule
-//    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     private MockMvc mockMvc;
 
     @MockBean
-    private NoticeServiceImpl noticeService;
+    private NoticeService noticeService;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    private final String articleId = "5cw2e1";
-    private final String postedDate = "20211016";
-    private final String subject = "[학사] 2021년 학사 관련 공지";
+    private final String articleId = "5b45b56";
+    private final String postedDate = "20210504";
+    private final String subject = "증명서 발급 시 본인 인증 방법 변경 안내";
     private final String categoryName = "bachelor";
+    private final String baseUrl = "https://www.konkuk.ac.kr/do/MessageBoard/ArticleRead.do";
+    private final String fullUrl = "https://www.konkuk.ac.kr/do/MessageBoard/ArticleRead.do?id=5b45b56";
 
     private String type;
     private int offset;
@@ -84,6 +84,7 @@ public class NoticeControllerTest {
                 .postedDate(postedDate)
                 .subject(subject)
                 .categoryName(categoryName)
+                .fullUrl(fullUrl)
                 .build());
 
         given(noticeService.getNotices(categoryName, offset, max)).willReturn(noticeDTOList);
@@ -101,14 +102,14 @@ public class NoticeControllerTest {
                 .andExpect(jsonPath("isSuccess").value(true))
                 .andExpect(jsonPath("resultMsg").value("성공"))
                 .andExpect(jsonPath("resultCode").value(200))
-                .andExpect(jsonPath("baseUrl").exists())
+                .andExpect(jsonPath("baseUrl").value(baseUrl))
                 .andExpect(jsonPath("noticeList").exists())
                 .andDo(document("notice-success",
                                 getDocumentRequest(),
                                 getDocumentResponse(),
                                 requestParameters(
                                         parameterWithName("type").description("공지 카테고리 키워드")
-                                                .attributes(key("Constraints").value("bch, sch, emp, nat, stu, ind, nor, lib")),
+                                                .attributes(key("Constraints").value("쿠링 Notion > 서버 > API 가이드 > 메인화면 - 모든 공지 데이터 API > key=type의 value 항목 참고")),
                                         parameterWithName("offset").description("가져올 공지의 시작 인덱스")
                                                 .attributes(key("Constraints").value("0 이상의 정수")),
                                         parameterWithName("max").description("가져올 공지 최대 개수")
@@ -122,7 +123,8 @@ public class NoticeControllerTest {
                                         fieldWithPath("noticeList[].articleId").type(JsonFieldType.STRING).description("공지 ID"),
                                         fieldWithPath("noticeList[].postedDate").type(JsonFieldType.STRING).description("공지 게시일"),
                                         fieldWithPath("noticeList[].subject").type(JsonFieldType.STRING).description("공지 제목"),
-                                        fieldWithPath("noticeList[].category").type(JsonFieldType.STRING).description("공지 카테고리명")
+                                        fieldWithPath("noticeList[].category").type(JsonFieldType.STRING).description("공지 카테고리명"),
+                                        fieldWithPath("noticeList[].fullUrl").type(JsonFieldType.STRING).description("공지 링크")
                                 ))
 
                 );

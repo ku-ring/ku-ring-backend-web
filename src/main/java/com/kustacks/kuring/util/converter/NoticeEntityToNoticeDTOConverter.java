@@ -14,6 +14,7 @@ public class NoticeEntityToNoticeDTOConverter implements DTOConverter<NoticeDTO,
                 .postedDate(target.getPostedDate())
                 .subject(target.getSubject())
                 .categoryName(target.getCategory().getName())
+                .fullUrl(target.getFullUrl())
                 .build();
     }
 }

@@ -20,4 +20,7 @@ public class NoticeDTO {
 
     @JsonProperty("category")
     private String categoryName;
+
+    @JsonProperty("fullUrl")
+    private String fullUrl;
 }

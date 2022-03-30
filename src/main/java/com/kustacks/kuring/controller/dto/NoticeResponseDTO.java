@@ -19,4 +19,10 @@ public class NoticeResponseDTO extends ResponseDTO {
         this.baseUrl = baseUrl;
         this.noticeList = noticeList;
     }
+
+    public NoticeResponseDTO(List<NoticeDTO> noticeList) {
+        super(true, "성공", 200);
+        this.baseUrl = "";
+        this.noticeList = noticeList;
+    }
 }
