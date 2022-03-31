@@ -33,8 +33,7 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     public List<NoticeDTO> getNotices(String type, int offset, int max) {
-        OffsetBasedPageRequest pageRequest = new OffsetBasedPageRequest(offset, max, Sort.by(Sort.Direction.DESC, "postedDate"));
-//        PageRequest pageRequest = PageRequest.of(offset / max, max);
+        OffsetBasedPageRequest pageRequest = new OffsetBasedPageRequest(offset, max, Sort.by(Sort.Direction.DESC, "postedDate", "id"));
 
         Category category = categoryMap.get(type);
         if(category == null) {
