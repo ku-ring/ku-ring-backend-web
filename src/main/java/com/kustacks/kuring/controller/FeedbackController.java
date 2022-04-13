@@ -27,7 +27,7 @@ public class FeedbackController {
         this.feedbackService = feedbackService;
     }
 
-    @PostMapping("/feedback")
+    @PostMapping(value = "/feedback", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public InsertFeedbackResponseDTO insertFeedback(@RequestBody SaveFeedbackRequestDTO requestDTO) throws APIException {
         String token = requestDTO.getToken();
         String content = requestDTO.getContent();

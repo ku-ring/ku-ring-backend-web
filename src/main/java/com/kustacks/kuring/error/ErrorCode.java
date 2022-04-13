@@ -23,8 +23,10 @@ public enum ErrorCode {
     API_NOTICE_NOT_EXIST_CATEGORY(HttpStatus.BAD_REQUEST, "해당 공지 카테고리를 지원하지 않습니다."),
 //    API_NOTICE_CANNOT_FIND_CATEGORY(HttpStatus.INTERNAL_SERVER_ERROR, "해당 공지 카테고리를 찾을 수 없습니다."),
     API_MISSING_PARAM(HttpStatus.BAD_REQUEST, "필수 파라미터가 없습니다."),
+    API_MISSING_BODY(HttpStatus.BAD_REQUEST, "필수 요청 body가 없습니다."),
     API_INVALID_PARAM(HttpStatus.BAD_REQUEST, "파라미터 값 중 잘못된 값이 있습니다."),
     API_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    API_INVALID_HEADER(HttpStatus.NOT_ACCEPTABLE, "잘못된 헤더입니다. Accept 또는 Content-Type 헤더를 확인해 주세요."),
     API_NOT_ACCEPTABLE(HttpStatus.NOT_ACCEPTABLE, "요청한 미디어 타입으로 응답할 수 없습니다."),
 
     API_FB_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 구독에 실패했습니다."),
@@ -88,7 +90,9 @@ public enum ErrorCode {
 
     MQ_CANNOT_CONVERT_OBJECT_TO_STRING("NewNoticeMQMessageDTO를 String으로 변환하는데 실패했습니다."),
     MQ_CANNOT_PUBLISH("MQ메세지를 전송하는데 실패했습니다."),
-    MQ_CANNOT_CONNECT("MQ서버와의 커넥션 생성에 실패했습니다.");
+    MQ_CANNOT_CONNECT("MQ서버와의 커넥션 생성에 실패했습니다."),
+
+    DB_DUP_KEY("DB에 저장하려는 Entity가 중복입니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
