@@ -2,7 +2,9 @@ package com.kustacks.kuring.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
+import com.kustacks.kuring.controller.dto.CategoryHierarchyDTO;
 import com.kustacks.kuring.controller.dto.SubscribeCategoriesRequestDTO;
+import com.kustacks.kuring.controller.dto.CategoryNameInfoDTO;
 import com.kustacks.kuring.persistence.category.Category;
 import com.kustacks.kuring.persistence.user.User;
 import com.kustacks.kuring.persistence.user_category.UserCategory;
@@ -12,6 +14,7 @@ import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.service.CategoryServiceImpl;
 import com.kustacks.kuring.service.FirebaseService;
 import com.kustacks.kuring.service.UserServiceImpl;
+import com.kustacks.kuring.util.converter.DTOConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +38,7 @@ import java.util.*;
 import static com.kustacks.kuring.ApiDocumentUtils.getDocumentRequest;
 import static com.kustacks.kuring.ApiDocumentUtils.getDocumentResponse;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.hasValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -85,41 +89,82 @@ public class CategoryControllerTest {
 
     @DisplayName("서버에서 제공하는 공지 카테고리 목록 제공 API - 성공")
     @Test
-    public void getSupportedCategoriesSuccessTest() throws Exception {
+    public void getSubscribableCategoriesSuccessTest() throws Exception {
 
-        List<Category> categories = new LinkedList<>();
-        categories.add(new Category("bachelor"));
-        categories.add(new Category("employment"));
-
-        List<String> categoryNames = new LinkedList<>();
-        categoryNames.add("bachelor");
-        categoryNames.add("employment");
+        String requestGroup = "kuis";
+        List<CategoryHierarchyDTO> subCategories = new LinkedList<>();
+        CategoryHierarchyDTO bachelor = new CategoryHierarchyDTO("bachelor", "학사", "bch");
+        CategoryHierarchyDTO scholarship = new CategoryHierarchyDTO("scholarship", "장학", "sch");
+        CategoryHierarchyDTO employment = new CategoryHierarchyDTO("employment", "취창업", "emp");
+        CategoryHierarchyDTO national = new CategoryHierarchyDTO("national", "국제", "nat");
+        CategoryHierarchyDTO student = new CategoryHierarchyDTO("student", "학생", "stu");
+        CategoryHierarchyDTO industryUniversity = new CategoryHierarchyDTO("industry_university", "산학", "ind");
+        CategoryHierarchyDTO normal = new CategoryHierarchyDTO("normal", "일반", "nor");
+        CategoryHierarchyDTO library = new CategoryHierarchyDTO("library", "도서관", "lib");
+        subCategories.add(bachelor);
+        subCategories.add(scholarship);
+        subCategories.add(employment);
+        subCategories.add(national);
+        subCategories.add(student);
+        subCategories.add(industryUniversity);
+        subCategories.add(normal);
+        subCategories.add(library);
 
         // given
-        given(categoryService.getCategories()).willReturn(categories);
-        given(categoryService.getCategoryNamesFromCategories(categories)).willReturn(categoryNames);
+        given(categoryService.getSubscribableCategories(requestGroup)).willReturn(subCategories);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice/categories")
-                .characterEncoding(StandardCharsets.UTF_8)
-                .accept(MediaType.APPLICATION_JSON));
+                        .queryParam("group", requestGroup)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .accept(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("isSuccess").value(true))
                 .andExpect(jsonPath("resultMsg").value("성공"))
                 .andExpect(jsonPath("resultCode").value(200))
-                .andExpect(jsonPath("categories", hasSize(2)))
-                .andExpect(jsonPath("categories[0]").value(categoryNames.get(0)))
-                .andExpect(jsonPath("categories[1]").value(categoryNames.get(1)))
-                .andDo(document("category-get-all-success",
+                .andExpect(jsonPath("type").value(requestGroup))
+                .andExpect(jsonPath("categories", hasSize(8)))
+                .andExpect(jsonPath("categories[0].name").value(bachelor.getName()))
+                .andExpect(jsonPath("categories[0].korName").value(bachelor.getKorName()))
+                .andExpect(jsonPath("categories[0].shortName").value(bachelor.getShortName()))
+                .andExpect(jsonPath("categories[1].name").value(scholarship.getName()))
+                .andExpect(jsonPath("categories[1].korName").value(scholarship.getKorName()))
+                .andExpect(jsonPath("categories[1].shortName").value(scholarship.getShortName()))
+                .andExpect(jsonPath("categories[2].name").value(employment.getName()))
+                .andExpect(jsonPath("categories[2].korName").value(employment.getKorName()))
+                .andExpect(jsonPath("categories[2].shortName").value(employment.getShortName()))
+                .andExpect(jsonPath("categories[3].name").value(national.getName()))
+                .andExpect(jsonPath("categories[3].korName").value(national.getKorName()))
+                .andExpect(jsonPath("categories[3].shortName").value(national.getShortName()))
+                .andExpect(jsonPath("categories[4].name").value(student.getName()))
+                .andExpect(jsonPath("categories[4].korName").value(student.getKorName()))
+                .andExpect(jsonPath("categories[4].shortName").value(student.getShortName()))
+                .andExpect(jsonPath("categories[5].name").value(industryUniversity.getName()))
+                .andExpect(jsonPath("categories[5].korName").value(industryUniversity.getKorName()))
+                .andExpect(jsonPath("categories[5].shortName").value(industryUniversity.getShortName()))
+                .andExpect(jsonPath("categories[6].name").value(normal.getName()))
+                .andExpect(jsonPath("categories[6].korName").value(normal.getKorName()))
+                .andExpect(jsonPath("categories[6].shortName").value(normal.getShortName()))
+                .andExpect(jsonPath("categories[7].name").value(library.getName()))
+                .andExpect(jsonPath("categories[7].korName").value(library.getKorName()))
+                .andExpect(jsonPath("categories[7].shortName").value(library.getShortName()))
+                .andDo(document("category-get-subscribable-categories-success",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        requestParameters(),
+                        requestParameters(
+                                parameterWithName("group").description("카테고리 그룹 이름")
+                                        .attributes(key("Constraints").value("kuis, major"))
+                        ),
                         responseFields(
                                 fieldWithPath("isSuccess").type(JsonFieldType.BOOLEAN).description("성공 여부"),
                                 fieldWithPath("resultMsg").type(JsonFieldType.STRING).description("결과 메세지"),
                                 fieldWithPath("resultCode").type(JsonFieldType.NUMBER).description("결과 코드"),
-                                fieldWithPath("categories").type(JsonFieldType.ARRAY).description("서버에서 지원하는 공지 카테고리 목록")
+                                fieldWithPath("type").type(JsonFieldType.STRING).description("최상위 카테고리"),
+                                fieldWithPath("categories").type(JsonFieldType.ARRAY).description("서버에서 지원하는 공지 카테고리 목록"),
+                                subsectionWithPath("categories[].name").type(JsonFieldType.STRING).description("구독 가능한 카테고리의 영문이름"),
+                                subsectionWithPath("categories[].korName").type(JsonFieldType.STRING).description("구독 가능한 카테고리의 국문이름"),
+                                subsectionWithPath("categories[].shortName").type(JsonFieldType.STRING).description("구독 가능한 카테고리의 짧은이름")
                         ))
                 );
     }
@@ -130,8 +175,8 @@ public class CategoryControllerTest {
         String token = "TEST_TOKEN";
 
         List<Category> categories = new LinkedList<>();
-        categories.add(new Category("bachelor"));
-        categories.add(new Category("employment"));
+        categories.add(Category.builder().name("bachelor").build());
+        categories.add(Category.builder().name("employment").build());
 
         List<String> categoryNames = new LinkedList<>();
         categoryNames.add("bachelor");

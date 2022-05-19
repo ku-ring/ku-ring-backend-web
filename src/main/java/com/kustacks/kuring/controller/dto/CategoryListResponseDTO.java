@@ -11,12 +11,16 @@ import java.util.List;
 @NoArgsConstructor
 public class CategoryListResponseDTO extends ResponseDTO {
 
+    @JsonProperty("type")
+    private String type;
+
     @JsonProperty("categories")
-    private List<String> categories;
+    private List<CategoryHierarchyDTO> categories;
 
     @Builder
-    public CategoryListResponseDTO(List<String> categories) {
+    public CategoryListResponseDTO(String type, List<CategoryHierarchyDTO> categories) {
         super(true, "성공", 200);
+        this.type = type;
         this.categories = categories;
     }
 }

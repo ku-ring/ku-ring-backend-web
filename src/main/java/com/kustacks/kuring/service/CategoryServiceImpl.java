@@ -2,6 +2,7 @@ package com.kustacks.kuring.service;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.controller.dto.CategoryDTO;
+import com.kustacks.kuring.controller.dto.CategoryHierarchyDTO;
 import com.kustacks.kuring.persistence.category.Category;
 import com.kustacks.kuring.persistence.category.CategoryRepository;
 import com.kustacks.kuring.persistence.user.User;
@@ -51,8 +52,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> getCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryHierarchyDTO> getSubscribableCategories(String ancestor) {
+        if(!verifyCategoryName(ancestor)) {
+            throw new InternalLogicException(ErrorCode.CAT_NOT_EXIST_CATEGORY);
+        }
+
+        List<CategoryHierarchyDTO> subscribableCategories = new ArrayList<>();
+        getChildCategories(ancestor, subscribableCategories);
+        return subscribableCategories;
     }
 
     @Override
@@ -153,6 +160,30 @@ public class CategoryServiceImpl implements CategoryService {
         // 카테고리 이름 중복 검사
         HashSet<String> set = new HashSet<>(categories);
         return new ArrayList<>(set);
+    }
+
+
+    // 재귀적으로 돌면서, 구독 가능한 카테고리를 만나면 subscribableCategories 리스트에 저장한다.
+    // 구독 가능하지 않은 카테고리라면, 해당 카테고리의 자식 카테고리를 탐색한다.
+    private void getChildCategories(String parent, List<CategoryHierarchyDTO> categoryHierarchyDTOList) {
+        List<Category> childCategories = getChildCategories(parent);
+        for (Category child : childCategories) {
+            if(child.isLeaf()) {
+                categoryHierarchyDTOList.add(new CategoryHierarchyDTO(child.getName(), child.getKorName(), child.getShortName()));
+            } else {
+                List<CategoryHierarchyDTO> curCategoryHierarchy = new ArrayList<>();
+                getChildCategories(child.getName(), curCategoryHierarchy);
+                categoryHierarchyDTOList.add(new CategoryHierarchyDTO(child.getName(), curCategoryHierarchy));
+            }
+        }
+    }
+
+    private List<Category> getChildCategories(String parent) {
+        return categoryRepository.findAllByParentName(parent);
+    }
+
+    private boolean verifyCategoryName(String name) {
+        return categoryRepository.findByName(name).isPresent();
     }
 
     private Map<String, UserCategory> listToMap(List<UserCategory> userCategories) {

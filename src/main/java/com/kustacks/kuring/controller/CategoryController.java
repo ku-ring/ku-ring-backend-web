@@ -1,15 +1,13 @@
 package com.kustacks.kuring.controller;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.controller.dto.CategoryListResponseDTO;
-import com.kustacks.kuring.controller.dto.SubscribeCategoriesRequestDTO;
-import com.kustacks.kuring.controller.dto.SubscribeCategoriesResponseDTO;
-import com.kustacks.kuring.persistence.category.Category;
-import com.kustacks.kuring.persistence.user.User;
-import com.kustacks.kuring.persistence.user_category.UserCategory;
+import com.kustacks.kuring.controller.dto.*;
 import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.persistence.category.Category;
+import com.kustacks.kuring.persistence.user.User;
+import com.kustacks.kuring.persistence.user_category.UserCategory;
 import com.kustacks.kuring.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -27,28 +25,36 @@ public class CategoryController {
     private final UserService userService;
     private final FirebaseService firebaseService;
 
-    public CategoryController(
-            CategoryServiceImpl categoryService,
-            FirebaseService firebaseService,
-            UserServiceImpl userService) {
+    public CategoryController(CategoryServiceImpl categoryService,
+                              FirebaseService firebaseService,
+                              UserServiceImpl userService) {
         this.categoryService = categoryService;
         this.userService = userService;
         this.firebaseService = firebaseService;
     }
 
     @GetMapping("/notice/categories")
-    public CategoryListResponseDTO getSupportedCategories() {
+    public CategoryListResponseDTO getSubscribableCategories(@RequestParam("group") String group) {
 
-        List<Category> categories = categoryService.getCategories();
-        List<String> categoryNames = categoryService.getCategoryNamesFromCategories(categories);
+        List<CategoryHierarchyDTO> categoryHierarchyDTOList;
+        try {
+            categoryHierarchyDTOList = categoryService.getSubscribableCategories(group);
+        } catch(InternalLogicException e) {
+            throw new APIException(ErrorCode.API_INVALID_PARAM, e);
+        }
+
+        for (CategoryHierarchyDTO category : categoryHierarchyDTOList) {
+            log.info("{} {} {}", category.getName(), category.getKorName(), category.getType());
+        }
 
         return CategoryListResponseDTO.builder()
-                .categories(categoryNames)
+                .type(group)
+                .categories(categoryHierarchyDTOList)
                 .build();
     }
 
     @GetMapping("/notice/subscribe")
-    public CategoryListResponseDTO getUserCategories(@RequestParam("id") String token) {
+    public UserCategoryListResponseDTO getUserCategories(@RequestParam("id") String token) {
         // FCM에 이 토큰이 유효한지 확인
         // 유효하면? user-category 테이블 조회해서 카테고리 목록 생성
         // 유효하지 않으면? 401에러 리턴
@@ -66,7 +72,7 @@ public class CategoryController {
         List<Category> categories = categoryService.getUserCategories(token);
         List<String> categoryNames = categoryService.getCategoryNamesFromCategories(categories);
 
-        return CategoryListResponseDTO.builder()
+        return UserCategoryListResponseDTO.builder()
                 .categories(categoryNames)
                 .build();
     }

@@ -22,6 +22,22 @@ public class Category {
     @Column(name = "name", length = 45, nullable = false)
     private String name;
 
+    @Column(name = "kor_name", nullable = false, unique = true, columnDefinition = "VARCHAR(45) default ''")
+    private String korName = "";
+
+    @Column(name = "short_name", nullable = false, unique = true, columnDefinition = "VARCHAR(15) default ''")
+    private String shortName = "";
+
+    @Column(name = "is_leaf", nullable = false)
+    private boolean isLeaf;
+
+    @ManyToOne(targetEntity = Category.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_name", referencedColumnName = "name", nullable = true)
+    private Category parent;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+    private List<Category> childs;
+
     // FetchMode.SELECT와 FetchType.LAZY로 설정해서
     // noticeList는 실제로 사용될 때 쿼리를 던지도록 함으로써 성능 향상을 꾀했다.
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
@@ -33,7 +49,11 @@ public class Category {
     private List<UserCategory> userCategories = new ArrayList<>();
 
     @Builder
-    public Category(String name) {
+    public Category(boolean isLeaf, String name, String korName, String shortName, Category parent) {
+        this.isLeaf = isLeaf;
         this.name = name;
+        this.korName = korName;
+        this.shortName = shortName;
+        this.parent = parent;
     }
 }
