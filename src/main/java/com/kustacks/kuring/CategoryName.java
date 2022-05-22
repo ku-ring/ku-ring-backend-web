@@ -48,7 +48,7 @@ public enum CategoryName {
     GLOBAL_BUSI("global_business", "gbuis", "글로벌비즈니스학과"),
 
     BUIS_ADMIN("business_administration", "badm", "경영학과"),
-    TECH_BUSI("tehnological_business", "techbuis", "기술경영학과"),
+    TECH_BUSI("technological_business", "techbuis", "기술경영학과"),
 
     REAL_ESTATE("real_estate", "rest", "부동산학과"),
 
