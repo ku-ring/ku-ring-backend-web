@@ -1,7 +1,7 @@
 spring:
   datasource:
-    url: jdbc:tc:mariadb:10.2:///soolsul?TC_REUSABLE=true
-    username: test
+    url: jdbc:tc:mariadb:10.2:///kuring?TC_REUSABLE=true
+    username: test # 테스트컨테이너 용이라 노출되도 상관없다
     password: test1234
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     p6spy:
@@ -31,3 +31,6 @@ spring:
 testcontainers:
   reuse:
     enable: true
+
+sentry:
+  dsn: ""
