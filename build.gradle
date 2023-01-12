@@ -58,6 +58,7 @@ dependencies {
 
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.rest-assured:rest-assured:4.2.0'
 
 	// Test Container
 	testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
