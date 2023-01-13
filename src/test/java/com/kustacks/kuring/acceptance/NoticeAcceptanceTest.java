@@ -1,14 +1,10 @@
 package com.kustacks.kuring.acceptance;
 
-import io.restassured.RestAssured;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청;
+import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청_응답_확인;
 
 @DisplayName("인수 : 공지사항")
 public class NoticeAcceptanceTest extends AcceptanceTest {
@@ -22,25 +18,9 @@ public class NoticeAcceptanceTest extends AcceptanceTest {
     @Test
     public void look_up_notice() {
         // when
-        ExtractableResponse<Response> response = RestAssured
-                .given().log().all()
-                .pathParam("type", "stu")
-                .pathParam("offset", "0")
-                .pathParam("max", "10")
-                .when().get("/api/v1/notice?type={type}&offset={offset}&max={max}")
-                .then().log().all()
-                .extract();
+        var 공지사항_조회_요청_응답 = 공지사항_조회_요청("stu");
 
         // then
-        assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isEqualTo(true),
-                () -> assertThat(response.jsonPath().getString("resultMsg")).isEqualTo("성공"),
-                () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getString("noticeList[0].articleId")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("noticeList[0].postedDate")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("noticeList[0].subject")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("noticeList[0].category")).isEqualTo("student")
-        );
+        공지사항_조회_요청_응답_확인(공지사항_조회_요청_응답, "student");
     }
 }
