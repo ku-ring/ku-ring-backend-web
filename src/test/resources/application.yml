@@ -34,3 +34,7 @@ testcontainers:
 
 sentry:
   dsn: ""
+
+logging:
+  level:
+    p6spy: debug
