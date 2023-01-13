@@ -35,8 +35,12 @@ public class DataLoader {
     public void loadData() {
         log.info("[call DataLoader]");
 
-        Category studentCategory = categoryRepository.save(new Category("student"));
-        List<Notice> noticeList = buildNotices(5, studentCategory);
+        Category student = new Category("student");
+        Category bachelor = new Category("bachelor");
+        Category employment = new Category("employment");
+        categoryRepository.saveAll(List.of(student, bachelor, employment));
+
+        List<Notice> noticeList = buildNotices(5, student);
         noticeRepository.saveAll(noticeList);
 
         log.info("[init complete DataLoader]");
