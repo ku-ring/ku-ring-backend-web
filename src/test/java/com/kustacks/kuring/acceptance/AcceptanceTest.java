@@ -12,6 +12,8 @@ import org.springframework.boot.web.server.LocalServerPort;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AcceptanceTest {
 
+    protected final String USER_FCM_TOKEN = "test_fcm_token";
+
     @LocalServerPort
     int port;
 

@@ -4,6 +4,8 @@ import com.kustacks.kuring.domain.category.Category;
 import com.kustacks.kuring.domain.category.CategoryRepository;
 import com.kustacks.kuring.domain.notice.Notice;
 import com.kustacks.kuring.domain.notice.NoticeRepository;
+import com.kustacks.kuring.domain.user.User;
+import com.kustacks.kuring.domain.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -17,13 +19,16 @@ import java.util.stream.Stream;
 public class DataLoader {
 
     private static final Logger log = LoggerFactory.getLogger(DataLoader.class);
+    protected final String USER_FCM_TOKEN = "test_fcm_token";
 
     private final NoticeRepository noticeRepository;
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
-    public DataLoader(NoticeRepository noticeRepository, CategoryRepository categoryRepository) {
+    public DataLoader(NoticeRepository noticeRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
         this.noticeRepository = noticeRepository;
         this.categoryRepository = categoryRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -34,6 +39,9 @@ public class DataLoader {
     @Transactional
     public void loadData() {
         log.info("[call DataLoader]");
+
+        User newUser = new User(USER_FCM_TOKEN);
+        userRepository.save(newUser);
 
         Category student = new Category("student");
         Category bachelor = new Category("bachelor");
