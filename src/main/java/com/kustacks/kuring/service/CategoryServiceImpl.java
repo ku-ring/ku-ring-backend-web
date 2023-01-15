@@ -100,10 +100,7 @@ public class CategoryServiceImpl implements CategoryService {
                 iterator.remove();
                 dbUserCategoriesMap.remove(categoryName);
             } else {
-                newUserCategories.add(UserCategory.builder()
-                        .user(user)
-                        .category(categoryMap.get(categoryName))
-                        .build());
+                newUserCategories.add(new UserCategory(user, categoryMap.get(categoryName)));
             }
         }
 
