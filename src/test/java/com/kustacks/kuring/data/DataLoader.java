@@ -46,7 +46,8 @@ public class DataLoader {
         Category student = new Category("student");
         Category bachelor = new Category("bachelor");
         Category employment = new Category("employment");
-        categoryRepository.saveAll(List.of(student, bachelor, employment));
+        Category library = new Category("library");
+        categoryRepository.saveAll(List.of(student, bachelor, employment, library));
 
         List<Notice> noticeList = buildNotices(5, student);
         noticeRepository.saveAll(noticeList);

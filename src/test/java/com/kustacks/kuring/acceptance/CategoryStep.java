@@ -12,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class CategoryStep {
 
-    public static void 카테고리_조회_요청_응답_확인(ExtractableResponse<Response> response) {
+    public static void 카테고리_조회_요청_응답_확인(ExtractableResponse<Response> response, String... categories) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isEqualTo(true),
                 () -> assertThat(response.jsonPath().getString("resultMsg")).isEqualTo("성공"),
                 () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getList("categories").size()).isNotZero()
+                () -> assertThat(response.jsonPath().getList("categories")).contains(categories)
         );
     }
 
@@ -47,6 +47,10 @@ public class CategoryStep {
                 .when().post("/api/v1/notice/subscribe")
                 .then().log().all()
                 .extract();
+    }
+
+    public static ExtractableResponse<Response> 카테고리_수정_요청(SubscribeCategoriesRequestDTO request) {
+        return 카테고리_구독_요청(request);
     }
 
     public static ExtractableResponse<Response> 사용자_카테고리_목록_조회_요청(String id) {
