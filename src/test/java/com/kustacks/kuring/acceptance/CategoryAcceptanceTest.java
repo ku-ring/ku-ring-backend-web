@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 
+import static com.kustacks.kuring.acceptance.CategoryStep.사용자_카테고리_목록_조회_요청;
 import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_구독_요청;
 import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_구독_요청_응답_확인;
 import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_조회_요청;
@@ -52,5 +53,24 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
 
         // then
         카테고리_구독_요청_응답_확인(카테고리_구독_요청_응답);
+    }
+
+    /**
+     * Given : 사용자가 사전에 구독한 카테고리들이 있다
+     * When : 사용자가 구독한 카테고리 목록을 요청한다
+     * Then : 구독한 카테고리 목록을 반환한다
+     */
+    @DisplayName("사용자가 구독한 카테고리 목록을 조회한다")
+    @Test
+    public void look_up_user_subscribe_category() throws FirebaseMessagingException {
+        // given
+        doNothing().when(firebaseService).verifyToken(anyString());
+        카테고리_구독_요청(new SubscribeCategoriesRequestDTO(USER_FCM_TOKEN, List.of("student", "employment")));
+
+        // when
+        var 조회_응답 = 사용자_카테고리_목록_조회_요청(USER_FCM_TOKEN);
+
+        // then
+        카테고리_조회_요청_응답_확인(조회_응답);
     }
 }

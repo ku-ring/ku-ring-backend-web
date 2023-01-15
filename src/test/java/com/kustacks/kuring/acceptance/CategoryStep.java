@@ -48,4 +48,14 @@ public class CategoryStep {
                 .then().log().all()
                 .extract();
     }
+
+    public static ExtractableResponse<Response> 사용자_카테고리_목록_조회_요청(String id) {
+        return RestAssured
+                .given().log().all()
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .pathParam("id", id)
+                .when().get("/api/v1/notice/subscribe?id={id}")
+                .then().log().all()
+                .extract();
+    }
 }
