@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청;
 import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청_실패_응답_확인;
 import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청_응답_확인;
+import static com.kustacks.kuring.acceptance.NoticeStep.페이지_번호와_함께_공지사항_조회_요청;
 
 @DisplayName("인수 : 공지사항")
 public class NoticeAcceptanceTest extends AcceptanceTest {
@@ -36,6 +37,21 @@ public class NoticeAcceptanceTest extends AcceptanceTest {
         // when
         var 공지사항_조회_요청_응답 = 공지사항_조회_요청("invalid-type");
         
+        // then
+        공지사항_조회_요청_실패_응답_확인(공지사항_조회_요청_응답);
+    }
+
+    /**
+     * Given : 쿠링앱이 실행중이다
+     * When : 잘못된 페이지 넘버 요청시
+     * Then : 실패 코드를 반환한다
+     */
+    @DisplayName("잘못된 offset을 요청한다")
+    @Test
+    public void invalid_offset_request() {
+        // when
+        var 공지사항_조회_요청_응답 = 페이지_번호와_함께_공지사항_조회_요청("student", -1);
+
         // then
         공지사항_조회_요청_실패_응답_확인(공지사항_조회_요청_응답);
     }
