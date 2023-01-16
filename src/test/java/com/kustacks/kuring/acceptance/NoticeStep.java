@@ -33,4 +33,13 @@ public class NoticeStep {
                 .then().log().all()
                 .extract();
     }
+
+    public static void 공지사항_조회_요청_실패_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isEqualTo(false),
+                () -> assertThat(response.jsonPath().getString("resultMsg")).isEqualTo("해당 공지 카테고리를 지원하지 않습니다."),
+                () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(400)
+        );
+    }
 }
