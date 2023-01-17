@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 
 import static com.kustacks.kuring.acceptance.CategoryStep.사용자_카테고리_목록_조회_요청;
+import static com.kustacks.kuring.acceptance.CategoryStep.실패_응답_확인;
 import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_구독_요청;
 import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_구독_요청_응답_확인;
 import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_수정_요청;
@@ -104,5 +105,18 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
 
         // then
         카테고리_조회_요청_응답_확인(조회_응답, "student", "library");
+    }
+
+    @DisplayName("요청 JSON body 필드 누락시 예외 발생")
+    @Test
+    public void json_body_miss() throws FirebaseMessagingException {
+        // given
+        doNothing().when(firebaseService).subscribe(anyString(), anyString());
+
+        // when
+        var 카테고리_구독_요청_응답 = 카테고리_구독_요청(new SubscribeCategoriesRequestDTO(null, List.of("student", "employment")));
+
+        // then
+        실패_응답_확인(카테고리_구독_요청_응답, 400);
     }
 }

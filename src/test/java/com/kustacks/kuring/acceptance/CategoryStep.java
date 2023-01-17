@@ -62,4 +62,12 @@ public class CategoryStep {
                 .then().log().all()
                 .extract();
     }
+
+    public static void 실패_응답_확인(ExtractableResponse<Response> response, int expected) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isEqualTo(false),
+                () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(expected)
+        );
+    }
 }
