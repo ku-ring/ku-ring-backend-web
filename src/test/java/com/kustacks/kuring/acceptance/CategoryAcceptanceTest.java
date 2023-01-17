@@ -2,6 +2,8 @@ package com.kustacks.kuring.acceptance;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.controller.dto.SubscribeCategoriesRequestDTO;
+import com.kustacks.kuring.error.ErrorCode;
+import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.service.FirebaseService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_조회_�
 import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 
 @DisplayName("인수 : 카테고리")
 public class CategoryAcceptanceTest extends AcceptanceTest {
@@ -56,6 +59,25 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
 
         // then
         카테고리_구독_요청_응답_확인(카테고리_구독_요청_응답);
+    }
+
+    /**
+     * Given : 구독한 카테고리가 없는 사용자가 있다
+     * When : 사용자가 비정상 토큰과 함께 카테고리 구독을 요청한다
+     * Then : 실패코드를 반환한다
+     */
+    @DisplayName("사용자가 잘못된 토큰과 함께 카테고리 구독시 실패한다")
+    @Test
+    public void user_subscribe_category_with_invalid_token() throws FirebaseMessagingException {
+        // given
+        doNothing().when(firebaseService).subscribe(anyString(), anyString());
+        doThrow(new InternalLogicException(ErrorCode.API_ADMIN_INVALID_FCM)).when(firebaseService).verifyToken(anyString());
+
+        // when
+        var response = 카테고리_구독_요청(new SubscribeCategoriesRequestDTO(INVALID_USER_FCM_TOKEN, List.of("student", "employment")));
+
+        // then
+        실패_응답_확인(response, 401);
     }
 
     /**
