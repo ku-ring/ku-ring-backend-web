@@ -10,12 +10,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 
 import static com.kustacks.kuring.acceptance.CategoryStep.사용자_카테고리_목록_조회_요청;
-import static com.kustacks.kuring.acceptance.CategoryStep.실패_응답_확인;
 import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_구독_요청;
 import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_구독_요청_응답_확인;
 import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_수정_요청;
 import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_조회_요청;
 import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_조회_요청_응답_확인;
+import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 
