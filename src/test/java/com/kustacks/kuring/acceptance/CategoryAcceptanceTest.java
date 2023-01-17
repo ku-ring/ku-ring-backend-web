@@ -119,4 +119,17 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
         // then
         실패_응답_확인(카테고리_구독_요청_응답, 400);
     }
+
+    @DisplayName("잘못된 카테고리 구독 요청시 예외 발생")
+    @Test
+    public void user_subscribe_invalid_category() throws FirebaseMessagingException {
+        // given
+        doNothing().when(firebaseService).subscribe(anyString(), anyString());
+
+        // when
+        var 카테고리_구독_요청_응답 = 카테고리_구독_요청(new SubscribeCategoriesRequestDTO(null, List.of("invalid-category")));
+
+        // then
+        실패_응답_확인(카테고리_구독_요청_응답, 400);
+    }
 }
