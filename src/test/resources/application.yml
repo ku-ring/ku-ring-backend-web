@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    url: jdbc:tc:mariadb:10.2:///kuring?TC_REUSABLE=true
+    username: test # 테스트컨테이너 용이라 노출되도 상관없다
+    password: test1234
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    p6spy:
+      enable-logging: true
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL55Dialect
+    defer-datasource-initialization: true
+    open-in-view: false
+  sql:
+    init:
+      mode: always
+  thymeleaf:
+    cache: true
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+
+testcontainers:
+  reuse:
+    enable: true
+
+sentry:
+  dsn: ""
+
+logging:
+  level:
+    p6spy: debug
