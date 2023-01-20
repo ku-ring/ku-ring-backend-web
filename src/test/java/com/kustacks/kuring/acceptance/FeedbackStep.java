@@ -1,6 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.controller.dto.SaveFeedbackRequestDTO;
+import com.kustacks.kuring.common.dto.SaveFeedbackRequestDTO;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

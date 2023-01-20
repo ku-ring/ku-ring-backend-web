@@ -1,9 +1,9 @@
 package com.kustacks.kuring.kuapi.api.staff;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.controller.dto.StaffDTO;
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.dto.StaffDTO;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.api.staff.dto.TestStaffDTO;
 import com.kustacks.kuring.kuapi.scrap.StaffScraper;
 import com.kustacks.kuring.kuapi.scrap.parser.EachDeptHTMLParser;

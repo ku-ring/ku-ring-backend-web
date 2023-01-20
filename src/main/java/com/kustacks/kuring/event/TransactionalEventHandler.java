@@ -2,8 +2,8 @@ package com.kustacks.kuring.event;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.user.domain.UserCategory;
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

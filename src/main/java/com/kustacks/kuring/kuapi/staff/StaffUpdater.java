@@ -1,9 +1,9 @@
 package com.kustacks.kuring.kuapi.staff;
 
-import com.kustacks.kuring.controller.dto.StaffDTO;
+import com.kustacks.kuring.common.dto.StaffDTO;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.domain.StaffRepository;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.Updater;
 import com.kustacks.kuring.kuapi.scrap.StaffScraper;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;

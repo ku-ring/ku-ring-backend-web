@@ -5,23 +5,33 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.admin.business.AdminService;
 import com.kustacks.kuring.category.business.CategoryService;
-import com.kustacks.kuring.common.annotation.CheckSession;
-import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.controller.dto.*;
 import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.common.annotation.CheckSession;
+import com.kustacks.kuring.common.dto.AdminMessageDTO;
+import com.kustacks.kuring.common.dto.CategoryDTO;
+import com.kustacks.kuring.common.dto.FakeUpdateResponseDTO;
+import com.kustacks.kuring.common.dto.LoginResponseDTO;
+import com.kustacks.kuring.common.dto.NoticeMessageDTO;
+import com.kustacks.kuring.common.dto.ResponseDTO;
+import com.kustacks.kuring.common.error.APIException;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.feedback.domain.Feedback;
+import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.error.APIException;
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
-import com.kustacks.kuring.kuapi.CategoryName;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -136,7 +146,7 @@ public class AdminController {
     @GetMapping("/service/fake-update")
     public String fakeUpdatePage(Model model) throws JsonProcessingException {
 
-        if(!"dev".equals(deployEnv)) {
+        if (!"dev".equals(deployEnv)) {
             return "thymeleaf/404";
         }
 
@@ -159,14 +169,14 @@ public class AdminController {
         String fakeNoticeCategory = requestBody.get("category");
         String fakeNoticeSubject = requestBody.get("subject");
         String fakeNoticeArticleId = requestBody.get("articleId");
-        if(fakeNoticeCategory == null || fakeNoticeSubject == null) {
+        if (fakeNoticeCategory == null || fakeNoticeSubject == null) {
             throw new APIException(ErrorCode.API_ADMIN_MISSING_PARAM);
         }
 
         fakeNoticeSubject = URLDecoder.decode(fakeNoticeSubject, StandardCharsets.UTF_8);
 
         Category dbCategory = categoryMap.get(fakeNoticeCategory);
-        if(dbCategory == null || fakeNoticeSubject.equals("") || fakeNoticeSubject.length() > 128) {
+        if (dbCategory == null || fakeNoticeSubject.equals("") || fakeNoticeSubject.length() > 128) {
             throw new APIException(ErrorCode.API_ADMIN_INVALID_SUBJECT);
         }
 
@@ -186,7 +196,7 @@ public class AdminController {
                     .subject(fakeNoticeSubject)
                     .baseUrl(CategoryName.LIBRARY.getName().equals(fakeNoticeCategory) ? libraryBaseUrl : normalBaseUrl)
                     .build());
-        } catch(FirebaseMessagingException e) {
+        } catch (FirebaseMessagingException e) {
             throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
         }
 
@@ -206,13 +216,13 @@ public class AdminController {
     public LoginResponseDTO login(@RequestBody HashMap<String, String> requestBody, HttpServletRequest request, HttpServletResponse response) {
 
         String token = requestBody.get("token");
-        if(token == null || token.equals("")) {
+        if (token == null || token.equals("")) {
             throw new APIException(ErrorCode.API_MISSING_PARAM);
         }
 
         try {
             adminService.checkToken(token);
-        } catch(InternalLogicException e) {
+        } catch (InternalLogicException e) {
             throw new APIException(ErrorCode.API_ADMIN_UNAUTHENTICATED, e);
         }
 
@@ -237,17 +247,17 @@ public class AdminController {
         log.info("인증 토큰 = {}\n", auth);
 
         boolean isAuthenticated = adminService.checkToken(auth);
-        if(!isAuthenticated) {
+        if (!isAuthenticated) {
             throw new APIException(ErrorCode.API_ADMIN_UNAUTHENTICATED);
         }
 
         try {
             firebaseService.verifyToken(token);
-        } catch(FirebaseMessagingException e) {
+        } catch (FirebaseMessagingException e) {
             throw new APIException(ErrorCode.API_ADMIN_INVALID_FCM, e);
         }
 
-        if("notice".equals(type)) {
+        if ("notice".equals(type)) {
             String articleId = reqBody.get("articleId");
             String postedDate = reqBody.get("postedDate");
             String subject = reqBody.get("subject");
@@ -259,17 +269,17 @@ public class AdminController {
             log.info("카테고리 = {}", category);
 
             boolean isCategorySupported = adminService.checkCategory(category);
-            if(!isCategorySupported) {
+            if (!isCategorySupported) {
                 throw new APIException(ErrorCode.API_ADMIN_INVALID_CATEGORY);
             }
 
             boolean isSubjectValid = adminService.checkSubject(subject);
-            if(!isSubjectValid) {
+            if (!isSubjectValid) {
                 throw new APIException(ErrorCode.API_ADMIN_INVALID_SUBJECT);
             }
 
             boolean isPostedDateValid = adminService.checkPostedDate(postedDate);
-            if(!isPostedDateValid) {
+            if (!isPostedDateValid) {
                 throw new APIException(ErrorCode.API_ADMIN_INVALID_POSTED_DATE);
             }
 
@@ -284,20 +294,20 @@ public class AdminController {
             } catch (FirebaseMessagingException e) {
                 throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
             }
-        } else if("admin".equals(type)) {
+        } else if ("admin".equals(type)) {
             String title = reqBody.get("title");
             String body = reqBody.get("body");
-            
+
             log.info("제목 = {}", title);
             log.info("내용 = {}", body);
 
             boolean isTitleValid = adminService.checkTitle(title);
-            if(!isTitleValid) {
+            if (!isTitleValid) {
                 throw new APIException(ErrorCode.API_ADMIN_INVALID_TITLE);
             }
 
             boolean isBodyValid = adminService.checkBody(body);
-            if(!isBodyValid) {
+            if (!isBodyValid) {
                 throw new APIException(ErrorCode.API_ADMIN_INVALID_BODY);
             }
 

@@ -1,14 +1,14 @@
 package com.kustacks.kuring.kuapi.api.notice;
 
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.kuapi.notice.dto.request.*;
 import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;
 import com.kustacks.kuring.kuapi.notice.dto.response.KuisNoticeDTO;
 import com.kustacks.kuring.kuapi.notice.dto.response.KuisNoticeResponseDTO;
-import com.kustacks.kuring.util.converter.DTOConverter;
-import com.kustacks.kuring.util.converter.KuisNoticeDTOToCommonFormatDTOConverter;
+import com.kustacks.kuring.common.utils.converter.DTOConverter;
+import com.kustacks.kuring.common.utils.converter.KuisNoticeDTOToCommonFormatDTOConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

@@ -1,6 +1,6 @@
 package com.kustacks.kuring.kuapi.api.notice;
 
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.kuapi.api.APIClient;
 import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;

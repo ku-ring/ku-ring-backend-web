@@ -1,6 +1,6 @@
 package com.kustacks.kuring.kuapi.api.staff;
 
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.api.APIClient;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
 import org.jsoup.nodes.Document;

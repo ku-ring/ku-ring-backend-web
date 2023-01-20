@@ -1,7 +1,7 @@
 package com.kustacks.kuring.controller;
 
-import com.kustacks.kuring.controller.dto.NoticeDTO;
-import com.kustacks.kuring.error.ErrorCode;
+import com.kustacks.kuring.common.dto.NoticeDTO;
+import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.notice.presentation.NoticeController;
 import com.kustacks.kuring.notice.business.NoticeService;
 import org.junit.jupiter.api.BeforeEach;

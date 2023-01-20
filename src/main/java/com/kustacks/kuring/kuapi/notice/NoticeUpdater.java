@@ -1,20 +1,20 @@
 package com.kustacks.kuring.kuapi.notice;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.controller.dto.NoticeMessageDTO;
+import com.kustacks.kuring.common.dto.NoticeMessageDTO;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.kuapi.Updater;
 import com.kustacks.kuring.kuapi.api.notice.NoticeAPIClient;
 import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;
 import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.util.converter.DTOConverter;
-import com.kustacks.kuring.util.converter.DateConverter;
+import com.kustacks.kuring.common.utils.converter.DTOConverter;
+import com.kustacks.kuring.common.utils.converter.DateConverter;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

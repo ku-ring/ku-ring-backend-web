@@ -1,19 +1,17 @@
 package com.kustacks.kuring.kuapi.scrap;
 
-import com.kustacks.kuring.controller.dto.StaffDTO;
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.dto.StaffDTO;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.api.staff.StaffAPIClient;
 import com.kustacks.kuring.kuapi.scrap.parser.HTMLParser;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
-import com.kustacks.kuring.kuapi.staff.deptinfo.real_estate.RealEstateDept;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
