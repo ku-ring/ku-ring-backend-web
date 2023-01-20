@@ -12,7 +12,7 @@ import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.kuapi.Updater;
 import com.kustacks.kuring.kuapi.api.notice.NoticeAPIClient;
 import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;
-import com.kustacks.kuring.service.FirebaseService;
+import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.util.converter.DTOConverter;
 import com.kustacks.kuring.util.converter.DateConverter;
 import io.sentry.Sentry;

@@ -3,7 +3,10 @@ package com.kustacks.kuring.admin.presentation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
+import com.kustacks.kuring.admin.business.AdminService;
+import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.common.annotation.CheckSession;
+import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.controller.dto.*;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.feedback.domain.Feedback;
@@ -13,7 +16,6 @@ import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
-import com.kustacks.kuring.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -55,9 +57,9 @@ public class AdminController {
     private String libraryBaseUrl;
 
     public AdminController(
-            CategoryServiceImpl categoryService,
+            CategoryService categoryService,
             FirebaseService firebaseService,
-            AdminServiceImpl adminService,
+            AdminService adminService,
             ObjectMapper objectMapper) {
 
         this.categoryService = categoryService;

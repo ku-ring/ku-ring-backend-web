@@ -5,8 +5,7 @@ import com.kustacks.kuring.controller.dto.NoticeResponseDTO;
 import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.kuapi.CategoryName;
-import com.kustacks.kuring.service.NoticeService;
-import com.kustacks.kuring.service.NoticeServiceImpl;
+import com.kustacks.kuring.notice.business.NoticeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +30,7 @@ public class NoticeController {
 
     private final NoticeService noticeService;
 
-    public NoticeController(NoticeServiceImpl noticeService) {
+    public NoticeController(NoticeService noticeService) {
         this.noticeService = noticeService;
     }
 

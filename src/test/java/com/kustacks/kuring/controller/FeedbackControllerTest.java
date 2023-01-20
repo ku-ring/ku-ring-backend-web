@@ -5,8 +5,8 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.controller.dto.SaveFeedbackRequestDTO;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.feedback.presentation.FeedbackController;
-import com.kustacks.kuring.service.FeedbackServiceImpl;
-import com.kustacks.kuring.service.FirebaseService;
+import com.kustacks.kuring.feedback.business.FeedbackService;
+import com.kustacks.kuring.common.firebase.FirebaseService;
 //import org.junit.Before;
 //import org.junit.Rule;
 //import org.junit.Test;
@@ -57,7 +57,7 @@ public class FeedbackControllerTest {
     private FirebaseService firebaseService;
 
     @MockBean
-    private FeedbackServiceImpl feedbackService;
+    private FeedbackService feedbackService;
 
     @Mock
     private FirebaseMessagingException firebaseMessagingException;

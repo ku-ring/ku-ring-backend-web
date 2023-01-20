@@ -5,7 +5,7 @@ import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
 import com.kustacks.kuring.user.domain.UserCategoryRepository;
 import com.kustacks.kuring.kuapi.Updater;
-import com.kustacks.kuring.service.FirebaseService;
+import com.kustacks.kuring.common.firebase.FirebaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

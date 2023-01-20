@@ -1,4 +1,4 @@
-package com.kustacks.kuring.service;
+package com.kustacks.kuring.notice.business;
 
 import com.kustacks.kuring.controller.dto.NoticeDTO;
 import com.kustacks.kuring.common.OffsetBasedPageRequest;
@@ -7,21 +7,21 @@ import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.kuapi.CategoryName;
-import com.kustacks.kuring.service.utils.ObjectComparator;
+import com.kustacks.kuring.common.utils.ObjectComparator;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-public class NoticeServiceImpl implements NoticeService {
+public class NoticeService {
 
     private final NoticeRepository noticeRepository;
     private final CategoryRepository categoryRepository;
     private final Map<String, Category> categoryMap;
     private final CategoryName[] categoryNames;
 
-    public NoticeServiceImpl(NoticeRepository noticeRepository, CategoryRepository categoryRepository) {
+    public NoticeService(NoticeRepository noticeRepository, CategoryRepository categoryRepository) {
         this.noticeRepository = noticeRepository;
         this.categoryRepository = categoryRepository;
 

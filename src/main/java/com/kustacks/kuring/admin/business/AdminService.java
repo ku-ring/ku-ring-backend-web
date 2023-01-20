@@ -1,4 +1,4 @@
-package com.kustacks.kuring.service;
+package com.kustacks.kuring.admin.business;
 
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.domain.AdminRepository;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class AdminServiceImpl implements AdminService {
+public class AdminService {
 
     private final AdminRepository adminRepository;
     private final FeedbackRepository feedbackRepository;
@@ -27,11 +27,11 @@ public class AdminServiceImpl implements AdminService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
 
-    public AdminServiceImpl(AdminRepository adminRepository,
-                            FeedbackRepository feedbackRepository,
-                            NoticeRepository noticeRepository,
-                            UserRepository userRepository,
-                            CategoryRepository categoryRepository
+    public AdminService(AdminRepository adminRepository,
+                        FeedbackRepository feedbackRepository,
+                        NoticeRepository noticeRepository,
+                        UserRepository userRepository,
+                        CategoryRepository categoryRepository
     ) {
 
         this.adminRepository = adminRepository;
@@ -42,47 +42,44 @@ public class AdminServiceImpl implements AdminService {
     }
 
 
-    @Override
     public List<Category> getCategories() {
         return categoryRepository.findAll();
     }
 
-    @Override
     public List<Notice> getNotices() {
         return noticeRepository.findAll();
     }
 
-    @Override
     public List<Feedback> getFeedbacks() {
         return feedbackRepository.findAll();
     }
 
-    @Override
+
     public List<User> getUsers() {
         return userRepository.findAll();
     }
 
-    @Override
+
     public HashMap<String, Category> getCategoryMap() {
         return (HashMap<String, Category>) categoryRepository.findAllMap();
     }
 
-    @Override
+
     public boolean checkToken(String token) {
         Admin admin = adminRepository.findByToken(token);
         return admin != null;
     }
 
-    @Override
+
     public boolean checkSubject(String subject) {
         return subject.length() > 0 && subject.length() <= 128;
     }
 
-    @Override
+
     public boolean checkCategory(String category) {
         boolean isSupported = false;
         for (CategoryName categoryName : CategoryName.values()) {
-            if(categoryName.getName().equals(category) || categoryName.getKorName().equals(category)) {
+            if (categoryName.getName().equals(category) || categoryName.getKorName().equals(category)) {
                 isSupported = true;
                 break;
             }
@@ -90,26 +87,26 @@ public class AdminServiceImpl implements AdminService {
         return isSupported;
     }
 
-    @Override
+
     public boolean checkPostedDate(String postedDate) {
-        SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         dateFormat.setLenient(false);
 
         try {
             dateFormat.parse(postedDate);
-        } catch(ParseException e) {
+        } catch (ParseException e) {
             return false;
         }
 
         return true;
     }
 
-    @Override
+
     public boolean checkTitle(String title) {
         return title != null && title.length() > 0;
     }
 
-    @Override
+
     public boolean checkBody(String body) {
         return body != null && body.length() > 0;
     }

@@ -1,4 +1,4 @@
-package com.kustacks.kuring.service.utils;
+package com.kustacks.kuring.common.utils;
 
 import com.kustacks.kuring.notice.domain.Notice;
 import org.springframework.stereotype.Component;

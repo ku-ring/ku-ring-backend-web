@@ -1,16 +1,18 @@
 package com.kustacks.kuring.category.presentation;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
+import com.kustacks.kuring.category.business.CategoryService;
+import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.controller.dto.CategoryListResponseDTO;
 import com.kustacks.kuring.controller.dto.SubscribeCategoriesRequestDTO;
 import com.kustacks.kuring.controller.dto.SubscribeCategoriesResponseDTO;
 import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.user.business.UserService;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserCategory;
 import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
-import com.kustacks.kuring.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +30,9 @@ public class CategoryController {
     private final FirebaseService firebaseService;
 
     public CategoryController(
-            CategoryServiceImpl categoryService,
+            CategoryService categoryService,
             FirebaseService firebaseService,
-            UserServiceImpl userService) {
+            UserService userService) {
         this.categoryService = categoryService;
         this.userService = userService;
         this.firebaseService = firebaseService;

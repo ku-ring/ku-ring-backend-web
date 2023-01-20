@@ -4,7 +4,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.controller.dto.SubscribeCategoriesRequestDTO;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
-import com.kustacks.kuring.service.FirebaseService;
+import com.kustacks.kuring.common.firebase.FirebaseService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;

@@ -10,9 +10,9 @@ import com.kustacks.kuring.user.domain.UserCategory;
 import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
-import com.kustacks.kuring.service.CategoryServiceImpl;
-import com.kustacks.kuring.service.FirebaseService;
-import com.kustacks.kuring.service.UserServiceImpl;
+import com.kustacks.kuring.category.business.CategoryService;
+import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.user.business.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,13 +64,13 @@ public class CategoryControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CategoryServiceImpl categoryService;
+    private CategoryService categoryService;
 
     @MockBean
     private FirebaseService firebaseService;
 
     @MockBean
-    private UserServiceImpl userService;
+    private UserService userService;
 
     @Mock
     private FirebaseMessagingException firebaseMessagingException;

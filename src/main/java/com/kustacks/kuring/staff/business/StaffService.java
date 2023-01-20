@@ -1,4 +1,4 @@
-package com.kustacks.kuring.service;
+package com.kustacks.kuring.staff.business;
 
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.domain.StaffRepository;
@@ -8,15 +8,15 @@ import java.util.Iterator;
 import java.util.List;
 
 @Service
-public class StaffServiceImpl implements StaffService {
+public class StaffService {
 
     private final StaffRepository staffRepository;
 
-    public StaffServiceImpl(StaffRepository staffRepository) {
+    public StaffService(StaffRepository staffRepository) {
         this.staffRepository = staffRepository;
     }
 
-    @Override
+
     public List<Staff> handleSearchRequest(String keywords) {
 
         keywords = keywords.trim();

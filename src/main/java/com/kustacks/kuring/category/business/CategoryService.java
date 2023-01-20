@@ -1,9 +1,10 @@
-package com.kustacks.kuring.service;
+package com.kustacks.kuring.category.business;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.controller.dto.CategoryDTO;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
+import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
 import com.kustacks.kuring.user.domain.UserCategory;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class CategoryServiceImpl implements CategoryService {
+public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
@@ -32,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final Map<String, Category> categoryMap;
 
-    public CategoryServiceImpl(
+    public CategoryService(
             CategoryRepository categoryRepository,
             UserRepository userRepository,
             UserCategoryRepository userCategoryRepository,
@@ -50,12 +51,12 @@ public class CategoryServiceImpl implements CategoryService {
         categoryMap = categoryRepository.findAllMap();
     }
 
-    @Override
+
     public List<Category> getCategories() {
         return categoryRepository.findAll();
     }
 
-    @Override
+
     public List<CategoryDTO> getCategoryDTOList() {
 
         List<Category> categories = categoryRepository.findAll();
@@ -65,7 +66,6 @@ public class CategoryServiceImpl implements CategoryService {
                 .collect(Collectors.toList());
     }
 
-    @Override
     public List<String> getCategoryNamesFromCategories(List<Category> categories) {
 
         return categories.stream()
@@ -73,7 +73,6 @@ public class CategoryServiceImpl implements CategoryService {
                 .collect(Collectors.toList());
     }
 
-    @Override
     public List<Category> getUserCategories(String token) {
 
         User user = userRepository.findByToken(token);
@@ -84,7 +83,6 @@ public class CategoryServiceImpl implements CategoryService {
                 .collect(Collectors.toList());
     }
 
-    @Override
     public Map<String, List<UserCategory>> compareCategories(List<String> categories, List<UserCategory> dbUserCategories, User user) {
 
         Map<String, List<UserCategory>> result = new HashMap<>();
@@ -137,7 +135,6 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
-    @Override
     public List<String> verifyCategories(List<String> categories) {
         
         // 카테고리 지원 여부 검사

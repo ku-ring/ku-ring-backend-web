@@ -3,7 +3,7 @@ package com.kustacks.kuring.controller;
 import com.kustacks.kuring.controller.dto.NoticeDTO;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.notice.presentation.NoticeController;
-import com.kustacks.kuring.service.NoticeServiceImpl;
+import com.kustacks.kuring.notice.business.NoticeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,7 +50,7 @@ public class NoticeControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private NoticeServiceImpl noticeService;
+    private NoticeService noticeService;
 
     @Autowired
     private WebApplicationContext webApplicationContext;

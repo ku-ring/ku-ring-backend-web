@@ -1,4 +1,4 @@
-package com.kustacks.kuring.service;
+package com.kustacks.kuring.feedback.business;
 
 import com.kustacks.kuring.feedback.domain.Feedback;
 import com.kustacks.kuring.feedback.domain.FeedbackRepository;
@@ -7,12 +7,12 @@ import com.kustacks.kuring.user.domain.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FeedbackServiceImpl implements FeedbackService {
+public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
     private final UserRepository userRepository;
 
-    public FeedbackServiceImpl(
+    public FeedbackService(
             FeedbackRepository feedbackRepository,
             UserRepository userRepository) {
 
@@ -20,7 +20,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         this.userRepository = userRepository;
     }
 
-    @Override
+
     public void insertFeedback(String token, String content) {
 
         User user = userRepository.findByToken(token);

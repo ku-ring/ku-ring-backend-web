@@ -1,11 +1,12 @@
 package com.kustacks.kuring.feedback.presentation;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
+import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.controller.dto.InsertFeedbackResponseDTO;
 import com.kustacks.kuring.controller.dto.SaveFeedbackRequestDTO;
 import com.kustacks.kuring.error.APIException;
 import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.service.*;
+import com.kustacks.kuring.feedback.business.FeedbackService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +22,7 @@ public class FeedbackController {
 
     public FeedbackController(
             FirebaseService firebaseService,
-            FeedbackServiceImpl feedbackService) {
+            FeedbackService feedbackService) {
 
         this.firebaseService = firebaseService;
         this.feedbackService = feedbackService;

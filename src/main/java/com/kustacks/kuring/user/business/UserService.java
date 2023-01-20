@@ -1,24 +1,23 @@
-package com.kustacks.kuring.service;
+package com.kustacks.kuring.user.business;
 
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    @Override
+
     public User getUserByToken(String token) {
         return userRepository.findByToken(token);
     }
 
-    @Override
     public User insertUserToken(String token) {
         return userRepository.save(User.builder()
                 .token(token)

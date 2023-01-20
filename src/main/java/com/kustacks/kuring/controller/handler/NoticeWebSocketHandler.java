@@ -7,8 +7,7 @@ import com.kustacks.kuring.controller.dto.NoticeWebSocketResponseDTO;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.WebSocketExceptionHandler;
-import com.kustacks.kuring.service.NoticeService;
-import com.kustacks.kuring.service.NoticeServiceImpl;
+import com.kustacks.kuring.notice.business.NoticeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -37,7 +36,7 @@ public class NoticeWebSocketHandler implements SearchHandler {
 
 
     public NoticeWebSocketHandler(
-            NoticeServiceImpl noticeService,
+            NoticeService noticeService,
             ObjectMapper objectMapper,
             WebSocketExceptionHandler exceptionHandler) {
 

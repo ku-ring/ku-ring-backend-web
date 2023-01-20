@@ -7,8 +7,7 @@ import com.kustacks.kuring.controller.dto.StaffWebSocketResponseDTO;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.WebSocketExceptionHandler;
-import com.kustacks.kuring.service.StaffService;
-import com.kustacks.kuring.service.StaffServiceImpl;
+import com.kustacks.kuring.staff.business.StaffService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
@@ -29,7 +28,7 @@ public class StaffWebSocketHandler implements SearchHandler {
     private final WebSocketExceptionHandler exceptionHandler;
 
     public StaffWebSocketHandler(
-            StaffServiceImpl staffService,
+            StaffService staffService,
             ObjectMapper objectMapper,
             WebSocketExceptionHandler exceptionHandler) {
 

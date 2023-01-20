@@ -4,7 +4,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.user.domain.UserCategory;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
-import com.kustacks.kuring.service.FirebaseService;
+import com.kustacks.kuring.common.firebase.FirebaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
