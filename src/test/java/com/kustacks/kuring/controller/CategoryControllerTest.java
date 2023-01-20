@@ -3,7 +3,7 @@ package com.kustacks.kuring.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.category.presentation.CategoryController;
-import com.kustacks.kuring.common.dto.SubscribeCategoriesRequestDTO;
+import com.kustacks.kuring.common.dto.SubscribeCategoriesRequestDto;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserCategory;
@@ -234,7 +234,7 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequestDTO requestDTO = new SubscribeCategoriesRequestDTO(token, categories);
+        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
 
         Map<String, List<UserCategory>> compareCategoriesResult = new HashMap<>();
         compareCategoriesResult.put("new", new LinkedList<>());
@@ -292,7 +292,7 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequestDTO requestDTO = new SubscribeCategoriesRequestDTO(token, categories);
+        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
 
         // given
         given(userService.getUserByToken(token)).willReturn(null);
@@ -350,7 +350,7 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("invalid-category");
 
-        SubscribeCategoriesRequestDTO requestDTO = new SubscribeCategoriesRequestDTO(token, categories);
+        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
 
         // given
         doThrow(new InternalLogicException(ErrorCode.CAT_NOT_EXIST_CATEGORY)).when(categoryService).verifyCategories(categories);
@@ -383,7 +383,7 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequestDTO requestDTO = new SubscribeCategoriesRequestDTO(token, categories);
+        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
 
         Map<String, List<UserCategory>> compareCategoriesResult = new HashMap<>();
         compareCategoriesResult.put("new", new LinkedList<>());

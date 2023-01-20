@@ -1,18 +1,17 @@
 package com.kustacks.kuring.common.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class SearchRequestDTO {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class SaveFeedbackRequestDto {
 
-    @JsonProperty("type")
-    private String type;
+    private String id;
 
-    @JsonProperty("content")
     private String content;
 }
+

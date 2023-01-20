@@ -8,8 +8,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.TopicManagementResponse;
-import com.kustacks.kuring.common.dto.AdminMessageDTO;
-import com.kustacks.kuring.common.dto.NoticeMessageDTO;
+import com.kustacks.kuring.common.dto.AdminMessageDto;
+import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import org.springframework.beans.factory.annotation.Value;
@@ -108,7 +108,7 @@ public class FirebaseService {
      * @throws FirebaseMessagingException
      */
 
-    public void sendMessage(NoticeMessageDTO messageDTO) throws FirebaseMessagingException {
+    public void sendMessage(NoticeMessageDto messageDTO) throws FirebaseMessagingException {
 
         Map<String, String> noticeMap = objectMapper.convertValue(messageDTO, Map.class);
 
@@ -125,13 +125,13 @@ public class FirebaseService {
         firebaseMessaging.send(newMessage);
     }
 
-    public void sendMessage(List<NoticeMessageDTO> messageDTOList) throws FirebaseMessagingException {
-        for (NoticeMessageDTO messageDTO : messageDTOList) {
+    public void sendMessage(List<NoticeMessageDto> messageDTOList) throws FirebaseMessagingException {
+        for (NoticeMessageDto messageDTO : messageDTOList) {
             sendMessage(messageDTO);
         }
     }
 
-    public void sendMessage(String token, NoticeMessageDTO messageDTO) throws FirebaseMessagingException {
+    public void sendMessage(String token, NoticeMessageDto messageDTO) throws FirebaseMessagingException {
 
         Map<String, String> messageMap = objectMapper.convertValue(messageDTO, Map.class);
 
@@ -143,7 +143,7 @@ public class FirebaseService {
         firebaseMessaging.send(newMessage);
     }
 
-    public void sendMessage(String token, AdminMessageDTO messageDTO) throws FirebaseMessagingException {
+    public void sendMessage(String token, AdminMessageDto messageDTO) throws FirebaseMessagingException {
 
         Map<String, String> messageMap = objectMapper.convertValue(messageDTO, Map.class);
 

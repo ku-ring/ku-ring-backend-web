@@ -1,7 +1,7 @@
 package com.kustacks.kuring.category.business;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.common.dto.CategoryDTO;
+import com.kustacks.kuring.common.dto.CategoryDto;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.common.firebase.FirebaseService;
@@ -57,12 +57,12 @@ public class CategoryService {
     }
 
 
-    public List<CategoryDTO> getCategoryDTOList() {
+    public List<CategoryDto> getCategoryDTOList() {
 
         List<Category> categories = categoryRepository.findAll();
 
         return categories.stream()
-                .map(category -> CategoryDTO.builder().name(category.getName()).build())
+                .map(category -> new CategoryDto(category.getName()))
                 .collect(Collectors.toList());
     }
 

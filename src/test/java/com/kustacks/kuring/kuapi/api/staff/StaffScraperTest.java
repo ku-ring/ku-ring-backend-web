@@ -1,7 +1,7 @@
 package com.kustacks.kuring.kuapi.api.staff;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.common.dto.StaffDTO;
+import com.kustacks.kuring.common.dto.StaffDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.api.staff.dto.TestStaffDTO;
@@ -138,12 +138,12 @@ public class StaffScraperTest {
             createExpectationForSuccess(requestPath, deptInfo instanceof KoreanDept ? deptInfo.getStaffScrapInfo().getPfForumId().get(0) : "", folderName);
 
             // when
-            List<StaffDTO> staffDTOList = staffScraper.scrap(deptInfo);
+            List<StaffDto> staffDtoList = staffScraper.scrap(deptInfo);
 
             // then
             int correct = 0;
             List<TestStaffDTO> answers = getAnswers("staffpages/" + folderName + "/answers");
-            for (StaffDTO result : staffDTOList) {
+            for (StaffDto result : staffDtoList) {
                 for (TestStaffDTO answer : answers) {
                     if(compareDTO(result, answer)) {
                         ++correct;
@@ -337,7 +337,7 @@ public class StaffScraperTest {
         return FileCopyUtils.copyToString(new InputStreamReader(inputStream));
     }
 
-    private boolean compareDTO(StaffDTO result, TestStaffDTO answer) {
+    private boolean compareDTO(StaffDto result, TestStaffDTO answer) {
         return (result.getName().equals(answer.getName())) &&
                 (result.getMajor().equals(answer.getMajor())) &&
                 (result.getLab().equals(answer.getLab())) &&

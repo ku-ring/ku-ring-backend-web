@@ -1,6 +1,6 @@
 package com.kustacks.kuring.common.utils.converter;
 
-import com.kustacks.kuring.common.dto.NoticeDTO;
+import com.kustacks.kuring.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.domain.Notice;
 import org.springframework.stereotype.Component;
 
@@ -11,11 +11,11 @@ public class NoticeEntityToNoticeDTOConverter implements DTOConverter {
     public Object convert(Object target) {
 
         Notice notice = (Notice) target;
-        return NoticeDTO.builder()
+        return NoticeDto.builder()
                 .articleId(notice.getArticleId())
                 .postedDate(notice.getPostedDate())
                 .subject(notice.getSubject())
-                .categoryName(notice.getCategory().getName())
+                .category(notice.getCategory().getName())
                 .build();
     }
 }

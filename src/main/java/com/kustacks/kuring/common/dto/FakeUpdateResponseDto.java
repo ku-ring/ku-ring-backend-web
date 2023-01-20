@@ -3,9 +3,9 @@ package com.kustacks.kuring.common.dto;
 import lombok.Getter;
 
 @Getter
-public class FakeUpdateResponseDTO extends ResponseDTO {
+public class FakeUpdateResponseDto extends ResponseDto {
 
-    public FakeUpdateResponseDTO() {
+    public FakeUpdateResponseDto() {
         super(true, "성공", 200);
     }
 }

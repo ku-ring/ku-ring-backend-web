@@ -1,7 +1,7 @@
 package com.kustacks.kuring.kuapi.notice;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.common.dto.NoticeMessageDTO;
+import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.notice.domain.Notice;
@@ -83,7 +83,7 @@ public class NoticeUpdater implements Updater {
         // kuisNoticeResponseBody에 있는 데이터가 DB에는 없는 경우 -> DB에 공지 추가
         // DB에 있는 데이터가 kuisNoticeResponseBody에는 없는 경우 -> DB에 공지 삭제
         List<Notice> willBeNotiNotices = compareAndUpdateDB(apiNoticesMap);
-        List<NoticeMessageDTO> willBeNotiNoticeDTOList = new ArrayList<>(willBeNotiNotices.size());
+        List<NoticeMessageDto> willBeNotiNoticeDTOList = new ArrayList<>(willBeNotiNotices.size());
         for (Notice notice : willBeNotiNotices) {
             if(CategoryName.LIBRARY.getName().equals(notice.getCategory().getName())) {
                 // TODO: notice entity 내용을 변경해서 사용하는게 좋은 방법인지는 생각을 해봐야함
@@ -91,7 +91,7 @@ public class NoticeUpdater implements Updater {
                 // compareAndUpdateDB에서 saveAndFlush 메서드를 사용함.
                 notice.setPostedDate(dateConverter.convert(notice.getPostedDate()));
             }
-            willBeNotiNoticeDTOList.add((NoticeMessageDTO) dtoConverter.convert(notice));
+            willBeNotiNoticeDTOList.add((NoticeMessageDto) dtoConverter.convert(notice));
         }
 
         // FCM으로 새롭게 수신한 공지 데이터 전송
@@ -99,7 +99,7 @@ public class NoticeUpdater implements Updater {
             firebaseService.sendMessage(willBeNotiNoticeDTOList);
             log.info("FCM에 정상적으로 메세지를 전송했습니다.");
             log.info("전송된 공지 목록은 다음과 같습니다.");
-            for (NoticeMessageDTO messageDTO : willBeNotiNoticeDTOList) {
+            for (NoticeMessageDto messageDTO : willBeNotiNoticeDTOList) {
                 log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", messageDTO.getArticleId(), messageDTO.getPostedDate(), messageDTO.getCategory(), messageDTO.getSubject());
             }
         } catch(FirebaseMessagingException e) {

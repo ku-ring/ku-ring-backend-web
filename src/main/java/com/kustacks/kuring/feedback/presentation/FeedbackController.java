@@ -2,8 +2,8 @@ package com.kustacks.kuring.feedback.presentation;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.common.dto.InsertFeedbackResponseDTO;
-import com.kustacks.kuring.common.dto.SaveFeedbackRequestDTO;
+import com.kustacks.kuring.common.dto.InsertFeedbackResponseDto;
+import com.kustacks.kuring.common.dto.SaveFeedbackRequestDto;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.feedback.business.FeedbackService;
@@ -29,8 +29,8 @@ public class FeedbackController {
     }
 
     @PostMapping("/feedback")
-    public InsertFeedbackResponseDTO insertFeedback(@RequestBody SaveFeedbackRequestDTO requestDTO) throws APIException {
-        String token = requestDTO.getToken();
+    public InsertFeedbackResponseDto insertFeedback(@RequestBody SaveFeedbackRequestDto requestDTO) throws APIException {
+        String token = requestDTO.getId();
         String content = requestDTO.getContent();
 
         if(token == null || content == null) {
@@ -53,6 +53,6 @@ public class FeedbackController {
 
         feedbackService.insertFeedback(token, content);
 
-        return InsertFeedbackResponseDTO.builder().build();
+        return new InsertFeedbackResponseDto();
     }
 }

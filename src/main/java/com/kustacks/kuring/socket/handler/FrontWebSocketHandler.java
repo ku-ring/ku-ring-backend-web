@@ -1,8 +1,8 @@
 package com.kustacks.kuring.socket.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.common.dto.HeartBeatResponseDTO;
-import com.kustacks.kuring.common.dto.SearchRequestDTO;
+import com.kustacks.kuring.common.dto.HeartBeatResponseDto;
+import com.kustacks.kuring.common.dto.SearchRequestDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.WebSocketExceptionHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -52,10 +52,10 @@ public class FrontWebSocketHandler extends TextWebSocketHandler {
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
 
         String payload = message.getPayload();
-        SearchRequestDTO requestDTO;
+        SearchRequestDto requestDTO;
 
         try {
-            requestDTO = objectMapper.readValue(payload, SearchRequestDTO.class);
+            requestDTO = objectMapper.readValue(payload, SearchRequestDto.class);
         } catch(IOException e) {
             exceptionHandler.sendErrorMessage(session, ErrorCode.WS_CANNOT_PARSE_JSON, ERROR_TYPE);
             log.error("", e);
@@ -92,9 +92,7 @@ public class FrontWebSocketHandler extends TextWebSocketHandler {
 
     private void handleHeartBeat(WebSocketSession session) throws IOException {
 
-        HeartBeatResponseDTO responseDTO = HeartBeatResponseDTO.builder()
-                .type("heartbeat")
-                .content(LocalDateTime.now().toString()).build();
+        HeartBeatResponseDto responseDTO = new HeartBeatResponseDto("heartbeat", LocalDateTime.now().toString());
 
         String responseString = objectMapper.writeValueAsString(responseDTO);
         session.sendMessage(new TextMessage(responseString));

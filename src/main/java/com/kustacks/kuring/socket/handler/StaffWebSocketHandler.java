@@ -2,8 +2,8 @@ package com.kustacks.kuring.socket.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.common.dto.StaffDTO;
-import com.kustacks.kuring.common.dto.StaffWebSocketResponseDTO;
+import com.kustacks.kuring.common.dto.StaffDto;
+import com.kustacks.kuring.common.dto.StaffWebSocketResponseDto;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.WebSocketExceptionHandler;
@@ -47,13 +47,12 @@ public class StaffWebSocketHandler implements SearchHandler {
 
         List<Staff> searchResult = staffService.handleSearchRequest(keywords);
 
-        List<StaffDTO> searchResultDTOList = new LinkedList<>();
+        List<StaffDto> searchResultDTOList = new LinkedList<>();
         for (Staff staff : searchResult) {
-            searchResultDTOList.add(StaffDTO.entityToDTO(staff));
+            searchResultDTOList.add(StaffDto.entityToDto(staff));
         }
 
-        StaffWebSocketResponseDTO responseObject = StaffWebSocketResponseDTO.builder()
-                .staffDTOList(searchResultDTOList).build();
+        StaffWebSocketResponseDto responseObject = new StaffWebSocketResponseDto(searchResultDTOList);
 
         try {
             String responseString = objectMapper.writeValueAsString(responseObject);

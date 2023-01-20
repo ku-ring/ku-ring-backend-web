@@ -3,9 +3,9 @@ package com.kustacks.kuring.category.presentation;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.common.dto.CategoryListResponseDTO;
-import com.kustacks.kuring.common.dto.SubscribeCategoriesRequestDTO;
-import com.kustacks.kuring.common.dto.SubscribeCategoriesResponseDTO;
+import com.kustacks.kuring.common.dto.CategoryListResponseDto;
+import com.kustacks.kuring.common.dto.SubscribeCategoriesRequestDto;
+import com.kustacks.kuring.common.dto.SubscribeCategoriesResponseDto;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.user.business.UserService;
 import com.kustacks.kuring.user.domain.User;
@@ -39,18 +39,16 @@ public class CategoryController {
     }
 
     @GetMapping("/notice/categories")
-    public CategoryListResponseDTO getSupportedCategories() {
+    public CategoryListResponseDto getSupportedCategories() {
 
         List<Category> categories = categoryService.getCategories();
         List<String> categoryNames = categoryService.getCategoryNamesFromCategories(categories);
 
-        return CategoryListResponseDTO.builder()
-                .categories(categoryNames)
-                .build();
+        return new CategoryListResponseDto(categoryNames);
     }
 
     @GetMapping("/notice/subscribe")
-    public CategoryListResponseDTO getUserCategories(@RequestParam("id") String token) {
+    public CategoryListResponseDto getUserCategories(@RequestParam("id") String token) {
         // FCM에 이 토큰이 유효한지 확인
         // 유효하면? user-category 테이블 조회해서 카테고리 목록 생성
         // 유효하지 않으면? 401에러 리턴
@@ -68,16 +66,14 @@ public class CategoryController {
         List<Category> categories = categoryService.getUserCategories(token);
         List<String> categoryNames = categoryService.getCategoryNamesFromCategories(categories);
 
-        return CategoryListResponseDTO.builder()
-                .categories(categoryNames)
-                .build();
+        return new CategoryListResponseDto(categoryNames);
     }
 
     @PostMapping(value = "/notice/subscribe", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public SubscribeCategoriesResponseDTO subscribeCategories(@RequestBody SubscribeCategoriesRequestDTO requestDTO) {
+    public SubscribeCategoriesResponseDto subscribeCategories(@RequestBody SubscribeCategoriesRequestDto requestDTO) {
 
         List<String> categories = requestDTO.getCategories();
-        String token = requestDTO.getToken();
+        String token = requestDTO.getId();
 
         if(categories == null || token == null || token.equals("")) {
             throw new APIException(ErrorCode.API_MISSING_PARAM);
@@ -122,6 +118,6 @@ public class CategoryController {
             }
         }
 
-        return SubscribeCategoriesResponseDTO.builder().build();
+        return new SubscribeCategoriesResponseDto();
     }
 }

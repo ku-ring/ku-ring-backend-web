@@ -1,6 +1,6 @@
 package com.kustacks.kuring.notice.business;
 
-import com.kustacks.kuring.common.dto.NoticeDTO;
+import com.kustacks.kuring.common.dto.NoticeDto;
 import com.kustacks.kuring.common.OffsetBasedPageRequest;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
@@ -29,7 +29,7 @@ public class NoticeService {
         categoryNames = CategoryName.values();
     }
 
-    public List<NoticeDTO> getNotices(String type, int offset, int max) {
+    public List<NoticeDto> getNotices(String type, int offset, int max) {
         OffsetBasedPageRequest pageRequest = new OffsetBasedPageRequest(offset, max, Sort.by(Sort.Direction.DESC, "postedDate"));
 //        PageRequest pageRequest = PageRequest.of(offset / max, max);
 
@@ -88,17 +88,17 @@ public class NoticeService {
 
 
     // TODO: noticeDTO 클래스에 위치하는게 맞는듯?
-    private List<NoticeDTO> noticeEntityToDTO(List<Notice> notices) {
-        List<NoticeDTO> noticeDTOList = new ArrayList<>(notices.size());
+    private List<NoticeDto> noticeEntityToDTO(List<Notice> notices) {
+        List<NoticeDto> noticeDtoList = new ArrayList<>(notices.size());
         for (Notice notice : notices) {
-            noticeDTOList.add(NoticeDTO.builder()
+            noticeDtoList.add(NoticeDto.builder()
                     .articleId(notice.getArticleId())
                     .postedDate(notice.getPostedDate())
                     .subject(notice.getSubject())
-                    .categoryName(notice.getCategory().getName())
+                    .category(notice.getCategory().getName())
                     .build());
         }
 
-        return noticeDTOList;
+        return noticeDtoList;
     }
 }

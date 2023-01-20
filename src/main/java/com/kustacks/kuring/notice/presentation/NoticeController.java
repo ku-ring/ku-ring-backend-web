@@ -1,7 +1,7 @@
 package com.kustacks.kuring.notice.presentation;
 
-import com.kustacks.kuring.common.dto.NoticeDTO;
-import com.kustacks.kuring.common.dto.NoticeResponseDTO;
+import com.kustacks.kuring.common.dto.NoticeDto;
+import com.kustacks.kuring.common.dto.NoticeResponseDto;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.kuapi.CategoryName;
@@ -35,7 +35,7 @@ public class NoticeController {
     }
 
     @GetMapping("/notice")
-    public NoticeResponseDTO getNotices(
+    public NoticeResponseDto getNotices(
             @RequestParam(name = "type") String type,
             @RequestParam(name = "offset") @Min(0) int offset,
             @RequestParam(name = "max") @Min(1) @Max(30) int max) {
@@ -51,11 +51,11 @@ public class NoticeController {
             throw new APIException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY);
         }
 
-        List<NoticeDTO> notices = noticeService.getNotices(categoryName, offset, max);
+        List<NoticeDto> notices = noticeService.getNotices(categoryName, offset, max);
         if(notices == null) {
             throw new APIException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY);
         }
 
-        return new NoticeResponseDTO(type.equals(CategoryName.LIBRARY.getShortName()) ? libraryBaseUrl : normalBaseUrl, notices);
+        return new NoticeResponseDto(type.equals(CategoryName.LIBRARY.getShortName()) ? libraryBaseUrl : normalBaseUrl, notices);
     }
 }

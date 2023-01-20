@@ -4,27 +4,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kustacks.kuring.notice.domain.Notice;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.util.Assert;
 
 @Getter
-public class NoticeSearchDTO {
+public class NoticeSearchDto {
 
-    @JsonProperty("articleId")
     private String articleId;
 
-    @JsonProperty("postedDate")
     private String postedDate;
 
-    @JsonProperty("subject")
     private String subject;
 
     @JsonProperty("category")
     private String categoryName;
 
-    @JsonProperty("baseUrl")
     private String baseUrl;
 
     @Builder
-    public NoticeSearchDTO(String articleId, String postedDate, String subject, String categoryName, String baseUrl) {
+    private NoticeSearchDto(String articleId, String postedDate, String subject, String categoryName, String baseUrl) {
+        Assert.notNull(articleId, "articleId must not be null");
+        Assert.notNull(postedDate, "postedDate must not be null");
+        Assert.notNull(subject, "subject must not be null");
+        Assert.notNull(categoryName, "categoryName must not be null");
+        Assert.notNull(baseUrl, "baseUrl must not be null");
+
         this.articleId = articleId;
         this.postedDate = postedDate;
         this.subject = subject;
@@ -32,8 +35,8 @@ public class NoticeSearchDTO {
         this.baseUrl = baseUrl;
     }
 
-    public static NoticeSearchDTO entityToDTO(Notice notice, String baseUrl) {
-        return NoticeSearchDTO.builder()
+    public static NoticeSearchDto entityToDTO(Notice notice, String baseUrl) {
+        return NoticeSearchDto.builder()
                 .articleId(notice.getArticleId())
                 .postedDate(notice.getPostedDate())
                 .subject(notice.getSubject())

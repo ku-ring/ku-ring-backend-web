@@ -1,30 +1,24 @@
 package com.kustacks.kuring.common.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class FakeUpdateRequestDTO {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class FakeUpdateRequestDto {
 
-    @JsonProperty("articleId")
     private String articleId;
 
-    @JsonProperty("postedDate")
     private String postedDate;
 
-    @JsonProperty("subject")
     private String subject;
 
-    @JsonProperty("category")
     private String category;
 
-    @JsonProperty("token")
     private String token;
 
-    @JsonProperty("auth")
     private String auth;
 }

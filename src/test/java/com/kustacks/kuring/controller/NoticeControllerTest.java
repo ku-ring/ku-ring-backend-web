@@ -1,6 +1,6 @@
 package com.kustacks.kuring.controller;
 
-import com.kustacks.kuring.common.dto.NoticeDTO;
+import com.kustacks.kuring.common.dto.NoticeDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.notice.presentation.NoticeController;
 import com.kustacks.kuring.notice.business.NoticeService;
@@ -79,15 +79,15 @@ public class NoticeControllerTest {
         offset = 0;
         max = 10;
 
-        List<NoticeDTO> noticeDTOList = new LinkedList<>();
-        noticeDTOList.add(NoticeDTO.builder()
+        List<NoticeDto> noticeDtoList = new LinkedList<>();
+        noticeDtoList.add(NoticeDto.builder()
                 .articleId(articleId)
                 .postedDate(postedDate)
                 .subject(subject)
-                .categoryName(categoryName)
+                .category(categoryName)
                 .build());
 
-        given(noticeService.getNotices(categoryName, offset, max)).willReturn(noticeDTOList);
+        given(noticeService.getNotices(categoryName, offset, max)).willReturn(noticeDtoList);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice")

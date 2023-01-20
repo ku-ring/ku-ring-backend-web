@@ -2,8 +2,8 @@ package com.kustacks.kuring.socket.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.common.dto.NoticeSearchDTO;
-import com.kustacks.kuring.common.dto.NoticeWebSocketResponseDTO;
+import com.kustacks.kuring.common.dto.NoticeSearchDto;
+import com.kustacks.kuring.common.dto.NoticeWebSocketResponseDto;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.WebSocketExceptionHandler;
@@ -55,13 +55,13 @@ public class NoticeWebSocketHandler implements SearchHandler {
 
         List<Notice> notices = noticeService.handleSearchRequest(keywords);
 
-        LinkedList<NoticeSearchDTO> noticeDTOList = new LinkedList<>();
+        LinkedList<NoticeSearchDto> noticeDTOList = new LinkedList<>();
         for (Notice notice : notices) {
-            noticeDTOList.add(NoticeSearchDTO.entityToDTO(notice, notice.getCategory().getName().equals("library")
+            noticeDTOList.add(NoticeSearchDto.entityToDTO(notice, notice.getCategory().getName().equals("library")
                     ? libraryBaseUrl : normalBaseUrl));
         }
 
-        NoticeWebSocketResponseDTO responseObject = NoticeWebSocketResponseDTO.builder().noticeList(noticeDTOList).build();
+        NoticeWebSocketResponseDto responseObject = new NoticeWebSocketResponseDto(noticeDTOList);
 
         try {
             String responseString = objectMapper.writeValueAsString(responseObject);

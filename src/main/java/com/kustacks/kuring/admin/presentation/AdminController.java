@@ -7,12 +7,12 @@ import com.kustacks.kuring.admin.business.AdminService;
 import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.common.annotation.CheckSession;
-import com.kustacks.kuring.common.dto.AdminMessageDTO;
-import com.kustacks.kuring.common.dto.CategoryDTO;
-import com.kustacks.kuring.common.dto.FakeUpdateResponseDTO;
-import com.kustacks.kuring.common.dto.LoginResponseDTO;
-import com.kustacks.kuring.common.dto.NoticeMessageDTO;
-import com.kustacks.kuring.common.dto.ResponseDTO;
+import com.kustacks.kuring.common.dto.AdminMessageDto;
+import com.kustacks.kuring.common.dto.CategoryDto;
+import com.kustacks.kuring.common.dto.FakeUpdateResponseDto;
+import com.kustacks.kuring.common.dto.LoginResponseDto;
+import com.kustacks.kuring.common.dto.NoticeMessageDto;
+import com.kustacks.kuring.common.dto.ResponseDto;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
@@ -88,7 +88,7 @@ public class AdminController {
         List<Feedback> feedbacks = null;
         List<Notice> notices = null;
         List<User> users = null;
-        List<CategoryDTO> categoryDTOList = null;
+        List<CategoryDto> categoryDtoList = null;
 
         model.addAttribute("title", "KU Ring");
 
@@ -96,7 +96,7 @@ public class AdminController {
             case "dashboard":
                 feedbacks = adminService.getFeedbacks();
                 notices = adminService.getNotices();
-                categoryDTOList = categoryService.getCategoryDTOList();
+                categoryDtoList = categoryService.getCategoryDTOList();
                 users = adminService.getUsers();
                 break;
             case "user":
@@ -107,7 +107,7 @@ public class AdminController {
                 break;
             case "notice":
                 notices = adminService.getNotices();
-                categoryDTOList = categoryService.getCategoryDTOList();
+                categoryDtoList = categoryService.getCategoryDTOList();
                 break;
             default:
                 break;
@@ -116,7 +116,7 @@ public class AdminController {
         model.addAttribute("feedbacks", feedbacks);
 
         model.addAttribute("notices", notices);
-        String jsonCategories = objectMapper.writeValueAsString(categoryDTOList);
+        String jsonCategories = objectMapper.writeValueAsString(categoryDtoList);
         model.addAttribute("categories", jsonCategories);
 
         model.addAttribute("users", users);
@@ -131,12 +131,12 @@ public class AdminController {
     @GetMapping("/service/sub-unsub")
     public String subUnsubPage(Model model) throws JsonProcessingException {
 
-        List<CategoryDTO> categoryDTOList = categoryService.getCategoryDTOList();
+        List<CategoryDto> categoryDtoList = categoryService.getCategoryDTOList();
 
         model.addAttribute("subUnsub", true);
         model.addAttribute("fakeUpdate", false);
 
-        String jsonCategories = objectMapper.writeValueAsString(categoryDTOList);
+        String jsonCategories = objectMapper.writeValueAsString(categoryDtoList);
         model.addAttribute("categories", jsonCategories);
 
         return "thymeleaf/main";
@@ -150,12 +150,12 @@ public class AdminController {
             return "thymeleaf/404";
         }
 
-        List<CategoryDTO> categoryDTOList = categoryService.getCategoryDTOList();
+        List<CategoryDto> categoryDtoList = categoryService.getCategoryDTOList();
 
         model.addAttribute("subUnsub", false);
         model.addAttribute("fakeUpdate", true);
 
-        String jsonCategories = objectMapper.writeValueAsString(categoryDTOList);
+        String jsonCategories = objectMapper.writeValueAsString(categoryDtoList);
         model.addAttribute("categories", jsonCategories);
 
         return "thymeleaf/main";
@@ -164,7 +164,7 @@ public class AdminController {
     @CheckSession
     @ResponseBody
     @PostMapping(value = "/service/fake-update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseDTO enrollFakeNotice(@RequestBody HashMap<String, String> requestBody) {
+    public ResponseDto enrollFakeNotice(@RequestBody HashMap<String, String> requestBody) {
 
         String fakeNoticeCategory = requestBody.get("category");
         String fakeNoticeSubject = requestBody.get("subject");
@@ -189,7 +189,7 @@ public class AdminController {
         log.info("fake category = {}", fakeNoticeCategory);
 
         try {
-            firebaseService.sendMessage(NoticeMessageDTO.builder()
+            firebaseService.sendMessage(NoticeMessageDto.builder()
                     .articleId(fakeNoticeArticleId)
                     .postedDate(fakeNoticePostedDate)
                     .category(fakeNoticeCategory)
@@ -200,7 +200,7 @@ public class AdminController {
             throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
         }
 
-        return new ResponseDTO(true, "성공", 200);
+        return new ResponseDto(true, "성공", 200);
     }
 
     @CheckSession(isSessionRequired = false)
@@ -213,7 +213,7 @@ public class AdminController {
     @CheckSession(isSessionRequired = false)
     @ResponseBody
     @PostMapping("/login")
-    public LoginResponseDTO login(@RequestBody HashMap<String, String> requestBody, HttpServletRequest request, HttpServletResponse response) {
+    public LoginResponseDto login(@RequestBody HashMap<String, String> requestBody, HttpServletRequest request, HttpServletResponse response) {
 
         String token = requestBody.get("token");
         if (token == null || token.equals("")) {
@@ -229,15 +229,12 @@ public class AdminController {
         HttpSession session = request.getSession(true);
         session.setMaxInactiveInterval(60 * 120); // 브라우저에서 2시간동안 요청이 없으면 세션 파기
 
-        return LoginResponseDTO.builder()
-                .isSuccess(true)
-                .resultMsg("성공")
-                .resultCode(200).build();
+        return new LoginResponseDto(true, "성공", 200);
     }
 
     @ResponseBody
     @PostMapping("/api/fake-update/fcm")
-    public FakeUpdateResponseDTO enrollFakeUpdate(@RequestBody Map<String, String> reqBody) {
+    public FakeUpdateResponseDto enrollFakeUpdate(@RequestBody Map<String, String> reqBody) {
 
         String token = reqBody.get("token");
         String auth = reqBody.get("auth");
@@ -284,7 +281,7 @@ public class AdminController {
             }
 
             try {
-                firebaseService.sendMessage(token, NoticeMessageDTO.builder()
+                firebaseService.sendMessage(token, NoticeMessageDto.builder()
                         .articleId(articleId)
                         .postedDate(postedDate)
                         .subject(subject)
@@ -312,10 +309,7 @@ public class AdminController {
             }
 
             try {
-                firebaseService.sendMessage(token, AdminMessageDTO.builder()
-                        .title(title)
-                        .body(body)
-                        .build());
+                firebaseService.sendMessage(token, new AdminMessageDto(title, body));
             } catch (FirebaseMessagingException e) {
                 throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
             }
@@ -323,6 +317,6 @@ public class AdminController {
             throw new APIException(ErrorCode.API_ADMIN_INVALID_TYPE);
         }
 
-        return new FakeUpdateResponseDTO();
+        return new FakeUpdateResponseDto();
     }
 }
