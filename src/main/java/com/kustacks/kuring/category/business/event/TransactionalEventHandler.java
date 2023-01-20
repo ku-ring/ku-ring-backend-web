@@ -1,4 +1,4 @@
-package com.kustacks.kuring.event;
+package com.kustacks.kuring.category.business.event;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.user.domain.UserCategory;
