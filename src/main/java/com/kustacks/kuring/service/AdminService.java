@@ -1,9 +1,9 @@
 package com.kustacks.kuring.service;
 
-import com.kustacks.kuring.domain.category.Category;
-import com.kustacks.kuring.domain.feedback.Feedback;
-import com.kustacks.kuring.domain.notice.Notice;
-import com.kustacks.kuring.domain.user.User;
+import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.feedback.domain.Feedback;
+import com.kustacks.kuring.notice.domain.Notice;
+import com.kustacks.kuring.user.domain.User;
 
 import java.util.HashMap;
 import java.util.List;

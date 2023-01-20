@@ -1,15 +1,15 @@
 package com.kustacks.kuring.service;
 
-import com.kustacks.kuring.domain.admin.Admin;
-import com.kustacks.kuring.domain.admin.AdminRepository;
-import com.kustacks.kuring.domain.category.Category;
-import com.kustacks.kuring.domain.category.CategoryRepository;
-import com.kustacks.kuring.domain.feedback.Feedback;
-import com.kustacks.kuring.domain.feedback.FeedbackRepository;
-import com.kustacks.kuring.domain.notice.Notice;
-import com.kustacks.kuring.domain.notice.NoticeRepository;
-import com.kustacks.kuring.domain.user.User;
-import com.kustacks.kuring.domain.user.UserRepository;
+import com.kustacks.kuring.admin.domain.Admin;
+import com.kustacks.kuring.admin.domain.AdminRepository;
+import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.category.domain.CategoryRepository;
+import com.kustacks.kuring.feedback.domain.Feedback;
+import com.kustacks.kuring.feedback.domain.FeedbackRepository;
+import com.kustacks.kuring.notice.domain.Notice;
+import com.kustacks.kuring.notice.domain.NoticeRepository;
+import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.UserRepository;
 import com.kustacks.kuring.kuapi.CategoryName;
 import org.springframework.stereotype.Service;
 

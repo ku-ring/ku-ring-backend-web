@@ -1,6 +1,6 @@
 package com.kustacks.kuring.service.utils;
 
-import com.kustacks.kuring.domain.notice.Notice;
+import com.kustacks.kuring.notice.domain.Notice;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;

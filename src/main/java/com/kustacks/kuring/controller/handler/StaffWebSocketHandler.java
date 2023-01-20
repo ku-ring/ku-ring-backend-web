@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kustacks.kuring.controller.dto.StaffDTO;
 import com.kustacks.kuring.controller.dto.StaffWebSocketResponseDTO;
-import com.kustacks.kuring.domain.staff.Staff;
+import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.WebSocketExceptionHandler;
 import com.kustacks.kuring.service.StaffService;

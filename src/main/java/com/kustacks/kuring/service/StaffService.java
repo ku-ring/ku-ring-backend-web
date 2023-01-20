@@ -1,6 +1,6 @@
 package com.kustacks.kuring.service;
 
-import com.kustacks.kuring.domain.staff.Staff;
+import com.kustacks.kuring.staff.domain.Staff;
 
 import java.util.List;
 

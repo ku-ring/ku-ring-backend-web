@@ -1,6 +1,6 @@
 package com.kustacks.kuring.event;
 
-import com.kustacks.kuring.domain.user_category.UserCategory;
+import com.kustacks.kuring.user.domain.UserCategory;
 import lombok.Getter;
 
 import java.util.List;

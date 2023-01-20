@@ -1,7 +1,7 @@
 package com.kustacks.kuring.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.kustacks.kuring.domain.notice.Notice;
+import com.kustacks.kuring.notice.domain.Notice;
 import lombok.Builder;
 import lombok.Getter;
 

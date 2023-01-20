@@ -1,9 +1,9 @@
 package com.kustacks.kuring.service;
 
-import com.kustacks.kuring.domain.feedback.Feedback;
-import com.kustacks.kuring.domain.feedback.FeedbackRepository;
-import com.kustacks.kuring.domain.user.User;
-import com.kustacks.kuring.domain.user.UserRepository;
+import com.kustacks.kuring.feedback.domain.Feedback;
+import com.kustacks.kuring.feedback.domain.FeedbackRepository;
+import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service

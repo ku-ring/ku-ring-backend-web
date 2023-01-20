@@ -1,18 +1,16 @@
 package com.kustacks.kuring.service;
 
 import com.kustacks.kuring.controller.dto.NoticeDTO;
-import com.kustacks.kuring.domain.OffsetBasedPageRequest;
-import com.kustacks.kuring.domain.category.Category;
-import com.kustacks.kuring.domain.category.CategoryRepository;
-import com.kustacks.kuring.domain.notice.Notice;
-import com.kustacks.kuring.domain.notice.NoticeRepository;
+import com.kustacks.kuring.common.OffsetBasedPageRequest;
+import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.category.domain.CategoryRepository;
+import com.kustacks.kuring.notice.domain.Notice;
+import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.service.utils.ObjectComparator;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service

@@ -2,12 +2,12 @@ package com.kustacks.kuring.service;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.controller.dto.CategoryDTO;
-import com.kustacks.kuring.domain.category.Category;
-import com.kustacks.kuring.domain.category.CategoryRepository;
-import com.kustacks.kuring.domain.user.User;
-import com.kustacks.kuring.domain.user.UserRepository;
-import com.kustacks.kuring.domain.user_category.UserCategory;
-import com.kustacks.kuring.domain.user_category.UserCategoryRepository;
+import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.category.domain.CategoryRepository;
+import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.UserRepository;
+import com.kustacks.kuring.user.domain.UserCategory;
+import com.kustacks.kuring.user.domain.UserCategoryRepository;
 import com.kustacks.kuring.error.ErrorCode;
 import com.kustacks.kuring.error.InternalLogicException;
 import com.kustacks.kuring.event.RollbackEvent;

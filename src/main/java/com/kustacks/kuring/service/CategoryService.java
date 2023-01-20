@@ -2,9 +2,9 @@ package com.kustacks.kuring.service;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.controller.dto.CategoryDTO;
-import com.kustacks.kuring.domain.category.Category;
-import com.kustacks.kuring.domain.user.User;
-import com.kustacks.kuring.domain.user_category.UserCategory;
+import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.UserCategory;
 
 import java.util.List;
 import java.util.Map;

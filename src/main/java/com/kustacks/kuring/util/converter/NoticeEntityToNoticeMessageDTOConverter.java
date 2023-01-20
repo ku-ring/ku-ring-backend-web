@@ -1,7 +1,7 @@
 package com.kustacks.kuring.util.converter;
 
 import com.kustacks.kuring.controller.dto.NoticeMessageDTO;
-import com.kustacks.kuring.domain.notice.Notice;
+import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.kuapi.CategoryName;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

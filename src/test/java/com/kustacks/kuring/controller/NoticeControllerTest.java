@@ -2,6 +2,7 @@ package com.kustacks.kuring.controller;
 
 import com.kustacks.kuring.controller.dto.NoticeDTO;
 import com.kustacks.kuring.error.ErrorCode;
+import com.kustacks.kuring.notice.presentation.NoticeController;
 import com.kustacks.kuring.service.NoticeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
