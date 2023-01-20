@@ -13,6 +13,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 public class AcceptanceTest {
 
     protected final String USER_FCM_TOKEN = "test_fcm_token";
+    protected final String INVALID_USER_FCM_TOKEN = "invalid_fcm_token";
 
     @LocalServerPort
     int port;

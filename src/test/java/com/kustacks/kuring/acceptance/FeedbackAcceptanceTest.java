@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
 import static com.kustacks.kuring.acceptance.FeedbackStep.피드백_요청;
 import static com.kustacks.kuring.acceptance.FeedbackStep.피드백_요청_응답_확인;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -33,5 +34,18 @@ public class FeedbackAcceptanceTest extends AcceptanceTest {
 
         // then
         피드백_요청_응답_확인(피드백_요청_응답);
+    }
+
+    @DisplayName("잘못된 길이의 피드백을 요청시 예외가 발생한다")
+    @Test
+    public void request_invalid_length_feedback() throws FirebaseMessagingException {
+        // given
+        doNothing().when(firebaseService).verifyToken(anyString());
+
+        // when
+        var 피드백_요청_응답 = 피드백_요청(USER_FCM_TOKEN, "5자미만");
+
+        // then
+        실패_응답_확인(피드백_요청_응답, 400);
     }
 }

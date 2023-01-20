@@ -24,13 +24,25 @@ public class NoticeStep {
     }
 
     public static ExtractableResponse<Response> 공지사항_조회_요청(String category) {
+        return 페이지_번호와_함께_공지사항_조회_요청(category, 0);
+    }
+
+    public static ExtractableResponse<Response> 페이지_번호와_함께_공지사항_조회_요청(String category, int offset) {
         return RestAssured
                 .given().log().all()
                 .pathParam("type", category)
-                .pathParam("offset", "0")
+                .pathParam("offset", String.valueOf(offset))
                 .pathParam("max", "10")
                 .when().get("/api/v1/notice?type={type}&offset={offset}&max={max}")
                 .then().log().all()
                 .extract();
+    }
+
+    public static void 공지사항_조회_요청_실패_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isEqualTo(false),
+                () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(400)
+        );
     }
 }
