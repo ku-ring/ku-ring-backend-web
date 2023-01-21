@@ -1,4 +1,4 @@
-package com.kustacks.kuring.common.dto;
+package com.kustacks.kuring.search.common.dto.response;
 
 import lombok.Getter;
 

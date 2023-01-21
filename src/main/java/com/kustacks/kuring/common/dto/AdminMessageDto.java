@@ -6,8 +6,9 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AdminMessageDto extends FcmMessageDto {
+public class AdminMessageDto {
 
+    private String type;
     private String title;
 
     private String body;

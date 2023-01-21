@@ -2,7 +2,7 @@ package com.kustacks.kuring.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.common.dto.SaveFeedbackRequestDto;
+import com.kustacks.kuring.feedback.common.dto.request.SaveFeedbackRequestDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.feedback.presentation.FeedbackController;
 import com.kustacks.kuring.feedback.business.FeedbackService;

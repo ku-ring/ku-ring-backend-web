@@ -1,6 +1,6 @@
 package com.kustacks.kuring.controller;
 
-import com.kustacks.kuring.common.dto.NoticeDto;
+import com.kustacks.kuring.notice.common.dto.response.NoticeDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.notice.presentation.NoticeController;
 import com.kustacks.kuring.notice.business.NoticeService;

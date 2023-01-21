@@ -1,5 +1,6 @@
-package com.kustacks.kuring.common.dto;
+package com.kustacks.kuring.category.common.dto.response;
 
+import com.kustacks.kuring.common.dto.ResponseDto;
 import lombok.Getter;
 
 @Getter

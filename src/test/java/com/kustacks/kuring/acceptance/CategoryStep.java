@@ -1,6 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.common.dto.SubscribeCategoriesRequestDto;
+import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequestDto;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

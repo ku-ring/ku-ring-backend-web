@@ -1,16 +1,19 @@
-package com.kustacks.kuring.common.dto;
+package com.kustacks.kuring.category.common.dto.request;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SearchRequestDto {
+public class SubscribeCategoriesRequestDto {
 
-    private String type;
+    private String id;
 
-    private String content;
+    private List<String> categories;
 }

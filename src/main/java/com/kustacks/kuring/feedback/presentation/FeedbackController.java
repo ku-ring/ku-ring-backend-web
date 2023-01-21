@@ -2,8 +2,8 @@ package com.kustacks.kuring.feedback.presentation;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.common.dto.InsertFeedbackResponseDto;
-import com.kustacks.kuring.common.dto.SaveFeedbackRequestDto;
+import com.kustacks.kuring.feedback.common.dto.response.InsertFeedbackResponseDto;
+import com.kustacks.kuring.feedback.common.dto.request.SaveFeedbackRequestDto;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.feedback.business.FeedbackService;

@@ -1,14 +1,15 @@
-package com.kustacks.kuring.search.handler;
+package com.kustacks.kuring.search.presentation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.common.dto.StaffDto;
-import com.kustacks.kuring.common.dto.StaffWebSocketResponseDto;
-import com.kustacks.kuring.staff.domain.Staff;
+import com.kustacks.kuring.search.common.dto.response.NoticeSearchDto;
+import com.kustacks.kuring.search.common.dto.response.NoticeWebSocketResponseDto;
+import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.WebSocketExceptionHandler;
-import com.kustacks.kuring.staff.business.StaffService;
+import com.kustacks.kuring.notice.business.NoticeService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -19,20 +20,27 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class StaffWebSocketHandler implements SearchHandler {
+public class NoticeWebSocketHandler implements SearchHandler {
 
-    private final String ERROR_TYPE = "staff";
+    @Value("${notice.normal-base-url}")
+    private String normalBaseUrl;
 
-    private final StaffService staffService;
+    @Value("${notice.library-base-url}")
+    private String libraryBaseUrl;
+
+    private final String ERROR_TYPE = "notice";
+
+    private final NoticeService noticeService;
     private final ObjectMapper objectMapper;
     private final WebSocketExceptionHandler exceptionHandler;
 
-    public StaffWebSocketHandler(
-            StaffService staffService,
+
+    public NoticeWebSocketHandler(
+            NoticeService noticeService,
             ObjectMapper objectMapper,
             WebSocketExceptionHandler exceptionHandler) {
 
-        this.staffService = staffService;
+        this.noticeService = noticeService;
         this.objectMapper = objectMapper;
         this.exceptionHandler = exceptionHandler;
     }
@@ -45,14 +53,15 @@ public class StaffWebSocketHandler implements SearchHandler {
             return;
         }
 
-        List<Staff> searchResult = staffService.handleSearchRequest(keywords);
+        List<Notice> notices = noticeService.handleSearchRequest(keywords);
 
-        List<StaffDto> searchResultDTOList = new LinkedList<>();
-        for (Staff staff : searchResult) {
-            searchResultDTOList.add(StaffDto.entityToDto(staff));
+        LinkedList<NoticeSearchDto> noticeDTOList = new LinkedList<>();
+        for (Notice notice : notices) {
+            noticeDTOList.add(NoticeSearchDto.entityToDTO(notice, notice.getCategory().getName().equals("library")
+                    ? libraryBaseUrl : normalBaseUrl));
         }
 
-        StaffWebSocketResponseDto responseObject = new StaffWebSocketResponseDto(searchResultDTOList);
+        NoticeWebSocketResponseDto responseObject = new NoticeWebSocketResponseDto(noticeDTOList);
 
         try {
             String responseString = objectMapper.writeValueAsString(responseObject);
@@ -61,7 +70,7 @@ public class StaffWebSocketHandler implements SearchHandler {
             if(e instanceof JsonProcessingException) {
                 exceptionHandler.sendErrorMessage(session, ErrorCode.WS_CANNOT_STRINGIFY, ERROR_TYPE);
             } else {
-                exceptionHandler.sendErrorMessage(session, ErrorCode.WS_SERVER_ERROR, ERROR_TYPE);
+                exceptionHandler.sendErrorMessage(session, ErrorCode.WS_CANNOT_SEND, ERROR_TYPE);
             }
             log.error("", e);
         }

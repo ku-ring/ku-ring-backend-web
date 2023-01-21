@@ -1,7 +1,7 @@
 package com.kustacks.kuring.category.business;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.common.dto.CategoryDto;
+import com.kustacks.kuring.admin.common.dto.response.CategoryDto;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.common.firebase.FirebaseService;

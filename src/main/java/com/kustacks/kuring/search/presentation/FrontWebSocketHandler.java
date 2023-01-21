@@ -1,8 +1,8 @@
-package com.kustacks.kuring.search.handler;
+package com.kustacks.kuring.search.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.common.dto.HeartBeatResponseDto;
-import com.kustacks.kuring.common.dto.SearchRequestDto;
+import com.kustacks.kuring.search.common.dto.response.HeartBeatResponseDto;
+import com.kustacks.kuring.search.common.dto.request.SearchRequestDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.WebSocketExceptionHandler;
 import lombok.extern.slf4j.Slf4j;

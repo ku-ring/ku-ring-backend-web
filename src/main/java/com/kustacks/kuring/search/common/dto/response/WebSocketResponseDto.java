@@ -1,5 +1,6 @@
-package com.kustacks.kuring.common.dto;
+package com.kustacks.kuring.search.common.dto.response;
 
+import com.kustacks.kuring.common.dto.ResponseDto;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -3,7 +3,7 @@ package com.kustacks.kuring.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.category.presentation.CategoryController;
-import com.kustacks.kuring.common.dto.SubscribeCategoriesRequestDto;
+import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequestDto;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserCategory;

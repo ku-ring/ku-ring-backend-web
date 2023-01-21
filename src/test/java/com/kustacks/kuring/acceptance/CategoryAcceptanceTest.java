@@ -1,7 +1,7 @@
 package com.kustacks.kuring.acceptance;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.common.dto.SubscribeCategoriesRequestDto;
+import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequestDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;

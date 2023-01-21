@@ -1,6 +1,6 @@
 package com.kustacks.kuring.notice.business;
 
-import com.kustacks.kuring.common.dto.NoticeDto;
+import com.kustacks.kuring.notice.common.dto.response.NoticeDto;
 import com.kustacks.kuring.common.OffsetBasedPageRequest;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;

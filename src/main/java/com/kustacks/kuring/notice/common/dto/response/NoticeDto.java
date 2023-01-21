@@ -1,4 +1,4 @@
-package com.kustacks.kuring.common.dto;
+package com.kustacks.kuring.notice.common.dto.response;
 
 import lombok.AccessLevel;
 import lombok.Builder;

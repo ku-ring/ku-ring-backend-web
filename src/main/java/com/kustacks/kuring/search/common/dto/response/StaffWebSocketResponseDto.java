@@ -1,6 +1,7 @@
-package com.kustacks.kuring.common.dto;
+package com.kustacks.kuring.search.common.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.kustacks.kuring.common.dto.StaffDto;
 import lombok.Getter;
 
 import java.util.List;

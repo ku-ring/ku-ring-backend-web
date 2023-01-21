@@ -1,7 +1,7 @@
 package com.kustacks.kuring.notice.presentation;
 
-import com.kustacks.kuring.common.dto.NoticeDto;
-import com.kustacks.kuring.common.dto.NoticeResponseDto;
+import com.kustacks.kuring.notice.common.dto.response.NoticeDto;
+import com.kustacks.kuring.notice.common.dto.response.NoticeResponseDto;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.kuapi.CategoryName;

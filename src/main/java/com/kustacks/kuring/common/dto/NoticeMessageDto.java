@@ -8,7 +8,9 @@ import org.springframework.util.Assert;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class NoticeMessageDto extends FcmMessageDto {
+public class NoticeMessageDto {
+
+    private String type;
 
     private String articleId;
 
