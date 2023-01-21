@@ -1,4 +1,4 @@
-package com.kustacks.kuring.socket.handler;
+package com.kustacks.kuring.search.handler;
 
 import org.springframework.web.socket.WebSocketSession;
 

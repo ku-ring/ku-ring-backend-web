@@ -1,4 +1,4 @@
-package com.kustacks.kuring.socket.handler;
+package com.kustacks.kuring.search.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
