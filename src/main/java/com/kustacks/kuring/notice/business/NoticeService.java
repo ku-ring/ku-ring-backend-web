@@ -2,7 +2,6 @@ package com.kustacks.kuring.notice.business;
 
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
-import com.kustacks.kuring.common.OffsetBasedPageRequest;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.utils.ObjectComparator;
@@ -12,10 +11,9 @@ import com.kustacks.kuring.notice.common.dto.response.NoticeListResponse;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -44,12 +42,9 @@ public class NoticeService {
 
     public NoticeListResponse getNotices(String type, int offset, int max) {
         String categoryName = convertShortNameIntoLongName(type);
-
         Category category = getCategoryByName(categoryName);
-        List<Notice> notices = noticeRepository.findByCategory(category,
-                new OffsetBasedPageRequest(offset, max, Sort.by(Sort.Direction.DESC, "postedDate")));
-
-        return new NoticeListResponse(convertBaseUrl(categoryName), noticeEntityToDTO(notices));
+        List<NoticeDto> noticeDtoList = noticeRepository.findNoticesByCategoryWithOffset(category, PageRequest.of(offset, max));
+        return new NoticeListResponse(convertBaseUrl(categoryName), noticeDtoList);
     }
 
     public List<Notice> handleSearchRequest(String keywords) {
@@ -112,20 +107,5 @@ public class NoticeService {
         notices.sort(ObjectComparator.NoticeDateComparator);
 
         return notices;
-    }
-
-    // TODO: noticeDTO 클래스에 위치하는게 맞는듯?
-    private List<NoticeDto> noticeEntityToDTO(List<Notice> notices) {
-        List<NoticeDto> noticeDtoList = new ArrayList<>(notices.size());
-        for (Notice notice : notices) {
-            noticeDtoList.add(NoticeDto.builder()
-                    .articleId(notice.getArticleId())
-                    .postedDate(notice.getPostedDate())
-                    .subject(notice.getSubject())
-                    .category(notice.getCategory().getName())
-                    .build());
-        }
-
-        return noticeDtoList;
     }
 }
