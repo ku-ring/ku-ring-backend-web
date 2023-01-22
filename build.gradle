@@ -1,6 +1,13 @@
+buildscript {
+	ext {
+		queryDslVersion = "5.0.0"
+	}
+}
+
 plugins {
 	id 'org.springframework.boot' version '2.5.5'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 	id 'java'
 	id 'org.asciidoctor.convert' version '1.5.3'
 }
@@ -34,6 +41,9 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.8.1'
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
+
 
 	// Logging
 	implementation 'io.sentry:sentry-spring-boot-starter:5.4.0'
@@ -127,4 +137,20 @@ jar {
 	manifest {
 		attributes 'Main-Class': 'com.kustacks.kuring.KuringApplication'
 	}
+}
+
+// -- QueryDsl 설정 -------------------------------------------------------
+def querydslDir = "$buildDir/generated/querydsl"
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets {
+	main.java.srcDir querydslDir
+}
+configurations {
+	querydsl.extendsFrom compileClasspath
+}
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
 }
