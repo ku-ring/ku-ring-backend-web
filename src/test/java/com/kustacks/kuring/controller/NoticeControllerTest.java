@@ -2,6 +2,7 @@ package com.kustacks.kuring.controller;
 
 import com.kustacks.kuring.notice.common.dto.response.NoticeDto;
 import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.notice.common.dto.response.NoticeListResponse;
 import com.kustacks.kuring.notice.presentation.NoticeController;
 import com.kustacks.kuring.notice.business.NoticeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -87,10 +88,12 @@ public class NoticeControllerTest {
                 .category(categoryName)
                 .build());
 
-        given(noticeService.getNotices(categoryName, offset, max)).willReturn(noticeDtoList);
+        NoticeListResponse noticeListResponse = new NoticeListResponse("base-utl", noticeDtoList);
+
+        given(noticeService.getNotices(categoryName, offset, max)).willReturn(noticeListResponse);
 
         // when
-        ResultActions result = mockMvc.perform(get("/api/v1/notice")
+        ResultActions result = mockMvc.perform(get("/api/v1/notices")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
                 .queryParam("type", type)
@@ -137,7 +140,7 @@ public class NoticeControllerTest {
         max = 20;
 
         // when
-        ResultActions result = mockMvc.perform(get("/api/v1/notice")
+        ResultActions result = mockMvc.perform(get("/api/v1/notices")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
                 .queryParam("type", type)
@@ -163,7 +166,7 @@ public class NoticeControllerTest {
         max = 20;
 
         // when
-        ResultActions result = mockMvc.perform(get("/api/v1/notice")
+        ResultActions result = mockMvc.perform(get("/api/v1/notices")
                 .characterEncoding(StandardCharsets.UTF_8)
                 .accept(MediaType.APPLICATION_JSON)
                 .queryParam("type", type)
