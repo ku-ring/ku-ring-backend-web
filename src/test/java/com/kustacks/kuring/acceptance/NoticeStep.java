@@ -33,7 +33,7 @@ public class NoticeStep {
                 .pathParam("type", category)
                 .pathParam("offset", String.valueOf(offset))
                 .pathParam("max", "10")
-                .when().get("/api/v1/notices?type={type}&offset={offset}&max={max}")
+                .when().get("/api/v1/notice?type={type}&offset={offset}&max={max}")
                 .then().log().all()
                 .extract();
     }

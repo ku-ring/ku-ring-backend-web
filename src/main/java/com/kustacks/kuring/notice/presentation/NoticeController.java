@@ -15,7 +15,7 @@ import javax.validation.constraints.Min;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/notices", produces = "application/json")
+@RequestMapping(value = "/api/v1/notice", produces = "application/json")
 public class NoticeController {
 
     private final NoticeService noticeService;
