@@ -1,7 +1,7 @@
 package com.kustacks.kuring.acceptance;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.service.FirebaseService;
+import com.kustacks.kuring.common.firebase.FirebaseService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;

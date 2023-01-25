@@ -1,14 +1,13 @@
 package com.kustacks.kuring.kuapi.api.notice;
 
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.notice.dto.request.KuisLoginRequestBody;
 import com.kustacks.kuring.kuapi.notice.dto.request.KuisRequestBody;
-import com.kustacks.kuring.util.encoder.Encoder;
+import com.kustacks.kuring.common.utils.encoder.Encoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;

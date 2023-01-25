@@ -2,16 +2,17 @@ package com.kustacks.kuring.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.controller.dto.SubscribeCategoriesRequestDTO;
-import com.kustacks.kuring.domain.category.Category;
-import com.kustacks.kuring.domain.user.User;
-import com.kustacks.kuring.domain.user_category.UserCategory;
-import com.kustacks.kuring.error.APIException;
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
-import com.kustacks.kuring.service.CategoryServiceImpl;
-import com.kustacks.kuring.service.FirebaseService;
-import com.kustacks.kuring.service.UserServiceImpl;
+import com.kustacks.kuring.category.presentation.CategoryController;
+import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequestDto;
+import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.UserCategory;
+import com.kustacks.kuring.common.error.APIException;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.category.business.CategoryService;
+import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.user.business.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,13 +64,13 @@ public class CategoryControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CategoryServiceImpl categoryService;
+    private CategoryService categoryService;
 
     @MockBean
     private FirebaseService firebaseService;
 
     @MockBean
-    private UserServiceImpl userService;
+    private UserService userService;
 
     @Mock
     private FirebaseMessagingException firebaseMessagingException;
@@ -233,7 +234,7 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequestDTO requestDTO = new SubscribeCategoriesRequestDTO(token, categories);
+        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
 
         Map<String, List<UserCategory>> compareCategoriesResult = new HashMap<>();
         compareCategoriesResult.put("new", new LinkedList<>());
@@ -291,7 +292,7 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequestDTO requestDTO = new SubscribeCategoriesRequestDTO(token, categories);
+        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
 
         // given
         given(userService.getUserByToken(token)).willReturn(null);
@@ -349,7 +350,7 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("invalid-category");
 
-        SubscribeCategoriesRequestDTO requestDTO = new SubscribeCategoriesRequestDTO(token, categories);
+        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
 
         // given
         doThrow(new InternalLogicException(ErrorCode.CAT_NOT_EXIST_CATEGORY)).when(categoryService).verifyCategories(categories);
@@ -382,7 +383,7 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequestDTO requestDTO = new SubscribeCategoriesRequestDTO(token, categories);
+        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
 
         Map<String, List<UserCategory>> compareCategoriesResult = new HashMap<>();
         compareCategoriesResult.put("new", new LinkedList<>());

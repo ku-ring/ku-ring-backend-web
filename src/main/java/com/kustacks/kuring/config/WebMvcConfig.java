@@ -1,6 +1,6 @@
 package com.kustacks.kuring.config;
 
-import com.kustacks.kuring.interceptor.AuthInterceptor;
+import com.kustacks.kuring.common.interceptor.AuthInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

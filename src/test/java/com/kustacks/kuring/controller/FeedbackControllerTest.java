@@ -2,10 +2,11 @@ package com.kustacks.kuring.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.controller.dto.SaveFeedbackRequestDTO;
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.service.FeedbackServiceImpl;
-import com.kustacks.kuring.service.FirebaseService;
+import com.kustacks.kuring.feedback.common.dto.request.SaveFeedbackRequestDto;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.feedback.presentation.FeedbackController;
+import com.kustacks.kuring.feedback.business.FeedbackService;
+import com.kustacks.kuring.common.firebase.FirebaseService;
 //import org.junit.Before;
 //import org.junit.Rule;
 //import org.junit.Test;
@@ -19,12 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -59,7 +57,7 @@ public class FeedbackControllerTest {
     private FirebaseService firebaseService;
 
     @MockBean
-    private FeedbackServiceImpl feedbackService;
+    private FeedbackService feedbackService;
 
     @Mock
     private FirebaseMessagingException firebaseMessagingException;
@@ -79,10 +77,7 @@ public class FeedbackControllerTest {
         String token = "TEST_TOKEN";
         String content = "테스트 피드백입니다.";
 
-        SaveFeedbackRequestDTO requestDTO = SaveFeedbackRequestDTO.builder()
-                .token(token)
-                .content(content)
-                .build();
+        SaveFeedbackRequestDto requestDTO = new SaveFeedbackRequestDto(token, content);
 
         String requestBody = objectMapper.writeValueAsString(requestDTO);
 
@@ -124,10 +119,7 @@ public class FeedbackControllerTest {
         String token = "INVALID_TOKEN";
         String content = "테스트 피드백입니다.";
 
-        SaveFeedbackRequestDTO requestDTO = SaveFeedbackRequestDTO.builder()
-                .token(token)
-                .content(content)
-                .build();
+        SaveFeedbackRequestDto requestDTO = new SaveFeedbackRequestDto(token, content);
 
         String requestBody = objectMapper.writeValueAsString(requestDTO);
 
@@ -158,10 +150,7 @@ public class FeedbackControllerTest {
         String token = "TEST_TOKEN";
         String content = "5자미만";
 
-        SaveFeedbackRequestDTO requestDTO = SaveFeedbackRequestDTO.builder()
-                .token(token)
-                .content(content)
-                .build();
+        SaveFeedbackRequestDto requestDTO = new SaveFeedbackRequestDto(token, content);
 
         String requestBody = objectMapper.writeValueAsString(requestDTO);
 

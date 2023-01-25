@@ -1,11 +1,11 @@
 package com.kustacks.kuring.data;
 
-import com.kustacks.kuring.domain.category.Category;
-import com.kustacks.kuring.domain.category.CategoryRepository;
-import com.kustacks.kuring.domain.notice.Notice;
-import com.kustacks.kuring.domain.notice.NoticeRepository;
-import com.kustacks.kuring.domain.user.User;
-import com.kustacks.kuring.domain.user.UserRepository;
+import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.category.domain.CategoryRepository;
+import com.kustacks.kuring.notice.domain.Notice;
+import com.kustacks.kuring.notice.domain.NoticeRepository;
+import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
