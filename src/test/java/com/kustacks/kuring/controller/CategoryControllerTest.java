@@ -2,6 +2,7 @@ package com.kustacks.kuring.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
+import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.presentation.CategoryController;
 import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequestDto;
 import com.kustacks.kuring.category.domain.Category;
@@ -100,10 +101,10 @@ public class CategoryControllerTest {
         List<String> categoryNames = new LinkedList<>();
         categoryNames.add("bachelor");
         categoryNames.add("employment");
+        CategoryListResponse categoryListResponse = new CategoryListResponse(categoryNames);
 
         // given
-        given(categoryService.getCategories()).willReturn(categories);
-        given(categoryService.getCategoryNamesFromCategories(categories)).willReturn(categoryNames);
+        given(categoryService.lookUpSupportedCategories()).willReturn(categoryListResponse);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice/categories")

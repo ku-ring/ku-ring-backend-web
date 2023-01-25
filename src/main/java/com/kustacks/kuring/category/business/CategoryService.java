@@ -2,22 +2,29 @@ package com.kustacks.kuring.category.business;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.admin.common.dto.response.CategoryDto;
+import com.kustacks.kuring.category.business.event.RollbackEvent;
+import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
-import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserRepository;
-import com.kustacks.kuring.user.domain.UserCategory;
-import com.kustacks.kuring.user.domain.UserCategoryRepository;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.category.business.event.RollbackEvent;
+import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.UserCategory;
+import com.kustacks.kuring.user.domain.UserCategoryRepository;
+import com.kustacks.kuring.user.domain.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -28,9 +35,7 @@ public class CategoryService {
     private final UserRepository userRepository;
     private final UserCategoryRepository userCategoryRepository;
     private final FirebaseService firebaseService;
-
     private final ApplicationEventPublisher applicationEventPublisher;
-
     private final Map<String, Category> categoryMap;
 
     public CategoryService(
@@ -43,19 +48,25 @@ public class CategoryService {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.userCategoryRepository = userCategoryRepository;
-
         this.applicationEventPublisher = applicationEventPublisher;
-
         this.firebaseService = firebaseService;
-
-        categoryMap = categoryRepository.findAllMap();
+        this.categoryMap = categoryRepository.findAllMap();
     }
 
+    public CategoryListResponse lookUpSupportedCategories() {
+        List<String> categoryNames = getCategoryNamesFromCategories(getCategories());
+        return new CategoryListResponse(categoryNames);
+    }
 
-    public List<Category> getCategories() {
+    private List<Category> getCategories() {
         return categoryRepository.findAll();
     }
 
+    public List<String> getCategoryNamesFromCategories(List<Category> categories) {
+        return categories.stream()
+                .map(Category::getName)
+                .collect(Collectors.toList());
+    }
 
     public List<CategoryDto> getCategoryDTOList() {
 
@@ -63,13 +74,6 @@ public class CategoryService {
 
         return categories.stream()
                 .map(category -> new CategoryDto(category.getName()))
-                .collect(Collectors.toList());
-    }
-
-    public List<String> getCategoryNamesFromCategories(List<Category> categories) {
-
-        return categories.stream()
-                .map(Category::getName)
                 .collect(Collectors.toList());
     }
 

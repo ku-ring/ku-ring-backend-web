@@ -3,7 +3,7 @@ package com.kustacks.kuring.category.presentation;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.category.common.dto.response.CategoryListResponseDto;
+import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequestDto;
 import com.kustacks.kuring.category.common.dto.response.SubscribeCategoriesResponseDto;
 import com.kustacks.kuring.category.domain.Category;
@@ -13,6 +13,7 @@ import com.kustacks.kuring.user.domain.UserCategory;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CategoryController {
 
@@ -29,26 +31,13 @@ public class CategoryController {
     private final UserService userService;
     private final FirebaseService firebaseService;
 
-    public CategoryController(
-            CategoryService categoryService,
-            FirebaseService firebaseService,
-            UserService userService) {
-        this.categoryService = categoryService;
-        this.userService = userService;
-        this.firebaseService = firebaseService;
-    }
-
     @GetMapping("/notice/categories")
-    public CategoryListResponseDto getSupportedCategories() {
-
-        List<Category> categories = categoryService.getCategories();
-        List<String> categoryNames = categoryService.getCategoryNamesFromCategories(categories);
-
-        return new CategoryListResponseDto(categoryNames);
+    public CategoryListResponse getSupportedCategories() {
+        return categoryService.lookUpSupportedCategories();
     }
 
     @GetMapping("/notice/subscribe")
-    public CategoryListResponseDto getUserCategories(@RequestParam("id") String token) {
+    public CategoryListResponse getUserCategories(@RequestParam("id") String token) {
         // FCM에 이 토큰이 유효한지 확인
         // 유효하면? user-category 테이블 조회해서 카테고리 목록 생성
         // 유효하지 않으면? 401에러 리턴
@@ -66,7 +55,7 @@ public class CategoryController {
         List<Category> categories = categoryService.getUserCategories(token);
         List<String> categoryNames = categoryService.getCategoryNamesFromCategories(categories);
 
-        return new CategoryListResponseDto(categoryNames);
+        return new CategoryListResponse(categoryNames);
     }
 
     @PostMapping(value = "/notice/subscribe", consumes = MediaType.APPLICATION_JSON_VALUE)
