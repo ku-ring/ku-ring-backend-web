@@ -25,7 +25,7 @@ public class FeedbackService {
 
         User user = userRepository.findByToken(token);
         if(user == null) {
-            user = userRepository.save(User.builder().token(token).build());
+            user = userRepository.save(new User(token));
         }
 
         feedbackRepository.save(Feedback.builder()

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.presentation.CategoryController;
-import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequestDto;
+import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequest;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserCategory;
@@ -231,7 +231,7 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
+        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
 
         Map<String, List<UserCategory>> compareCategoriesResult = new HashMap<>();
         compareCategoriesResult.put("new", new LinkedList<>());
@@ -240,9 +240,7 @@ public class CategoryControllerTest {
         Category bachelorCategory = Category.builder().name("bachelor").build();
         Category studentCategory = Category.builder().name("student").build();
 
-        User user = User.builder()
-                .token(token)
-                .build();
+        User user = new User(token);
 
         compareCategoriesResult.get("new").add(new UserCategory(user, bachelorCategory));
         compareCategoriesResult.get("new").add(new UserCategory(user, studentCategory));
@@ -289,7 +287,7 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
+        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
 
         // given
         given(userService.getUserByToken(token)).willReturn(null);
@@ -347,7 +345,7 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("invalid-category");
 
-        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
+        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
 
         // given
         doThrow(new InternalLogicException(ErrorCode.CAT_NOT_EXIST_CATEGORY)).when(categoryService).verifyCategories(categories);
@@ -380,7 +378,7 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
+        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
 
         Map<String, List<UserCategory>> compareCategoriesResult = new HashMap<>();
         compareCategoriesResult.put("new", new LinkedList<>());
@@ -389,9 +387,7 @@ public class CategoryControllerTest {
         Category bachelorCategory = Category.builder().name("bachelor").build();
         Category studentCategory = Category.builder().name("student").build();
 
-        User user = User.builder()
-                .token(token)
-                .build();
+        User user = new User(token);
 
         compareCategoriesResult.get("new").add(new UserCategory(user, bachelorCategory));
         compareCategoriesResult.get("new").add(new UserCategory(user, studentCategory));

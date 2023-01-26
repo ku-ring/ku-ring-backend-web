@@ -19,8 +19,6 @@ public class UserService {
     }
 
     public User insertUserToken(String token) {
-        return userRepository.save(User.builder()
-                .token(token)
-                .build());
+        return userRepository.save(new User(token));
     }
 }
