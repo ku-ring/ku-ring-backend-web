@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SubscribeCategoriesRequestDto {
+public class SubscribeCategoriesRequest {
 
     private String id;
 
