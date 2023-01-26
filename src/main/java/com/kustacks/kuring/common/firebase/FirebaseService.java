@@ -10,11 +10,13 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.TopicManagementResponse;
 import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
+import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,19 +26,12 @@ import java.util.Map;
 @Service
 public class FirebaseService {
 
-    @Value("${notice.normal-base-url}")
-    private String normalBaseUrl;
-
-    @Value("${notice.library-base-url}")
-    private String libraryBaseUrl;
+    private final String DEV_SUFFIX = ".dev";
+    private final FirebaseMessaging firebaseMessaging;
+    private final ObjectMapper objectMapper;
 
     @Value("${server.deploy.environment}")
     private String deployEnv;
-
-    private final String DEV_SUFFIX = ".dev";
-
-    private final FirebaseMessaging firebaseMessaging;
-    private final ObjectMapper objectMapper;
 
     FirebaseService(ObjectMapper objectMapper, @Value("${firebase.file-path}") String filePath) throws IOException {
 
@@ -53,11 +48,7 @@ public class FirebaseService {
     }
 
     public void verifyToken(String token) throws FirebaseMessagingException {
-
-        Message message = Message.builder()
-                .setToken(token)
-                .build();
-
+        Message message = Message.builder().setToken(token).build();
         firebaseMessaging.send(message);
     }
 
@@ -107,7 +98,6 @@ public class FirebaseService {
      * @param messageDTO
      * @throws FirebaseMessagingException
      */
-
     public void sendMessage(NoticeMessageDto messageDTO) throws FirebaseMessagingException {
 
         Map<String, String> noticeMap = objectMapper.convertValue(messageDTO, Map.class);
@@ -153,5 +143,17 @@ public class FirebaseService {
                 .build();
 
         firebaseMessaging.send(newMessage);
+    }
+
+    public void validationToken(String token) {
+        if(!StringUtils.hasText(token)) {
+            throw new APIException(ErrorCode.API_INVALID_PARAM);
+        }
+
+        try {
+            this.verifyToken(token);
+        } catch (FirebaseMessagingException e) {
+            throw new APIException(ErrorCode.API_FB_INVALID_TOKEN, e);
+        }
     }
 }

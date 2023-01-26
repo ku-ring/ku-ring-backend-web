@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Transactional
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -53,6 +54,7 @@ public class CategoryService {
         this.categoryMap = categoryRepository.findAllMap();
     }
 
+    @Transactional(readOnly = true)
     public CategoryListResponse lookUpSupportedCategories() {
         List<String> categoryNames = getCategoryNamesFromCategories(getCategories());
         return new CategoryListResponse(categoryNames);
@@ -62,14 +64,14 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-    public List<String> getCategoryNamesFromCategories(List<Category> categories) {
+    private List<String> getCategoryNamesFromCategories(List<Category> categories) {
         return categories.stream()
                 .map(Category::getName)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<CategoryDto> getCategoryDTOList() {
-
         List<Category> categories = categoryRepository.findAll();
 
         return categories.stream()
@@ -77,14 +79,10 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    public List<Category> getUserCategories(String token) {
-
-        User user = userRepository.findByToken(token);
-        List<UserCategory> userCategories = userCategoryRepository.findAllByUser(user);
-
-        return userCategories.stream()
-                .map(UserCategory::getCategory)
-                .collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public CategoryListResponse lookUpUserCategories(String token) {
+        List<String> categoryNames = userCategoryRepository.getUserCategoryNamesByToken(token);
+        return new CategoryListResponse(categoryNames);
     }
 
     public Map<String, List<UserCategory>> compareCategories(List<String> categories, List<UserCategory> dbUserCategories, User user) {
@@ -154,12 +152,11 @@ public class CategoryService {
     }
 
     private Map<String, UserCategory> listToMap(List<UserCategory> userCategories) {
-
         Map<String, UserCategory> map = new HashMap<>();
+
         for (UserCategory userCategory : userCategories) {
             map.put(userCategory.getCategory().getName(), userCategory);
         }
-
         return map;
     }
 }

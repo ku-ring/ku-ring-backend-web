@@ -2,21 +2,25 @@ package com.kustacks.kuring.category.presentation;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.category.business.CategoryService;
-import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequestDto;
+import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.common.dto.response.SubscribeCategoriesResponseDto;
-import com.kustacks.kuring.category.domain.Category;
-import com.kustacks.kuring.user.business.UserService;
-import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserCategory;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.user.business.UserService;
+import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.UserCategory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -38,24 +42,8 @@ public class CategoryController {
 
     @GetMapping("/notice/subscribe")
     public CategoryListResponse getUserCategories(@RequestParam("id") String token) {
-        // FCM에 이 토큰이 유효한지 확인
-        // 유효하면? user-category 테이블 조회해서 카테고리 목록 생성
-        // 유효하지 않으면? 401에러 리턴
-
-        if(token == null || token.equals("")) {
-            throw new APIException(ErrorCode.API_INVALID_PARAM);
-        }
-
-        try {
-            firebaseService.verifyToken(token);
-        } catch (FirebaseMessagingException e) {
-            throw new APIException(ErrorCode.API_FB_INVALID_TOKEN, e);
-        }
-
-        List<Category> categories = categoryService.getUserCategories(token);
-        List<String> categoryNames = categoryService.getCategoryNamesFromCategories(categories);
-
-        return new CategoryListResponse(categoryNames);
+        firebaseService.validationToken(token);
+        return categoryService.lookUpUserCategories(token);
     }
 
     @PostMapping(value = "/notice/subscribe", consumes = MediaType.APPLICATION_JSON_VALUE)
