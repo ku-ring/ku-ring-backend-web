@@ -6,6 +6,7 @@ import com.kustacks.kuring.category.business.event.RollbackEvent;
 import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
+import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
@@ -109,7 +110,7 @@ public class CategoryService {
 
         return result;
     }
-    
+
     // TODO: FirebaseMessagingException 외에 다른 예외 발생할 수 있는지 확인
     @Transactional
     public void updateUserCategory(String token, Map<String, List<UserCategory>> userCategories) throws FirebaseMessagingException {
@@ -137,15 +138,41 @@ public class CategoryService {
         }
     }
 
+//    private void editUserCategoryList(User user, Map<String, List<String>> compareResult) throws FirebaseMessagingException {
+//        String token = user.getToken();
+//
+//        Map<String, List<String>> transactionHistory = new HashMap<>();
+//        transactionHistory.put("new", new LinkedList<>());
+//        transactionHistory.put("remove", new LinkedList<>());
+//
+//        applicationEventPublisher.publishEvent(new RollbackEvent(token, transactionHistory));
+//
+//        List<String> newCategoryList = compareResult.get("new");
+//        for (String newCategoryName : newCategoryList) {
+//            firebaseService.subscribe(token, newCategoryName);
+//            user.addCategory(categoryMap.get(newCategoryName));
+//            transactionHistory.get("new").add(newCategoryName);
+//            log.info("구독 요청 = {}", newCategoryName);
+//        }
+//
+//        List<String> removeCategoryList = compareResult.get("remove");
+//        for (String removeCategoryName : removeCategoryList) {
+//            firebaseService.unsubscribe(token, removeCategoryName);
+//            user.deleteCategory(removeCategoryName);
+//            transactionHistory.get("remove").add(removeCategoryName);
+//            log.info("구독 취소 = {}", removeCategoryName);
+//        }
+//    }
+
     public List<String> verifyCategories(List<String> categories) {
-        
+
         // 카테고리 지원 여부 검사
         for (String category : categories) {
             if(categoryMap.get(category) == null) {
                 throw new InternalLogicException(ErrorCode.CAT_NOT_EXIST_CATEGORY);
             }
         }
-        
+
         // 카테고리 이름 중복 검사
         HashSet<String> set = new HashSet<>(categories);
         return new ArrayList<>(set);
@@ -159,4 +186,72 @@ public class CategoryService {
         }
         return map;
     }
+
+    public void editSubscribeList(String token, List<String> categories) {
+        // categories에 중복된 카테고리 검사 & 지원하지 않는 카테고리 검사
+        try {
+            categories = verifyCategories(categories);
+        } catch(InternalLogicException e) {
+            throw new APIException(ErrorCode.API_INVALID_PARAM, e);
+        }
+
+        // FCM 토큰이 서버에 등록된 토큰인지 확인
+        // 등록안되어 있다면 firebase에 유효한 토큰인지 확인 후 유효하다면 DB에 등록
+        User user = userRepository.findByToken(token);
+        if(user == null) {
+            try {
+                firebaseService.verifyToken(token);
+            } catch(FirebaseMessagingException | InternalLogicException e) {
+                throw new APIException(ErrorCode.API_FB_INVALID_TOKEN, e);
+            }
+
+            user = userRepository.save(new User(token));
+        }
+
+        // 클라이언트가 등록 희망한 카테고리 목록과 DB에 등록되어있는 카테고리 목록을 비교
+        // categories에는 있고 dbUserCategories에는 없는 건 새로 구독해야할 카테고리
+        // dbUserCategories에는 있고 categories에는 없는 건 구독을 취소해야할 카테고리
+        // 두 리스트 모두에 있는 카테고리는 무시. 아무 작업도 안해도 됨
+        List<UserCategory> dbUserCategories = user.getUserCategories();
+        Map<String, List<UserCategory>> resultMap = compareCategories(categories, dbUserCategories, user);
+
+        // TODO 지우가 진행중
+//        List<String> categoryNames = userCategoryRepository.getUserCategoryNamesByToken(token);
+//        Map<String, List<String>> compareResult = compareCategoryName(categoryNames, categories);
+//        editUserCategoryList(user, compareResult);
+
+        // 새로운 카테고리 구독 및 그렇지 않은 카테고리 구독 취소 작업 (DB, Firebase api 작업)
+        // Transactional하게 동작하게 하기 위해 service layer에서 작업
+        try {
+            updateUserCategory(token, resultMap);
+        } catch (Exception e) {
+            if(e instanceof FirebaseMessagingException) {
+                throw new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY, e);
+            } else {
+                throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
+            }
+        }
+    }
+
+//    private Map<String, List<String>> compareCategoryName(List<String> oldCategoryNames, List<String> newCategoryNames) {
+//        Map<String, List<String>> result = new HashMap<>();
+//        List<String> newList = new ArrayList<>();
+//        List<String> deleteList = new ArrayList<>();
+//
+//        for(String newCategoryName : newCategoryNames) {
+//            if(!oldCategoryNames.contains(newCategoryName)) {
+//                newList.add(newCategoryName);
+//            }
+//        }
+//
+//        for(String oldCategoryName : oldCategoryNames) {
+//            if(!newCategoryNames.contains(oldCategoryName)) {
+//                deleteList.add(oldCategoryName);
+//            }
+//        }
+//        result.put("new", newList);
+//        result.put("delete", deleteList);
+//
+//        return result;
+//    }
 }

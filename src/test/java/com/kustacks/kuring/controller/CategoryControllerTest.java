@@ -2,18 +2,17 @@ package com.kustacks.kuring.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
-import com.kustacks.kuring.category.presentation.CategoryController;
+import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequest;
+import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.domain.Category;
-import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserCategory;
+import com.kustacks.kuring.category.presentation.CategoryController;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.user.business.UserService;
+import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.UserCategory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,6 +39,8 @@ import java.util.Map;
 import static com.kustacks.kuring.ApiDocumentUtils.getDocumentRequest;
 import static com.kustacks.kuring.ApiDocumentUtils.getDocumentResponse;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -177,9 +178,8 @@ public class CategoryControllerTest {
     @DisplayName("특정 회원이 구독한 카테고리 목록 제공 API - 실패 - 유효하지 않은 FCM 토큰")
     @Test
     public void getUserCategoriesFailByInvalidTokenTest() throws Exception {
-        String token = "INVALID_TOKEN";
-
         // given
+        String token = "INVALID_TOKEN";
         doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(firebaseService).validationToken(token);
 
         // when
@@ -291,7 +291,7 @@ public class CategoryControllerTest {
 
         // given
         given(userService.getUserByToken(token)).willReturn(null);
-        doThrow(firebaseMessagingException).when(firebaseService).verifyToken(token);
+        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(categoryService).editSubscribeList(anyString(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -313,10 +313,8 @@ public class CategoryControllerTest {
     @DisplayName("특정 회원의 구독 카테고리 편집 API - 실패 - 요청 body에 필수 json 필드 누락")
     @Test
     public void subscribeCategoriesFailByMissingJsonField() throws Exception {
-
-        String requestBody = "{\"categories\": [\"bachelor\", \"student\"]}";
-
         // given
+        String requestBody = "{\"categories\": [\"bachelor\", \"student\"]}";
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -348,7 +346,7 @@ public class CategoryControllerTest {
         SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
 
         // given
-        doThrow(new InternalLogicException(ErrorCode.CAT_NOT_EXIST_CATEGORY)).when(categoryService).verifyCategories(categories);
+        doThrow(new APIException(ErrorCode.API_INVALID_PARAM)).when(categoryService).editSubscribeList(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -393,11 +391,7 @@ public class CategoryControllerTest {
         compareCategoriesResult.get("new").add(new UserCategory(user, studentCategory));
 
         // given
-        given(categoryService.verifyCategories(categories)).willReturn(categories);
-        given(userService.getUserByToken(token)).willReturn(null);
-        given(userService.insertUserToken(token)).willReturn(user);
-        given(categoryService.compareCategories(categories, new LinkedList<>(), user)).willReturn(compareCategoriesResult);
-        doThrow(firebaseMessagingException).when(categoryService).updateUserCategory(token, compareCategoriesResult);
+        doThrow(new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY)).when(categoryService).editSubscribeList(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
