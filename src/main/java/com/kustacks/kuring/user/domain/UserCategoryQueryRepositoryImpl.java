@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+import static com.kustacks.kuring.category.domain.QCategory.category;
 import static com.kustacks.kuring.user.domain.QUserCategory.userCategory;
 
 @RequiredArgsConstructor
@@ -17,6 +18,15 @@ public class UserCategoryQueryRepositoryImpl implements UserCategoryQueryReposit
         return queryFactory
                 .select(userCategory.category.name)
                 .from(userCategory)
+                .where(userCategory.user.token.eq(token))
+                .fetch();
+    }
+
+    @Override
+    public List<UserCategory> getUserCategoriesByToken(String token) {
+        return queryFactory
+                .selectFrom(userCategory)
+                .join(userCategory.category, category).fetchJoin()
                 .where(userCategory.user.token.eq(token))
                 .fetch();
     }

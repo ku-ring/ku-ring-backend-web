@@ -42,6 +42,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -224,38 +225,16 @@ public class CategoryControllerTest {
     @DisplayName("특정 회원의 구독 카테고리 편집 API - 성공")
     @Test
     public void subscribeCategoriesSuccessTest() throws Exception {
-
-        String token = "TEST_TOKEN";
-
-        List<String> categories = new LinkedList<>();
-        categories.add("bachelor");
-        categories.add("student");
-
-        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
-
-        Map<String, List<UserCategory>> compareCategoriesResult = new HashMap<>();
-        compareCategoriesResult.put("new", new LinkedList<>());
-        compareCategoriesResult.put("remove", new LinkedList<>());
-
-        Category bachelorCategory = Category.builder().name("bachelor").build();
-        Category studentCategory = Category.builder().name("student").build();
-
-        User user = new User(token);
-
-        compareCategoriesResult.get("new").add(new UserCategory(user, bachelorCategory));
-        compareCategoriesResult.get("new").add(new UserCategory(user, studentCategory));
-
-
         // given
-        given(userService.getUserByToken(token)).willReturn(null);
-        given(userService.insertUserToken(token)).willReturn(user);
-        given(categoryService.compareCategories(categories, new LinkedList<>(), user)).willReturn(compareCategoriesResult);
+        SubscribeCategoriesRequest subscribeCategoriesRequest = new SubscribeCategoriesRequest("TEST_TOKEN", List.of("bachelor", "student"));
+        doNothing().when(firebaseService).validationToken(anyString());
+        doNothing().when(categoryService).editSubscribeCategoryList(anyString(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDTO)));
+                .content(objectMapper.writeValueAsString(subscribeCategoriesRequest)));
 
         // then
         result.andExpect(status().isOk())
@@ -291,7 +270,7 @@ public class CategoryControllerTest {
 
         // given
         given(userService.getUserByToken(token)).willReturn(null);
-        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(categoryService).editSubscribeList(anyString(), any());
+        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(categoryService).editSubscribeCategoryList(anyString(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -346,7 +325,7 @@ public class CategoryControllerTest {
         SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
 
         // given
-        doThrow(new APIException(ErrorCode.API_INVALID_PARAM)).when(categoryService).editSubscribeList(any(), any());
+        doThrow(new APIException(ErrorCode.API_INVALID_PARAM)).when(categoryService).editSubscribeCategoryList(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -391,7 +370,7 @@ public class CategoryControllerTest {
         compareCategoriesResult.get("new").add(new UserCategory(user, studentCategory));
 
         // given
-        doThrow(new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY)).when(categoryService).editSubscribeList(any(), any());
+        doThrow(new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY)).when(categoryService).editSubscribeCategoryList(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")

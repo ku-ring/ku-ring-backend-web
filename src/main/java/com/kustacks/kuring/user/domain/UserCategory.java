@@ -1,7 +1,6 @@
 package com.kustacks.kuring.user.domain;
 
 import com.kustacks.kuring.category.domain.Category;
-import com.kustacks.kuring.user.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,5 +35,9 @@ public class UserCategory {
     public UserCategory(User user, Category category) {
         this.user = user;
         this.category = category;
+    }
+
+    public String getCategoryName() {
+        return this.category.getName();
     }
 }

@@ -43,7 +43,7 @@ public class CategoryController {
             throw new APIException(ErrorCode.API_MISSING_PARAM);
         }
         firebaseService.validationToken(request.getId());
-        categoryService.editSubscribeList(request.getId(), request.getCategories());
+        categoryService.editSubscribeCategoryList(request.getId(), request.getCategories());
         return new SubscribeCategoriesResponse();
     }
 }

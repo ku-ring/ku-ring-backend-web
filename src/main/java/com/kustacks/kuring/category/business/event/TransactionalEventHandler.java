@@ -1,7 +1,6 @@
 package com.kustacks.kuring.category.business.event;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.user.domain.UserCategory;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
@@ -11,7 +10,6 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Component
@@ -25,23 +23,22 @@ public class TransactionalEventHandler {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_ROLLBACK)
     public void rollbackFirebaseRequest(RollbackEvent rollbackEvent) {
-        Map<String, List<UserCategory>> transactionHistory = rollbackEvent.getTransactionHistory();
-        String token = rollbackEvent.getToken();
 
-        List<UserCategory> newUserCategories = transactionHistory.get("new");
-        List<UserCategory> removedUserCategories = transactionHistory.get("remove");
+        List<String> newUserCategoryNames = rollbackEvent.getTransactionHistory().get("new");
+        List<String> removedUserCategoryNames = rollbackEvent.getTransactionHistory().get("remove");
+        String token = rollbackEvent.getToken();
 
         try {
             log.info("=== 신청한 구독 롤백 ===");
-            for (UserCategory newUserCategory : newUserCategories) {
-                firebaseService.unsubscribe(token, newUserCategory.getCategory().getName());
-                log.info(newUserCategory.getCategory().getName());
+            for (String newUserCategoryName : newUserCategoryNames) {
+                firebaseService.unsubscribe(token, newUserCategoryName);
+                log.info(newUserCategoryName);
             }
 
             log.info("=== 취소한 구독 롤백 ===");
-            for (UserCategory removeUserCategory : removedUserCategories) {
-                firebaseService.subscribe(token, removeUserCategory.getCategory().getName());
-                log.info(removeUserCategory.getCategory().getName());
+            for (String removeUserCategoryName : removedUserCategoryNames) {
+                firebaseService.subscribe(token, removeUserCategoryName);
+                log.info(removeUserCategoryName);
             }
         } catch(FirebaseMessagingException | InternalLogicException e) {
             throw new InternalLogicException(ErrorCode.FB_FAIL_ROLLBACK, e);
