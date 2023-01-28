@@ -1,7 +1,7 @@
 package com.kustacks.kuring.category.business;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.admin.common.dto.response.CategoryDto;
+import com.kustacks.kuring.admin.common.dto.response.CategoryNameDto;
 import com.kustacks.kuring.category.business.event.Events;
 import com.kustacks.kuring.category.business.event.SubscribedRollbackEvent;
 import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
@@ -54,15 +54,15 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public CategoryListResponse lookUpSupportedCategories() {
-        List<String> categoryNames = getCategoryNamesFromCategories(categoryRepository.findAll());
+        List<String> categoryNames = categoryRepository.getSupportedCategoryNames();
         return new CategoryListResponse(categoryNames);
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryDto> getCategoryDTOList() {
-        return categoryRepository.findAll()
+    public List<CategoryNameDto> getCategoryDtoList() {
+        return categoryRepository.getSupportedCategoryNames()
                 .stream()
-                .map(category -> new CategoryDto(category.getName()))
+                .map(CategoryNameDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -147,12 +147,6 @@ public class CategoryService {
         }
     }
 
-    private List<String> getCategoryNamesFromCategories(List<Category> categories) {
-        return categories.stream()
-                .map(Category::getName)
-                .collect(Collectors.toList());
-    }
-
     private List<String> convertNameList(List<UserCategory> userCategoryList) {
         return userCategoryList.stream()
                 .map(UserCategory::getCategoryName)
@@ -176,9 +170,9 @@ public class CategoryService {
                 removeList.add(oldUserCategory);
             }
         }
+
         result.put(NEW_CATEGORY_FLAG, newList);
         result.put(REMOVE_CATEGORY_FLAG, removeList);
-
         return result;
     }
 }

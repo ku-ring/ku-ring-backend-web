@@ -8,7 +8,7 @@ import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.common.annotation.CheckSession;
 import com.kustacks.kuring.common.dto.AdminMessageDto;
-import com.kustacks.kuring.admin.common.dto.response.CategoryDto;
+import com.kustacks.kuring.admin.common.dto.response.CategoryNameDto;
 import com.kustacks.kuring.admin.common.dto.response.FakeUpdateResponseDto;
 import com.kustacks.kuring.admin.common.dto.response.LoginResponseDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
@@ -88,7 +88,7 @@ public class AdminController {
         List<Feedback> feedbacks = null;
         List<Notice> notices = null;
         List<User> users = null;
-        List<CategoryDto> categoryDtoList = null;
+        List<CategoryNameDto> categoryNameDtoList = null;
 
         model.addAttribute("title", "KU Ring");
 
@@ -96,7 +96,7 @@ public class AdminController {
             case "dashboard":
                 feedbacks = adminService.getFeedbacks();
                 notices = adminService.getNotices();
-                categoryDtoList = categoryService.getCategoryDTOList();
+                categoryNameDtoList = categoryService.getCategoryDtoList();
                 users = adminService.getUsers();
                 break;
             case "user":
@@ -107,7 +107,7 @@ public class AdminController {
                 break;
             case "notice":
                 notices = adminService.getNotices();
-                categoryDtoList = categoryService.getCategoryDTOList();
+                categoryNameDtoList = categoryService.getCategoryDtoList();
                 break;
             default:
                 break;
@@ -116,7 +116,7 @@ public class AdminController {
         model.addAttribute("feedbacks", feedbacks);
 
         model.addAttribute("notices", notices);
-        String jsonCategories = objectMapper.writeValueAsString(categoryDtoList);
+        String jsonCategories = objectMapper.writeValueAsString(categoryNameDtoList);
         model.addAttribute("categories", jsonCategories);
 
         model.addAttribute("users", users);
@@ -131,12 +131,12 @@ public class AdminController {
     @GetMapping("/service/sub-unsub")
     public String subUnsubPage(Model model) throws JsonProcessingException {
 
-        List<CategoryDto> categoryDtoList = categoryService.getCategoryDTOList();
+        List<CategoryNameDto> categoryNameDtoList = categoryService.getCategoryDtoList();
 
         model.addAttribute("subUnsub", true);
         model.addAttribute("fakeUpdate", false);
 
-        String jsonCategories = objectMapper.writeValueAsString(categoryDtoList);
+        String jsonCategories = objectMapper.writeValueAsString(categoryNameDtoList);
         model.addAttribute("categories", jsonCategories);
 
         return "thymeleaf/main";
@@ -150,12 +150,12 @@ public class AdminController {
             return "thymeleaf/404";
         }
 
-        List<CategoryDto> categoryDtoList = categoryService.getCategoryDTOList();
+        List<CategoryNameDto> categoryNameDtoList = categoryService.getCategoryDtoList();
 
         model.addAttribute("subUnsub", false);
         model.addAttribute("fakeUpdate", true);
 
-        String jsonCategories = objectMapper.writeValueAsString(categoryDtoList);
+        String jsonCategories = objectMapper.writeValueAsString(categoryNameDtoList);
         model.addAttribute("categories", jsonCategories);
 
         return "thymeleaf/main";
