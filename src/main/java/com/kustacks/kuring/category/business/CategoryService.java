@@ -2,7 +2,8 @@ package com.kustacks.kuring.category.business;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.admin.common.dto.response.CategoryDto;
-import com.kustacks.kuring.category.business.event.RollbackEvent;
+import com.kustacks.kuring.category.business.event.Events;
+import com.kustacks.kuring.category.business.event.SubscribedRollbackEvent;
 import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
@@ -15,7 +16,6 @@ import com.kustacks.kuring.user.domain.UserCategory;
 import com.kustacks.kuring.user.domain.UserCategoryRepository;
 import com.kustacks.kuring.user.domain.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,20 +37,17 @@ public class CategoryService {
     private final UserRepository userRepository;
     private final UserCategoryRepository userCategoryRepository;
     private final FirebaseService firebaseService;
-    private final ApplicationEventPublisher applicationEventPublisher;
     private final Map<String, Category> categoryMap;
 
     public CategoryService(
             CategoryRepository categoryRepository,
             UserRepository userRepository,
             UserCategoryRepository userCategoryRepository,
-            ApplicationEventPublisher applicationEventPublisher,
             FirebaseService firebaseService) {
 
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.userCategoryRepository = userCategoryRepository;
-        this.applicationEventPublisher = applicationEventPublisher;
         this.firebaseService = firebaseService;
         this.categoryMap = categoryRepository.findAllMap();
     }
@@ -100,11 +97,11 @@ public class CategoryService {
         try {
             String token = user.getToken();
 
-            RollbackEvent rollbackEvent = new RollbackEvent(token);
-            applicationEventPublisher.publishEvent(rollbackEvent);
+            SubscribedRollbackEvent subscribedRollbackEvent = new SubscribedRollbackEvent(token);
+            Events.raise(subscribedRollbackEvent);
 
-            subscribeUserCategory(compareResult, token, rollbackEvent);
-            unsubscribeUserCategory(compareResult, token, rollbackEvent);
+            subscribeUserCategory(compareResult, token, subscribedRollbackEvent);
+            unsubscribeUserCategory(compareResult, token, subscribedRollbackEvent);
         } catch (Exception e) {
             if(e instanceof FirebaseMessagingException) {
                 throw new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY, e);
@@ -114,22 +111,22 @@ public class CategoryService {
         }
     }
 
-    private void subscribeUserCategory(Map<String, List<UserCategory>> compareResult, String token, RollbackEvent rollbackEvent) throws FirebaseMessagingException {
+    private void subscribeUserCategory(Map<String, List<UserCategory>> compareResult, String token, SubscribedRollbackEvent subscribedRollbackEvent) throws FirebaseMessagingException {
         List<UserCategory> newUserCategories = compareResult.get(NEW_CATEGORY_FLAG);
         for (UserCategory newUserCategory : newUserCategories) {
             firebaseService.subscribe(token, newUserCategory.getCategoryName());
             userCategoryRepository.save(newUserCategory);
-            rollbackEvent.addNewCategoryName(newUserCategory.getCategoryName());
+            subscribedRollbackEvent.addNewCategoryName(newUserCategory.getCategoryName());
             log.info("구독 성공 = {}", newUserCategory.getCategoryName());
         }
     }
 
-    private void unsubscribeUserCategory(Map<String, List<UserCategory>> compareResult, String token, RollbackEvent rollbackEvent) throws FirebaseMessagingException {
+    private void unsubscribeUserCategory(Map<String, List<UserCategory>> compareResult, String token, SubscribedRollbackEvent subscribedRollbackEvent) throws FirebaseMessagingException {
         List<UserCategory> removeUserCategories = compareResult.get(REMOVE_CATEGORY_FLAG);
         for (UserCategory removeUserCategory : removeUserCategories) {
             firebaseService.unsubscribe(token, removeUserCategory.getCategoryName());
             userCategoryRepository.delete(removeUserCategory);
-            rollbackEvent.deleteNewCategoryName(removeUserCategory.getCategoryName());
+            subscribedRollbackEvent.deleteNewCategoryName(removeUserCategory.getCategoryName());
             log.info("구독 취소 = {}", removeUserCategory.getCategoryName());
         }
     }
