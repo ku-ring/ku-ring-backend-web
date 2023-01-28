@@ -9,10 +9,8 @@ public class ErrorResponse {
     @JsonProperty("isSuccess")
     private final boolean success = false;
 
-    @JsonProperty("resultMsg")
     private String resultMsg;
 
-    @JsonProperty("resultCode")
     private int resultCode;
 
     public ErrorResponse(ErrorCode errorCode) {

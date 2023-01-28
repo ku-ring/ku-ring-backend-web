@@ -4,8 +4,6 @@ import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequest;
 import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.common.dto.response.SubscribeCategoriesResponse;
-import com.kustacks.kuring.common.error.APIException;
-import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -38,10 +38,7 @@ public class CategoryController {
     }
 
     @PostMapping(value = "/notice/subscribe", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public SubscribeCategoriesResponse editUserSubscribeCategories(@RequestBody SubscribeCategoriesRequest request) {
-        if(request.getCategories() == null || request.getId() == null || request.getId().equals("")) {
-            throw new APIException(ErrorCode.API_MISSING_PARAM);
-        }
+    public SubscribeCategoriesResponse editUserSubscribeCategories(@Valid @RequestBody SubscribeCategoriesRequest request) {
         firebaseService.validationToken(request.getId());
         categoryService.editSubscribeCategoryList(request.getId(), request.getCategories());
         return new SubscribeCategoriesResponse();
