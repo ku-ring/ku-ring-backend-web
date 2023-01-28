@@ -140,13 +140,11 @@ public class NoticeUpdater implements Updater {
                 CommonNoticeFormatDTO apiNotice = noticeIterator.next();
                 Notice notice = dbNoticeMap.get(apiNotice.getArticleId());
                 if(notice == null) {
-                    newNotices.add(Notice.builder()
-                            .articleId(apiNotice.getArticleId())
-                            .postedDate(apiNotice.getPostedDate())
-                            .updatedDate(apiNotice.getUpdatedDate())
-                            .subject(apiNotice.getSubject())
-                            .category(noticeCategory)
-                            .build());
+                    newNotices.add(new Notice(apiNotice.getArticleId(),
+                            apiNotice.getPostedDate(),
+                            apiNotice.getUpdatedDate(),
+                            apiNotice.getSubject(),
+                            noticeCategory));
                 } else {
                     noticeIterator.remove();
                     dbNoticeMap.remove(apiNotice.getArticleId());

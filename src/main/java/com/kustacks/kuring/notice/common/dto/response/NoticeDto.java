@@ -1,5 +1,6 @@
 package com.kustacks.kuring.notice.common.dto.response;
 
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +20,8 @@ public class NoticeDto {
     private String category;
 
     @Builder
-    private NoticeDto(String articleId, String postedDate, String subject, String category) {
+    @QueryProjection
+    public NoticeDto(String articleId, String postedDate, String subject, String category) {
         Assert.notNull(articleId, "articleId must not be null");
         Assert.notNull(postedDate, "postedDate must not be null");
         Assert.notNull(subject, "subject must not be null");

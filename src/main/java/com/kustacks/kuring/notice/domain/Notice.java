@@ -1,18 +1,25 @@
 package com.kustacks.kuring.notice.domain;
 
 import com.kustacks.kuring.category.domain.Category;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Getter @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "notice")
 public class Notice {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -24,17 +31,16 @@ public class Notice {
     @Column(name = "posted_dt", length = 32, nullable = false)
     private String postedDate;
 
-    @Column(name = "updated_dt", length = 32, nullable = true)
+    @Column(name = "updated_dt", length = 32)
     private String updatedDate;
 
     @Column(name = "subject", length = 128, nullable = false)
     private String subject;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_name", nullable = false)
     private Category category;
 
-    @Builder
     public Notice(String articleId, String postedDate, String updatedDate, String subject, Category category) {
         this.articleId = articleId;
         this.postedDate = postedDate;
