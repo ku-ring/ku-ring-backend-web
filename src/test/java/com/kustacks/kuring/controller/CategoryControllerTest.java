@@ -361,8 +361,8 @@ public class CategoryControllerTest {
         compareCategoriesResult.put("new", new LinkedList<>());
         compareCategoriesResult.put("remove", new LinkedList<>());
 
-        Category bachelorCategory = Category.builder().name("bachelor").build();
-        Category studentCategory = Category.builder().name("student").build();
+        Category bachelorCategory = new Category("bachelor");
+        Category studentCategory = new Category("student");
 
         User user = new User(token);
 
