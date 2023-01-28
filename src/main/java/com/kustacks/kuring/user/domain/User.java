@@ -4,13 +4,10 @@ import com.kustacks.kuring.feedback.domain.Feedback;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,10 +31,6 @@ public class User implements Serializable {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Feedback> feedbacks = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    @Fetch(FetchMode.JOIN)
-    private List<UserCategory> userCategories = new ArrayList<>();
 
     public User(String token) {
         this.token = token;
