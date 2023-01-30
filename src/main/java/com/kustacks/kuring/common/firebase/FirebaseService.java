@@ -152,8 +152,12 @@ public class FirebaseService {
 
         try {
             this.verifyToken(token);
-        } catch (FirebaseMessagingException e) {
-            throw new APIException(ErrorCode.API_FB_INVALID_TOKEN, e);
+        } catch (FirebaseMessagingException exception) {
+            if(exception instanceof FirebaseMessagingException) {
+                throw new APIException(ErrorCode.API_FB_INVALID_TOKEN);
+            } else {
+                throw new APIException(ErrorCode.UNKNOWN_ERROR);
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.feedback.common.dto.request.SaveFeedbackRequestDto;
+import com.kustacks.kuring.feedback.common.dto.request.SaveFeedbackRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -23,7 +23,7 @@ public class FeedbackStep {
         return RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new SaveFeedbackRequestDto(fcmToken, feedback))
+                .body(new SaveFeedbackRequest(fcmToken, feedback))
                 .when().post("/api/v1/feedback")
                 .then().log().all()
                 .extract();

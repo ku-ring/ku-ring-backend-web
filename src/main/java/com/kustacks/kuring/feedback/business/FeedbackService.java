@@ -21,16 +21,12 @@ public class FeedbackService {
     }
 
 
-    public void insertFeedback(String token, String content) {
-
+    public void saveFeedback(String token, String content) {
         User user = userRepository.findByToken(token);
         if(user == null) {
             user = userRepository.save(new User(token));
         }
 
-        feedbackRepository.save(Feedback.builder()
-                .user(user)
-                .content(content)
-                .build());
+        feedbackRepository.save(new Feedback(content, user));
     }
 }
