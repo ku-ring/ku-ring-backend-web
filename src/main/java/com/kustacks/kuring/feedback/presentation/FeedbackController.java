@@ -27,13 +27,17 @@ public class FeedbackController {
     public SaveFeedbackResponse saveFeedback(@Valid @RequestBody SaveFeedbackRequest request) throws APIException {
         String token = request.getId();
         String content = request.getContent();
-        if (content.length() < 5 || content.length() > 256) {
-            throw new APIException(ErrorCode.API_FD_INVALID_CONTENT);
-        }
+        validationContentsLength(content);
 
         firebaseService.validationToken(token);
         feedbackService.saveFeedback(token, content);
 
         return new SaveFeedbackResponse();
+    }
+
+    private static void validationContentsLength(String content) {
+        if (content.length() < 5 || content.length() > 256) {
+            throw new APIException(ErrorCode.API_FD_INVALID_CONTENT);
+        }
     }
 }
