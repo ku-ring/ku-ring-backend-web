@@ -6,33 +6,25 @@ import com.kustacks.kuring.user.domain.UserRepository;
 import com.kustacks.kuring.user.domain.UserCategoryRepository;
 import com.kustacks.kuring.kuapi.Updater;
 import com.kustacks.kuring.common.firebase.FirebaseService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class UserUpdater implements Updater {
 
     private final FirebaseService firebaseService;
     private final UserRepository userRepository;
     private final UserCategoryRepository userCategoryRepository;
 
-//    private final int STAFF_UPDATE_RETRY_PERIOD = 1000 * 10;
-
-    public UserUpdater(
-            FirebaseService firebaseService,
-            UserRepository userRepository,
-            UserCategoryRepository userCategoryRepository) {
-
-        this.firebaseService = firebaseService;
-        this.userRepository = userRepository;
-        this.userCategoryRepository = userCategoryRepository;
-    }
-
+    @Transactional
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
     public void update() {
 
