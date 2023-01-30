@@ -9,12 +9,12 @@ import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserCategory;
 import com.kustacks.kuring.user.domain.UserCategoryRepository;
 import com.kustacks.kuring.user.domain.UserRepository;
+import com.kustacks.kuring.user.exception.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -80,17 +81,12 @@ public class CategoryService {
     }
 
     private User findUserByToken(String token) {
-        User user = userRepository.findByToken(token);
-        if(user == null) {
-            try {
-                firebaseService.verifyToken(token);
-            } catch(FirebaseMessagingException | InternalLogicException e) {
-                throw new APIException(ErrorCode.API_FB_INVALID_TOKEN, e);
-            }
-
-            user = userRepository.save(new User(token));
+        Optional<User> optionalUser = userRepository.findByToken(token);
+        if (optionalUser.isEmpty()) {
+            optionalUser = Optional.of(userRepository.save(new User(token)));
         }
-        return user;
+
+        return optionalUser.orElseThrow(UserNotFoundException::new);
     }
 
     private void editUserCategoryList(User user, Map<String, List<UserCategory>> compareResult) {
@@ -103,7 +99,7 @@ public class CategoryService {
             subscribeUserCategory(compareResult, token, subscribedRollbackEvent);
             unsubscribeUserCategory(compareResult, token, subscribedRollbackEvent);
         } catch (Exception e) {
-            if(e instanceof FirebaseMessagingException) {
+            if (e instanceof FirebaseMessagingException) {
                 throw new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY, e);
             } else {
                 throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
@@ -141,7 +137,7 @@ public class CategoryService {
 
     private void validationSupportedCategory(List<String> categoryNames) {
         for (String category : categoryNames) {
-            if(categoryMap.get(category) == null) {
+            if (categoryMap.get(category) == null) {
                 throw new APIException(ErrorCode.API_INVALID_PARAM);
             }
         }
@@ -159,14 +155,14 @@ public class CategoryService {
         List<UserCategory> removeList = new ArrayList<>();
         List<String> oldCategoryNames = convertNameList(oldUserCategories);
 
-        for(String newCategoryName : newCategoryNames) {
-            if(!oldCategoryNames.contains(newCategoryName)) {
+        for (String newCategoryName : newCategoryNames) {
+            if (!oldCategoryNames.contains(newCategoryName)) {
                 newList.add(new UserCategory(user, categoryMap.get(newCategoryName)));
             }
         }
 
-        for(UserCategory oldUserCategory : oldUserCategories) {
-            if(!newCategoryNames.contains(oldUserCategory.getCategoryName())) {
+        for (UserCategory oldUserCategory : oldUserCategories) {
+            if (!newCategoryNames.contains(oldUserCategory.getCategoryName())) {
                 removeList.add(oldUserCategory);
             }
         }
