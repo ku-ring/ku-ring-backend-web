@@ -1,16 +1,21 @@
 package com.kustacks.kuring.feedback.domain;
 
 import com.kustacks.kuring.user.domain.User;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "feedback")
 public class Feedback {
 
     @Id
@@ -22,10 +27,9 @@ public class Feedback {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "uid", nullable = true)
+    @JoinColumn(name = "uid")
     private User user;
 
-    @Builder
     public Feedback(String content, User user) {
         this.content = content;
         this.user = user;
