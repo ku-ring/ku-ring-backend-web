@@ -78,7 +78,9 @@ public enum ErrorCode {
     WS_CANNOT_STRINGIFY("객체를 JSON 문자열로 변경하는데 실패했습니다."),
     WS_CANNOT_SEND("웹소켓이 메세지 전송에 실패했습니다."),
 
-    AD_UNAUTHENTICATED("관리자가 아닙니다.");
+    AD_UNAUTHENTICATED("관리자가 아닙니다."),
+
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
