@@ -18,6 +18,7 @@ import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
 import com.kustacks.kuring.feedback.domain.Feedback;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.notice.domain.Notice;
@@ -197,7 +198,7 @@ public class AdminController {
                     .subject(fakeNoticeSubject)
                     .baseUrl(CategoryName.LIBRARY.getName().equals(fakeNoticeCategory) ? libraryBaseUrl : normalBaseUrl)
                     .build());
-        } catch (FirebaseMessagingException e) {
+        } catch (FirebaseMessageSendException e) {
             throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
         }
 
@@ -282,7 +283,7 @@ public class AdminController {
             }
 
             try {
-                firebaseService.sendMessage(token, NoticeMessageDto.builder()
+                firebaseService.sendMessageForAdmin(token, NoticeMessageDto.builder()
                         .articleId(articleId)
                         .postedDate(postedDate)
                         .subject(subject)
@@ -310,7 +311,7 @@ public class AdminController {
             }
 
             try {
-                firebaseService.sendMessage(token, new AdminMessageDto(title, body));
+                firebaseService.sendMessageForAdmin(token, new AdminMessageDto(title, body));
             } catch (FirebaseMessagingException e) {
                 throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
             }

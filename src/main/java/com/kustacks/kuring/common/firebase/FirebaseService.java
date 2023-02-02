@@ -8,6 +8,7 @@ import com.google.firebase.messaging.TopicManagementResponse;
 import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
 import com.kustacks.kuring.common.firebase.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.common.firebase.exception.FirebaseUnSubscribeException;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class FirebaseService {
     @Value("${server.deploy.environment}")
     private String deployEnv;
 
-    public void validationToken(String token) {
+    public void validationToken(String token) throws FirebaseInvalidTokenException {
         try {
             Message message = Message.builder().setToken(token).build();
             firebaseMessaging.send(message);
@@ -83,32 +84,33 @@ public class FirebaseService {
      * 따라서 여기선 putData를 사용하여 보내고, 클라이언트가 푸쉬 알람을 만들어 띄운다.
      *
      * @param messageDto
-     * @throws FirebaseMessagingException
+     * @throws FirebaseMessageSendException
      */
-    public void sendMessage(NoticeMessageDto messageDto) throws FirebaseMessagingException {
-
-        Map<String, String> noticeMap = objectMapper.convertValue(messageDto, Map.class);
-
+    public void sendMessage(NoticeMessageDto messageDto) throws FirebaseMessageSendException {
         StringBuilder topic = new StringBuilder(messageDto.getCategory());
         if (deployEnv.equals("dev")) {
             topic.append(DEV_SUFFIX);
         }
 
-        Message newMessage = Message.builder()
-                .putAllData(noticeMap)
-                .setTopic(topic.toString())
-                .build();
+        try {
+            Message newMessage = Message.builder()
+                    .putAllData(objectMapper.convertValue(messageDto, Map.class))
+                    .setTopic(topic.toString())
+                    .build();
 
-        firebaseMessaging.send(newMessage);
-    }
-
-    public void sendMessage(List<NoticeMessageDto> messageDtoList) throws FirebaseMessagingException {
-        for (NoticeMessageDto messageDTO : messageDtoList) {
-            sendMessage(messageDTO);
+            firebaseMessaging.send(newMessage);
+        } catch (FirebaseMessagingException exception) {
+            throw new FirebaseMessageSendException();
         }
     }
 
-    public void sendMessage(String token, NoticeMessageDto messageDto) throws FirebaseMessagingException {
+    public void sendMessage(List<NoticeMessageDto> messageDtoList) throws FirebaseMessageSendException {
+        for (NoticeMessageDto messageDto : messageDtoList) {
+            sendMessage(messageDto);
+        }
+    }
+
+    public void sendMessageForAdmin(String token, NoticeMessageDto messageDto) throws FirebaseMessagingException {
         Message newMessage = Message.builder()
                 .putAllData(objectMapper.convertValue(messageDto, Map.class))
                 .setToken(token)
@@ -117,7 +119,7 @@ public class FirebaseService {
         firebaseMessaging.send(newMessage);
     }
 
-    public void sendMessage(String token, AdminMessageDto messageDto) throws FirebaseMessagingException {
+    public void sendMessageForAdmin(String token, AdminMessageDto messageDto) throws FirebaseMessagingException {
         Message newMessage = Message.builder()
                 .putAllData(objectMapper.convertValue(messageDto, Map.class))
                 .setToken(token)

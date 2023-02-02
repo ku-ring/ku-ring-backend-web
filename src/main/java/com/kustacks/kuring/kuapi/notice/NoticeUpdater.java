@@ -1,26 +1,32 @@
 package com.kustacks.kuring.kuapi.notice;
 
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
-import com.kustacks.kuring.notice.domain.Notice;
-import com.kustacks.kuring.notice.domain.NoticeRepository;
+import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
+import com.kustacks.kuring.common.utils.converter.DTOConverter;
+import com.kustacks.kuring.common.utils.converter.DateConverter;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.kuapi.Updater;
 import com.kustacks.kuring.kuapi.api.notice.NoticeAPIClient;
 import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;
-import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.common.utils.converter.DTOConverter;
-import com.kustacks.kuring.common.utils.converter.DateConverter;
+import com.kustacks.kuring.notice.domain.Notice;
+import com.kustacks.kuring.notice.domain.NoticeRepository;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -102,7 +108,7 @@ public class NoticeUpdater implements Updater {
             for (NoticeMessageDto messageDTO : willBeNotiNoticeDTOList) {
                 log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", messageDTO.getArticleId(), messageDTO.getPostedDate(), messageDTO.getCategory(), messageDTO.getSubject());
             }
-        } catch(FirebaseMessagingException e) {
+        } catch(FirebaseMessageSendException e) {
             log.error("새로운 공지의 FCM 전송에 실패했습니다.");
             throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
         } catch(Exception e) {
