@@ -1,11 +1,11 @@
 package com.kustacks.kuring.kuapi.user;
 
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserRepository;
-import com.kustacks.kuring.user.domain.UserCategoryRepository;
-import com.kustacks.kuring.kuapi.Updater;
 import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.kuapi.Updater;
+import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.UserCategoryRepository;
+import com.kustacks.kuring.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,8 +35,8 @@ public class UserUpdater implements Updater {
         for (User user : users) {
             String token = user.getToken();
             try {
-                firebaseService.verifyToken(token);
-            } catch(FirebaseMessagingException e) {
+                firebaseService.validationToken(token);
+            } catch (FirebaseInvalidTokenException e) {
                 userCategoryRepository.deleteAllByUser(user);
                 userRepository.deleteByToken(token);
                 log.info("삭제한 토큰 = {}", token);

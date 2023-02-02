@@ -89,7 +89,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
     @Test
     public void look_up_user_subscribe_category() throws FirebaseMessagingException {
         // given
-        doNothing().when(firebaseService).verifyToken(anyString());
+        doNothing().when(firebaseService).validationToken(anyString());
         카테고리_구독_요청(new SubscribeCategoriesRequest(USER_FCM_TOKEN, List.of("student", "employment")));
 
         // when
@@ -110,7 +110,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
     @Test
     public void edit_user_subscribe_category() throws FirebaseMessagingException {
         // given
-        doNothing().when(firebaseService).verifyToken(anyString());
+        doNothing().when(firebaseService).validationToken(anyString());
         doNothing().when(firebaseService).subscribe(anyString(), anyString());
         doNothing().when(firebaseService).unsubscribe(anyString(), anyString());
 

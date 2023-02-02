@@ -17,6 +17,7 @@ import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.feedback.domain.Feedback;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.notice.domain.Notice;
@@ -249,8 +250,8 @@ public class AdminController {
         }
 
         try {
-            firebaseService.verifyToken(token);
-        } catch (FirebaseMessagingException e) {
+            firebaseService.validationToken(token);
+        } catch (FirebaseInvalidTokenException e) {
             throw new APIException(ErrorCode.API_ADMIN_INVALID_FCM, e);
         }
 
