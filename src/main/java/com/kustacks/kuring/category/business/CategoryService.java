@@ -1,6 +1,5 @@
 package com.kustacks.kuring.category.business;
 
-import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.admin.common.dto.response.CategoryNameDto;
 import com.kustacks.kuring.category.business.event.Events;
 import com.kustacks.kuring.category.business.event.SubscribedRollbackEvent;
@@ -11,6 +10,8 @@ import com.kustacks.kuring.category.exception.CategoryNotFoundException;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.common.firebase.exception.FirebaseSubscribeException;
+import com.kustacks.kuring.common.firebase.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserCategory;
 import com.kustacks.kuring.user.domain.UserCategoryRepository;
@@ -99,16 +100,12 @@ public class CategoryService {
 
             subscribeUserCategory(compareResult, token, subscribedRollbackEvent);
             unsubscribeUserCategory(compareResult, token, subscribedRollbackEvent);
-        } catch (Exception e) {
-            if (e instanceof FirebaseMessagingException) {
-                throw new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY, e);
-            } else {
-                throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
-            }
+        } catch (FirebaseSubscribeException | FirebaseUnSubscribeException e) {
+            throw new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY, e);
         }
     }
 
-    private void subscribeUserCategory(Map<String, List<UserCategory>> compareResult, String token, SubscribedRollbackEvent subscribedRollbackEvent) throws FirebaseMessagingException {
+    private void subscribeUserCategory(Map<String, List<UserCategory>> compareResult, String token, SubscribedRollbackEvent subscribedRollbackEvent) {
         List<UserCategory> newUserCategories = compareResult.get(NEW_CATEGORY_FLAG);
         for (UserCategory newUserCategory : newUserCategories) {
             firebaseService.subscribe(token, newUserCategory.getCategoryName());
@@ -118,7 +115,7 @@ public class CategoryService {
         }
     }
 
-    private void unsubscribeUserCategory(Map<String, List<UserCategory>> compareResult, String token, SubscribedRollbackEvent subscribedRollbackEvent) throws FirebaseMessagingException {
+    private void unsubscribeUserCategory(Map<String, List<UserCategory>> compareResult, String token, SubscribedRollbackEvent subscribedRollbackEvent) {
         List<UserCategory> removeUserCategories = compareResult.get(REMOVE_CATEGORY_FLAG);
         for (UserCategory removeUserCategory : removeUserCategories) {
             firebaseService.unsubscribe(token, removeUserCategory.getCategoryName());

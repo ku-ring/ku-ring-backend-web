@@ -1,9 +1,10 @@
 package com.kustacks.kuring.category.business.event;
 
-import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.common.firebase.exception.FirebaseSubscribeException;
+import com.kustacks.kuring.common.firebase.exception.FirebaseUnSubscribeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ public class subscribedRollbackEventHandler {
                 firebaseService.subscribe(token, removeUserCategoryName);
                 log.info(removeUserCategoryName);
             }
-        } catch (FirebaseMessagingException | InternalLogicException e) {
+        } catch (FirebaseSubscribeException | FirebaseUnSubscribeException e) {
             throw new InternalLogicException(ErrorCode.FB_FAIL_ROLLBACK, e);
         }
     }

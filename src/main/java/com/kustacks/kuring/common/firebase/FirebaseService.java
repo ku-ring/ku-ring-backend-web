@@ -7,9 +7,9 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.TopicManagementResponse;
 import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
-import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.common.firebase.exception.FirebaseSubscribeException;
+import com.kustacks.kuring.common.firebase.exception.FirebaseUnSubscribeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,27 +37,37 @@ public class FirebaseService {
         }
     }
 
-    public void subscribe(String token, String topic) throws FirebaseMessagingException, InternalLogicException {
+    public void subscribe(String token, String topic) throws FirebaseSubscribeException {
         if (deployEnv.equals("dev")) {
             topic = topic + DEV_SUFFIX;
         }
 
-        TopicManagementResponse response = firebaseMessaging.subscribeToTopic(List.of(token), topic);
+        TopicManagementResponse response;
+        try{
+            response = firebaseMessaging.subscribeToTopic(List.of(token), topic);
+        } catch (FirebaseMessagingException exception) {
+            throw new FirebaseSubscribeException();
+        }
 
         if (response.getFailureCount() > 0) {
-            throw new InternalLogicException(ErrorCode.FB_FAIL_SUBSCRIBE);
+            throw new FirebaseSubscribeException();
         }
     }
 
-    public void unsubscribe(String token, String topic) throws FirebaseMessagingException, InternalLogicException {
+    public void unsubscribe(String token, String topic) throws FirebaseUnSubscribeException {
         if (deployEnv.equals("dev")) {
             topic = topic + DEV_SUFFIX;
         }
 
-        TopicManagementResponse response = firebaseMessaging.unsubscribeFromTopic(List.of(token), topic);
+        TopicManagementResponse response;
+        try{
+            response = firebaseMessaging.unsubscribeFromTopic(List.of(token), topic);
+        } catch (FirebaseMessagingException exception) {
+            throw new FirebaseUnSubscribeException();
+        }
 
         if (response.getFailureCount() > 0) {
-            throw new InternalLogicException(ErrorCode.FB_FAIL_UNSUBSCRIBE);
+            throw new FirebaseUnSubscribeException();
         }
     }
 
