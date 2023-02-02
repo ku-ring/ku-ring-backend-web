@@ -1,6 +1,5 @@
 package com.kustacks.kuring.feedback.business;
 
-import com.kustacks.kuring.feedback.domain.Feedback;
 import com.kustacks.kuring.feedback.domain.FeedbackRepository;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
@@ -26,6 +25,6 @@ public class FeedbackService {
         }
         User findUser = optionalUser.orElseThrow(UserNotFoundException::new);
 
-        feedbackRepository.save(new Feedback(content, findUser));
+        findUser.addFeedback(content);
     }
 }

@@ -5,15 +5,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,11 +28,23 @@ public class User implements Serializable {
     @Column(name = "token", unique = true, length = 256, nullable = false)
     private String token;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Feedback> feedbacks = new ArrayList<>();
+    @Embedded
+    private Feedbacks feedbacks = new Feedbacks();
 
     public User(String token) {
         this.token = token;
+    }
+
+    public void addFeedback(String content) {
+        this.feedbacks.add(new Feedback(content, this));
+    }
+
+    public List<Feedback> getAllFeedback() {
+        return this.feedbacks.getAllFeedback();
+    }
+
+    public void clearFeedbacks() {
+        this.feedbacks.clear();
     }
 
     @Override
