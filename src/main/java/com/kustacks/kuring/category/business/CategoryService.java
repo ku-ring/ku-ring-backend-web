@@ -7,6 +7,7 @@ import com.kustacks.kuring.category.business.event.SubscribedRollbackEvent;
 import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
+import com.kustacks.kuring.category.exception.CategoryNotFoundException;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.firebase.FirebaseService;
@@ -138,7 +139,7 @@ public class CategoryService {
     private void validationSupportedCategory(List<String> categoryNames) {
         for (String category : categoryNames) {
             if (categoryMap.get(category) == null) {
-                throw new APIException(ErrorCode.API_INVALID_PARAM);
+                throw new CategoryNotFoundException();
             }
         }
     }

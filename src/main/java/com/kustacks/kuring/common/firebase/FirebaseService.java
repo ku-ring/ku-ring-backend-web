@@ -1,9 +1,6 @@
 package com.kustacks.kuring.common.firebase;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -13,17 +10,17 @@ import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class FirebaseService {
 
     private final String DEV_SUFFIX = ".dev";
@@ -32,20 +29,6 @@ public class FirebaseService {
 
     @Value("${server.deploy.environment}")
     private String deployEnv;
-
-    FirebaseService(ObjectMapper objectMapper, @Value("${firebase.file-path}") String filePath) throws IOException {
-
-        this.objectMapper = objectMapper;
-
-        ClassPathResource resource = new ClassPathResource(filePath);
-
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(resource.getInputStream()))
-                .build();
-
-        FirebaseApp firebaseApp = FirebaseApp.initializeApp(options);
-        this.firebaseMessaging = FirebaseMessaging.getInstance(firebaseApp);
-    }
 
     public void verifyToken(String token) throws FirebaseMessagingException {
         Message message = Message.builder().setToken(token).build();
@@ -115,30 +98,24 @@ public class FirebaseService {
         firebaseMessaging.send(newMessage);
     }
 
-    public void sendMessage(List<NoticeMessageDto> messageDTOList) throws FirebaseMessagingException {
-        for (NoticeMessageDto messageDTO : messageDTOList) {
+    public void sendMessage(List<NoticeMessageDto> messageDtoList) throws FirebaseMessagingException {
+        for (NoticeMessageDto messageDTO : messageDtoList) {
             sendMessage(messageDTO);
         }
     }
 
-    public void sendMessage(String token, NoticeMessageDto messageDTO) throws FirebaseMessagingException {
-
-        Map<String, String> messageMap = objectMapper.convertValue(messageDTO, Map.class);
-
+    public void sendMessage(String token, NoticeMessageDto messageDto) throws FirebaseMessagingException {
         Message newMessage = Message.builder()
-                .putAllData(messageMap)
+                .putAllData(objectMapper.convertValue(messageDto, Map.class))
                 .setToken(token)
                 .build();
 
         firebaseMessaging.send(newMessage);
     }
 
-    public void sendMessage(String token, AdminMessageDto messageDTO) throws FirebaseMessagingException {
-
-        Map<String, String> messageMap = objectMapper.convertValue(messageDTO, Map.class);
-
+    public void sendMessage(String token, AdminMessageDto messageDto) throws FirebaseMessagingException {
         Message newMessage = Message.builder()
-                .putAllData(messageMap)
+                .putAllData(objectMapper.convertValue(messageDto, Map.class))
                 .setToken(token)
                 .build();
 
