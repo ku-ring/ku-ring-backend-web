@@ -45,7 +45,7 @@ public class UserUpdater implements Updater {
             try {
                 firebaseService.verifyToken(token);
             } catch(FirebaseMessagingException e) {
-                userCategoryRepository.deleteAll(user.getUserCategories());
+                userCategoryRepository.deleteAllByUser(user);
                 userRepository.deleteByToken(token);
                 log.info("삭제한 토큰 = {}", token);
             }

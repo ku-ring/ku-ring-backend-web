@@ -1,6 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequestDto;
+import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -38,7 +38,7 @@ public class CategoryStep {
         );
     }
 
-    public static ExtractableResponse<Response> 카테고리_구독_요청(SubscribeCategoriesRequestDto reqeust) {
+    public static ExtractableResponse<Response> 카테고리_구독_요청(SubscribeCategoriesRequest reqeust) {
         return RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -49,7 +49,7 @@ public class CategoryStep {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 카테고리_수정_요청(SubscribeCategoriesRequestDto request) {
+    public static ExtractableResponse<Response> 카테고리_수정_요청(SubscribeCategoriesRequest request) {
         return 카테고리_구독_요청(request);
     }
 

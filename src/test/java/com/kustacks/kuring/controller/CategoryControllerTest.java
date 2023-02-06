@@ -2,17 +2,17 @@ package com.kustacks.kuring.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.category.presentation.CategoryController;
-import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequestDto;
+import com.kustacks.kuring.category.business.CategoryService;
+import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequest;
+import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.domain.Category;
-import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserCategory;
+import com.kustacks.kuring.category.presentation.CategoryController;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.user.business.UserService;
+import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.UserCategory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,10 @@ import java.util.Map;
 import static com.kustacks.kuring.ApiDocumentUtils.getDocumentRequest;
 import static com.kustacks.kuring.ApiDocumentUtils.getDocumentResponse;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -57,9 +60,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith({RestDocumentationExtension.class})
 @WebMvcTest(CategoryController.class)
 public class CategoryControllerTest {
-    // gradle을 기반으로 디렉토리로 자동 구성 하는 역할
-//    @Rule
-//    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     private MockMvc mockMvc;
 
@@ -100,10 +100,10 @@ public class CategoryControllerTest {
         List<String> categoryNames = new LinkedList<>();
         categoryNames.add("bachelor");
         categoryNames.add("employment");
+        CategoryListResponse categoryListResponse = new CategoryListResponse(categoryNames);
 
         // given
-        given(categoryService.getCategories()).willReturn(categories);
-        given(categoryService.getCategoryNamesFromCategories(categories)).willReturn(categoryNames);
+        given(categoryService.lookUpSupportedCategories()).willReturn(categoryListResponse);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice/categories")
@@ -144,8 +144,7 @@ public class CategoryControllerTest {
         categoryNames.add("employment");
 
         // given
-        given(categoryService.getUserCategories(token)).willReturn(categories);
-        given(categoryService.getCategoryNamesFromCategories(categories)).willReturn(categoryNames);
+        given(categoryService.lookUpUserCategories(token)).willReturn(new CategoryListResponse(categoryNames));
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice/subscribe")
@@ -180,10 +179,9 @@ public class CategoryControllerTest {
     @DisplayName("특정 회원이 구독한 카테고리 목록 제공 API - 실패 - 유효하지 않은 FCM 토큰")
     @Test
     public void getUserCategoriesFailByInvalidTokenTest() throws Exception {
-        String token = "INVALID_TOKEN";
-
         // given
-        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(firebaseService).verifyToken(token);
+        String token = "INVALID_TOKEN";
+        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(firebaseService).validationToken(token);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice/subscribe")
@@ -227,40 +225,16 @@ public class CategoryControllerTest {
     @DisplayName("특정 회원의 구독 카테고리 편집 API - 성공")
     @Test
     public void subscribeCategoriesSuccessTest() throws Exception {
-
-        String token = "TEST_TOKEN";
-
-        List<String> categories = new LinkedList<>();
-        categories.add("bachelor");
-        categories.add("student");
-
-        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
-
-        Map<String, List<UserCategory>> compareCategoriesResult = new HashMap<>();
-        compareCategoriesResult.put("new", new LinkedList<>());
-        compareCategoriesResult.put("remove", new LinkedList<>());
-
-        Category bachelorCategory = Category.builder().name("bachelor").build();
-        Category studentCategory = Category.builder().name("student").build();
-
-        User user = User.builder()
-                .token(token)
-                .build();
-
-        compareCategoriesResult.get("new").add(new UserCategory(user, bachelorCategory));
-        compareCategoriesResult.get("new").add(new UserCategory(user, studentCategory));
-
-
         // given
-        given(userService.getUserByToken(token)).willReturn(null);
-        given(userService.insertUserToken(token)).willReturn(user);
-        given(categoryService.compareCategories(categories, new LinkedList<>(), user)).willReturn(compareCategoriesResult);
+        SubscribeCategoriesRequest subscribeCategoriesRequest = new SubscribeCategoriesRequest("TEST_TOKEN", List.of("bachelor", "student"));
+        doNothing().when(firebaseService).validationToken(anyString());
+        doNothing().when(categoryService).editSubscribeCategoryList(anyString(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDTO)));
+                .content(objectMapper.writeValueAsString(subscribeCategoriesRequest)));
 
         // then
         result.andExpect(status().isOk())
@@ -292,11 +266,11 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
+        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
 
         // given
         given(userService.getUserByToken(token)).willReturn(null);
-        doThrow(firebaseMessagingException).when(firebaseService).verifyToken(token);
+        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(categoryService).editSubscribeCategoryList(anyString(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -318,10 +292,8 @@ public class CategoryControllerTest {
     @DisplayName("특정 회원의 구독 카테고리 편집 API - 실패 - 요청 body에 필수 json 필드 누락")
     @Test
     public void subscribeCategoriesFailByMissingJsonField() throws Exception {
-
-        String requestBody = "{\"categories\": [\"bachelor\", \"student\"]}";
-
         // given
+        String requestBody = "{\"categories\": [\"bachelor\", \"student\"]}";
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -350,10 +322,10 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("invalid-category");
 
-        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
+        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
 
         // given
-        doThrow(new InternalLogicException(ErrorCode.CAT_NOT_EXIST_CATEGORY)).when(categoryService).verifyCategories(categories);
+        doThrow(new APIException(ErrorCode.API_INVALID_PARAM)).when(categoryService).editSubscribeCategoryList(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -383,28 +355,22 @@ public class CategoryControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequestDto requestDTO = new SubscribeCategoriesRequestDto(token, categories);
+        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
 
         Map<String, List<UserCategory>> compareCategoriesResult = new HashMap<>();
         compareCategoriesResult.put("new", new LinkedList<>());
         compareCategoriesResult.put("remove", new LinkedList<>());
 
-        Category bachelorCategory = Category.builder().name("bachelor").build();
-        Category studentCategory = Category.builder().name("student").build();
+        Category bachelorCategory = new Category("bachelor");
+        Category studentCategory = new Category("student");
 
-        User user = User.builder()
-                .token(token)
-                .build();
+        User user = new User(token);
 
         compareCategoriesResult.get("new").add(new UserCategory(user, bachelorCategory));
         compareCategoriesResult.get("new").add(new UserCategory(user, studentCategory));
 
         // given
-        given(categoryService.verifyCategories(categories)).willReturn(categories);
-        given(userService.getUserByToken(token)).willReturn(null);
-        given(userService.insertUserToken(token)).willReturn(user);
-        given(categoryService.compareCategories(categories, new LinkedList<>(), user)).willReturn(compareCategoriesResult);
-        doThrow(firebaseMessagingException).when(categoryService).updateUserCategory(token, compareCategoriesResult);
+        doThrow(new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY)).when(categoryService).editSubscribeCategoryList(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")

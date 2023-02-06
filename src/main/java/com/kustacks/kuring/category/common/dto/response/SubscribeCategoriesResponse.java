@@ -4,9 +4,9 @@ import com.kustacks.kuring.common.dto.ResponseDto;
 import lombok.Getter;
 
 @Getter
-public class SubscribeCategoriesResponseDto extends ResponseDto {
+public class SubscribeCategoriesResponse extends ResponseDto {
 
-    public SubscribeCategoriesResponseDto() {
+    public SubscribeCategoriesResponse() {
         super(true, "성공", 201);
     }
 }

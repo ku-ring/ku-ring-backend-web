@@ -1,161 +1,178 @@
 package com.kustacks.kuring.category.business;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.admin.common.dto.response.CategoryDto;
+import com.kustacks.kuring.admin.common.dto.response.CategoryNameDto;
+import com.kustacks.kuring.category.business.event.Events;
+import com.kustacks.kuring.category.business.event.SubscribedRollbackEvent;
+import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
-import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserRepository;
-import com.kustacks.kuring.user.domain.UserCategory;
-import com.kustacks.kuring.user.domain.UserCategoryRepository;
+import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.category.business.event.RollbackEvent;
+import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.UserCategory;
+import com.kustacks.kuring.user.domain.UserCategoryRepository;
+import com.kustacks.kuring.user.domain.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Transactional
 public class CategoryService {
+
+    private static final String NEW_CATEGORY_FLAG = "new";
+    private static final String REMOVE_CATEGORY_FLAG = "remove";
 
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final UserCategoryRepository userCategoryRepository;
     private final FirebaseService firebaseService;
-
-    private final ApplicationEventPublisher applicationEventPublisher;
-
     private final Map<String, Category> categoryMap;
 
     public CategoryService(
             CategoryRepository categoryRepository,
             UserRepository userRepository,
             UserCategoryRepository userCategoryRepository,
-            ApplicationEventPublisher applicationEventPublisher,
             FirebaseService firebaseService) {
 
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.userCategoryRepository = userCategoryRepository;
-
-        this.applicationEventPublisher = applicationEventPublisher;
-
         this.firebaseService = firebaseService;
-
-        categoryMap = categoryRepository.findAllMap();
+        this.categoryMap = categoryRepository.findAllMap();
     }
 
-
-    public List<Category> getCategories() {
-        return categoryRepository.findAll();
+    @Transactional(readOnly = true)
+    public CategoryListResponse lookUpSupportedCategories() {
+        List<String> categoryNames = categoryRepository.getSupportedCategoryNames();
+        return new CategoryListResponse(categoryNames);
     }
 
-
-    public List<CategoryDto> getCategoryDTOList() {
-
-        List<Category> categories = categoryRepository.findAll();
-
-        return categories.stream()
-                .map(category -> new CategoryDto(category.getName()))
+    @Transactional(readOnly = true)
+    public List<CategoryNameDto> getCategoryDtoList() {
+        return categoryRepository.getSupportedCategoryNames()
+                .stream()
+                .map(CategoryNameDto::new)
                 .collect(Collectors.toList());
     }
 
-    public List<String> getCategoryNamesFromCategories(List<Category> categories) {
-
-        return categories.stream()
-                .map(Category::getName)
-                .collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public CategoryListResponse lookUpUserCategories(String token) {
+        List<String> categoryNames = userCategoryRepository.getUserCategoryNamesByToken(token);
+        return new CategoryListResponse(categoryNames);
     }
 
-    public List<Category> getUserCategories(String token) {
+    public void editSubscribeCategoryList(String token, List<String> newCategoryNames) {
+        User user = findUserByToken(token);
+        List<UserCategory> oldUserCategories = userCategoryRepository.getUserCategoriesByToken(token);
+        Map<String, List<UserCategory>> compareResults = compareUserCategory(user, oldUserCategories, verifyCategories(newCategoryNames));
+        editUserCategoryList(user, compareResults);
+    }
 
+    private User findUserByToken(String token) {
         User user = userRepository.findByToken(token);
-        List<UserCategory> userCategories = userCategoryRepository.findAllByUser(user);
+        if(user == null) {
+            try {
+                firebaseService.verifyToken(token);
+            } catch(FirebaseMessagingException | InternalLogicException e) {
+                throw new APIException(ErrorCode.API_FB_INVALID_TOKEN, e);
+            }
 
-        return userCategories.stream()
-                .map(UserCategory::getCategory)
+            user = userRepository.save(new User(token));
+        }
+        return user;
+    }
+
+    private void editUserCategoryList(User user, Map<String, List<UserCategory>> compareResult) {
+        try {
+            String token = user.getToken();
+
+            SubscribedRollbackEvent subscribedRollbackEvent = new SubscribedRollbackEvent(token);
+            Events.raise(subscribedRollbackEvent);
+
+            subscribeUserCategory(compareResult, token, subscribedRollbackEvent);
+            unsubscribeUserCategory(compareResult, token, subscribedRollbackEvent);
+        } catch (Exception e) {
+            if(e instanceof FirebaseMessagingException) {
+                throw new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY, e);
+            } else {
+                throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
+            }
+        }
+    }
+
+    private void subscribeUserCategory(Map<String, List<UserCategory>> compareResult, String token, SubscribedRollbackEvent subscribedRollbackEvent) throws FirebaseMessagingException {
+        List<UserCategory> newUserCategories = compareResult.get(NEW_CATEGORY_FLAG);
+        for (UserCategory newUserCategory : newUserCategories) {
+            firebaseService.subscribe(token, newUserCategory.getCategoryName());
+            userCategoryRepository.save(newUserCategory);
+            subscribedRollbackEvent.addNewCategoryName(newUserCategory.getCategoryName());
+            log.info("구독 성공 = {}", newUserCategory.getCategoryName());
+        }
+    }
+
+    private void unsubscribeUserCategory(Map<String, List<UserCategory>> compareResult, String token, SubscribedRollbackEvent subscribedRollbackEvent) throws FirebaseMessagingException {
+        List<UserCategory> removeUserCategories = compareResult.get(REMOVE_CATEGORY_FLAG);
+        for (UserCategory removeUserCategory : removeUserCategories) {
+            firebaseService.unsubscribe(token, removeUserCategory.getCategoryName());
+            userCategoryRepository.delete(removeUserCategory);
+            subscribedRollbackEvent.deleteNewCategoryName(removeUserCategory.getCategoryName());
+            log.info("구독 취소 = {}", removeUserCategory.getCategoryName());
+        }
+    }
+
+    private List<String> verifyCategories(List<String> categories) {
+        validationSupportedCategory(categories);
+
+        return categories.stream()
+                .distinct()
                 .collect(Collectors.toList());
     }
 
-    public Map<String, List<UserCategory>> compareCategories(List<String> categories, List<UserCategory> dbUserCategories, User user) {
-
-        Map<String, List<UserCategory>> result = new HashMap<>();
-
-        Map<String, UserCategory> dbUserCategoriesMap = listToMap(dbUserCategories);
-        Iterator<String> iterator = categories.iterator();
-
-        List<UserCategory> newUserCategories = new LinkedList<>();
-        while(iterator.hasNext()) {
-            String categoryName = iterator.next();
-            UserCategory userCategory = dbUserCategoriesMap.get(categoryName);
-            if(userCategory != null) {
-                iterator.remove();
-                dbUserCategoriesMap.remove(categoryName);
-            } else {
-                newUserCategories.add(new UserCategory(user, categoryMap.get(categoryName)));
-            }
-        }
-
-        result.put("new", newUserCategories);
-        result.put("remove", new ArrayList<>(dbUserCategoriesMap.values()));
-
-        return result;
-    }
-    
-    // TODO: FirebaseMessagingException 외에 다른 예외 발생할 수 있는지 확인
-    @Transactional
-    public void updateUserCategory(String token, Map<String, List<UserCategory>> userCategories) throws FirebaseMessagingException {
-
-        Map<String, List<UserCategory>> transactionHistory = new HashMap<>();
-        transactionHistory.put("new", new LinkedList<>());
-        transactionHistory.put("remove", new LinkedList<>());
-
-        applicationEventPublisher.publishEvent(new RollbackEvent(token, transactionHistory));
-
-        List<UserCategory> newUserCategories = userCategories.get("new");
-        for (UserCategory newUserCategory : newUserCategories) {
-            firebaseService.subscribe(newUserCategory.getUser().getToken(), newUserCategory.getCategory().getName());
-            userCategoryRepository.save(newUserCategory);
-            transactionHistory.get("new").add(newUserCategory);
-            log.info("구독 요청 = {}", newUserCategory.getCategory().getName());
-        }
-
-        List<UserCategory> removeUserCategories = userCategories.get("remove");
-        for (UserCategory removeUserCategory : removeUserCategories) {
-            firebaseService.unsubscribe(removeUserCategory.getUser().getToken(), removeUserCategory.getCategory().getName());
-            userCategoryRepository.delete(removeUserCategory);
-            transactionHistory.get("remove").add(removeUserCategory);
-            log.info("구독 취소 = {}", removeUserCategory.getCategory().getName());
-        }
-    }
-
-    public List<String> verifyCategories(List<String> categories) {
-        
-        // 카테고리 지원 여부 검사
-        for (String category : categories) {
+    private void validationSupportedCategory(List<String> categoryNames) {
+        for (String category : categoryNames) {
             if(categoryMap.get(category) == null) {
-                throw new InternalLogicException(ErrorCode.CAT_NOT_EXIST_CATEGORY);
+                throw new APIException(ErrorCode.API_INVALID_PARAM);
             }
         }
-        
-        // 카테고리 이름 중복 검사
-        HashSet<String> set = new HashSet<>(categories);
-        return new ArrayList<>(set);
     }
 
-    private Map<String, UserCategory> listToMap(List<UserCategory> userCategories) {
+    private List<String> convertNameList(List<UserCategory> userCategoryList) {
+        return userCategoryList.stream()
+                .map(UserCategory::getCategoryName)
+                .collect(Collectors.toList());
+    }
 
-        Map<String, UserCategory> map = new HashMap<>();
-        for (UserCategory userCategory : userCategories) {
-            map.put(userCategory.getCategory().getName(), userCategory);
+    private Map<String, List<UserCategory>> compareUserCategory(User user, List<UserCategory> oldUserCategories, List<String> newCategoryNames) {
+        Map<String, List<UserCategory>> result = new HashMap<>();
+        List<UserCategory> newList = new ArrayList<>();
+        List<UserCategory> removeList = new ArrayList<>();
+        List<String> oldCategoryNames = convertNameList(oldUserCategories);
+
+        for(String newCategoryName : newCategoryNames) {
+            if(!oldCategoryNames.contains(newCategoryName)) {
+                newList.add(new UserCategory(user, categoryMap.get(newCategoryName)));
+            }
         }
 
-        return map;
+        for(UserCategory oldUserCategory : oldUserCategories) {
+            if(!newCategoryNames.contains(oldUserCategory.getCategoryName())) {
+                removeList.add(oldUserCategory);
+            }
+        }
+
+        result.put(NEW_CATEGORY_FLAG, newList);
+        result.put(REMOVE_CATEGORY_FLAG, removeList);
+        return result;
     }
 }

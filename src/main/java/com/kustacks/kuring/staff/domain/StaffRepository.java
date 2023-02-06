@@ -1,14 +1,12 @@
 package com.kustacks.kuring.staff.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Repository
 public interface StaffRepository extends JpaRepository<Staff, Long> {
     default Map<String, Staff> findAllMap() {
         return findAll().stream().collect(Collectors.toMap(Staff::getEmail, v -> v));
@@ -21,7 +19,7 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
             List<Staff> staffs = findByDeptContaining(deptName);
             for (Staff staff : staffs) {
                 Staff staffInMap = staffMap.get(staff.getEmail());
-                if(staffInMap == null) {
+                if (staffInMap == null) {
                     staffMap.put(staff.getEmail(), staff);
                 }
             }
