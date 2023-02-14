@@ -1,9 +1,7 @@
 package com.kustacks.kuring.category.business;
 
-import com.kustacks.kuring.admin.common.dto.response.CategoryNameDto;
 import com.kustacks.kuring.category.business.event.Events;
 import com.kustacks.kuring.category.business.event.SubscribedRollbackEvent;
-import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.category.exception.CategoryNotFoundException;
@@ -56,23 +54,13 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public CategoryListResponse lookUpSupportedCategories() {
-        List<String> categoryNames = categoryRepository.getSupportedCategoryNames();
-        return new CategoryListResponse(categoryNames);
+    public List<String> lookUpSupportedCategories() {
+        return categoryRepository.getSupportedCategoryNames();
     }
 
     @Transactional(readOnly = true)
-    public List<CategoryNameDto> getCategoryDtoList() {
-        return categoryRepository.getSupportedCategoryNames()
-                .stream()
-                .map(CategoryNameDto::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public CategoryListResponse lookUpUserCategories(String token) {
-        List<String> categoryNames = userCategoryRepository.getUserCategoryNamesByToken(token);
-        return new CategoryListResponse(categoryNames);
+    public List<String> lookUpUserCategories(String token) {
+        return userCategoryRepository.getUserCategoryNamesByToken(token);
     }
 
     public void editSubscribeCategoryList(String token, List<String> newCategoryNames) {

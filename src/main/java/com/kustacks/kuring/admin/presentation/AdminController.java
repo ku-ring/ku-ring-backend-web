@@ -46,6 +46,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -98,7 +99,7 @@ public class AdminController {
             case "dashboard":
                 feedbacks = adminService.getFeedbacks();
                 notices = adminService.getNotices();
-                categoryNameDtoList = categoryService.getCategoryDtoList();
+                categoryNameDtoList = this.getCategoryDtoList();
                 users = adminService.getUsers();
                 break;
             case "user":
@@ -109,7 +110,7 @@ public class AdminController {
                 break;
             case "notice":
                 notices = adminService.getNotices();
-                categoryNameDtoList = categoryService.getCategoryDtoList();
+                categoryNameDtoList = this.getCategoryDtoList();
                 break;
             default:
                 break;
@@ -133,7 +134,7 @@ public class AdminController {
     @GetMapping("/service/sub-unsub")
     public String subUnsubPage(Model model) throws JsonProcessingException {
 
-        List<CategoryNameDto> categoryNameDtoList = categoryService.getCategoryDtoList();
+        List<CategoryNameDto> categoryNameDtoList = this.getCategoryDtoList();
 
         model.addAttribute("subUnsub", true);
         model.addAttribute("fakeUpdate", false);
@@ -152,7 +153,7 @@ public class AdminController {
             return "thymeleaf/404";
         }
 
-        List<CategoryNameDto> categoryNameDtoList = categoryService.getCategoryDtoList();
+        List<CategoryNameDto> categoryNameDtoList = this.getCategoryDtoList();
 
         model.addAttribute("subUnsub", false);
         model.addAttribute("fakeUpdate", true);
@@ -320,5 +321,12 @@ public class AdminController {
         }
 
         return new FakeUpdateResponseDto();
+    }
+
+    public List<CategoryNameDto> getCategoryDtoList() {
+        return categoryService.lookUpSupportedCategories()
+                .stream()
+                .map(CategoryNameDto::new)
+                .collect(Collectors.toList());
     }
 }

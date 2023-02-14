@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Slf4j
 @Validated
@@ -31,13 +32,15 @@ public class CategoryController {
 
     @GetMapping("/notice/categories")
     public CategoryListResponse getSupportedCategories() {
-        return categoryService.lookUpSupportedCategories();
+        List<String> categoryNames = categoryService.lookUpSupportedCategories();
+        return new CategoryListResponse(categoryNames);
     }
 
     @GetMapping("/notice/subscribe")
     public CategoryListResponse getUserCategories(@RequestParam("id") @NotBlank String token) {
         firebaseService.validationToken(token);
-        return categoryService.lookUpUserCategories(token);
+        List<String> categoryNames = categoryService.lookUpUserCategories(token);
+        return new CategoryListResponse(categoryNames);
     }
 
     @PostMapping(value = "/notice/subscribe", consumes = MediaType.APPLICATION_JSON_VALUE)
