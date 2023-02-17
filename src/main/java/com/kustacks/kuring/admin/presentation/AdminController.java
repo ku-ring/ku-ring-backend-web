@@ -284,7 +284,7 @@ public class AdminController {
             }
 
             try {
-                firebaseService.sendMessageForAdmin(token, NoticeMessageDto.builder()
+                firebaseService.sendNoticeMessageForAdmin(token, NoticeMessageDto.builder()
                         .articleId(articleId)
                         .postedDate(postedDate)
                         .subject(subject)
@@ -312,7 +312,7 @@ public class AdminController {
             }
 
             try {
-                firebaseService.sendMessageForAdmin(token, new AdminMessageDto(title, body));
+                firebaseService.sendNoticeMessageForAdmin(token, new AdminMessageDto(title, body));
             } catch (FirebaseMessagingException e) {
                 throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
             }

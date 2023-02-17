@@ -102,7 +102,7 @@ public class NoticeUpdater implements Updater {
 
         // FCM으로 새롭게 수신한 공지 데이터 전송
         try {
-            firebaseService.sendMessage(willBeNotiNoticeDTOList);
+            firebaseService.sendNoticeMessageList(willBeNotiNoticeDTOList);
             log.info("FCM에 정상적으로 메세지를 전송했습니다.");
             log.info("전송된 공지 목록은 다음과 같습니다.");
             for (NoticeMessageDto messageDTO : willBeNotiNoticeDTOList) {
