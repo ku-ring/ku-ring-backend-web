@@ -23,7 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FirebaseService {
 
-    private static final String NOTIFICATION_TITLE = "신규 공지가 왔어요!";
+    private static final String NOTIFICATION_TITLE = "새로운 공지가 왔어요!";
     private final String DEV_SUFFIX = ".dev";
     private final FirebaseMessaging firebaseMessaging;
     private final ObjectMapper objectMapper;
