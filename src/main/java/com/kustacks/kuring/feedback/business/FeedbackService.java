@@ -1,6 +1,5 @@
 package com.kustacks.kuring.feedback.business;
 
-import com.kustacks.kuring.feedback.domain.FeedbackRepository;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
 import com.kustacks.kuring.user.exception.UserNotFoundException;
@@ -15,7 +14,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FeedbackService {
 
-    private final FeedbackRepository feedbackRepository;
     private final UserRepository userRepository;
 
     public void saveFeedback(String token, String content) {
