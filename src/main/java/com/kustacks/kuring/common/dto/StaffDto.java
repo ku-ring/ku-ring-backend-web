@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.util.Assert;
 
 import java.util.Objects;
 
@@ -29,14 +28,6 @@ public class StaffDto {
 
     @Builder
     private StaffDto(String name, String major, String lab, String phone, String email, String deptName, String collegeName) {
-        Assert.hasText(name, "name must not be empty");
-        Assert.hasText(major, "major must not be empty");
-        Assert.hasText(lab, "lab must not be empty");
-        Assert.hasText(phone, "phone must not be empty");
-        Assert.hasText(email, "email must not be empty");
-        Assert.hasText(deptName, "deptName must not be empty");
-        Assert.hasText(collegeName, "collegeName must not be empty");
-
         this.name = name;
         this.major = major;
         this.lab = lab;
@@ -74,10 +65,10 @@ public class StaffDto {
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) {
+        if (this == o) {
             return true;
         }
-        if(o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 

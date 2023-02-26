@@ -1,31 +1,29 @@
 package com.kustacks.kuring.common.firebase;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import com.google.firebase.messaging.TopicManagementResponse;
 import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
-import com.kustacks.kuring.common.error.APIException;
-import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
+import com.kustacks.kuring.common.firebase.exception.FirebaseSubscribeException;
+import com.kustacks.kuring.common.firebase.exception.FirebaseUnSubscribeException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class FirebaseService {
 
+    private static final String NOTIFICATION_TITLE = "새로운 공지가 왔어요!";
     private final String DEV_SUFFIX = ".dev";
     private final FirebaseMessaging firebaseMessaging;
     private final ObjectMapper objectMapper;
@@ -33,57 +31,41 @@ public class FirebaseService {
     @Value("${server.deploy.environment}")
     private String deployEnv;
 
-    FirebaseService(ObjectMapper objectMapper, @Value("${firebase.file-path}") String filePath) throws IOException {
+    public void validationToken(String token) throws FirebaseInvalidTokenException {
+        try {
+            Message message = Message.builder().setToken(token).build();
 
-        this.objectMapper = objectMapper;
-
-        ClassPathResource resource = new ClassPathResource(filePath);
-
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(resource.getInputStream()))
-                .build();
-
-        FirebaseApp firebaseApp = FirebaseApp.initializeApp(options);
-        this.firebaseMessaging = FirebaseMessaging.getInstance(firebaseApp);
-    }
-
-    public void verifyToken(String token) throws FirebaseMessagingException {
-        Message message = Message.builder().setToken(token).build();
-        firebaseMessaging.send(message);
-    }
-
-    public void subscribe(String token, String topic) throws FirebaseMessagingException, InternalLogicException {
-
-        ArrayList<String> tokens = new ArrayList<>(1);
-        tokens.add(token);
-
-        if (deployEnv.equals("dev")) {
-            topic = topic + DEV_SUFFIX;
-        }
-
-        TopicManagementResponse response = firebaseMessaging.subscribeToTopic(tokens, topic);
-
-        if (response.getFailureCount() > 0) {
-            throw new InternalLogicException(ErrorCode.FB_FAIL_SUBSCRIBE);
+            firebaseMessaging.send(message);
+        } catch (FirebaseMessagingException exception) {
+            throw new FirebaseInvalidTokenException();
         }
     }
 
-    public void unsubscribe(String token, String topic) throws FirebaseMessagingException, InternalLogicException {
+    public void subscribe(String token, String topic) throws FirebaseSubscribeException {
+        try {
+            TopicManagementResponse response = firebaseMessaging
+                    .subscribeToTopic(List.of(token), ifDevThenAddSuffix(topic).toString());
 
-        ArrayList<String> tokens = new ArrayList<>(1);
-        tokens.add(token);
-
-        if (deployEnv.equals("dev")) {
-            topic = topic + DEV_SUFFIX;
-        }
-
-        TopicManagementResponse response = firebaseMessaging.unsubscribeFromTopic(tokens, topic);
-
-        if (response.getFailureCount() > 0) {
-            throw new InternalLogicException(ErrorCode.FB_FAIL_UNSUBSCRIBE);
+            if (response.getFailureCount() > 0) {
+                throw new FirebaseSubscribeException();
+            }
+        } catch (FirebaseMessagingException | FirebaseSubscribeException exception) {
+            throw new FirebaseSubscribeException();
         }
     }
 
+    public void unsubscribe(String token, String topic) throws FirebaseUnSubscribeException {
+        try {
+            TopicManagementResponse response = firebaseMessaging
+                    .unsubscribeFromTopic(List.of(token), ifDevThenAddSuffix(topic).toString());
+
+            if (response.getFailureCount() > 0) {
+                throw new FirebaseUnSubscribeException();
+            }
+        } catch (FirebaseMessagingException | FirebaseUnSubscribeException exception) {
+            throw new FirebaseUnSubscribeException();
+        }
+    }
 
     /**
      * Firebase message에는 두 가지 paylaad가 존재한다.
@@ -95,65 +77,51 @@ public class FirebaseService {
      * <p>
      * 따라서 여기선 putData를 사용하여 보내고, 클라이언트가 푸쉬 알람을 만들어 띄운다.
      *
-     * @param messageDTO
-     * @throws FirebaseMessagingException
+     * @param messageDto
+     * @throws FirebaseMessageSendException
      */
-    public void sendMessage(NoticeMessageDto messageDTO) throws FirebaseMessagingException {
-
-        Map<String, String> noticeMap = objectMapper.convertValue(messageDTO, Map.class);
-
-        StringBuilder topic = new StringBuilder(messageDTO.getCategory());
-        if (deployEnv.equals("dev")) {
-            topic.append(DEV_SUFFIX);
-        }
-
-        Message newMessage = Message.builder()
-                .putAllData(noticeMap)
-                .setTopic(topic.toString())
-                .build();
-
-        firebaseMessaging.send(newMessage);
-    }
-
-    public void sendMessage(List<NoticeMessageDto> messageDTOList) throws FirebaseMessagingException {
-        for (NoticeMessageDto messageDTO : messageDTOList) {
-            sendMessage(messageDTO);
-        }
-    }
-
-    public void sendMessage(String token, NoticeMessageDto messageDTO) throws FirebaseMessagingException {
-
-        Map<String, String> messageMap = objectMapper.convertValue(messageDTO, Map.class);
-
-        Message newMessage = Message.builder()
-                .putAllData(messageMap)
-                .setToken(token)
-                .build();
-
-        firebaseMessaging.send(newMessage);
-    }
-
-    public void sendMessage(String token, AdminMessageDto messageDTO) throws FirebaseMessagingException {
-
-        Map<String, String> messageMap = objectMapper.convertValue(messageDTO, Map.class);
-
-        Message newMessage = Message.builder()
-                .putAllData(messageMap)
-                .setToken(token)
-                .build();
-
-        firebaseMessaging.send(newMessage);
-    }
-
-    public void validationToken(String token) {
-        if(!StringUtils.hasText(token)) {
-            throw new APIException(ErrorCode.API_INVALID_PARAM);
-        }
-
+    public void sendMessage(NoticeMessageDto messageDto) throws FirebaseMessageSendException {
         try {
-            this.verifyToken(token);
-        } catch (FirebaseMessagingException e) {
-            throw new APIException(ErrorCode.API_FB_INVALID_TOKEN, e);
+            Message newMessage = Message.builder()
+                    .setNotification(Notification
+                            .builder()
+                            .setTitle(NOTIFICATION_TITLE)
+                            .build())
+                    .putAllData(objectMapper.convertValue(messageDto, Map.class))
+                    .setTopic(ifDevThenAddSuffix(messageDto.getCategory()).toString())
+                    .build();
+
+            firebaseMessaging.send(newMessage);
+        } catch (FirebaseMessagingException exception) {
+            throw new FirebaseMessageSendException();
         }
+    }
+
+    public void sendNoticeMessageList(List<NoticeMessageDto> messageDtoList) throws FirebaseMessageSendException {
+        messageDtoList.forEach(this::sendMessage);
+    }
+
+    public void sendNoticeMessageForAdmin(String token, NoticeMessageDto messageDto) throws FirebaseMessagingException {
+        firebaseMessaging.send(buildMessage(token, messageDto));
+    }
+
+    public void sendNoticeMessageForAdmin(String token, AdminMessageDto messageDto) throws FirebaseMessagingException {
+        firebaseMessaging.send(buildMessage(token, messageDto));
+    }
+
+    private <T> Message buildMessage(String token, T messageDto) {
+        return Message.builder()
+                .putAllData(objectMapper.convertValue(messageDto, Map.class))
+                .setToken(token)
+                .build();
+    }
+
+    private StringBuilder ifDevThenAddSuffix(String topic) {
+        StringBuilder topicBuilder = new StringBuilder(topic);
+        if (deployEnv.equals("dev")) {
+            topicBuilder.append(DEV_SUFFIX);
+        }
+
+        return topicBuilder;
     }
 }

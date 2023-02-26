@@ -4,9 +4,9 @@ import com.kustacks.kuring.common.dto.ResponseDto;
 import lombok.Getter;
 
 @Getter
-public class InsertFeedbackResponseDto extends ResponseDto {
+public class SaveFeedbackResponse extends ResponseDto {
 
-    public InsertFeedbackResponseDto() {
+    public SaveFeedbackResponse() {
         super(true, "성공", 201);
     }
 }

@@ -1,4 +1,4 @@
-package com.kustacks.kuring.common.exception;
+package com.kustacks.kuring.common.exception.handler;
 
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.ErrorResponse;

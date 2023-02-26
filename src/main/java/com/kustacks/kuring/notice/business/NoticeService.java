@@ -2,8 +2,7 @@ package com.kustacks.kuring.notice.business;
 
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
-import com.kustacks.kuring.common.error.APIException;
-import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.category.exception.CategoryNotFoundException;
 import com.kustacks.kuring.common.utils.ObjectComparator;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.notice.common.dto.response.NoticeDto;
@@ -13,6 +12,7 @@ import com.kustacks.kuring.notice.domain.NoticeRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -20,10 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional(readOnly = true)
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
-    private final CategoryRepository categoryRepository;
     private final Map<String, Category> categoryMap;
     private final CategoryName[] categoryNames;
 
@@ -35,7 +35,6 @@ public class NoticeService {
 
     public NoticeService(NoticeRepository noticeRepository, CategoryRepository categoryRepository) {
         this.noticeRepository = noticeRepository;
-        this.categoryRepository = categoryRepository;
         this.categoryMap = categoryRepository.findAllMap();
         this.categoryNames = CategoryName.values();
     }
@@ -68,7 +67,7 @@ public class NoticeService {
     private Category getCategoryByName(String categoryName) {
         Category category = categoryMap.get(categoryName);
         if (category == null) {
-            throw new APIException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY);
+            throw new CategoryNotFoundException();
         }
         return category;
     }
@@ -78,7 +77,7 @@ public class NoticeService {
                 .filter(categoryName -> categoryName.isSameShortName(typeShortName))
                 .findFirst()
                 .map(CategoryName::getName)
-                .orElseThrow(() -> new APIException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY));
+                .orElseThrow(CategoryNotFoundException::new);
     }
 
     private String convertBaseUrl(String type) {

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequest;
-import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.presentation.CategoryController;
 import com.kustacks.kuring.common.error.APIException;
@@ -100,10 +99,9 @@ public class CategoryControllerTest {
         List<String> categoryNames = new LinkedList<>();
         categoryNames.add("bachelor");
         categoryNames.add("employment");
-        CategoryListResponse categoryListResponse = new CategoryListResponse(categoryNames);
 
         // given
-        given(categoryService.lookUpSupportedCategories()).willReturn(categoryListResponse);
+        given(categoryService.lookUpSupportedCategories()).willReturn(categoryNames);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice/categories")
@@ -144,7 +142,7 @@ public class CategoryControllerTest {
         categoryNames.add("employment");
 
         // given
-        given(categoryService.lookUpUserCategories(token)).willReturn(new CategoryListResponse(categoryNames));
+        given(categoryService.lookUpUserCategories(token)).willReturn(categoryNames);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice/subscribe")

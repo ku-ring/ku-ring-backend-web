@@ -27,7 +27,7 @@ public class FeedbackAcceptanceTest extends AcceptanceTest {
     @Test
     public void request_feedback() throws FirebaseMessagingException {
         // given
-        doNothing().when(firebaseService).verifyToken(anyString());
+        doNothing().when(firebaseService).validationToken(anyString());
 
         // when
         var 피드백_요청_응답 = 피드백_요청(USER_FCM_TOKEN, "feedback request");
@@ -40,7 +40,7 @@ public class FeedbackAcceptanceTest extends AcceptanceTest {
     @Test
     public void request_invalid_length_feedback() throws FirebaseMessagingException {
         // given
-        doNothing().when(firebaseService).verifyToken(anyString());
+        doNothing().when(firebaseService).validationToken(anyString());
 
         // when
         var 피드백_요청_응답 = 피드백_요청(USER_FCM_TOKEN, "5자미만");

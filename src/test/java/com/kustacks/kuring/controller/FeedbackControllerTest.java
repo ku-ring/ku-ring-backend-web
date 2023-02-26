@@ -2,7 +2,8 @@ package com.kustacks.kuring.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.feedback.common.dto.request.SaveFeedbackRequestDto;
+import com.kustacks.kuring.common.error.APIException;
+import com.kustacks.kuring.feedback.common.dto.request.SaveFeedbackRequest;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.feedback.presentation.FeedbackController;
 import com.kustacks.kuring.feedback.business.FeedbackService;
@@ -77,7 +78,7 @@ public class FeedbackControllerTest {
         String token = "TEST_TOKEN";
         String content = "테스트 피드백입니다.";
 
-        SaveFeedbackRequestDto requestDTO = new SaveFeedbackRequestDto(token, content);
+        SaveFeedbackRequest requestDTO = new SaveFeedbackRequest(token, content);
 
         String requestBody = objectMapper.writeValueAsString(requestDTO);
 
@@ -115,16 +116,12 @@ public class FeedbackControllerTest {
     @DisplayName("피드백 저장 API - 실패 - 유효하지 않은 토큰")
     @Test
     public void saveFeedbackFailByInvalidTokenTest() throws Exception {
-
+        // given
         String token = "INVALID_TOKEN";
         String content = "테스트 피드백입니다.";
+        String requestBody = objectMapper.writeValueAsString(new SaveFeedbackRequest(token, content));
 
-        SaveFeedbackRequestDto requestDTO = new SaveFeedbackRequestDto(token, content);
-
-        String requestBody = objectMapper.writeValueAsString(requestDTO);
-
-        // given
-        doThrow(firebaseMessagingException).when(firebaseService).verifyToken(token);
+        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(firebaseService).validationToken(token);
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/feedback")
@@ -143,18 +140,13 @@ public class FeedbackControllerTest {
                 );
     }
 
-    @DisplayName("피드백 저장 API - 실패 - 유효하지 않은 토큰")
+    @DisplayName("피드백 저장 API - 실패 - 유효하지 않은 피드백 길이")
     @Test
     public void saveFeedbackFailByInvalidContentLength() throws Exception {
-
+        // given
         String token = "TEST_TOKEN";
         String content = "5자미만";
-
-        SaveFeedbackRequestDto requestDTO = new SaveFeedbackRequestDto(token, content);
-
-        String requestBody = objectMapper.writeValueAsString(requestDTO);
-
-        // given
+        String requestBody = objectMapper.writeValueAsString(new SaveFeedbackRequest(token, content));
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/feedback")

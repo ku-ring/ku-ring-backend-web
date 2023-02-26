@@ -2,8 +2,8 @@ package com.kustacks.kuring.acceptance;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequest;
+import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -71,7 +71,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
     public void user_subscribe_category_with_invalid_token() throws FirebaseMessagingException {
         // given
         doNothing().when(firebaseService).subscribe(anyString(), anyString());
-        doThrow(new InternalLogicException(ErrorCode.API_ADMIN_INVALID_FCM)).when(firebaseService).verifyToken(anyString());
+        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(firebaseService).validationToken(anyString());
 
         // when
         var response = 카테고리_구독_요청(new SubscribeCategoriesRequest(INVALID_USER_FCM_TOKEN, List.of("student", "employment")));
@@ -89,7 +89,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
     @Test
     public void look_up_user_subscribe_category() throws FirebaseMessagingException {
         // given
-        doNothing().when(firebaseService).verifyToken(anyString());
+        doNothing().when(firebaseService).validationToken(anyString());
         카테고리_구독_요청(new SubscribeCategoriesRequest(USER_FCM_TOKEN, List.of("student", "employment")));
 
         // when
@@ -110,7 +110,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
     @Test
     public void edit_user_subscribe_category() throws FirebaseMessagingException {
         // given
-        doNothing().when(firebaseService).verifyToken(anyString());
+        doNothing().when(firebaseService).validationToken(anyString());
         doNothing().when(firebaseService).subscribe(anyString(), anyString());
         doNothing().when(firebaseService).unsubscribe(anyString(), anyString());
 

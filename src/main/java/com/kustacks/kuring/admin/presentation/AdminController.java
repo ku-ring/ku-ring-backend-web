@@ -17,6 +17,8 @@ import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
 import com.kustacks.kuring.feedback.domain.Feedback;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.notice.domain.Notice;
@@ -44,6 +46,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -96,7 +99,7 @@ public class AdminController {
             case "dashboard":
                 feedbacks = adminService.getFeedbacks();
                 notices = adminService.getNotices();
-                categoryNameDtoList = categoryService.getCategoryDtoList();
+                categoryNameDtoList = this.getCategoryDtoList();
                 users = adminService.getUsers();
                 break;
             case "user":
@@ -107,7 +110,7 @@ public class AdminController {
                 break;
             case "notice":
                 notices = adminService.getNotices();
-                categoryNameDtoList = categoryService.getCategoryDtoList();
+                categoryNameDtoList = this.getCategoryDtoList();
                 break;
             default:
                 break;
@@ -131,7 +134,7 @@ public class AdminController {
     @GetMapping("/service/sub-unsub")
     public String subUnsubPage(Model model) throws JsonProcessingException {
 
-        List<CategoryNameDto> categoryNameDtoList = categoryService.getCategoryDtoList();
+        List<CategoryNameDto> categoryNameDtoList = this.getCategoryDtoList();
 
         model.addAttribute("subUnsub", true);
         model.addAttribute("fakeUpdate", false);
@@ -150,7 +153,7 @@ public class AdminController {
             return "thymeleaf/404";
         }
 
-        List<CategoryNameDto> categoryNameDtoList = categoryService.getCategoryDtoList();
+        List<CategoryNameDto> categoryNameDtoList = this.getCategoryDtoList();
 
         model.addAttribute("subUnsub", false);
         model.addAttribute("fakeUpdate", true);
@@ -196,7 +199,7 @@ public class AdminController {
                     .subject(fakeNoticeSubject)
                     .baseUrl(CategoryName.LIBRARY.getName().equals(fakeNoticeCategory) ? libraryBaseUrl : normalBaseUrl)
                     .build());
-        } catch (FirebaseMessagingException e) {
+        } catch (FirebaseMessageSendException e) {
             throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
         }
 
@@ -249,8 +252,8 @@ public class AdminController {
         }
 
         try {
-            firebaseService.verifyToken(token);
-        } catch (FirebaseMessagingException e) {
+            firebaseService.validationToken(token);
+        } catch (FirebaseInvalidTokenException e) {
             throw new APIException(ErrorCode.API_ADMIN_INVALID_FCM, e);
         }
 
@@ -281,7 +284,7 @@ public class AdminController {
             }
 
             try {
-                firebaseService.sendMessage(token, NoticeMessageDto.builder()
+                firebaseService.sendNoticeMessageForAdmin(token, NoticeMessageDto.builder()
                         .articleId(articleId)
                         .postedDate(postedDate)
                         .subject(subject)
@@ -309,7 +312,7 @@ public class AdminController {
             }
 
             try {
-                firebaseService.sendMessage(token, new AdminMessageDto(title, body));
+                firebaseService.sendNoticeMessageForAdmin(token, new AdminMessageDto(title, body));
             } catch (FirebaseMessagingException e) {
                 throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
             }
@@ -318,5 +321,12 @@ public class AdminController {
         }
 
         return new FakeUpdateResponseDto();
+    }
+
+    public List<CategoryNameDto> getCategoryDtoList() {
+        return categoryService.lookUpSupportedCategories()
+                .stream()
+                .map(CategoryNameDto::new)
+                .collect(Collectors.toList());
     }
 }
