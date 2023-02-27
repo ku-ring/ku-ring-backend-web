@@ -35,13 +35,20 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      # (3) Gradle build (Test 제외)
+      # (3) firebase secret decrypt
+      - name: Decrypt Secrets
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          sh .github/workflows/decrypt.sh
+
+      # (4) Gradle build (Test 제외)
       - name: Build with Gradle
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
           arguments: clean build -x test
 
-      # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
+      # (5) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -49,7 +56,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # (5) 빌드 결과물을 S3 버킷에 업로드
+      # (6) 빌드 결과물을 S3 버킷에 업로드
       - name: Upload to AWS S3
         run: |
           aws deploy push \
@@ -58,7 +65,7 @@ jobs:
             --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
             --source .
 
-      # (6) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
+      # (7) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
       - name: Deploy to AWS EC2 from S3
         run: |
           aws deploy create-deployment \
