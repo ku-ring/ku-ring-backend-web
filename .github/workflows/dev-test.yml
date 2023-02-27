@@ -13,6 +13,7 @@ env:
   S3_BUCKET_NAME: kuring-web-cd-bucket
   CODE_DEPLOY_APPLICATION_NAME: kuring-web-codedeploy-app
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: kuring-web-codedeploy-group
+  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
 permissions:
   contents: read
@@ -37,8 +38,6 @@ jobs:
 
       # (3) firebase secret decrypt
       - name: Decrypt Secrets
-        env:
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           sh .github/workflows/decrypt.sh
 
