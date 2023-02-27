@@ -9,11 +9,19 @@ on:
     branches: [ develop-ngwoon ]
 
 env:
-  AWS_REGION: ap-northeast-1
-  S3_BUCKET_NAME: kuring-web-cd-bucket
-  CODE_DEPLOY_APPLICATION_NAME: kuring-web-codedeploy-app
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: kuring-web-codedeploy-group
+  AWS_REGION: ${{ secrets.TEST_AWS_REGION }}
+  S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+  CODE_DEPLOY_APPLICATION_NAME: ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }}
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ${{ secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
   GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+  DB_URL: ${{ secrets.APP_ENV_DB_URL }}
+  DB_USER: ${{ secrets.APP_ENV_DB_USER }}
+  DB_PASSWORD: ${{ secrets.APP_ENV_DB_PASSWORD }}
+  DEPLOY_ENV: ${{ secrets.APP_ENV_DEPLOY_ENV }}
+  KU_ID: ${{ secrets.APP_ENV_KU_ID }}
+  KU_PASSWORD: ${{ secrets.APP_ENV_KU_PASSWORD }}
+  SENTRY_URL: ${{ secrets.APP_ENV_SENTRY_URL }}
+  TZ: ${{ APP_ENV_TZ }}
 
 permissions:
   contents: read
