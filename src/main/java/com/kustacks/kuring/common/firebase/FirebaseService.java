@@ -86,6 +86,7 @@ public class FirebaseService {
                     .setNotification(Notification
                             .builder()
                             .setTitle(NOTIFICATION_TITLE)
+                            .setBody(messageDto.getSubject())
                             .build())
                     .putAllData(objectMapper.convertValue(messageDto, Map.class))
                     .setTopic(ifDevThenAddSuffix(messageDto.getCategory()).toString())

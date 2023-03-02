@@ -23,7 +23,6 @@ public class NoticeMessageDto {
     private String baseUrl;
 
     @Builder
-
     private NoticeMessageDto(String articleId, String postedDate, String subject, String category, String baseUrl) {
         Assert.notNull(articleId, "articleId must not be null");
         Assert.notNull(postedDate, "postedDate must not be null");
