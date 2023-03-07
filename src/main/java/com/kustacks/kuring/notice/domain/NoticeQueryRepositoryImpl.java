@@ -48,7 +48,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                         notice.subject,
                         notice.category.name))
                 .from(notice)
-                .where(isContainSubject(keywords), isContainCategory(keywords))
+                .where(isContainSubject(keywords).or(isContainCategory(keywords)))
                 .orderBy(notice.postedDate.desc())
                 .fetch();
 
