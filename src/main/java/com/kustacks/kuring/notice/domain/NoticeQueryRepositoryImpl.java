@@ -49,11 +49,12 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                         notice.category.name))
                 .from(notice)
                 .where(isContainSubject(keywords), isContainCategory(keywords))
+                .orderBy(notice.postedDate.desc())
                 .fetch();
 
         searchDtoList
                 .forEach(dto -> dto.setBaseUrl(
-                        dto.getBaseUrl().equals("library") ? libraryBaseUrl : normalBaseUrl)
+                        dto.getCategoryName().equals("library") ? libraryBaseUrl : normalBaseUrl)
                 );
 
         return searchDtoList;

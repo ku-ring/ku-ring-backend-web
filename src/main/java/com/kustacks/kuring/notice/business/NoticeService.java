@@ -45,7 +45,9 @@ public class NoticeService {
     public NoticeListResponse getNotices(String type, int offset, int max) {
         String categoryName = convertShortNameIntoLongName(type);
         Category category = getCategoryByName(categoryName);
+
         List<NoticeDto> noticeDtoList = noticeRepository.findNoticesByCategoryWithOffset(category, PageRequest.of(offset, max));
+
         return new NoticeListResponse(convertBaseUrl(categoryName), noticeDtoList);
     }
 
@@ -55,6 +57,24 @@ public class NoticeService {
         List<String> keywords = noticeCategoryNameConvertEnglish(splitedKeywords);
 
         return noticeRepository.findAllByKeywords(keywords);
+    }
+
+    public List<Notice> handleSearchRequest(String keywords) {
+
+        keywords = keywords.trim();
+        String[] splitedKeywords = keywords.split(SPACE_REGEX);
+
+        // 키워드 중 공지 카테고리가 있다면, 이를 영문으로 변환
+        for (int i = 0; i < splitedKeywords.length; ++i) {
+            for (CategoryName categoryName : categoryNames) {
+                if (splitedKeywords[i].equals(categoryName.getKorName())) {
+                    splitedKeywords[i] = categoryName.getName();
+                    break;
+                }
+            }
+        }
+
+        return getNoticesBySubjectOrCategory(splitedKeywords);
     }
 
     private static String[] splitBySpace(String content) {
@@ -74,24 +94,6 @@ public class NoticeService {
             }
         }
         return keyword;
-    }
-
-    public List<Notice> handleSearchRequest(String keywords) {
-
-        keywords = keywords.trim();
-        String[] splitedKeywords = keywords.split(SPACE_REGEX);
-
-        // 키워드 중 공지 카테고리가 있다면, 이를 영문으로 변환
-        for (int i = 0; i < splitedKeywords.length; ++i) {
-            for (CategoryName categoryName : categoryNames) {
-                if (splitedKeywords[i].equals(categoryName.getKorName())) {
-                    splitedKeywords[i] = categoryName.getName();
-                    break;
-                }
-            }
-        }
-
-        return getNoticesBySubjectOrCategory(splitedKeywords);
     }
 
     private Category getCategoryByName(String categoryName) {

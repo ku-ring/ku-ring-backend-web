@@ -3,6 +3,8 @@ package com.kustacks.kuring.acceptance;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.kustacks.kuring.acceptance.NoticeStep.공지_조회_요청;
+import static com.kustacks.kuring.acceptance.NoticeStep.공지_조회_응답_확인;
 import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청;
 import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청_실패_응답_확인;
 import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청_응답_확인;
@@ -54,5 +56,19 @@ public class NoticeAcceptanceTest extends AcceptanceTest {
 
         // then
         공지사항_조회_요청_실패_응답_확인(공지사항_조회_요청_응답);
+    }
+
+    /**
+     * Give : 사전에 저장된 공지가 있다
+     * When : 키워드로 검색하면
+     * Then : 해당하는 공지들이 조회된다
+     */
+    @Test
+    public void search_notice_by_keyword() {
+        // when
+        var 공지_조회_응답 = 공지_조회_요청("subject contain student");
+
+        // then
+        공지_조회_응답_확인(공지_조회_응답);
     }
 }
