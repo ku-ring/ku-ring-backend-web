@@ -2,6 +2,7 @@ package com.kustacks.kuring.search.common.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kustacks.kuring.notice.domain.Notice;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.util.Assert;
@@ -19,6 +20,14 @@ public class NoticeSearchDto {
     private String categoryName;
 
     private String baseUrl;
+
+    @QueryProjection
+    public NoticeSearchDto(String articleId, String postedDate, String subject, String categoryName) {
+        this.articleId = articleId;
+        this.postedDate = postedDate;
+        this.subject = subject;
+        this.categoryName = categoryName;
+    }
 
     @Builder
     private NoticeSearchDto(String articleId, String postedDate, String subject, String categoryName, String baseUrl) {
@@ -43,5 +52,9 @@ public class NoticeSearchDto {
                 .categoryName(notice.getCategory().getName())
                 .baseUrl(baseUrl)
                 .build();
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 }
