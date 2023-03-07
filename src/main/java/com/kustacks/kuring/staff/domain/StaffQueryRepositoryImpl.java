@@ -28,7 +28,7 @@ public class StaffQueryRepositoryImpl implements StaffQueryRepository {
                         staff.college
                 ))
                 .from(staff)
-                .where(isContainName(keywords), isContainDept(keywords), isContainCollege(keywords))
+                .where(isContainName(keywords).or(isContainDept(keywords)).or(isContainCollege(keywords)))
                 .fetch();
     }
 
