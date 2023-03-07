@@ -1,7 +1,6 @@
 package com.kustacks.kuring.staff.presentation;
 
 import com.kustacks.kuring.common.dto.BaseResponse;
-import com.kustacks.kuring.notice.common.dto.response.NoticeLookupResponse;
 import com.kustacks.kuring.staff.business.StaffService;
 import com.kustacks.kuring.staff.common.dto.response.StaffLookupResponse;
 import com.kustacks.kuring.staff.common.dto.response.StaffSearchDto;
@@ -28,7 +27,7 @@ public class StaffController {
     private final StaffService staffService;
 
     @GetMapping("/api/v2/staffs/search")
-    public ResponseEntity<BaseResponse<NoticeLookupResponse>> searchStaff(@NotBlank @RequestParam String content) {
+    public ResponseEntity<BaseResponse<StaffLookupResponse>> searchStaff(@NotBlank @RequestParam String content) {
         List<StaffSearchDto> staffDtoList = staffService.findAllStaffByContent(content);
         StaffLookupResponse response = new StaffLookupResponse(staffDtoList);
         return ResponseEntity.ok().body(new BaseResponse(STAFF_SEARCH_SUCCESS, response));
