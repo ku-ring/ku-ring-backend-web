@@ -9,6 +9,7 @@ import com.kustacks.kuring.notice.common.dto.response.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.response.NoticeListResponse;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
+import com.kustacks.kuring.search.common.dto.response.NoticeSearchDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
 public class NoticeService {
 
+    private static final String SPACE_REGEX = "[\\s+]";
     private final NoticeRepository noticeRepository;
     private final Map<String, Category> categoryMap;
     private final CategoryName[] categoryNames;
@@ -46,10 +49,37 @@ public class NoticeService {
         return new NoticeListResponse(convertBaseUrl(categoryName), noticeDtoList);
     }
 
+    public List<NoticeSearchDto> findAllNoticeByContent(String content) {
+        String[] splitedKeywords = splitBySpace(content);
+
+        List<String> keywords = noticeCategoryNameConvertEnglish(splitedKeywords);
+
+        return noticeRepository.findAllByKeywords(keywords);
+    }
+
+    private static String[] splitBySpace(String content) {
+        return content.trim().split(SPACE_REGEX);
+    }
+
+    private List<String> noticeCategoryNameConvertEnglish(String[] splitedKeywords) {
+        return Arrays.stream(splitedKeywords)
+                .map(this::convertEnglish)
+                .collect(Collectors.toList());
+    }
+
+    private String convertEnglish(String keyword) {
+        for (CategoryName categoryName : categoryNames) {
+            if (categoryName.isSameKorName(keyword)) {
+                return categoryName.getName();
+            }
+        }
+        return keyword;
+    }
+
     public List<Notice> handleSearchRequest(String keywords) {
 
         keywords = keywords.trim();
-        String[] splitedKeywords = keywords.split("[\\s+]");
+        String[] splitedKeywords = keywords.split(SPACE_REGEX);
 
         // 키워드 중 공지 카테고리가 있다면, 이를 영문으로 변환
         for (int i = 0; i < splitedKeywords.length; ++i) {
