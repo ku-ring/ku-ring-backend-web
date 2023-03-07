@@ -5,7 +5,10 @@ import org.springframework.http.HttpStatus;
 public enum ResponseCodeAndMessages {
 
     /* Notice */
-    NOTICE_SEARCH_SUCCESS(HttpStatus.OK.value(), "공지 조회에 성공하였습니다");
+    NOTICE_SEARCH_SUCCESS(HttpStatus.OK.value(), "공지 조회에 성공하였습니다"),
+
+    /* Staff */
+    STAFF_SEARCH_SUCCESS(HttpStatus.OK.value(), "교직원 조회에 성공하였습니다");
 
     private final int code;
     private final String message;
