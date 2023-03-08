@@ -2,8 +2,8 @@ package com.kustacks.kuring.staff.presentation;
 
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.staff.business.StaffService;
-import com.kustacks.kuring.staff.common.dto.response.StaffLookupResponse;
-import com.kustacks.kuring.staff.common.dto.response.StaffSearchDto;
+import com.kustacks.kuring.staff.common.dto.StaffLookupResponse;
+import com.kustacks.kuring.staff.common.dto.StaffSearchDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

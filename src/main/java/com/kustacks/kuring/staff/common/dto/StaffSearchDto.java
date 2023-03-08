@@ -1,4 +1,4 @@
-package com.kustacks.kuring.staff.common.dto.response;
+package com.kustacks.kuring.staff.common.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;

@@ -1,6 +1,6 @@
 package com.kustacks.kuring.staff.business;
 
-import com.kustacks.kuring.staff.common.dto.response.StaffSearchDto;
+import com.kustacks.kuring.staff.common.dto.StaffSearchDto;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.domain.StaffRepository;
 import org.springframework.stereotype.Service;

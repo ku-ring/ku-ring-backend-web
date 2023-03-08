@@ -2,8 +2,8 @@ package com.kustacks.kuring.notice.presentation;
 
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.notice.business.NoticeService;
-import com.kustacks.kuring.notice.common.dto.response.NoticeListResponse;
-import com.kustacks.kuring.notice.common.dto.response.NoticeLookupResponse;
+import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
+import com.kustacks.kuring.notice.common.dto.NoticeLookupResponse;
 import com.kustacks.kuring.search.common.dto.response.NoticeSearchDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

@@ -1,9 +1,9 @@
 package com.kustacks.kuring.category.presentation;
 
 import com.kustacks.kuring.category.business.CategoryService;
-import com.kustacks.kuring.category.common.dto.request.SubscribeCategoriesRequest;
-import com.kustacks.kuring.category.common.dto.response.CategoryListResponse;
-import com.kustacks.kuring.category.common.dto.response.SubscribeCategoriesResponse;
+import com.kustacks.kuring.category.common.dto.SubscribeCategoriesRequest;
+import com.kustacks.kuring.category.common.dto.CategoryListResponse;
+import com.kustacks.kuring.category.common.dto.SubscribeCategoriesResponse;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

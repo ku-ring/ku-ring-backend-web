@@ -1,4 +1,4 @@
-package com.kustacks.kuring.admin.common.dto.response;
+package com.kustacks.kuring.admin.common.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

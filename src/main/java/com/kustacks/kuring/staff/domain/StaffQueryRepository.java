@@ -1,6 +1,6 @@
 package com.kustacks.kuring.staff.domain;
 
-import com.kustacks.kuring.staff.common.dto.response.StaffSearchDto;
+import com.kustacks.kuring.staff.common.dto.StaffSearchDto;
 
 import java.util.List;
 
