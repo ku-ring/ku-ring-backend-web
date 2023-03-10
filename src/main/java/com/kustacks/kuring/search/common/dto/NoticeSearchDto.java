@@ -1,4 +1,4 @@
-package com.kustacks.kuring.search.common.dto.response;
+package com.kustacks.kuring.search.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kustacks.kuring.notice.domain.Notice;

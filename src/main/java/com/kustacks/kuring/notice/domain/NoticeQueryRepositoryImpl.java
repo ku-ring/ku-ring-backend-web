@@ -2,9 +2,9 @@ package com.kustacks.kuring.notice.domain;
 
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
-import com.kustacks.kuring.notice.common.dto.response.QNoticeDto;
-import com.kustacks.kuring.search.common.dto.response.NoticeSearchDto;
-import com.kustacks.kuring.search.common.dto.response.QNoticeSearchDto;
+import com.kustacks.kuring.notice.common.dto.QNoticeDto;
+import com.kustacks.kuring.search.common.dto.NoticeSearchDto;
+import com.kustacks.kuring.search.common.dto.QNoticeSearchDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

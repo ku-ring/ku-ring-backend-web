@@ -2,7 +2,7 @@ package com.kustacks.kuring.notice.domain;
 
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
-import com.kustacks.kuring.search.common.dto.response.NoticeSearchDto;
+import com.kustacks.kuring.search.common.dto.NoticeSearchDto;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

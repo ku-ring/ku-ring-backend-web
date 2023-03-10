@@ -1,6 +1,6 @@
 package com.kustacks.kuring.staff.domain;
 
-import com.kustacks.kuring.staff.common.dto.response.QStaffSearchDto;
+import com.kustacks.kuring.staff.common.dto.QStaffSearchDto;
 import com.kustacks.kuring.staff.common.dto.StaffSearchDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;

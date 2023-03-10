@@ -3,7 +3,7 @@ package com.kustacks.kuring.notice.presentation;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.notice.business.NoticeService;
 import com.kustacks.kuring.notice.common.dto.NoticeLookupResponse;
-import com.kustacks.kuring.search.common.dto.response.NoticeSearchDto;
+import com.kustacks.kuring.search.common.dto.NoticeSearchDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

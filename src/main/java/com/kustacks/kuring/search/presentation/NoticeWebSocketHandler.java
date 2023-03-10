@@ -2,8 +2,8 @@ package com.kustacks.kuring.search.presentation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.search.common.dto.response.NoticeSearchDto;
-import com.kustacks.kuring.search.common.dto.response.NoticeWebSocketResponseDto;
+import com.kustacks.kuring.search.common.dto.NoticeSearchDto;
+import com.kustacks.kuring.search.common.dto.NoticeWebSocketResponseDto;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.WebSocketExceptionHandler;

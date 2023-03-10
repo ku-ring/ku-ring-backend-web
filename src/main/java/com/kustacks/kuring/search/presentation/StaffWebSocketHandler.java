@@ -3,7 +3,7 @@ package com.kustacks.kuring.search.presentation;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kustacks.kuring.common.dto.StaffDto;
-import com.kustacks.kuring.search.common.dto.response.StaffWebSocketResponseDto;
+import com.kustacks.kuring.search.common.dto.StaffWebSocketResponseDto;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.WebSocketExceptionHandler;
