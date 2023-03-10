@@ -21,12 +21,12 @@ import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.STAFF_SEARC
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-public class StaffController {
+@RequestMapping(value = "/api/v2", produces = MediaType.APPLICATION_JSON_VALUE)
+public class StaffControllerV2 {
 
     private final StaffService staffService;
 
-    @GetMapping("/api/v2/staffs/search")
+    @GetMapping("/staffs/search")
     public ResponseEntity<BaseResponse<StaffLookupResponse>> searchStaff(@NotBlank @RequestParam String content) {
         List<StaffSearchDto> staffDtoList = staffService.findAllStaffByContent(content);
         StaffLookupResponse response = new StaffLookupResponse(staffDtoList);
