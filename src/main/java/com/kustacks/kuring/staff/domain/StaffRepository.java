@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public interface StaffRepository extends JpaRepository<Staff, Long> {
+public interface StaffRepository extends JpaRepository<Staff, Long>, StaffQueryRepository {
     default Map<String, Staff> findAllMap() {
         return findAll().stream().collect(Collectors.toMap(Staff::getEmail, v -> v));
     }

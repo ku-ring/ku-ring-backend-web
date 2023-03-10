@@ -1,8 +1,9 @@
 package com.kustacks.kuring.notice.presentation;
 
 import com.kustacks.kuring.notice.business.NoticeService;
-import com.kustacks.kuring.notice.common.dto.response.NoticeListResponse;
+import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,12 +16,12 @@ import javax.validation.constraints.Min;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/notice", produces = "application/json")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class NoticeController {
 
     private final NoticeService noticeService;
 
-    @GetMapping
+    @GetMapping("/api/v1/notice")
     public NoticeListResponse getNotices(
             @RequestParam(name = "type") String type,
             @RequestParam(name = "offset") @Min(0) int offset,

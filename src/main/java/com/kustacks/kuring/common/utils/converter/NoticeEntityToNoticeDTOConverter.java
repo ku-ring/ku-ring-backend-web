@@ -1,6 +1,6 @@
 package com.kustacks.kuring.common.utils.converter;
 
-import com.kustacks.kuring.notice.common.dto.response.NoticeDto;
+import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.domain.Notice;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.kustacks.kuring.category.common.dto.response;
+package com.kustacks.kuring.category.common.dto;
 
 import com.kustacks.kuring.common.dto.ResponseDto;
 import lombok.Getter;

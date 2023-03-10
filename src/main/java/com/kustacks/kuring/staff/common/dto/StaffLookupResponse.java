@@ -1,14 +1,16 @@
-package com.kustacks.kuring.admin.common.dto.response;
+package com.kustacks.kuring.staff.common.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CategoryNameDto {
+public class StaffLookupResponse {
 
-    private String name;
+    List<StaffSearchDto> staffList;
 }

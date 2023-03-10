@@ -45,4 +45,20 @@ public class NoticeStep {
                 () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(400)
         );
     }
+
+    public static void 공지_조회_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("공지 조회에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getList("data.noticeList").size()).isNotZero()
+        );
+    }
+
+    public static ExtractableResponse<Response> 공지_조회_요청(String content) {
+        return RestAssured
+                .given().log().all()
+                .when().get("/api/v2/notices/search?content={content}", content)
+                .then().log().all()
+                .extract();
+    }
 }

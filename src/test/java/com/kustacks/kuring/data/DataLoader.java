@@ -4,6 +4,8 @@ import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
+import com.kustacks.kuring.staff.domain.Staff;
+import com.kustacks.kuring.staff.domain.StaffRepository;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
 import org.slf4j.Logger;
@@ -24,11 +26,13 @@ public class DataLoader {
     private final NoticeRepository noticeRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final StaffRepository staffRepository;
 
-    public DataLoader(NoticeRepository noticeRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
+    public DataLoader(NoticeRepository noticeRepository, CategoryRepository categoryRepository, UserRepository userRepository, StaffRepository staffRepository) {
         this.noticeRepository = noticeRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
+        this.staffRepository = staffRepository;
     }
 
     /**
@@ -52,6 +56,9 @@ public class DataLoader {
         List<Notice> noticeList = buildNotices(5, student);
         noticeRepository.saveAll(noticeList);
 
+        List<Staff> staffList = buildStaffs(5);
+        staffRepository.saveAll(staffList);
+
         log.info("[init complete DataLoader]");
     }
 
@@ -59,6 +66,13 @@ public class DataLoader {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
                 .map(i -> new Notice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, category))
+                .collect(Collectors.toList());
+    }
+
+    private static List<Staff> buildStaffs(int cnt) {
+        return Stream.iterate(0, i -> i + 1)
+                .limit(cnt)
+                .map(i -> new Staff("shine_" + i, "computer", "lab", "phone", "email@naver.com", "dept", "college"))
                 .collect(Collectors.toList());
     }
 }
