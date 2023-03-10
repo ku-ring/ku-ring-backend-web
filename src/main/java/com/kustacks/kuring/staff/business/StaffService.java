@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class StaffService {
 
-    private static final String SPACE_REGEX = "[\\s+]";
+    private final String SPACE_REGEX = "[\\s+]";
 
     private final StaffRepository staffRepository;
 
@@ -56,7 +56,7 @@ public class StaffService {
         return staffs;
     }
 
-    private static String[] splitBySpace(String content) {
+    private String[] splitBySpace(String content) {
         return content.trim().split(SPACE_REGEX);
     }
 }

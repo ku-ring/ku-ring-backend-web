@@ -25,10 +25,10 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class NoticeService {
 
-    private static final String SPACE_REGEX = "[\\s+]";
     private final NoticeRepository noticeRepository;
     private final Map<String, Category> categoryMap;
     private final CategoryName[] categoryNames;
+    private final String SPACE_REGEX = "[\\s+]";
 
     @Value("${notice.normal-base-url}")
     private String normalBaseUrl;
@@ -77,7 +77,7 @@ public class NoticeService {
         return getNoticesBySubjectOrCategory(splitedKeywords);
     }
 
-    private static String[] splitBySpace(String content) {
+    private String[] splitBySpace(String content) {
         return content.trim().split(SPACE_REGEX);
     }
 
