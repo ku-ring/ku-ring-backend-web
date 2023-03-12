@@ -2,12 +2,12 @@ package com.kustacks.kuring.kuapi.notice;
 
 import com.kustacks.kuring.config.JsonConfig;
 import com.kustacks.kuring.config.RestConfig;
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.api.notice.KuisAuthManager;
 import com.kustacks.kuring.kuapi.api.notice.ParsingKuisAuthManager;
 import com.kustacks.kuring.kuapi.notice.dto.request.KuisLoginRequestBody;
-import com.kustacks.kuring.util.encoder.RequestBodyEncoder;
+import com.kustacks.kuring.common.utils.encoder.RequestBodyEncoder;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;

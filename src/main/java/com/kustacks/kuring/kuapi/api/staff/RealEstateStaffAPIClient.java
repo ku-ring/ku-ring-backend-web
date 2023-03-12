@@ -1,7 +1,7 @@
 package com.kustacks.kuring.kuapi.api.staff;
 
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
 import com.kustacks.kuring.kuapi.staff.deptinfo.real_estate.RealEstateDept;
 import org.jsoup.nodes.Document;

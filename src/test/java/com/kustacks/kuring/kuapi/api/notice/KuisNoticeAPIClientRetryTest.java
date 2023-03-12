@@ -2,11 +2,11 @@ package com.kustacks.kuring.kuapi.api.notice;
 
 import com.kustacks.kuring.config.JsonConfig;
 import com.kustacks.kuring.config.RetryConfig;
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.kuapi.notice.dto.request.*;
-import com.kustacks.kuring.util.converter.KuisNoticeDTOToCommonFormatDTOConverter;
+import com.kustacks.kuring.common.utils.converter.KuisNoticeDTOToCommonFormatDTOConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

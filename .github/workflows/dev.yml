@@ -8,41 +8,80 @@ on:
   push:
     branches: [ develop ]
 
+env:
+  AWS_REGION: ${{ secrets.TEST_AWS_REGION }}
+  S3_BUCKET_NAME: ${{ secrets.TEST_S3_BUCKET_NAME }}
+  CODE_DEPLOY_APPLICATION_NAME: ${{ secrets.TEST_CODE_DEPLOY_APPLICATION_NAME }}
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ${{ secrets.TEST_CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
+
+  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+  DB_URL: ${{ secrets.APP_ENV_DB_URL }}
+  DB_USER: ${{ secrets.APP_ENV_DB_USER }}
+  DB_PASSWORD: ${{ secrets.APP_ENV_DB_PASSWORD }}
+  DEPLOY_ENV: ${{ secrets.APP_ENV_DEPLOY_ENV }}
+  KU_ID: ${{ secrets.APP_ENV_KU_ID }}
+  KU_PASSWORD: ${{ secrets.APP_ENV_KU_PASSWORD }}
+  SENTRY_URL: ${{ secrets.APP_ENV_SENTRY_URL }}
+  TZ: ${{ secrets.APP_ENV_TZ }}
+
+permissions:
+  packages: write
+  contents: read
+  id-token: write
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      # (1) 기본 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      # (2) JDK 11 세팅
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
 
+      # (3) firebase secret decrypt
       - name: Decrypt Secrets
-        env:
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           sh .github/workflows/decrypt.sh
 
-      - name: Ready to deploy
-        run: |
-          rm .gitignore
-          git config user.email "todory2002@gmail.com"
-          git config user.name "ngwoon"
-          git add .
-          git commit -m "Build Ready"
-
-      - name: Deploy to Heroku
-        # You may pin to the exact commit or the version.
-        # uses: AkhileshNS/heroku-deploy@79ef2ae4ff9b897010907016b268fd0f88561820
-        uses: AkhileshNS/heroku-deploy@v3.12.12
+      # (4) Gradle build
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
-          # This will be used for authentication. You can find it in your heroku homepage account settings
-          heroku_api_key: ${{ secrets.heroku_api_key }}
-          # Email that you use with heroku
-          heroku_email: ${{ secrets.heroku_email }}
-          # The appname to use for deploying/updating
-          heroku_app_name: ${{ secrets.dev_heroku_app_name }}
+          arguments: clean build
+
+      # (5) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # (6) 빌드 결과물을 S3 버킷에 업로드
+      - name: Upload to AWS S3
+        run: |
+          aws deploy push \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --ignore-hidden-files \
+            --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
+            --source .
+
+      # (7) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
+      - name: Deploy to AWS EC2 from S3
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+            --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip

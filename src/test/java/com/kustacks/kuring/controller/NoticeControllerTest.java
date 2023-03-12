@@ -1,8 +1,11 @@
 package com.kustacks.kuring.controller;
 
-import com.kustacks.kuring.controller.dto.NoticeDTO;
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.service.NoticeServiceImpl;
+import com.kustacks.kuring.common.error.APIException;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.notice.business.NoticeService;
+import com.kustacks.kuring.notice.common.dto.NoticeDto;
+import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
+import com.kustacks.kuring.notice.presentation.NoticeController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,14 +45,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(NoticeController.class)
 public class NoticeControllerTest {
 
-    // gradle을 기반으로 디렉토리로 자동 구성 하는 역할
-//    @Rule
-//    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
-
     private MockMvc mockMvc;
 
     @MockBean
-    private NoticeServiceImpl noticeService;
+    private NoticeService noticeService;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -78,15 +77,17 @@ public class NoticeControllerTest {
         offset = 0;
         max = 10;
 
-        List<NoticeDTO> noticeDTOList = new LinkedList<>();
-        noticeDTOList.add(NoticeDTO.builder()
+        List<NoticeDto> noticeDtoList = new LinkedList<>();
+        noticeDtoList.add(NoticeDto.builder()
                 .articleId(articleId)
                 .postedDate(postedDate)
                 .subject(subject)
-                .categoryName(categoryName)
+                .category(categoryName)
                 .build());
 
-        given(noticeService.getNotices(categoryName, offset, max)).willReturn(noticeDTOList);
+        NoticeListResponse noticeListResponse = new NoticeListResponse("https://www.konkuk.ac.kr/do/MessageBoard/ArticleRead.do", noticeDtoList);
+
+        given(noticeService.getNotices(type, offset, max)).willReturn(noticeListResponse);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice")
@@ -134,6 +135,8 @@ public class NoticeControllerTest {
         type = "invalid-type";
         offset = 0;
         max = 20;
+
+        given(noticeService.getNotices(type, offset, max)).willThrow(new APIException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY));
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice")

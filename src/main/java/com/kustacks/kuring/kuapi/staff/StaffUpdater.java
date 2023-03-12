@@ -1,9 +1,9 @@
 package com.kustacks.kuring.kuapi.staff;
 
-import com.kustacks.kuring.controller.dto.StaffDTO;
-import com.kustacks.kuring.domain.staff.Staff;
-import com.kustacks.kuring.domain.staff.StaffRepository;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.dto.StaffDto;
+import com.kustacks.kuring.staff.domain.Staff;
+import com.kustacks.kuring.staff.domain.StaffRepository;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.Updater;
 import com.kustacks.kuring.kuapi.scrap.StaffScraper;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
@@ -52,7 +52,7 @@ public class StaffUpdater implements Updater {
            values에 StaffDeptInfo 전체 값이 아닌, 매개변수로 들어온 값을 전달한다.
          */
 
-        Map<String, StaffDTO> kuStaffDTOMap = new HashMap<>();
+        Map<String, StaffDto> kuStaffDTOMap = new HashMap<>();
         List<String> successDeptNames = new LinkedList<>();
         for (DeptInfo deptInfo : deptInfos) {
             try {
@@ -69,21 +69,21 @@ public class StaffUpdater implements Updater {
         log.info("========== 교직원 업데이트 종료 ==========");
     }
 
-    private void scrapDeptAndConvertToMap(Map<String, StaffDTO> kuStaffDTOMap, DeptInfo deptInfo) throws InternalLogicException {
+    private void scrapDeptAndConvertToMap(Map<String, StaffDto> kuStaffDTOMap, DeptInfo deptInfo) throws InternalLogicException {
 
-        List<StaffDTO> scrapedStaffDTOList = staffScraper.scrap(deptInfo);
+        List<StaffDto> scrapedStaffDtoList = staffScraper.scrap(deptInfo);
 
-        for (StaffDTO staffDTO : scrapedStaffDTOList) {
-            StaffDTO mapStaffDTO = kuStaffDTOMap.get(staffDTO.getEmail());
-            if(mapStaffDTO == null) {
+        for (StaffDto staffDTO : scrapedStaffDtoList) {
+            StaffDto mapStaffDto = kuStaffDTOMap.get(staffDTO.getEmail());
+            if(mapStaffDto == null) {
                 kuStaffDTOMap.put(staffDTO.getEmail(), staffDTO);
             } else {
-                mapStaffDTO.setDeptName(mapStaffDTO.getDeptName() + ", " + staffDTO.getDeptName());
+                mapStaffDto.setDeptName(mapStaffDto.getDeptName() + ", " + staffDTO.getDeptName());
             }
         }
     }
 
-    private void compareAndUpdateDB(Map<String, StaffDTO> kuStaffDTOMap, List<String> successDeptNames) {
+    private void compareAndUpdateDB(Map<String, StaffDto> kuStaffDTOMap, List<String> successDeptNames) {
 
         // 스크래핑으로 수집한 교직원 정보와 비교
         // 달라진 정보가 있거나, 새로운 교직원 정보이면 db에 추가할 리스트에 저장
@@ -92,15 +92,15 @@ public class StaffUpdater implements Updater {
         // db에 저장되어있는 교직원 정보 조회
         Map<String, Staff> dbStaffMap = staffRepository.findByDeptContainingMap(successDeptNames);
         List<Staff> toBeUpdateStaffs = new LinkedList<>();
-        Iterator<StaffDTO> kuStaffDTOIterator = kuStaffDTOMap.values().iterator();
+        Iterator<StaffDto> kuStaffDTOIterator = kuStaffDTOMap.values().iterator();
         while(kuStaffDTOIterator.hasNext()) {
-            StaffDTO staffDTO = kuStaffDTOIterator.next();
+            StaffDto staffDTO = kuStaffDTOIterator.next();
 
             Staff staff = dbStaffMap.get(staffDTO.getEmail());
             if(staff != null) {
-                StaffDTO dbStaffDTO = StaffDTO.entityToDTO(staff);
+                StaffDto dbStaffDto = StaffDto.entityToDto(staff);
 
-                if(!staffDTO.equals(dbStaffDTO)) {
+                if(!staffDTO.equals(dbStaffDto)) {
                     updateStaffEntity(staffDTO, staff);
                     toBeUpdateStaffs.add(staff);
                 }
@@ -124,11 +124,11 @@ public class StaffUpdater implements Updater {
         }
 
         staffRepository.deleteAll(dbStaffMap.values());
-        staffRepository.saveAll(kuStaffDTOMap.values().stream().map(StaffDTO::toEntity).collect(Collectors.toList()));
+        staffRepository.saveAll(kuStaffDTOMap.values().stream().map(StaffDto::toEntity).collect(Collectors.toList()));
         staffRepository.saveAll(toBeUpdateStaffs);
     }
 
-    private void updateStaffEntity(StaffDTO staffDTO, Staff staff) {
+    private void updateStaffEntity(StaffDto staffDTO, Staff staff) {
         staff.setName(staffDTO.getName());
         staff.setMajor(staffDTO.getMajor());
         staff.setLab(staffDTO.getLab());

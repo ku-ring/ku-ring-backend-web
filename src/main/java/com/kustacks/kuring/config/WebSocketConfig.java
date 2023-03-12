@@ -1,6 +1,6 @@
 package com.kustacks.kuring.config;
 
-import com.kustacks.kuring.controller.handler.FrontWebSocketHandler;
+import com.kustacks.kuring.search.presentation.FrontWebSocketHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.*;

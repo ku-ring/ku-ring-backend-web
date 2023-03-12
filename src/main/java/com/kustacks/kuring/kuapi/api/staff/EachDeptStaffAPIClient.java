@@ -1,17 +1,15 @@
 package com.kustacks.kuring.kuapi.api.staff;
 
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
 import com.kustacks.kuring.kuapi.staff.deptinfo.art_design.CommunicationDesignDept;
 import com.kustacks.kuring.kuapi.staff.deptinfo.art_design.LivingDesignDept;
 import com.kustacks.kuring.kuapi.staff.deptinfo.real_estate.RealEstateDept;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;

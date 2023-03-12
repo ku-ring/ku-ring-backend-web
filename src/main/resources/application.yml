@@ -1,0 +1,49 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL55Dialect
+    database-platform: org.hibernate.dialect.MariaDB103Dialect
+    defer-datasource-initialization: true # jpa\uB85C \uD14C\uC774\uBE14 \uC0DD\uC131\uD55C \uB4A4 data.sql \uC2E4\uD589\uB418\uAC8C \uD558\uB294 \uC124\uC815
+    show-sql: false
+    open-in-view: false
+  datasource:
+    hikari:
+      connectionTimeout: '30000'
+      maximum-pool-size: '8'
+      max-lifetime: '1800000'
+    driverClassName: org.mariadb.jdbc.Driver
+    password: ${DB_PASSWORD}
+    username: ${DB_USER}
+    url: jdbc:${DB_URL}
+  thymeleaf:
+    cache: true
+    prefix: classpath:/templates/
+    suffix: .html
+    enabled: true
+  sql:
+    init:
+      mode: always
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+
+logging:
+  level:
+    org:
+      apache:
+        coyote:
+          http11: info
+  file:
+    name: classpath:/kuring.log
+
+sentry:
+  traces-sample-rate: '1.0'
+  dsn: ${SENTRY_URL}

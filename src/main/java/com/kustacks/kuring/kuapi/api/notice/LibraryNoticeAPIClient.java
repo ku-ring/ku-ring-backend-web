@@ -1,13 +1,13 @@
 package com.kustacks.kuring.kuapi.api.notice;
 
-import com.kustacks.kuring.error.ErrorCode;
-import com.kustacks.kuring.error.InternalLogicException;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;
 import com.kustacks.kuring.kuapi.notice.dto.response.LibraryNoticeDTO;
 import com.kustacks.kuring.kuapi.notice.dto.response.LibraryNoticeResponseDTO;
-import com.kustacks.kuring.util.converter.DTOConverter;
-import com.kustacks.kuring.util.converter.LibraryNoticeDTOToCommonFormatDTOConverter;
+import com.kustacks.kuring.common.utils.converter.DTOConverter;
+import com.kustacks.kuring.common.utils.converter.LibraryNoticeDTOToCommonFormatDTOConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
