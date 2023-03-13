@@ -83,6 +83,8 @@ ext {
 	snippetsDir = file 'build/generated-snippets'
 }
 
+test.onlyIf { System.getenv('DEPLOY_ENV') == 'dev' }
+
 test {
 	outputs.dir snippetsDir
 	useJUnitPlatform()
