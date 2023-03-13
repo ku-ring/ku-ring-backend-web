@@ -17,12 +17,12 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
 
   GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-  DB_URL: ${{ secrets.APP_ENV_DB_URL }}
-  DB_USER: ${{ secrets.APP_ENV_DB_USER }}
-  DB_PASSWORD: ${{ secrets.APP_ENV_DB_PASSWORD }}
-  DEPLOY_ENV: ${{ secrets.APP_ENV_DEPLOY_ENV }}
-  KU_ID: ${{ secrets.APP_ENV_KU_ID }}
-  KU_PASSWORD: ${{ secrets.APP_ENV_KU_PASSWORD }}
+  DB_URL: ${{ secrets.APP_ENV_TEST_DB_URL }}
+  DB_USER: ${{ secrets.APP_ENV_TEST_DB_USER }}
+  DB_PASSWORD: ${{ secrets.APP_ENV_TEST_DB_PASSWORD }}
+  DEPLOY_ENV: ${{ secrets.APP_ENV_TEST_DEPLOY_ENV }}
+  KU_ID: ${{ secrets.APP_ENV_TEST_KU_ID }}
+  KU_PASSWORD: ${{ secrets.APP_ENV_TEST_KU_PASSWORD }}
   SENTRY_URL: ${{ secrets.APP_ENV_SENTRY_URL }}
   TZ: ${{ secrets.APP_ENV_TZ }}
 
