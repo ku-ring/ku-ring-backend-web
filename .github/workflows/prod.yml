@@ -46,12 +46,12 @@ jobs:
           # The appname to use for deploying/updating
           heroku_app_name: ${{ secrets.heroku_app_name }}
         env:
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          DB_URL: ${{ secrets.APP_ENV_DB_URL }}
-          DB_USER: ${{ secrets.APP_ENV_DB_USER }}
-          DB_PASSWORD: ${{ secrets.APP_ENV_DB_PASSWORD }}
-          DEPLOY_ENV: ${{ secrets.APP_ENV_DEPLOY_ENV }}
-          KU_ID: ${{ secrets.APP_ENV_KU_ID }}
-          KU_PASSWORD: ${{ secrets.APP_ENV_KU_PASSWORD }}
-          SENTRY_URL: ${{ secrets.APP_ENV_SENTRY_URL }}
-          TZ: ${{ secrets.APP_ENV_TZ }}
+          HD_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          HD_DB_URL: ${{ secrets.APP_ENV_DB_URL }}
+          HD_DB_USER: ${{ secrets.APP_ENV_DB_USER }}
+          HD_DB_PASSWORD: ${{ secrets.APP_ENV_DB_PASSWORD }}
+          HD_DEPLOY_ENV: ${{ secrets.APP_ENV_DEPLOY_ENV }}
+          HD_KU_ID: ${{ secrets.APP_ENV_KU_ID }}
+          HD_KU_PASSWORD: ${{ secrets.APP_ENV_KU_PASSWORD }}
+          HD_SENTRY_URL: ${{ secrets.APP_ENV_SENTRY_URL }}
+          HD_TZ: ${{ secrets.APP_ENV_TZ }}
