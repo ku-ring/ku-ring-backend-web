@@ -98,6 +98,8 @@ test {
 	}
 }
 
+asciidoctor.onlyIf { System.getenv('DEPLOY_ENV') == 'dev' }
+
 asciidoctor {
 	inputs.dir snippetsDir
 	dependsOn test
