@@ -30,7 +30,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withUnauthorizedRequest;
 
 @SpringJUnitConfig({
-        KuisNoticeAPIClient.class, RestTemplate.class, KuisNoticeDTOToCommonFormatDTOConverter.class,
+        KuisNoticeApiClient.class, RestTemplate.class, KuisNoticeDTOToCommonFormatDTOConverter.class,
         BachelorKuisNoticeRequestBody.class,
         ScholarshipKuisNoticeRequestBody.class,
         EmploymentKuisNoticeRequestBody.class,
@@ -41,12 +41,12 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
         JsonConfig.class})
 @TestPropertySource("classpath:test-constants.properties")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-public class KuisNoticeAPIClientTest {
+public class KuisNoticeApiClientTest {
 
     @Value("${notice.request-url}")
     private String noticeUrl;
 
-    private final KuisNoticeAPIClient kuisNoticeAPIClient;
+    private final KuisNoticeApiClient kuisNoticeAPIClient;
     private final RestTemplate restTemplate;
 
     @MockBean
@@ -55,7 +55,7 @@ public class KuisNoticeAPIClientTest {
     private MockRestServiceServer server;
     private String testSession;
 
-    public KuisNoticeAPIClientTest(KuisNoticeAPIClient kuisNoticeAPIClient, RestTemplate restTemplate) {
+    public KuisNoticeApiClientTest(KuisNoticeApiClient kuisNoticeAPIClient, RestTemplate restTemplate) {
 
         this.kuisNoticeAPIClient = kuisNoticeAPIClient;
         this.restTemplate = restTemplate;

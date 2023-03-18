@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
-@SpringJUnitConfig({KuisNoticeAPIClient.class, RestTemplate.class, KuisNoticeDTOToCommonFormatDTOConverter.class,
+@SpringJUnitConfig({KuisNoticeApiClient.class, RestTemplate.class, KuisNoticeDTOToCommonFormatDTOConverter.class,
         BachelorKuisNoticeRequestBody.class,
         ScholarshipKuisNoticeRequestBody.class,
         EmploymentKuisNoticeRequestBody.class,
@@ -33,9 +33,9 @@ import static org.mockito.BDDMockito.given;
         JsonConfig.class, RetryConfig.class})
 @TestPropertySource("classpath:test-constants.properties")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-public class KuisNoticeAPIClientRetryTest {
+public class KuisNoticeApiClientRetryTest {
 
-    private final NoticeAPIClient kuisNoticeAPIClient;
+    private final NoticeApiClient kuisNoticeAPIClient;
     private final RestTemplate restTemplate;
 
     @MockBean
@@ -43,7 +43,7 @@ public class KuisNoticeAPIClientRetryTest {
 
     private MockRestServiceServer server;
 
-    public KuisNoticeAPIClientRetryTest(NoticeAPIClient kuisNoticeAPIClient, RestTemplate restTemplate) {
+    public KuisNoticeApiClientRetryTest(NoticeApiClient kuisNoticeAPIClient, RestTemplate restTemplate) {
 
         this.kuisNoticeAPIClient = kuisNoticeAPIClient;
         this.restTemplate = restTemplate;
