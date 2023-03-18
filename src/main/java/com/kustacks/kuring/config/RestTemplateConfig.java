@@ -8,7 +8,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class RestConfig {
+public class RestTemplateConfig {
 
     @Bean
     public RestTemplate restTemplate() {
