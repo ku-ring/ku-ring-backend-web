@@ -2,10 +2,10 @@ package com.kustacks.kuring.worker.scrap.parser;
 
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.worker.staff.deptinfo.DeptInfo;
-import com.kustacks.kuring.worker.staff.deptinfo.art_design.CommunicationDesignDept;
-import com.kustacks.kuring.worker.staff.deptinfo.art_design.LivingDesignDept;
-import com.kustacks.kuring.worker.staff.deptinfo.real_estate.RealEstateDept;
+import com.kustacks.kuring.worker.update.staff.deptinfo.DeptInfo;
+import com.kustacks.kuring.worker.update.staff.deptinfo.art_design.CommunicationDesignDept;
+import com.kustacks.kuring.worker.update.staff.deptinfo.art_design.LivingDesignDept;
+import com.kustacks.kuring.worker.update.staff.deptinfo.real_estate.RealEstateDept;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;

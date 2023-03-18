@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.scrap;
 
-import com.kustacks.kuring.worker.staff.deptinfo.DeptInfo;
+import com.kustacks.kuring.worker.update.staff.deptinfo.DeptInfo;
 
 import java.io.IOException;
 import java.util.List;

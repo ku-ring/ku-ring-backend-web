@@ -2,8 +2,8 @@ package com.kustacks.kuring.worker.scrap.parser;
 
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.worker.staff.deptinfo.DeptInfo;
-import com.kustacks.kuring.worker.staff.deptinfo.real_estate.RealEstateDept;
+import com.kustacks.kuring.worker.update.staff.deptinfo.DeptInfo;
+import com.kustacks.kuring.worker.update.staff.deptinfo.real_estate.RealEstateDept;
 import lombok.NoArgsConstructor;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
