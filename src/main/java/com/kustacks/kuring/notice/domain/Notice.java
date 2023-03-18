@@ -1,10 +1,10 @@
 package com.kustacks.kuring.notice.domain;
 
 import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.kuapi.CategoryName;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,9 +16,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.util.Objects;
 
-@Getter @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notice {
 
     @Id
@@ -50,6 +50,14 @@ public class Notice {
         this.category = category;
     }
 
+    public boolean isSameCategoryName(CategoryName categoryName) {
+        return this.category.isSameName(categoryName);
+    }
+
+    public void setPostedDate(String postedDate) {
+        this.postedDate = postedDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -63,3 +71,4 @@ public class Notice {
         return Objects.hash(getId());
     }
 }
+
