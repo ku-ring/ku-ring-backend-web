@@ -1,7 +1,8 @@
 package com.kustacks.kuring.config;
 
 import com.kustacks.kuring.kuapi.CategoryName;
-import com.kustacks.kuring.kuapi.api.notice.NoticeAPIClient;
+import com.kustacks.kuring.kuapi.api.notice.NoticeApiClient;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,26 +10,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@RequiredArgsConstructor
 public class MappedBeanConfig {
 
-    private final NoticeAPIClient kuisNoticeAPIClient;
-    private final NoticeAPIClient libraryNoticeAPIClient;
+    private final NoticeApiClient kuisNoticeApiClient;
 
-    public MappedBeanConfig(NoticeAPIClient kuisNoticeAPIClient, NoticeAPIClient libraryNoticeAPIClient) {
-        this.kuisNoticeAPIClient = kuisNoticeAPIClient;
-        this.libraryNoticeAPIClient = libraryNoticeAPIClient;
-    }
+    private final NoticeApiClient libraryNoticeApiClient;
 
     @Bean
-    public Map<CategoryName, NoticeAPIClient> noticeAPIClientMap() {
-        HashMap<CategoryName, NoticeAPIClient> map = new HashMap<>();
+    public Map<CategoryName, NoticeApiClient> noticeApiClientMap() {
+        HashMap<CategoryName, NoticeApiClient> map = new HashMap<>();
+
         for (CategoryName categoryName : CategoryName.values()) {
             if(categoryName.equals(CategoryName.LIBRARY)) {
-                map.put(categoryName, libraryNoticeAPIClient);
+                map.put(categoryName, libraryNoticeApiClient);
             } else {
-                map.put(categoryName, kuisNoticeAPIClient);
+                map.put(categoryName, kuisNoticeApiClient);
             }
         }
+
         return map;
     }
 }

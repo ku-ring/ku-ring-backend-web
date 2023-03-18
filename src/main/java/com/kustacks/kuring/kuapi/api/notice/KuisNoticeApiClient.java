@@ -24,7 +24,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class KuisNoticeAPIClient implements NoticeAPIClient {
+public class KuisNoticeApiClient implements NoticeApiClient {
 
     @Value("${notice.referer}")
     private String noticeReferer;
@@ -37,7 +37,7 @@ public class KuisNoticeAPIClient implements NoticeAPIClient {
     private final KuisAuthManager kuisAuthManager;
     private final Map<CategoryName, KuisNoticeRequestBody> noticeRequestBodies;
 
-    public KuisNoticeAPIClient(KuisAuthManager parsingKuisAuthManager,
+    public KuisNoticeApiClient(KuisAuthManager parsingKuisAuthManager,
                                KuisNoticeDTOToCommonFormatDTOConverter dtoConverter,
 
                                BachelorKuisNoticeRequestBody bachelorNoticeRequestBody,

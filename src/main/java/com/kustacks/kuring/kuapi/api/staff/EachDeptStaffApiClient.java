@@ -19,14 +19,14 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class EachDeptStaffAPIClient implements StaffAPIClient {
+public class EachDeptStaffApiClient implements StaffApiClient {
 
     @Value("${staff.each-dept-url}")
     private String baseUrl;
 
     private final JsoupClient jsoupClient;
 
-    public EachDeptStaffAPIClient(JsoupClient normalJsoupClient) {
+    public EachDeptStaffApiClient(JsoupClient normalJsoupClient) {
         this.jsoupClient = normalJsoupClient;
     }
 

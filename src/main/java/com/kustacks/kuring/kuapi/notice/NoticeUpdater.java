@@ -11,7 +11,7 @@ import com.kustacks.kuring.common.utils.converter.DTOConverter;
 import com.kustacks.kuring.common.utils.converter.DateConverter;
 import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.kuapi.Updater;
-import com.kustacks.kuring.kuapi.api.notice.NoticeAPIClient;
+import com.kustacks.kuring.kuapi.api.notice.NoticeApiClient;
 import com.kustacks.kuring.kuapi.notice.dto.response.CommonNoticeFormatDTO;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class NoticeUpdater implements Updater {
 
-    private final Map<CategoryName, NoticeAPIClient> noticeAPIClientMap;
+    private final Map<CategoryName, NoticeApiClient> noticeAPIClientMap;
     private final DTOConverter dtoConverter;
     private final DateConverter dateConverter;
     private final FirebaseService firebaseService;
@@ -46,7 +46,7 @@ public class NoticeUpdater implements Updater {
 
                          DTOConverter noticeEntityToNoticeMessageDTOConverter,
                          DateConverter ymdhmsToYmdConverter,
-                         Map<CategoryName, NoticeAPIClient> noticeAPIClientMap,
+                         Map<CategoryName, NoticeApiClient> noticeAPIClientMap,
 
                          NoticeRepository noticeRepository,
                          CategoryRepository categoryRepository) {

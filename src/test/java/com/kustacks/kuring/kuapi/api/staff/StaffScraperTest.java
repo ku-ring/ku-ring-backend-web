@@ -43,7 +43,7 @@ import static org.mockserver.model.HttpResponse.response;
 
 @SpringJUnitConfig({
         StaffScraper.class,
-        EachDeptStaffAPIClient.class, KuStaffAPIClient.class, RealEstateStaffAPIClient.class,
+        EachDeptStaffApiClient.class, KuStaffApiClient.class, RealEstateStaffApiClient.class,
         EachDeptHTMLParser.class, KuHTMLParser.class, RealEstateHTMLParser.class,
         NormalJsoupClient.class,
         KoreanDept.class, LivingDesignDept.class, CommunicationDesignDept.class, RealEstateDept.class,

@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Component
-public class LibraryNoticeAPIClient implements NoticeAPIClient {
+public class LibraryNoticeApiClient implements NoticeApiClient {
 
     @Value("${library.request-url}")
     private String libraryUrl;
@@ -26,7 +26,7 @@ public class LibraryNoticeAPIClient implements NoticeAPIClient {
     private final DTOConverter dtoConverter;
     private final RestTemplate restTemplate;
 
-    public LibraryNoticeAPIClient(LibraryNoticeDTOToCommonFormatDTOConverter dtoConverter, RestTemplate restTemplate) {
+    public LibraryNoticeApiClient(LibraryNoticeDTOToCommonFormatDTOConverter dtoConverter, RestTemplate restTemplate) {
         this.dtoConverter = dtoConverter;
         this.restTemplate = restTemplate;
     }
