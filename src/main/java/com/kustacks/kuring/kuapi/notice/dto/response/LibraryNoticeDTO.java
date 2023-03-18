@@ -2,8 +2,10 @@ package com.kustacks.kuring.kuapi.notice.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class LibraryNoticeDTO {
     @JsonProperty("id")
     private String id;
@@ -43,12 +45,6 @@ public class LibraryNoticeDTO {
 
     @JsonProperty("commentCnt")
     private String commentCnt;
-
-//    @JsonProperty("attachmentCnt")
-//    private List<String> attachmentCnt;
-//
-//    @JsonProperty("attachments")
-//    private List<String> attachments;
 
     @JsonProperty("isPersonal")
     private boolean isPersonal;
