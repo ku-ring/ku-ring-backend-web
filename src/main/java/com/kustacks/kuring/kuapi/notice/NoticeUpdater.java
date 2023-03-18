@@ -43,20 +43,16 @@ public class NoticeUpdater implements Updater {
     private Map<String, Category> categoryMap;
 
     public NoticeUpdater(FirebaseService firebaseService,
-
                          DTOConverter noticeEntityToNoticeMessageDTOConverter,
                          DateConverter ymdhmsToYmdConverter,
                          Map<CategoryName, NoticeApiClient> noticeAPIClientMap,
-
                          NoticeRepository noticeRepository,
-                         CategoryRepository categoryRepository) {
-
+                         CategoryRepository categoryRepository)
+    {
+        this.firebaseService = firebaseService;
         this.dtoConverter = noticeEntityToNoticeMessageDTOConverter;
         this.dateConverter = ymdhmsToYmdConverter;
         this.noticeAPIClientMap = noticeAPIClientMap;
-
-        this.firebaseService = firebaseService;
-
         this.noticeRepository = noticeRepository;
         this.categoryRepository = categoryRepository;
     }
@@ -64,18 +60,28 @@ public class NoticeUpdater implements Updater {
     @Override
     @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
     public void update() {
-
         log.info("========== 공지 업데이트 시작 ==========");
 
-        /*
-            학사, 장학, 취창업, 국제, 학생, 산학, 일반, 도서관 공지 갱신
-         */
-        Map<CategoryName, List<CommonNoticeFormatDTO>> apiNoticesMap = new HashMap<>(); // 수신한 공지 데이터를 저장할 변수
-        for (CategoryName categoryName : CategoryName.values()) {
-            List<CommonNoticeFormatDTO> commonNoticeFormatDTO;
+        Map<CategoryName, List<CommonNoticeFormatDTO>> apiNoticesMap = scrapNewNotices();
 
+        List<Notice> willBeNotificationNotices = compareAndUpdateDB(apiNoticesMap);
+
+        List<NoticeMessageDto> notificationDtoList = createNotification(willBeNotificationNotices);
+
+        sendNotificationByFcm(notificationDtoList);
+
+        log.info("========== 공지 업데이트 종료 ==========");
+    }
+
+    /*
+    학사, 장학, 취창업, 국제, 학생, 산학, 일반, 도서관 공지 갱신
+    */
+    private Map<CategoryName, List<CommonNoticeFormatDTO>> scrapNewNotices() {
+        Map<CategoryName, List<CommonNoticeFormatDTO>> apiNoticesMap = new HashMap<>();
+
+        for (CategoryName categoryName : CategoryName.values()) {
             try {
-                commonNoticeFormatDTO = noticeAPIClientMap.get(categoryName).getNotices(categoryName);
+                List<CommonNoticeFormatDTO> commonNoticeFormatDTO = noticeAPIClientMap.get(categoryName).getNotices(categoryName);
                 apiNoticesMap.put(categoryName, commonNoticeFormatDTO);
             } catch (InternalLogicException e) {
                 log.info("{}", e.getErrorCode().getMessage());
@@ -85,41 +91,13 @@ public class NoticeUpdater implements Updater {
             }
         }
 
-        // DB에 있는 공지 데이터 카테고리별로 꺼내와서
-        // kuisNoticeResponseBody에 있는 데이터가 DB에는 없는 경우 -> DB에 공지 추가
-        // DB에 있는 데이터가 kuisNoticeResponseBody에는 없는 경우 -> DB에 공지 삭제
-        List<Notice> willBeNotiNotices = compareAndUpdateDB(apiNoticesMap);
-        List<NoticeMessageDto> willBeNotiNoticeDTOList = new ArrayList<>(willBeNotiNotices.size());
-        for (Notice notice : willBeNotiNotices) {
-            if(CategoryName.LIBRARY.getName().equals(notice.getCategory().getName())) {
-                // TODO: notice entity 내용을 변경해서 사용하는게 좋은 방법인지는 생각을 해봐야함
-                // 혹시나 compareAndUpdateDB에서 영속성 컨텍스트에 남아있는 notice entity의 내용이 변경되어서 저장될까봐
-                // compareAndUpdateDB에서 saveAndFlush 메서드를 사용함.
-                notice.setPostedDate(dateConverter.convert(notice.getPostedDate()));
-            }
-            willBeNotiNoticeDTOList.add((NoticeMessageDto) dtoConverter.convert(notice));
-        }
-
-        // FCM으로 새롭게 수신한 공지 데이터 전송
-        try {
-            firebaseService.sendNoticeMessageList(willBeNotiNoticeDTOList);
-            log.info("FCM에 정상적으로 메세지를 전송했습니다.");
-            log.info("전송된 공지 목록은 다음과 같습니다.");
-            for (NoticeMessageDto messageDTO : willBeNotiNoticeDTOList) {
-                log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", messageDTO.getArticleId(), messageDTO.getPostedDate(), messageDTO.getCategory(), messageDTO.getSubject());
-            }
-        } catch(FirebaseMessageSendException e) {
-            log.error("새로운 공지의 FCM 전송에 실패했습니다.");
-            throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
-        } catch(Exception e) {
-            log.error("새로운 공지를 FCM에 보내는 중 알 수 없는 오류가 발생했습니다.");
-            throw new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e);
-        }
-
-        log.info("========== 공지 업데이트 종료 ==========");
+        return apiNoticesMap;
     }
 
     private List<Notice> compareAndUpdateDB(Map<CategoryName, List<CommonNoticeFormatDTO>> apiNoticesMap) {
+        // DB에 있는 공지 데이터 카테고리별로 꺼내와서
+        // kuisNoticeResponseBody에 있는 데이터가 DB에는 없는 경우 -> DB에 공지 추가
+        // DB에 있는 데이터가 kuisNoticeResponseBody에는 없는 경우 -> DB에 공지 삭제
 
         if(categoryMap == null) {
             categoryMap = categoryRepository.findAllMap();
@@ -134,7 +112,7 @@ public class NoticeUpdater implements Updater {
             List<CommonNoticeFormatDTO> commonNoticeFormatDTOList = apiNoticesMap.get(categoryName);
 
             // categoryName에 대응하는, DB에 존재하는 공지 데이터
-            Map<String, Notice> dbNoticeMap = noticeRepository.findByCategoryMap(noticeCategory);
+            Map<String, Notice> dbNoticeMap = noticeRepository.findNoticeMapByCategory(noticeCategory);
 
             // commonNoticeFormatDTOList를 순회하면서
             // 현재 공지가 dbNoticeList에 있으면 dbNoticeList에서 해당 공지 없애고(실제 DB에는 아무런 작업 안함)
@@ -168,5 +146,36 @@ public class NoticeUpdater implements Updater {
         }
 
         return willBeNotiNotices;
+    }
+
+    private List<NoticeMessageDto> createNotification(List<Notice> willBeNotiNotices) {
+        List<NoticeMessageDto> willBeNotiNoticeDtoList = new ArrayList<>(willBeNotiNotices.size());
+        for (Notice notice : willBeNotiNotices) {
+            if(notice.isSameCategoryName(CategoryName.LIBRARY)) {
+                // TODO: notice entity 내용을 변경해서 사용하는게 좋은 방법인지는 생각을 해봐야함
+                // 혹시나 compareAndUpdateDB에서 영속성 컨텍스트에 남아있는 notice entity의 내용이 변경되어서 저장될까봐
+                // compareAndUpdateDB에서 saveAndFlush 메서드를 사용함.
+                notice.setPostedDate(dateConverter.convert(notice.getPostedDate()));
+            }
+            willBeNotiNoticeDtoList.add((NoticeMessageDto) dtoConverter.convert(notice));
+        }
+        return willBeNotiNoticeDtoList;
+    }
+
+    private void sendNotificationByFcm(List<NoticeMessageDto> willBeNotiNoticeDtoList) {
+        try {
+            firebaseService.sendNoticeMessageList(willBeNotiNoticeDtoList);
+            log.info("FCM에 정상적으로 메세지를 전송했습니다.");
+            log.info("전송된 공지 목록은 다음과 같습니다.");
+            for (NoticeMessageDto messageDTO : willBeNotiNoticeDtoList) {
+                log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", messageDTO.getArticleId(), messageDTO.getPostedDate(), messageDTO.getCategory(), messageDTO.getSubject());
+            }
+        } catch(FirebaseMessageSendException e) {
+            log.error("새로운 공지의 FCM 전송에 실패했습니다.");
+            throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
+        } catch(Exception e) {
+            log.error("새로운 공지를 FCM에 보내는 중 알 수 없는 오류가 발생했습니다.");
+            throw new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e);
+        }
     }
 }

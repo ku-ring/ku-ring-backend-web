@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,9 +23,6 @@ import java.util.stream.Collectors;
 public class LibraryNoticeApiClient implements NoticeApiClient {
 
     private static final int MAX_REQUEST_COUNT = 2;
-    private static final int OFFSET = 0;
-    private static final int MAX = 20;
-    private static final int MIN = 1;
 
     private final DTOConverter dtoConverter;
     private final RestTemplate restTemplate;
@@ -45,25 +42,25 @@ public class LibraryNoticeApiClient implements NoticeApiClient {
     }
 
     private List<LibraryNoticeDTO> scrapLibraryNoticeDtos() {
-        String completeLibraryUrl = buildUrl(libraryUrl, OFFSET, MAX);
+        int offset = 0;
+        int max = 20;
 
+        List<LibraryNoticeDTO> libraryNoticeDTOList = new LinkedList<>();
         for (int requestIndex = 0; requestIndex < MAX_REQUEST_COUNT; requestIndex++) {
+            String completeLibraryUrl = buildUrl(libraryUrl, offset, max);
             LibraryNoticeResponseDTO libraryNoticeResponseDTO = restTemplate
                     .getForEntity(completeLibraryUrl, LibraryNoticeResponseDTO.class)
                     .getBody();
 
             validateResponse(requestIndex, libraryNoticeResponseDTO);
 
-            if (isValidSize(libraryNoticeResponseDTO)) {
-                return libraryNoticeResponseDTO.getList();
-            }
+            offset = max;
+            max = libraryNoticeResponseDTO.getTotalCount() - max;
+
+            libraryNoticeDTOList.addAll(libraryNoticeResponseDTO.getData().getList());
         }
 
-        return Collections.emptyList();
-    }
-
-    private static boolean isValidSize(LibraryNoticeResponseDTO libraryNoticeResponseDTO) {
-        return libraryNoticeResponseDTO.getTotalCount() >= MIN && libraryNoticeResponseDTO.getTotalCount() <= MAX;
+        return libraryNoticeDTOList;
     }
 
     private String buildUrl(String url, int offset, int max) {
