@@ -1,7 +1,7 @@
 package com.kustacks.kuring.config;
 
-import com.kustacks.kuring.kuapi.CategoryName;
-import com.kustacks.kuring.kuapi.api.notice.NoticeApiClient;
+import com.kustacks.kuring.worker.CategoryName;
+import com.kustacks.kuring.worker.api.notice.NoticeApiClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

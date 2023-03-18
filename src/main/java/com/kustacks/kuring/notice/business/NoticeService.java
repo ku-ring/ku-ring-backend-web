@@ -4,7 +4,7 @@ import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.category.exception.CategoryNotFoundException;
 import com.kustacks.kuring.common.utils.ObjectComparator;
-import com.kustacks.kuring.kuapi.CategoryName;
+import com.kustacks.kuring.worker.CategoryName;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
 import com.kustacks.kuring.notice.domain.Notice;
