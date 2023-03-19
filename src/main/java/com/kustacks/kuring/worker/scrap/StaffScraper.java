@@ -17,13 +17,14 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class StaffScraper implements KuScraper<StaffDto> {
+public class StaffScraper {
+
+    private static final int RETRY_PERIOD = 1000 * 60; // 1분후에 실패한 크론잡 재시도
 
     private final List<StaffApiClient> staffAPIClients;
     private final List<HTMLParser> htmlParsers;
 
     public StaffScraper(List<HTMLParser> htmlParsers, List<StaffApiClient> staffAPIClients) {
-
         this.staffAPIClients = staffAPIClients;
         this.htmlParsers = htmlParsers;
     }
