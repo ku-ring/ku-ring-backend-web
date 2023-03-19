@@ -1,7 +1,8 @@
-package com.kustacks.kuring.worker.scrap.parser;
+package com.kustacks.kuring.worker.scrap.parser.notice;
 
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.worker.scrap.parser.HtmlParser;
 import com.kustacks.kuring.worker.update.staff.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.update.staff.deptinfo.real_estate.RealEstateDept;
 import lombok.NoArgsConstructor;

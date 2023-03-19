@@ -6,9 +6,9 @@ import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.client.staff.dto.TestStaffDTO;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
-import com.kustacks.kuring.worker.scrap.parser.EachDeptHtmlParser;
-import com.kustacks.kuring.worker.scrap.parser.KuHtmlParser;
-import com.kustacks.kuring.worker.scrap.parser.RealEstateHtmlParser;
+import com.kustacks.kuring.worker.scrap.parser.staff.StaffEachDeptHtmlParser;
+import com.kustacks.kuring.worker.scrap.parser.staff.StaffHtmlParser;
+import com.kustacks.kuring.worker.scrap.parser.notice.RealEstateHtmlParser;
 import com.kustacks.kuring.worker.update.staff.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.update.staff.deptinfo.art_design.CommunicationDesignDept;
 import com.kustacks.kuring.worker.update.staff.deptinfo.art_design.LivingDesignDept;
@@ -44,7 +44,7 @@ import static org.mockserver.model.HttpResponse.response;
 @SpringJUnitConfig({
         StaffScraper.class,
         EachDeptStaffApiClient.class, KuStaffApiClient.class, RealEstateStaffApiClient.class,
-        EachDeptHtmlParser.class, KuHtmlParser.class, RealEstateHtmlParser.class,
+        StaffEachDeptHtmlParser.class, StaffHtmlParser.class, RealEstateHtmlParser.class,
         NormalJsoupClient.class,
         KoreanDept.class, LivingDesignDept.class, CommunicationDesignDept.class, RealEstateDept.class,
         ObjectMapper.class})

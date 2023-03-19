@@ -1,7 +1,8 @@
-package com.kustacks.kuring.worker.scrap.parser;
+package com.kustacks.kuring.worker.scrap.parser.staff;
 
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.worker.scrap.parser.HtmlParser;
 import com.kustacks.kuring.worker.update.staff.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.update.staff.deptinfo.art_design.CommunicationDesignDept;
 import com.kustacks.kuring.worker.update.staff.deptinfo.art_design.LivingDesignDept;
@@ -16,7 +17,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Component
-public class KuHtmlParser implements HtmlParser {
+public class StaffHtmlParser implements HtmlParser {
 
     @Override
     public boolean support(DeptInfo deptInfo) {
