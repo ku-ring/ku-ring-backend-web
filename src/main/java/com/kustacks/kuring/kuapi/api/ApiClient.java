@@ -1,4 +1,4 @@
 package com.kustacks.kuring.kuapi.api;
 
-public interface APIClient {
+public interface ApiClient {
 }

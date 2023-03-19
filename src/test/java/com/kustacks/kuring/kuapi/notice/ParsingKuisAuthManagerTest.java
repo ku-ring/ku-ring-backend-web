@@ -1,7 +1,7 @@
 package com.kustacks.kuring.kuapi.notice;
 
 import com.kustacks.kuring.config.JsonConfig;
-import com.kustacks.kuring.config.RestConfig;
+import com.kustacks.kuring.config.RestTemplateConfig;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.api.notice.KuisAuthManager;
@@ -32,7 +32,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @SpringJUnitConfig({
     ParsingKuisAuthManager.class, KuisLoginRequestBody.class, RequestBodyEncoder.class,
-    RestConfig.class, JsonConfig.class
+    RestTemplateConfig.class, JsonConfig.class
 })
 @TestPropertySource(locations = "classpath:test-constants.properties")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

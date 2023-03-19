@@ -3,48 +3,37 @@ package com.kustacks.kuring.kuapi.api.staff;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
-import com.kustacks.kuring.kuapi.staff.deptinfo.art_design.CommunicationDesignDept;
-import com.kustacks.kuring.kuapi.staff.deptinfo.art_design.LivingDesignDept;
+import com.kustacks.kuring.kuapi.staff.deptinfo.real_estate.RealEstateDept;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 @Component
-public class KuStaffAPIClient implements StaffAPIClient {
+public class RealEstateStaffApiClient implements StaffApiClient {
 
-    private final Map<DeptInfo, String> urlMap;
+    @Value("${staff.real-estate-url}")
+    private String baseUrl;
+
     private final JsoupClient jsoupClient;
 
-    public KuStaffAPIClient(
-            @Value("${staff.living-design-url}") String livingDesignUrl,
-            @Value("${staff.communication-design-url}") String communicationDesignUrl,
-            DeptInfo communicationDesignDept,
-            DeptInfo livingDesignDept,
-            JsoupClient normalJsoupClient) {
-
-        urlMap = new HashMap<>();
-        urlMap.put(communicationDesignDept, communicationDesignUrl);
-        urlMap.put(livingDesignDept, livingDesignUrl);
-
-        this.jsoupClient = normalJsoupClient;
+    public RealEstateStaffApiClient(JsoupClient proxyJsoupClient) {
+        this.jsoupClient = proxyJsoupClient;
     }
 
     @Override
     public boolean support(DeptInfo deptInfo) {
-        return deptInfo instanceof LivingDesignDept || deptInfo instanceof CommunicationDesignDept;
+        return deptInfo instanceof RealEstateDept;
     }
 
     @Override
     public List<Document> getHTML(DeptInfo deptInfo) throws InternalLogicException {
 
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(urlMap.get(deptInfo));
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(baseUrl);
         String url = urlBuilder.toUriString();
 
         Document document;

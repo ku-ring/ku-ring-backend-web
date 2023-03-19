@@ -3,7 +3,7 @@ package com.kustacks.kuring.kuapi.scrap;
 import com.kustacks.kuring.common.dto.StaffDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.kuapi.api.staff.StaffAPIClient;
+import com.kustacks.kuring.kuapi.api.staff.StaffApiClient;
 import com.kustacks.kuring.kuapi.scrap.parser.HTMLParser;
 import com.kustacks.kuring.kuapi.staff.deptinfo.DeptInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +19,10 @@ import java.util.List;
 @Component
 public class StaffScraper implements KuScraper<StaffDto> {
 
-    private final List<StaffAPIClient> staffAPIClients;
+    private final List<StaffApiClient> staffAPIClients;
     private final List<HTMLParser> htmlParsers;
 
-    public StaffScraper(List<HTMLParser> htmlParsers, List<StaffAPIClient> staffAPIClients) {
+    public StaffScraper(List<HTMLParser> htmlParsers, List<StaffApiClient> staffAPIClients) {
 
         this.staffAPIClients = staffAPIClients;
         this.htmlParsers = htmlParsers;
@@ -34,7 +34,7 @@ public class StaffScraper implements KuScraper<StaffDto> {
         List<Document> documents = null;
         List<StaffDto> staffDtoList = new LinkedList<>();
 
-        for (StaffAPIClient staffAPIClient : staffAPIClients) {
+        for (StaffApiClient staffAPIClient : staffAPIClients) {
             if(staffAPIClient.support(deptInfo)) {
                 log.info("{} HTML 요청", deptInfo.getDeptName());
                 documents = staffAPIClient.getHTML(deptInfo);

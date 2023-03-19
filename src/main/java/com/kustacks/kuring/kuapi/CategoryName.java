@@ -24,6 +24,10 @@ public enum CategoryName {
         this.korName = korName;
     }
 
+    public boolean isSameName(String name) {
+        return this.name.equals(name);
+    }
+
     public boolean isSameShortName(String shortName) {
         return this.shortName.equals(shortName);
     }

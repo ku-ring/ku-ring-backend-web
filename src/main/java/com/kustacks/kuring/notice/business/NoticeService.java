@@ -112,8 +112,8 @@ public class NoticeService {
                 .orElseThrow(CategoryNotFoundException::new);
     }
 
-    private String convertBaseUrl(String type) {
-        return CategoryName.LIBRARY.isSameShortName(type) ? libraryBaseUrl : normalBaseUrl;
+    private String convertBaseUrl(String categoryName) {
+        return CategoryName.LIBRARY.isSameName(categoryName) ? libraryBaseUrl : normalBaseUrl;
     }
 
     private List<Notice> getNoticesBySubjectOrCategory(String[] keywords) {
