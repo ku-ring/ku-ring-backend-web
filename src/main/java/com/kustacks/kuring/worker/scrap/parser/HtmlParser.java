@@ -6,7 +6,7 @@ import org.jsoup.nodes.Document;
 
 import java.util.List;
 
-public interface HTMLParser {
+public interface HtmlParser {
 
     boolean support(DeptInfo deptInfo);
 

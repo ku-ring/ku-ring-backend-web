@@ -4,7 +4,7 @@ import com.kustacks.kuring.common.dto.StaffDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.client.staff.StaffApiClient;
-import com.kustacks.kuring.worker.scrap.parser.HTMLParser;
+import com.kustacks.kuring.worker.scrap.parser.HtmlParser;
 import com.kustacks.kuring.worker.update.staff.deptinfo.DeptInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
@@ -22,9 +22,9 @@ public class StaffScraper {
     private static final int RETRY_PERIOD = 1000 * 60; // 1분후에 실패한 크론잡 재시도
 
     private final List<StaffApiClient> staffAPIClients;
-    private final List<HTMLParser> htmlParsers;
+    private final List<HtmlParser> htmlParsers;
 
-    public StaffScraper(List<HTMLParser> htmlParsers, List<StaffApiClient> staffAPIClients) {
+    public StaffScraper(List<HtmlParser> htmlParsers, List<StaffApiClient> staffAPIClients) {
         this.staffAPIClients = staffAPIClients;
         this.htmlParsers = htmlParsers;
     }
@@ -45,7 +45,7 @@ public class StaffScraper {
 
         // 수신한 documents HTML 파싱
         List<String[]> parseResult = new LinkedList<>();
-        for (HTMLParser htmlParser : htmlParsers) {
+        for (HtmlParser htmlParser : htmlParsers) {
             if(htmlParser.support(deptInfo)) {
                 log.info("{} HTML 파싱 시작", deptInfo.getDeptName());
                 for (Document document : documents) {

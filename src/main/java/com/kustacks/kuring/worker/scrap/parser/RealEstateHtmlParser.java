@@ -15,7 +15,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Component
-public class RealEstateHTMLParser implements HTMLParser {
+public class RealEstateHtmlParser implements HtmlParser {
 
     @Override
     public boolean support(DeptInfo deptInfo) {

@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @NoArgsConstructor
 @Component
-public class EachDeptHTMLParser implements HTMLParser {
+public class EachDeptHtmlParser implements HtmlParser {
 
     @Override
     public boolean support(DeptInfo deptInfo) {

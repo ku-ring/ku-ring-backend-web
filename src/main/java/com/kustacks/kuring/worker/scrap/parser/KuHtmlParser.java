@@ -16,7 +16,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Component
-public class KuHTMLParser implements HTMLParser {
+public class KuHtmlParser implements HtmlParser {
 
     @Override
     public boolean support(DeptInfo deptInfo) {
