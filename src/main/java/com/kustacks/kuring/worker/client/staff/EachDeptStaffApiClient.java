@@ -2,10 +2,10 @@ package com.kustacks.kuring.worker.client.staff;
 
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.worker.update.staff.deptinfo.DeptInfo;
-import com.kustacks.kuring.worker.update.staff.deptinfo.art_design.CommunicationDesignDept;
-import com.kustacks.kuring.worker.update.staff.deptinfo.art_design.LivingDesignDept;
-import com.kustacks.kuring.worker.update.staff.deptinfo.real_estate.RealEstateDept;
+import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
+import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;
+import com.kustacks.kuring.worker.scrap.deptinfo.art_design.LivingDesignDept;
+import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +45,7 @@ public class EachDeptStaffApiClient implements StaffApiClient {
         String url;
         List<Document> documents = new LinkedList<>();
 
-        for (String pfForumId : deptInfo.getStaffScrapInfo().getPfForumId()) {
+        for (String pfForumId : deptInfo.getStaffScrapInfo().getProfessorForumId()) {
             urlBuilder = UriComponentsBuilder.fromUriString(baseUrl).queryParam("pfForumId", pfForumId);
             url = urlBuilder.toUriString();
 

@@ -2,8 +2,8 @@ package com.kustacks.kuring.worker.client.staff;
 
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.worker.update.staff.deptinfo.DeptInfo;
-import com.kustacks.kuring.worker.update.staff.deptinfo.real_estate.RealEstateDept;
+import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
+import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
 import org.jsoup.nodes.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

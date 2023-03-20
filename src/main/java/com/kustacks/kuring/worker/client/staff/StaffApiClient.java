@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.client.staff;
 
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.worker.update.staff.deptinfo.DeptInfo;
+import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import org.jsoup.nodes.Document;
 
 import java.util.List;

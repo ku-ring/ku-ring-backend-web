@@ -9,11 +9,11 @@ import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.parser.staff.StaffEachDeptHtmlParser;
 import com.kustacks.kuring.worker.scrap.parser.staff.StaffHtmlParser;
 import com.kustacks.kuring.worker.scrap.parser.notice.RealEstateHtmlParser;
-import com.kustacks.kuring.worker.update.staff.deptinfo.DeptInfo;
-import com.kustacks.kuring.worker.update.staff.deptinfo.art_design.CommunicationDesignDept;
-import com.kustacks.kuring.worker.update.staff.deptinfo.art_design.LivingDesignDept;
-import com.kustacks.kuring.worker.update.staff.deptinfo.liberal_art.KoreanDept;
-import com.kustacks.kuring.worker.update.staff.deptinfo.real_estate.RealEstateDept;
+import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
+import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;
+import com.kustacks.kuring.worker.scrap.deptinfo.art_design.LivingDesignDept;
+import com.kustacks.kuring.worker.scrap.deptinfo.liberal_art.KoreanDept;
+import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
 import org.junit.jupiter.api.*;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
@@ -135,7 +135,7 @@ public class StaffScraperTest {
         private void testTemplate(String requestPath, DeptInfo deptInfo, String folderName) throws IOException {
 
             // given
-            createExpectationForSuccess(requestPath, deptInfo instanceof KoreanDept ? deptInfo.getStaffScrapInfo().getPfForumId().get(0) : "", folderName);
+            createExpectationForSuccess(requestPath, deptInfo instanceof KoreanDept ? deptInfo.getStaffScrapInfo().getProfessorForumId().get(0) : "", folderName);
 
             // when
             List<StaffDto> staffDtoList = staffScraper.scrap(deptInfo);
@@ -234,7 +234,7 @@ public class StaffScraperTest {
             private void testTemplate(String requestPath, DeptInfo deptInfo, String folderName) throws IOException {
 
                 // given
-                createExpectationForHTMLDiff(requestPath, deptInfo instanceof KoreanDept ? deptInfo.getStaffScrapInfo().getPfForumId().get(0) : "", folderName);
+                createExpectationForHTMLDiff(requestPath, deptInfo instanceof KoreanDept ? deptInfo.getStaffScrapInfo().getProfessorForumId().get(0) : "", folderName);
 
                 // when, then
                 InternalLogicException e = assertThrows(InternalLogicException.class, () -> staffScraper.scrap(deptInfo));
@@ -299,7 +299,7 @@ public class StaffScraperTest {
             private void testTemplate(String requestPath, DeptInfo deptInfo) {
 
                 // given
-                createExpectationForAPIError(requestPath, deptInfo instanceof KoreanDept ? deptInfo.getStaffScrapInfo().getPfForumId().get(0) : "");
+                createExpectationForAPIError(requestPath, deptInfo instanceof KoreanDept ? deptInfo.getStaffScrapInfo().getProfessorForumId().get(0) : "");
 
                 // when, then
                 InternalLogicException e = assertThrows(InternalLogicException.class, () -> staffScraper.scrap(deptInfo));

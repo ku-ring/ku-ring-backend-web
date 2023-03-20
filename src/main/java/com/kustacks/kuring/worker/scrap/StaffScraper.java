@@ -5,7 +5,7 @@ import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.client.staff.StaffApiClient;
 import com.kustacks.kuring.worker.scrap.parser.HtmlParser;
-import com.kustacks.kuring.worker.update.staff.deptinfo.DeptInfo;
+import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.springframework.retry.annotation.Backoff;

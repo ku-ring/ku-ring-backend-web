@@ -6,7 +6,7 @@ import com.kustacks.kuring.staff.domain.StaffRepository;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.update.Updater;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
-import com.kustacks.kuring.worker.update.staff.deptinfo.DeptInfo;
+import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
