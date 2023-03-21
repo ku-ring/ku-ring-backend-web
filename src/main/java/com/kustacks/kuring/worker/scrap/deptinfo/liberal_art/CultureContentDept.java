@@ -1,13 +1,14 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.liberal_art;
 
+import com.kustacks.kuring.worker.DepartmentName;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
+import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
-import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
-@Component
+@RegisterDepartmentMap(key = DepartmentName.CULTURE_CONT)
 public class CultureContentDept extends LiberalArtCollege {
 
     public CultureContentDept() {

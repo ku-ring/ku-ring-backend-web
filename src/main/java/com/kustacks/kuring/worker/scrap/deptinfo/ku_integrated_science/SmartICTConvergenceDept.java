@@ -1,13 +1,14 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.ku_integrated_science;
 
+import com.kustacks.kuring.worker.DepartmentName;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
+import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
-import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
-@Component
+@RegisterDepartmentMap(key = DepartmentName.SMART_ICT)
 public class SmartICTConvergenceDept extends KuIntegratedScienceCollege {
 
     public SmartICTConvergenceDept() {

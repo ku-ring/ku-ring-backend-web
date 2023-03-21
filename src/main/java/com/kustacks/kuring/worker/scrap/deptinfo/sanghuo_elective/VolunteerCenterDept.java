@@ -1,14 +1,15 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.sanghuo_elective;
 
+import com.kustacks.kuring.worker.DepartmentName;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
+import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
-import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
 // TODO: 교직원 스크랩 시 장애가 되지 않는지 확인 필요
-@Component
+@RegisterDepartmentMap(key = DepartmentName.VOLUNTEER)
 public class VolunteerCenterDept extends SanghuoCollege {
 
     public VolunteerCenterDept() {
