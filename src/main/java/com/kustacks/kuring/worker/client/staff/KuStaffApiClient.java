@@ -2,6 +2,7 @@ package com.kustacks.kuring.worker.client.staff;
 
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.worker.DepartmentName;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.LivingDesignDept;
@@ -19,20 +20,17 @@ import java.util.Map;
 @Component
 public class KuStaffApiClient implements StaffApiClient {
 
-    private final Map<DeptInfo, String> urlMap;
+    private final Map<String, String> urlMap;
     private final JsoupClient jsoupClient;
 
     public KuStaffApiClient(
             @Value("${staff.living-design-url}") String livingDesignUrl,
             @Value("${staff.communication-design-url}") String communicationDesignUrl,
-            DeptInfo communicationDesignDept,
-            DeptInfo livingDesignDept,
-            JsoupClient normalJsoupClient) {
-
+            JsoupClient normalJsoupClient)
+    {
         urlMap = new HashMap<>();
-        urlMap.put(communicationDesignDept, communicationDesignUrl);
-        urlMap.put(livingDesignDept, livingDesignUrl);
-
+        urlMap.put(DepartmentName.COMM_DESIGN.getKorName(), communicationDesignUrl);
+        urlMap.put(DepartmentName.LIVING_DESIGN.getKorName(), livingDesignUrl);
         this.jsoupClient = normalJsoupClient;
     }
 
@@ -44,7 +42,7 @@ public class KuStaffApiClient implements StaffApiClient {
     @Override
     public List<Document> getHTML(DeptInfo deptInfo) throws InternalLogicException {
 
-        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(urlMap.get(deptInfo));
+        UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(urlMap.get(deptInfo.getDeptName()));
         String url = urlBuilder.toUriString();
 
         Document document;

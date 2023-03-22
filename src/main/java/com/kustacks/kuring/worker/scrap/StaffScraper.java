@@ -21,11 +21,11 @@ public class StaffScraper {
 
     private static final int RETRY_PERIOD = 1000 * 60; // 1분후에 실패한 크론잡 재시도
 
-    private final List<StaffApiClient> staffAPIClients;
+    private final List<StaffApiClient> staffApiClients;
     private final List<HtmlParser> htmlParsers;
 
-    public StaffScraper(List<HtmlParser> htmlParsers, List<StaffApiClient> staffAPIClients) {
-        this.staffAPIClients = staffAPIClients;
+    public StaffScraper(List<HtmlParser> htmlParsers, List<StaffApiClient> staffApiClients) {
+        this.staffApiClients = staffApiClients;
         this.htmlParsers = htmlParsers;
     }
 
@@ -35,10 +35,10 @@ public class StaffScraper {
         List<Document> documents = null;
         List<StaffDto> staffDtoList = new LinkedList<>();
 
-        for (StaffApiClient staffAPIClient : staffAPIClients) {
-            if(staffAPIClient.support(deptInfo)) {
+        for (StaffApiClient staffApiClient : staffApiClients) {
+            if(staffApiClient.support(deptInfo)) {
                 log.info("{} HTML 요청", deptInfo.getDeptName());
-                documents = staffAPIClient.getHTML(deptInfo);
+                documents = staffApiClient.getHTML(deptInfo);
                 log.info("{} HTML 수신", deptInfo.getDeptName());
             }
         }
