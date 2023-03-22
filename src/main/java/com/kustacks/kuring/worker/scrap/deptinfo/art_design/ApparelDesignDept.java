@@ -22,6 +22,6 @@ public class ApparelDesignDept extends ArtDesignCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "APPAREL", boardSeqs, menuSeqs);
         this.code = "122404";
-        this.deptName = "의상디자인학과";
+        this.deptName = DepartmentName.APPAREL_DESIGN.getKorName();
     }
 }

@@ -21,6 +21,6 @@ public class EducationDept extends EducationCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "GYOJIK", boardSeqs, menuSeqs);
         this.code = "105041";
-        this.deptName = "교직과";
+        this.deptName = DepartmentName.EDUCATION.getKorName();
     }
 }

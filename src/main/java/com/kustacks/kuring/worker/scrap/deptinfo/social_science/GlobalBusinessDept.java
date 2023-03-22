@@ -21,6 +21,6 @@ public class GlobalBusinessDept extends SocialSciencesCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "ITRADE", boardSeqs, menuSeqs);
         this.code = "127126";
-        this.deptName = "글로벌비즈니스학과";
+        this.deptName = DepartmentName.GLOBAL_BUSI.getKorName();
     }
 }

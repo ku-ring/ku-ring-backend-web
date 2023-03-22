@@ -21,6 +21,6 @@ public class BusinessAdministrationDept extends BusinessCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "BIZ", boardSeqs, menuSeqs);
         this.code = "126780";
-        this.deptName = "경영학과";
+        this.deptName = DepartmentName.BUIS_ADMIN.getKorName();
     }
 }

@@ -22,6 +22,6 @@ public class LivingDesignDept extends ArtDesignCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "LIVINGDESIGN", boardSeqs, menuSeqs);
         this.code = "126781";
-        this.deptName = "리빙디자인학과";
+        this.deptName = DepartmentName.LIVING_DESIGN.getKorName();
     }
 }

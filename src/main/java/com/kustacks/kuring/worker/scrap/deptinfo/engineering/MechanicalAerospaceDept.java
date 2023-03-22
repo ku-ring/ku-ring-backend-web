@@ -21,6 +21,6 @@ public class MechanicalAerospaceDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "MAE", boardSeqs, menuSeqs);
         this.code = "127427";
-        this.deptName = "기계항공공학부";
+        this.deptName = DepartmentName.MECH_AERO.getKorName();
     }
 }

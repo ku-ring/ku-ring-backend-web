@@ -21,6 +21,6 @@ public class ElectiveEducationCenterDept extends SanghuoCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "ELECTIVEEDU", boardSeqs, menuSeqs);
         this.code = "126952";
-        this.deptName = "교양교육센터";
+        this.deptName = DepartmentName.ELE_EDU_CENTER.getKorName();
     }
 }

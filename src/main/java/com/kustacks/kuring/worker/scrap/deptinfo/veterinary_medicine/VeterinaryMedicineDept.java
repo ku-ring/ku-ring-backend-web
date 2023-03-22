@@ -21,6 +21,6 @@ public class VeterinaryMedicineDept extends VeterinaryMedicineCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "VETERINARY", boardSeqs, menuSeqs);
         this.code = "105101";
-        this.deptName = "수의학과";
+        this.deptName = DepartmentName.VET_MEDICINE.getKorName();
     }
 }

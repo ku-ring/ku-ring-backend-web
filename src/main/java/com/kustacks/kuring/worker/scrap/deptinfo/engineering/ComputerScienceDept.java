@@ -21,6 +21,6 @@ public class ComputerScienceDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "CSE", boardSeqs, menuSeqs);
         this.code = "127428";
-        this.deptName = "컴퓨터공학부";
+        this.deptName = DepartmentName.COMPUTER.getKorName();
     }
 }

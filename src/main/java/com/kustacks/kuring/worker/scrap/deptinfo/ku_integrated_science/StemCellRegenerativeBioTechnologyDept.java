@@ -21,6 +21,6 @@ public class StemCellRegenerativeBioTechnologyDept extends KuIntegratedScienceCo
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "STEMREGENERATION", boardSeqs, menuSeqs);
         this.code = "126917";
-        this.deptName = "줄기세포재생공학과";
+        this.deptName = DepartmentName.STEM_REGEN.getKorName();
     }
 }

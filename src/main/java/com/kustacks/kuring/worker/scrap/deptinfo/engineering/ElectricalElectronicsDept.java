@@ -21,6 +21,6 @@ public class ElectricalElectronicsDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "EE", boardSeqs, menuSeqs);
         this.code = "127110";
-        this.deptName = "전기전자공학부";
+        this.deptName = DepartmentName.ELEC_ELEC.getKorName();
     }
 }

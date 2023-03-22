@@ -22,6 +22,6 @@ public class CommunicationDesignDept extends ArtDesignCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "COMMDESIGN", boardSeqs, menuSeqs);
         this.code = "122402";
-        this.deptName = "커뮤니케이션디자인학과";
+        this.deptName = DepartmentName.COMM_DESIGN.getKorName();
     }
 }

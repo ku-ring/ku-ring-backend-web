@@ -9,9 +9,9 @@ import java.util.Collections;
 import java.util.List;
 
 @RegisterDepartmentMap(key = DepartmentName.BIO_MEDICAL)
-public class BiomedicalScienceDept extends KuIntegratedScienceCollege {
+public class BioMedicalScienceDept extends KuIntegratedScienceCollege {
 
-    public BiomedicalScienceDept() {
+    public BioMedicalScienceDept() {
         super();
         List<String> professorForumIds = List.of("15602966");
         List<String> forumIds = Collections.emptyList();
@@ -21,6 +21,6 @@ public class BiomedicalScienceDept extends KuIntegratedScienceCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "BMSE", boardSeqs, menuSeqs);
         this.code = "126918";
-        this.deptName = "의생명공학과";
+        this.deptName = DepartmentName.BIO_MEDICAL.getKorName();
     }
 }

@@ -20,6 +20,6 @@ public class PhysicsDept extends ScienceCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "PHYSIC", boardSeqs, menuSeqs);
         this.code = "126783";
-        this.deptName = "물리학과";
+        this.deptName = DepartmentName.PHYSICS.getKorName();
     }
 }

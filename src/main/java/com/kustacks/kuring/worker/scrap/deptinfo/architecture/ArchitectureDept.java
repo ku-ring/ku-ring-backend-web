@@ -21,6 +21,6 @@ public class ArchitectureDept extends ArchitectureCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "CAKU", boardSeqs, menuSeqs);
         this.code = "127320";
-        this.deptName = "건축학부";
+        this.deptName = DepartmentName.ARCHITECTURE.getKorName();
     }
 }

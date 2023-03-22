@@ -21,6 +21,6 @@ public class ContemporaryArtDept extends ArtDesignCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "CONTEMPORARYART", boardSeqs, menuSeqs);
         this.code = "122406";
-        this.deptName = "현대미술학과";
+        this.deptName = DepartmentName.CONT_ART.getKorName();
     }
 }

@@ -21,6 +21,6 @@ public class AdvancedIndustrialFusionDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "AIF", boardSeqs, menuSeqs);
         this.code = "127431";
-        this.deptName = "신산업융합학과";
+        this.deptName = DepartmentName.ADV_INDUSTRIAL.getKorName();
     }
 }

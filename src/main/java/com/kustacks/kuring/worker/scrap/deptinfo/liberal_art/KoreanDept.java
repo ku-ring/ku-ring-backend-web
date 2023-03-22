@@ -21,6 +21,6 @@ public class KoreanDept extends LiberalArtCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "KOREA", boardSeqs, menuSeqs);
         this.code = "121253";
-        this.deptName = "국어국문학과";
+        this.deptName = DepartmentName.KOREAN.getKorName();
     }
 }

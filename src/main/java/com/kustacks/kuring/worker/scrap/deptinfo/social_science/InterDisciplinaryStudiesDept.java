@@ -9,9 +9,9 @@ import java.util.Collections;
 import java.util.List;
 
 @RegisterDepartmentMap(key = DepartmentName.DISCI_STUDIES)
-public class InterdisciplinaryStudiesDept extends SocialSciencesCollege {
+public class InterDisciplinaryStudiesDept extends SocialSciencesCollege {
 
-    public InterdisciplinaryStudiesDept() {
+    public InterDisciplinaryStudiesDept() {
         super();
         List<String> professorForumIds = List.of("3716919");
         List<String> forumIds = Collections.emptyList();
@@ -21,6 +21,6 @@ public class InterdisciplinaryStudiesDept extends SocialSciencesCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "DOLA", boardSeqs, menuSeqs);
         this.code = "127125";
-        this.deptName = "융합인재학과";
+        this.deptName = DepartmentName.DISCI_STUDIES.getKorName();
     }
 }

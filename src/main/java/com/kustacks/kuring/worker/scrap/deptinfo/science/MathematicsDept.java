@@ -21,6 +21,6 @@ public class MathematicsDept extends ScienceCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "MATH", boardSeqs, menuSeqs);
         this.code = "121260";
-        this.deptName = "수학과";
+        this.deptName = DepartmentName.MATH.getKorName();
     }
 }

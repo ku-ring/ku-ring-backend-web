@@ -21,6 +21,6 @@ public class CropScienceDept extends SanghuoBiologyCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "CROPSCIENCE", boardSeqs, menuSeqs);
         this.code = "126908";
-        this.deptName = "식량자원과학과";
+        this.deptName = DepartmentName.CROP_SCIENCE.getKorName();
     }
 }

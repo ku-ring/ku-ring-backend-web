@@ -21,6 +21,6 @@ public class BiologicalDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "MICROBIO", boardSeqs, menuSeqs);
         this.code = "122055";
-        this.deptName = "생물공학과";
+        this.deptName = DepartmentName.BIOLOGICAL.getKorName();
     }
 }

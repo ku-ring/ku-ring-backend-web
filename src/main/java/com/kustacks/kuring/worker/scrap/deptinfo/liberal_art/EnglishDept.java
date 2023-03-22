@@ -21,6 +21,6 @@ public class EnglishDept extends LiberalArtCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "ENGLISH", boardSeqs, menuSeqs);
         this.code = "121254";
-        this.deptName = "영어영문학과";
+        this.deptName = DepartmentName.ENGLISH.getKorName();
     }
 }

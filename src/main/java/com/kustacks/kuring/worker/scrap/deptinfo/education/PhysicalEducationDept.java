@@ -21,6 +21,6 @@ public class PhysicalEducationDept extends EducationCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "KUPE", boardSeqs, menuSeqs);
         this.code = "105001";
-        this.deptName = "체육교육과";
+        this.deptName = DepartmentName.PHY_EDU.getKorName();
     }
 }

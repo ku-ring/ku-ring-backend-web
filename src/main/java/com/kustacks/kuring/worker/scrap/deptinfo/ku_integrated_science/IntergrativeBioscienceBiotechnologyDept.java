@@ -21,6 +21,6 @@ public class IntergrativeBioscienceBiotechnologyDept extends KuIntegratedScience
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "IBB", boardSeqs, menuSeqs);
         this.code = "126920";
-        this.deptName = "융합생명공학과";
+        this.deptName = DepartmentName.INT_BIO_TECH.getKorName();
     }
 }

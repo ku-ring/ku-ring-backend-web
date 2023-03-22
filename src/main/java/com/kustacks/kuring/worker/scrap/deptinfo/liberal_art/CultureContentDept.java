@@ -21,6 +21,6 @@ public class CultureContentDept extends LiberalArtCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "CULTURECONTENTS", boardSeqs, menuSeqs);
         this.code = "121259";
-        this.deptName = "문화콘텐츠학과";
+        this.deptName = DepartmentName.CULTURE_CONT.getKorName();
     }
 }

@@ -21,6 +21,6 @@ public class GeologyDept extends LiberalArtCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "KUGEO", boardSeqs, menuSeqs);
         this.code = "127107";
-        this.deptName = "지리학과";
+        this.deptName = DepartmentName.GEOLOGY.getKorName();
     }
 }

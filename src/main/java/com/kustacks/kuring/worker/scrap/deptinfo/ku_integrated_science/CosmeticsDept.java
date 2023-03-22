@@ -21,6 +21,6 @@ public class CosmeticsDept extends KuIntegratedScienceCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "COSMETICS", boardSeqs, menuSeqs);
         this.code = "126916";
-        this.deptName = "화장품공학과";
+        this.deptName = DepartmentName.COSMETICS.getKorName();
     }
 }

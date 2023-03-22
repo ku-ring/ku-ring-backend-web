@@ -21,6 +21,6 @@ public class EconomicsDept extends SocialSciencesCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "ECONOMIC", boardSeqs, menuSeqs);
         this.code = "127121";
-        this.deptName = "경제학과";
+        this.deptName = DepartmentName.ECONOMICS.getKorName();
     }
 }

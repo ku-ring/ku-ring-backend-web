@@ -21,6 +21,6 @@ public class EnvironmentalHealthScienceDept extends SanghuoBiologyCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "HEALTHENV", boardSeqs, menuSeqs);
         this.code = "126911";
-        this.deptName = "환경보건과학과";
+        this.deptName = DepartmentName.ENV_HEALTH_SCIENCE.getKorName();
     }
 }

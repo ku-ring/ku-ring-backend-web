@@ -21,6 +21,6 @@ public class PoliticalScienceDept extends SocialSciencesCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "POL", boardSeqs, menuSeqs);
         this.code = "127120";
-        this.deptName = "정치외교학과";
+        this.deptName = DepartmentName.POLITICS.getKorName();
     }
 }

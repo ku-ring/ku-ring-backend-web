@@ -9,9 +9,9 @@ import java.util.Collections;
 import java.util.List;
 
 @RegisterDepartmentMap(key = DepartmentName.SMART_ICT)
-public class SmartICTConvergenceDept extends KuIntegratedScienceCollege {
+public class SmartIctConvergenceDept extends KuIntegratedScienceCollege {
 
-    public SmartICTConvergenceDept() {
+    public SmartIctConvergenceDept() {
         super();
         List<String> professorForumIds = List.of("15596417");
         List<String> forumIds = Collections.emptyList();
@@ -21,6 +21,6 @@ public class SmartICTConvergenceDept extends KuIntegratedScienceCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "SICTE", boardSeqs, menuSeqs);
         this.code = "126915";
-        this.deptName = "스마트ICT융합공학과";
+        this.deptName = DepartmentName.SMART_ICT.getKorName();
     }
 }

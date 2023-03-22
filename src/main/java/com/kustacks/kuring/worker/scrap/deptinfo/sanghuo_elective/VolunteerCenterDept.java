@@ -22,6 +22,6 @@ public class VolunteerCenterDept extends SanghuoCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "VOLUNTEER", boardSeqs, menuSeqs);
         this.code = "127424";
-        this.deptName = "사회봉사센터";
+        this.deptName = DepartmentName.VOLUNTEER.getKorName();
     }
 }

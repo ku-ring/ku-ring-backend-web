@@ -21,6 +21,6 @@ public class MediaCommunicationDept extends LiberalArtCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "COMM", boardSeqs, menuSeqs);
         this.code = "122281";
-        this.deptName = "미디어커뮤니케이션학과";
+        this.deptName = DepartmentName.MEDIA_COMM.getKorName();
     }
 }

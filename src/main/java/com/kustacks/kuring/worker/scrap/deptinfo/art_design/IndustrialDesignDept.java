@@ -21,6 +21,6 @@ public class IndustrialDesignDept extends ArtDesignCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "DESIGNID", boardSeqs, menuSeqs);
         this.code = "122403";
-        this.deptName = "산업디자인학과";
+        this.deptName = DepartmentName.IND_DESIGN.getKorName();
     }
 }

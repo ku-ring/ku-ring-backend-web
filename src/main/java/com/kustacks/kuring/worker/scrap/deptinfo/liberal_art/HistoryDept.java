@@ -21,6 +21,6 @@ public class HistoryDept extends LiberalArtCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "KHISTORY", boardSeqs, menuSeqs);
         this.code = "121257";
-        this.deptName = "사학과";
+        this.deptName = DepartmentName.HISTORY.getKorName();
     }
 }

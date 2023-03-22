@@ -22,6 +22,6 @@ public class PreVeterinaryDept extends VeterinaryMedicineCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "VETERINARY", boardSeqs, menuSeqs);
         this.code = "105091";
-        this.deptName = "수의예과";
+        this.deptName = DepartmentName.VET_PRE.getKorName();
     }
 }

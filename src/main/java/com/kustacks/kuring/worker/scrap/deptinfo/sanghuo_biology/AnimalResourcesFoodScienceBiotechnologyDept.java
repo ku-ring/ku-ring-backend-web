@@ -21,6 +21,6 @@ public class AnimalResourcesFoodScienceBiotechnologyDept extends SanghuoBiologyC
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "FOODBIO", boardSeqs, menuSeqs);
         this.code = "126909";
-        this.deptName = "축산식품생명공학과";
+        this.deptName = DepartmentName.ANIMAL_RESOURCES.getKorName();
     }
 }

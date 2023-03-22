@@ -21,6 +21,6 @@ public class CivilEnvironmentDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "CIVILENV", boardSeqs, menuSeqs);
         this.code = "127108";
-        this.deptName = "사회환경공학부";
+        this.deptName = DepartmentName.CIVIL_ENV.getKorName();
     }
 }

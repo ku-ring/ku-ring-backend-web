@@ -24,6 +24,6 @@ public class BiologicalSciencesDept extends SanghuoBiologyCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "BIOSCIENCE", boardSeqs, menuSeqs);
         this.code = "126906";
-        this.deptName = "생명과학특성학과";
+        this.deptName = DepartmentName.BIO_SCIENCE.getKorName();
     }
 }

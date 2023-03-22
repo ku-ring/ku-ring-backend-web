@@ -21,6 +21,6 @@ public class AppliedStatisticsDept extends SocialSciencesCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "STAT", boardSeqs, menuSeqs);
         this.code = "127124";
-        this.deptName = "응용통계학과";
+        this.deptName = DepartmentName.STATISTICS.getKorName();
     }
 }

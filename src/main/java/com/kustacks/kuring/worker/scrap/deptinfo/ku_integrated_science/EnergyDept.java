@@ -21,6 +21,6 @@ public class EnergyDept extends KuIntegratedScienceCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "ENERGY", boardSeqs, menuSeqs);
         this.code = "126913";
-        this.deptName = "미래에너지공학과";
+        this.deptName = DepartmentName.ENERGY.getKorName();
     }
 }
