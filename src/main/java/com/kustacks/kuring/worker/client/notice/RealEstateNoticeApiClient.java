@@ -5,7 +5,6 @@ import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.client.staff.JsoupClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
-import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,6 @@ import java.util.List;
 import static com.kustacks.kuring.worker.client.staff.StaffApiClient.SCRAP_TIMEOUT;
 
 @Component
-@RequiredArgsConstructor
 public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResultDto, DeptInfo> {
 
     private static final int PAGE_NUM = 1;
@@ -28,6 +26,11 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private final JsoupClient jsoupClient;
     private final RealEstateProperties realEstateProperties;
+
+    public RealEstateNoticeApiClient(JsoupClient normalJsoupClient, RealEstateProperties realEstateProperties) {
+        this.jsoupClient = normalJsoupClient;
+        this.realEstateProperties = realEstateProperties;
+    }
 
     @Override
     public List<ScrapingResultDto> request(DeptInfo deptInfo) throws InternalLogicException {
@@ -88,7 +91,7 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private String createRequestUrl(String sca, int pageNum) {
         return UriComponentsBuilder
-                .fromUriString(realEstateProperties.getRealEstateListUrl())
+                .fromUriString(realEstateProperties.getListUrl())
                 .queryParam("sca", sca)
                 .queryParam("page", pageNum)
                 .build()
@@ -97,7 +100,7 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private String createViewUrl(String sca) {
         return UriComponentsBuilder
-                .fromUriString(realEstateProperties.getRealEstateViewUrl())
+                .fromUriString(realEstateProperties.getViewUrl())
                 .queryParam("sca", sca)
                 .queryParam("wr_id", "")
                 .build()

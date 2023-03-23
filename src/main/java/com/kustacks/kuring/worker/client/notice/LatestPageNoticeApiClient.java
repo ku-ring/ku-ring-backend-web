@@ -5,7 +5,6 @@ import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.client.staff.JsoupClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -20,7 +19,6 @@ import static com.kustacks.kuring.worker.client.staff.StaffApiClient.SCRAP_TIMEO
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResultDto, DeptInfo> {
 
     private static final int PAGE_NUM = 1;    // recentPage는 pageNum 인자가 1부터 시작
@@ -28,6 +26,11 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private final JsoupClient jsoupClient;
     private final LatestPageProperties latestPageProperties;
+
+    public LatestPageNoticeApiClient(JsoupClient normalJsoupClient, LatestPageProperties latestPageProperties) {
+        this.jsoupClient = normalJsoupClient;
+        this.latestPageProperties = latestPageProperties;
+    }
 
     @Override
     public List<ScrapingResultDto> request(DeptInfo deptInfo) throws InternalLogicException {
@@ -101,7 +104,7 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
     }
 
     private String createRequestUrl(String siteId, String boardSeq, String menuSeq, int curPage, int pageNum) {
-        return UriComponentsBuilder.fromUriString(latestPageProperties.getRecentListUrl())
+        return UriComponentsBuilder.fromUriString(latestPageProperties.getListUrl())
                 .queryParam("siteId", siteId)
                 .queryParam("boardSeq", boardSeq)
                 .queryParam("menuSeq", menuSeq)
@@ -112,7 +115,7 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
     }
 
     private String createViewUrl(String siteId, String boardSeq, String menuSeq) {
-        return UriComponentsBuilder.fromUriString(latestPageProperties.getRecentViewUrl())
+        return UriComponentsBuilder.fromUriString(latestPageProperties.getViewUrl())
                 .queryParam("siteId", siteId)
                 .queryParam("boardSeq", boardSeq)
                 .queryParam("menuSeq", menuSeq)

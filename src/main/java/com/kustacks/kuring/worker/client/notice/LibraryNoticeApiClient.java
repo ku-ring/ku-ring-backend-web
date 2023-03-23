@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class LibraryNoticeApiClient implements NoticeApiClient {
+public class LibraryNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDTO, CategoryName> {
 
     private static final int MAX_REQUEST_COUNT = 2;
 
@@ -36,7 +36,7 @@ public class LibraryNoticeApiClient implements NoticeApiClient {
     }
 
     @Override
-    public List<CommonNoticeFormatDTO> getNotices(CategoryName categoryName) throws InternalLogicException {
+    public List<CommonNoticeFormatDTO> request(CategoryName categoryName) throws InternalLogicException {
         List<LibraryNoticeDTO> libraryNoticeDtoList = scrapLibraryNoticeDtos();
         return convertToCommonFormatDto(libraryNoticeDtoList);
     }
