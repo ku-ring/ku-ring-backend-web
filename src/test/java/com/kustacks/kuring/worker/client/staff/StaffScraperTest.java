@@ -6,15 +6,19 @@ import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.client.staff.dto.TestStaffDTO;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
-import com.kustacks.kuring.worker.scrap.parser.staff.StaffEachDeptHtmlParser;
-import com.kustacks.kuring.worker.scrap.parser.staff.StaffHtmlParser;
-import com.kustacks.kuring.worker.scrap.parser.notice.RealEstateHtmlParser;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.LivingDesignDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.liberal_art.KoreanDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
-import org.junit.jupiter.api.*;
+import com.kustacks.kuring.worker.scrap.parser.notice.RealEstateStaffHtmlParser;
+import com.kustacks.kuring.worker.scrap.parser.staff.StaffEachDeptHtmlParser;
+import com.kustacks.kuring.worker.scrap.parser.staff.StaffHtmlParser;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.HttpRequest;
@@ -44,7 +48,7 @@ import static org.mockserver.model.HttpResponse.response;
 @SpringJUnitConfig({
         StaffScraper.class,
         EachDeptStaffApiClient.class, KuStaffApiClient.class, RealEstateStaffApiClient.class,
-        StaffEachDeptHtmlParser.class, StaffHtmlParser.class, RealEstateHtmlParser.class,
+        StaffEachDeptHtmlParser.class, StaffHtmlParser.class, RealEstateStaffHtmlParser.class,
         NormalJsoupClient.class,
         KoreanDept.class, LivingDesignDept.class, CommunicationDesignDept.class, RealEstateDept.class,
         ObjectMapper.class})
@@ -145,7 +149,7 @@ public class StaffScraperTest {
             List<TestStaffDTO> answers = getAnswers("staffpages/" + folderName + "/answers");
             for (StaffDto result : staffDtoList) {
                 for (TestStaffDTO answer : answers) {
-                    if(compareDTO(result, answer)) {
+                    if (compareDTO(result, answer)) {
                         ++correct;
                         break;
                     }
@@ -161,7 +165,7 @@ public class StaffScraperTest {
 
             HttpRequest request = request().withMethod("GET").withPath(requestPath);
             boolean isEachDept = pfForumId.length() > 0;
-            if(isEachDept) {
+            if (isEachDept) {
                 request.withQueryStringParameter("pfForumId", pfForumId);
             }
 
@@ -177,13 +181,13 @@ public class StaffScraperTest {
         private List<TestStaffDTO> getAnswers(String answerPath) {
 
             List<TestStaffDTO> staffDTOList = new LinkedList<>();
-            int idx=1;
-            while(true) {
+            int idx = 1;
+            while (true) {
                 try {
                     String answerStr = readAnswer(answerPath, idx);
                     staffDTOList.add(objectMapper.readValue(answerStr, TestStaffDTO.class));
                     ++idx;
-                } catch(IOException e) {
+                } catch (IOException e) {
                     return staffDTOList;
                 }
             }
@@ -248,7 +252,7 @@ public class StaffScraperTest {
 
                 HttpRequest request = request().withMethod("GET").withPath(requestPath);
                 boolean isEachDept = pfForumId.length() > 0;
-                if(isEachDept) {
+                if (isEachDept) {
                     request.withQueryStringParameter("pfForumId", pfForumId);
                 }
 
@@ -310,7 +314,7 @@ public class StaffScraperTest {
 
                 HttpRequest request = request().withMethod("GET").withPath(requestPath);
                 boolean isEachDept = pfForumId.length() > 0;
-                if(isEachDept) {
+                if (isEachDept) {
                     request.withQueryStringParameter("pfForumId", pfForumId);
                 }
 
