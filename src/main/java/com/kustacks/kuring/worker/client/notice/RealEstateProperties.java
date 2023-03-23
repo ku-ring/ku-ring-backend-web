@@ -6,12 +6,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
 @Getter
-@RequiredArgsConstructor
-@ConfigurationProperties(prefix = "notice")
 @ConstructorBinding
+@RequiredArgsConstructor
+@ConfigurationProperties(prefix = "notice.real-estate")
 public class RealEstateProperties {
 
-    private final String realEstateListUrl;
+    private final String listUrl;
 
-    private final String realEstateViewUrl;
+    private final String viewUrl;
 }

@@ -6,12 +6,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
 @Getter
-@RequiredArgsConstructor
-@ConfigurationProperties(prefix = "notice")
 @ConstructorBinding
+@RequiredArgsConstructor
+@ConfigurationProperties(prefix = "notice.recent")
 public class LatestPageProperties {
 
-    private final String recentListUrl;
+    private final String listUrl;
 
-    private final String recentViewUrl;
+    private final String viewUrl;
 }
