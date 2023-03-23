@@ -2,7 +2,10 @@ package com.kustacks.kuring.worker.client.notice;
 
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.utils.converter.DTOConverter;
+import com.kustacks.kuring.common.utils.converter.KuisNoticeDTOToCommonFormatDTOConverter;
 import com.kustacks.kuring.worker.CategoryName;
+import com.kustacks.kuring.worker.client.auth.KuisAuthManager;
 import com.kustacks.kuring.worker.update.notice.dto.request.BachelorKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.EmploymentKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.IndustryUnivKuisNoticeRequestBody;
@@ -15,11 +18,13 @@ import com.kustacks.kuring.worker.update.notice.dto.request.StudentKuisNoticeReq
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDTO;
 import com.kustacks.kuring.worker.update.notice.dto.response.KuisNoticeDTO;
 import com.kustacks.kuring.worker.update.notice.dto.response.KuisNoticeResponseDTO;
-import com.kustacks.kuring.common.utils.converter.DTOConverter;
-import com.kustacks.kuring.common.utils.converter.KuisNoticeDTOToCommonFormatDTOConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -32,7 +37,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class KuisNoticeApiClient implements NoticeApiClient {
+public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDTO, CategoryName> {
 
     @Value("${notice.referer}")
     private String noticeReferer;
@@ -75,7 +80,7 @@ public class KuisNoticeApiClient implements NoticeApiClient {
 
     @Override
     @Retryable(value = {InternalLogicException.class})
-    public List<CommonNoticeFormatDTO> getNotices(CategoryName categoryName) throws InternalLogicException {
+    public List<CommonNoticeFormatDTO> request(CategoryName categoryName) throws InternalLogicException {
 
         // sessionId 획득
         String sessionId = kuisAuthManager.getSessionId();

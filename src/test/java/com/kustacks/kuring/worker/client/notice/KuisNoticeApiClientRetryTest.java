@@ -6,6 +6,7 @@ import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.CategoryName;
 import com.kustacks.kuring.common.utils.converter.KuisNoticeDTOToCommonFormatDTOConverter;
+import com.kustacks.kuring.worker.client.auth.KuisAuthManager;
 import com.kustacks.kuring.worker.update.notice.dto.request.BachelorKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.EmploymentKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.IndustryUnivKuisNoticeRequestBody;
@@ -68,7 +69,7 @@ public class KuisNoticeApiClientRetryTest {
         given(kuisAuthManager.getSessionId()).willThrow(new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE, new RestClientException("로그인 세션 획득 실패")));
 
         // when, then
-        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.getNotices(CategoryName.BACHELOR));
+        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.request(CategoryName.BACHELOR));
         assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
     }
 }
