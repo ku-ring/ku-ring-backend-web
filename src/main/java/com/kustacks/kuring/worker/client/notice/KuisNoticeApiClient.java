@@ -15,7 +15,7 @@ import com.kustacks.kuring.worker.update.notice.dto.request.NationalKuisNoticeRe
 import com.kustacks.kuring.worker.update.notice.dto.request.NormalKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.ScholarshipKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.StudentKuisNoticeRequestBody;
-import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDTO;
+import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import com.kustacks.kuring.worker.update.notice.dto.response.KuisNoticeDTO;
 import com.kustacks.kuring.worker.update.notice.dto.response.KuisNoticeResponseDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDTO, CategoryName> {
+public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDto, CategoryName> {
 
     @Value("${notice.referer}")
     private String noticeReferer;
@@ -80,7 +80,7 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDT
 
     @Override
     @Retryable(value = {InternalLogicException.class})
-    public List<CommonNoticeFormatDTO> request(CategoryName categoryName) throws InternalLogicException {
+    public List<CommonNoticeFormatDto> request(CategoryName categoryName) throws InternalLogicException {
 
         // sessionId 획득
         String sessionId = kuisAuthManager.getSessionId();
@@ -126,11 +126,11 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDT
         return httpHeaders;
     }
 
-    private List<CommonNoticeFormatDTO> convertToCommonFormatDTO(List<KuisNoticeDTO> kuisNoticeDTOList) {
+    private List<CommonNoticeFormatDto> convertToCommonFormatDTO(List<KuisNoticeDTO> kuisNoticeDTOList) {
 
-        List<CommonNoticeFormatDTO> converted = new LinkedList<>();
+        List<CommonNoticeFormatDto> converted = new LinkedList<>();
         for (KuisNoticeDTO kuisNoticeDTO : kuisNoticeDTOList) {
-            converted.add((CommonNoticeFormatDTO) dtoConverter.convert(kuisNoticeDTO));
+            converted.add((CommonNoticeFormatDto) dtoConverter.convert(kuisNoticeDTO));
         }
 
         return converted;

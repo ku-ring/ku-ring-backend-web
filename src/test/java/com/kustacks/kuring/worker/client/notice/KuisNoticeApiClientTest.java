@@ -12,7 +12,7 @@ import com.kustacks.kuring.worker.update.notice.dto.request.NationalKuisNoticeRe
 import com.kustacks.kuring.worker.update.notice.dto.request.NormalKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.ScholarshipKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.StudentKuisNoticeRequestBody;
-import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDTO;
+import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import com.kustacks.kuring.common.utils.converter.KuisNoticeDTOToCommonFormatDTOConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -88,13 +88,13 @@ public class KuisNoticeApiClientTest {
         String notice2PostedDate = "20211219";
         String notice2Subject = "2022학년도 전과 신청 안내 (2021. 12. 20. 수정)";
 
-        List<CommonNoticeFormatDTO> expectedNotices = new ArrayList<>(2);
-        CommonNoticeFormatDTO notice1 = CommonNoticeFormatDTO.builder()
+        List<CommonNoticeFormatDto> expectedNotices = new ArrayList<>(2);
+        CommonNoticeFormatDto notice1 = CommonNoticeFormatDto.builder()
                 .articleId(notice1ArticleId)
                 .postedDate(notice1PostedDate)
                 .subject(notice1Subject)
                 .build();
-        CommonNoticeFormatDTO notice2 = CommonNoticeFormatDTO.builder()
+        CommonNoticeFormatDto notice2 = CommonNoticeFormatDto.builder()
                 .articleId(notice2ArticleId)
                 .postedDate(notice2PostedDate)
                 .subject(notice2Subject)
@@ -111,7 +111,7 @@ public class KuisNoticeApiClientTest {
         server.expect(requestTo(noticeUrl)).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(expectedResponseBody));
 
         // when
-        List<CommonNoticeFormatDTO> notices = kuisNoticeAPIClient.request(CategoryName.BACHELOR);
+        List<CommonNoticeFormatDto> notices = kuisNoticeAPIClient.request(CategoryName.BACHELOR);
 
         // then
         for(int i=0; i<2 ;++i) {

@@ -12,7 +12,7 @@ import com.kustacks.kuring.common.utils.converter.DateConverter;
 import com.kustacks.kuring.worker.CategoryName;
 import com.kustacks.kuring.worker.update.Updater;
 import com.kustacks.kuring.worker.client.notice.NoticeApiClient;
-import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDTO;
+import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
 import io.sentry.Sentry;
@@ -62,7 +62,7 @@ public class NoticeUpdater implements Updater {
     public void update() {
         log.info("========== 공지 업데이트 시작 ==========");
 
-        Map<CategoryName, List<CommonNoticeFormatDTO>> apiNoticesMap = scrapNewNotices();
+        Map<CategoryName, List<CommonNoticeFormatDto>> apiNoticesMap = scrapNewNotices();
 
         List<Notice> willBeNotificationNotices = compareAndUpdateDB(apiNoticesMap);
 
@@ -76,12 +76,12 @@ public class NoticeUpdater implements Updater {
     /*
     학사, 장학, 취창업, 국제, 학생, 산학, 일반, 도서관 공지 갱신
     */
-    private Map<CategoryName, List<CommonNoticeFormatDTO>> scrapNewNotices() {
-        Map<CategoryName, List<CommonNoticeFormatDTO>> apiNoticesMap = new HashMap<>();
+    private Map<CategoryName, List<CommonNoticeFormatDto>> scrapNewNotices() {
+        Map<CategoryName, List<CommonNoticeFormatDto>> apiNoticesMap = new HashMap<>();
 
         for (CategoryName categoryName : CategoryName.values()) {
             try {
-                List<CommonNoticeFormatDTO> commonNoticeFormatDTO = noticeAPIClientMap.get(categoryName).getNotices(categoryName);
+                List<CommonNoticeFormatDto> commonNoticeFormatDTO = noticeAPIClientMap.get(categoryName).request(categoryName);
                 apiNoticesMap.put(categoryName, commonNoticeFormatDTO);
             } catch (InternalLogicException e) {
                 log.info("{}", e.getErrorCode().getMessage());
@@ -94,7 +94,7 @@ public class NoticeUpdater implements Updater {
         return apiNoticesMap;
     }
 
-    private List<Notice> compareAndUpdateDB(Map<CategoryName, List<CommonNoticeFormatDTO>> apiNoticesMap) {
+    private List<Notice> compareAndUpdateDB(Map<CategoryName, List<CommonNoticeFormatDto>> apiNoticesMap) {
         // DB에 있는 공지 데이터 카테고리별로 꺼내와서
         // kuisNoticeResponseBody에 있는 데이터가 DB에는 없는 경우 -> DB에 공지 추가
         // DB에 있는 데이터가 kuisNoticeResponseBody에는 없는 경우 -> DB에 공지 삭제
@@ -109,7 +109,7 @@ public class NoticeUpdater implements Updater {
             Category noticeCategory = categoryMap.get(categoryFullName);
 
             // categoryName에 대응하는, ku api로 받아온 공지 데이터
-            List<CommonNoticeFormatDTO> commonNoticeFormatDTOList = apiNoticesMap.get(categoryName);
+            List<CommonNoticeFormatDto> commonNoticeFormatDtoList = apiNoticesMap.get(categoryName);
 
             // categoryName에 대응하는, DB에 존재하는 공지 데이터
             Map<String, Notice> dbNoticeMap = noticeRepository.findNoticeMapByCategory(noticeCategory);
@@ -119,9 +119,9 @@ public class NoticeUpdater implements Updater {
             // dbNoticeList에 없다면 공지 추가 (실제 DB에 추가)
             // 작업이 끝난 후 dbNoticeList에 공지가 남아있다면, 해당 공지들은 DB에서 삭제 (실제 DB에 삭제)
             List<Notice> newNotices = new LinkedList<>(); // DB에 추가할 공지 임시 저장
-            Iterator<CommonNoticeFormatDTO> noticeIterator = commonNoticeFormatDTOList.iterator();
+            Iterator<CommonNoticeFormatDto> noticeIterator = commonNoticeFormatDtoList.iterator();
             while(noticeIterator.hasNext()) {
-                CommonNoticeFormatDTO apiNotice = noticeIterator.next();
+                CommonNoticeFormatDto apiNotice = noticeIterator.next();
                 Notice notice = dbNoticeMap.get(apiNotice.getArticleId());
                 if(notice == null) {
                     newNotices.add(new Notice(apiNotice.getArticleId(),

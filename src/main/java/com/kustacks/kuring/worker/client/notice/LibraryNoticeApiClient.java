@@ -5,7 +5,7 @@ import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.utils.converter.DTOConverter;
 import com.kustacks.kuring.common.utils.converter.LibraryNoticeDTOToCommonFormatDTOConverter;
 import com.kustacks.kuring.worker.CategoryName;
-import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDTO;
+import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import com.kustacks.kuring.worker.update.notice.dto.response.LibraryNoticeDTO;
 import com.kustacks.kuring.worker.update.notice.dto.response.LibraryNoticeResponseDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class LibraryNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDTO, CategoryName> {
+public class LibraryNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDto, CategoryName> {
 
     private static final int MAX_REQUEST_COUNT = 2;
 
@@ -36,7 +36,7 @@ public class LibraryNoticeApiClient implements NoticeApiClient<CommonNoticeForma
     }
 
     @Override
-    public List<CommonNoticeFormatDTO> request(CategoryName categoryName) throws InternalLogicException {
+    public List<CommonNoticeFormatDto> request(CategoryName categoryName) throws InternalLogicException {
         List<LibraryNoticeDTO> libraryNoticeDtoList = scrapLibraryNoticeDtos();
         return convertToCommonFormatDto(libraryNoticeDtoList);
     }
@@ -70,9 +70,9 @@ public class LibraryNoticeApiClient implements NoticeApiClient<CommonNoticeForma
                 .build().toString();
     }
 
-    private List<CommonNoticeFormatDTO> convertToCommonFormatDto(List<LibraryNoticeDTO> libraryNoticeDtoList) {
+    private List<CommonNoticeFormatDto> convertToCommonFormatDto(List<LibraryNoticeDTO> libraryNoticeDtoList) {
         return libraryNoticeDtoList.stream()
-                .map(dto -> (CommonNoticeFormatDTO) dtoConverter.convert(dto))
+                .map(dto -> (CommonNoticeFormatDto) dtoConverter.convert(dto))
                 .collect(Collectors.toList());
     }
 
