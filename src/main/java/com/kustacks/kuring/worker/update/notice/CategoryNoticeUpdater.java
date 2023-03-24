@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
-public class NoticeUpdater implements Updater {
+public class CategoryNoticeUpdater implements Updater {
 
     private final Map<CategoryName, NoticeApiClient> noticeAPIClientMap;
     private final DTOConverter dtoConverter;
@@ -42,12 +42,12 @@ public class NoticeUpdater implements Updater {
 
     private Map<String, Category> categoryMap;
 
-    public NoticeUpdater(FirebaseService firebaseService,
-                         DTOConverter noticeEntityToNoticeMessageDTOConverter,
-                         DateConverter ymdhmsToYmdConverter,
-                         Map<CategoryName, NoticeApiClient> noticeAPIClientMap,
-                         NoticeRepository noticeRepository,
-                         CategoryRepository categoryRepository)
+    public CategoryNoticeUpdater(FirebaseService firebaseService,
+                                 DTOConverter noticeEntityToNoticeMessageDTOConverter,
+                                 DateConverter ymdhmsToYmdConverter,
+                                 Map<CategoryName, NoticeApiClient> noticeAPIClientMap,
+                                 NoticeRepository noticeRepository,
+                                 CategoryRepository categoryRepository)
     {
         this.firebaseService = firebaseService;
         this.dtoConverter = noticeEntityToNoticeMessageDTOConverter;
