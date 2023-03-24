@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kustacks.kuring.common.dto.StaffDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.worker.client.notice.LatestPageNoticeApiClient;
+import com.kustacks.kuring.worker.client.notice.LatestPageProperties;
 import com.kustacks.kuring.worker.client.staff.dto.TestStaffDTO;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
@@ -11,6 +13,7 @@ import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignD
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.LivingDesignDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.liberal_art.KoreanDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
+import com.kustacks.kuring.worker.scrap.parser.notice.LatestPageNoticeHtmlParser;
 import com.kustacks.kuring.worker.scrap.parser.notice.RealEstateStaffHtmlParser;
 import com.kustacks.kuring.worker.scrap.parser.staff.StaffEachDeptHtmlParser;
 import com.kustacks.kuring.worker.scrap.parser.staff.StaffHtmlParser;
@@ -25,6 +28,7 @@ import org.mockserver.model.HttpRequest;
 import org.mockserver.model.HttpResponse;
 import org.mockserver.model.MediaType;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestPropertySource;
@@ -47,11 +51,13 @@ import static org.mockserver.model.HttpResponse.response;
 
 @SpringJUnitConfig({
         StaffScraper.class,
+        LatestPageNoticeApiClient.class, LatestPageNoticeHtmlParser.class,
         EachDeptStaffApiClient.class, KuStaffApiClient.class, RealEstateStaffApiClient.class,
         StaffEachDeptHtmlParser.class, StaffHtmlParser.class, RealEstateStaffHtmlParser.class,
         NormalJsoupClient.class,
         KoreanDept.class, LivingDesignDept.class, CommunicationDesignDept.class, RealEstateDept.class,
         ObjectMapper.class})
+@EnableConfigurationProperties(value = LatestPageProperties.class)
 @TestPropertySource("classpath:test-constants.properties")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class StaffScraperTest {

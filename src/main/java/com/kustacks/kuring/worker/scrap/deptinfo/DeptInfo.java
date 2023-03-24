@@ -1,9 +1,10 @@
 package com.kustacks.kuring.worker.scrap.deptinfo;
 
+import com.kustacks.kuring.worker.client.notice.NoticeApiClient;
+import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
+import com.kustacks.kuring.worker.scrap.parser.HtmlParser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -14,17 +15,8 @@ public class DeptInfo {
     protected String collegeName;
     protected StaffScrapInfo staffScrapInfo;
     protected NoticeScrapInfo noticeScrapInfo;
-
-    public DeptInfo(String code, String deptName, String collegeName,
-                    List<String> forumIds, String siteId, List<String> boardSeqs, List<String> menuSeqs,
-                    List<String> professorForumIds) {
-
-        this.code = code;
-        this.deptName = deptName;
-        this.collegeName = collegeName;
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(forumIds, siteId, boardSeqs, menuSeqs);
-    }
+    protected NoticeApiClient<ScrapingResultDto, DeptInfo> noticeApiClient;
+    protected HtmlParser htmlParser;
 
     @Override
     public String toString() {
