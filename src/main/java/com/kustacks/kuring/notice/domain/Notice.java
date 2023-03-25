@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -38,16 +39,20 @@ public class Notice {
     @Column(name = "subject", length = 128, nullable = false)
     private String subject;
 
+    @Embedded
+    private Url url;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_name", nullable = false)
     private Category category;
 
-    public Notice(String articleId, String postedDate, String updatedDate, String subject, Category category) {
+    public Notice(String articleId, String postedDate, String updatedDate, String subject, Category category, String fullUrl) {
         this.articleId = articleId;
         this.postedDate = postedDate;
         this.updatedDate = updatedDate;
         this.subject = subject;
         this.category = category;
+        this.url = new Url(fullUrl);
     }
 
     public boolean isSameCategoryName(CategoryName categoryName) {

@@ -128,7 +128,8 @@ public class CategoryNoticeUpdater implements Updater {
                             apiNotice.getPostedDate(),
                             apiNotice.getUpdatedDate(),
                             apiNotice.getSubject(),
-                            noticeCategory));
+                            noticeCategory,
+                            apiNotice.getFullUrl()));
                 } else {
                     noticeIterator.remove();
                     dbNoticeMap.remove(apiNotice.getArticleId());
