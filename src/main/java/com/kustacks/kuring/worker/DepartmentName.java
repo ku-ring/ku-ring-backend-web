@@ -1,6 +1,11 @@
 package com.kustacks.kuring.worker;
 
+import com.kustacks.kuring.common.error.DomainLogicException;
 import lombok.Getter;
+
+import java.util.Arrays;
+
+import static com.kustacks.kuring.common.error.ErrorCode.DEPARTMENT_NOT_FOUND;
 
 @Getter
 public enum DepartmentName {
@@ -89,5 +94,16 @@ public enum DepartmentName {
         this.name = name;
         this.shortName = shortName;
         this.korName = korName;
+    }
+
+    public boolean isSameKorName(String name) {
+        return this.korName.equals(name);
+    }
+
+    public static DepartmentName fromKor(String departmentName) {
+        return Arrays.stream(DepartmentName.values())
+                .filter(d -> d.isSameKorName(departmentName))
+                .findFirst()
+                .orElseThrow(() -> new DomainLogicException(DEPARTMENT_NOT_FOUND));
     }
 }
