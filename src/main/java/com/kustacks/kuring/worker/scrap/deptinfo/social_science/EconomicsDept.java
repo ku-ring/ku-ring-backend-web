@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.social_science;
 
 import com.kustacks.kuring.worker.DepartmentName;
+import com.kustacks.kuring.worker.client.notice.LatestPageProperties;
 import com.kustacks.kuring.worker.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -16,10 +17,11 @@ import java.util.List;
 public class EconomicsDept extends SocialSciencesCollege {
 
     public EconomicsDept(NoticeApiClient<ScrapingResultDto, DeptInfo> latestPageNoticeApiClient,
-                         NoticeHtmlParser latestPageNoticeHtmlParserTwo) {
+                         NoticeHtmlParser latestPageNoticeHtmlParserTwo, LatestPageProperties latestPageProperties) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
         this.htmlParser = latestPageNoticeHtmlParserTwo;
+        this.latestPageProperties = latestPageProperties;
 
         List<String> professorForumIds = List.of("9842");
         List<String> forumIds = Collections.emptyList();
