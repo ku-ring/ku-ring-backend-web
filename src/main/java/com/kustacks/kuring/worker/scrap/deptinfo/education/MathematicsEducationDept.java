@@ -30,6 +30,6 @@ public class MathematicsEducationDept extends EducationCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "MATHEDU", boardSeqs, menuSeqs);
         this.code = "104991";
-        this.deptName = DepartmentName.MATH_EDU.getKorName();
+        this.departmentName = DepartmentName.MATH_EDU;
     }
 }

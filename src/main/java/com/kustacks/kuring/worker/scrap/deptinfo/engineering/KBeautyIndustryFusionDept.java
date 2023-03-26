@@ -28,6 +28,6 @@ public class KBeautyIndustryFusionDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "KBEAUTY", boardSeqs, menuSeqs);
         this.code = "127432";
-        this.deptName = DepartmentName.KBEAUTY.getKorName();
+        this.departmentName = DepartmentName.KBEAUTY;
     }
 }

@@ -30,6 +30,6 @@ public class InterDisciplinaryStudiesDept extends SocialSciencesCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "DOLA", boardSeqs, menuSeqs);
         this.code = "127125";
-        this.deptName = DepartmentName.DISCI_STUDIES.getKorName();
+        this.departmentName = DepartmentName.DISCI_STUDIES;
     }
 }

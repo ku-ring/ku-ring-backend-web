@@ -30,6 +30,6 @@ public class ChemicalDivisionDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "CHEMENG", boardSeqs, menuSeqs);
         this.code = "127111";
-        this.deptName = DepartmentName.CHEMI_DIV.getKorName();
+        this.departmentName = DepartmentName.CHEMI_DIV;
     }
 }

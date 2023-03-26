@@ -30,6 +30,6 @@ public class TechnologicalBusinessDept extends BusinessCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "MOT", boardSeqs, menuSeqs);
         this.code = "121174";
-        this.deptName = DepartmentName.TECH_BUSI.getKorName();
+        this.departmentName = DepartmentName.TECH_BUSI;
     }
 }

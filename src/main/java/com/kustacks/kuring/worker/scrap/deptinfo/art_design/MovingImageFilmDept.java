@@ -30,6 +30,6 @@ public class MovingImageFilmDept extends ArtDesignCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "MOVINGIMAGES", boardSeqs, menuSeqs);
         this.code = "127128";
-        this.deptName = DepartmentName.MOV_IMAGE.getKorName();
+        this.departmentName = DepartmentName.MOV_IMAGE;
     }
 }

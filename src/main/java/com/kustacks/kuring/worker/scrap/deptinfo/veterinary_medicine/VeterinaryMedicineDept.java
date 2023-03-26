@@ -8,7 +8,6 @@ import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
-import lombok.NoArgsConstructor;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +29,6 @@ public class VeterinaryMedicineDept extends VeterinaryMedicineCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "VETERINARY", boardSeqs, menuSeqs);
         this.code = "105101";
-        this.deptName = DepartmentName.VET_MEDICINE.getKorName();
+        this.departmentName = DepartmentName.VET_MEDICINE;
     }
 }

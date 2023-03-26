@@ -30,6 +30,6 @@ public class EnergyDept extends KuIntegratedScienceCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "ENERGY", boardSeqs, menuSeqs);
         this.code = "126913";
-        this.deptName = DepartmentName.ENERGY.getKorName();
+        this.departmentName = DepartmentName.ENERGY;
     }
 }

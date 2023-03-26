@@ -30,6 +30,6 @@ public class IndustrialDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "KIES", boardSeqs, menuSeqs);
         this.code = "127430";
-        this.deptName = DepartmentName.INDUSTRIAL.getKorName();
+        this.departmentName = DepartmentName.INDUSTRIAL;
     }
 }

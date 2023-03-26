@@ -30,6 +30,6 @@ public class SmartVehicleDept extends KuIntegratedScienceCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "SMARTVEHICLE", boardSeqs, menuSeqs);
         this.code = "126914";
-        this.deptName = DepartmentName.SMART_VEHICLE.getKorName();
+        this.departmentName = DepartmentName.SMART_VEHICLE;
     }
 }

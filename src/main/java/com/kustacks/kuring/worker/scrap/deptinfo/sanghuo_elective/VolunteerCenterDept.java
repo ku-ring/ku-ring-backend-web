@@ -8,7 +8,6 @@ import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
-import lombok.NoArgsConstructor;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,12 +24,12 @@ public class VolunteerCenterDept extends SanghuoCollege {
 
         List<String> professorForumIds = Collections.emptyList();
         List<String> forumIds = Collections.emptyList();
-        List<String> boardSeqs = List.of("773", "774");
-        List<String> menuSeqs = List.of("5528", "5530");
+        List<String> boardSeqs = List.of("773");
+        List<String> menuSeqs = List.of("5528");
 
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "VOLUNTEER", boardSeqs, menuSeqs);
         this.code = "127424";
-        this.deptName = DepartmentName.VOLUNTEER.getKorName();
+        this.departmentName = DepartmentName.VOLUNTEER;
     }
 }

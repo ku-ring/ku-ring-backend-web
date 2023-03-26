@@ -30,6 +30,6 @@ public class CivilEnvironmentDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "CIVILENV", boardSeqs, menuSeqs);
         this.code = "127108";
-        this.deptName = DepartmentName.CIVIL_ENV.getKorName();
+        this.departmentName = DepartmentName.CIVIL_ENV;
     }
 }

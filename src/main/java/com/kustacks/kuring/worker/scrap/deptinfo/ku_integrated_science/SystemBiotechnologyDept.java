@@ -28,6 +28,6 @@ public class SystemBiotechnologyDept extends KuIntegratedScienceCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "SYSTEMBIO", boardSeqs, menuSeqs);
         this.code = "126919";
-        this.deptName = DepartmentName.SYSTEM_BIO_TECH.getKorName();
+        this.departmentName = DepartmentName.SYSTEM_BIO_TECH;
     }
 }

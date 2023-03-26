@@ -8,7 +8,6 @@ import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
-import lombok.NoArgsConstructor;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +29,6 @@ public class EconomicsDept extends SocialSciencesCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "ECONOMIC", boardSeqs, menuSeqs);
         this.code = "127121";
-        this.deptName = DepartmentName.ECONOMICS.getKorName();
+        this.departmentName = DepartmentName.ECONOMICS;
     }
 }

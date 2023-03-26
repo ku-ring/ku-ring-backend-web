@@ -28,6 +28,6 @@ public class ChineseDept extends LiberalArtCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "CHINESE", boardSeqs, menuSeqs);
         this.code = "121255";
-        this.deptName = DepartmentName.CHINESE.getKorName();
+        this.departmentName = DepartmentName.CHINESE;
     }
 }

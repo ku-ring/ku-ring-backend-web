@@ -31,6 +31,6 @@ public class RealEstateDept extends RealEstateCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "REALESTATE", boardSeqs, menuSeqs);
         this.code = "127426";
-        this.deptName = DepartmentName.REAL_ESTATE.getKorName();
+        this.departmentName = DepartmentName.REAL_ESTATE;
     }
 }

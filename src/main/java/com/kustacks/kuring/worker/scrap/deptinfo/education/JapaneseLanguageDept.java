@@ -30,6 +30,6 @@ public class JapaneseLanguageDept extends EducationCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "JAPAN", boardSeqs, menuSeqs);
         this.code = "104981";
-        this.deptName = DepartmentName.JAPANESE_EDU.getKorName();
+        this.departmentName = DepartmentName.JAPANESE_EDU;
     }
 }

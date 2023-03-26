@@ -28,6 +28,6 @@ public class InternationalTradeDept extends SocialSciencesCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "TRADE", boardSeqs, menuSeqs);
         this.code = "127123";
-        this.deptName = DepartmentName.INT_TRADE.getKorName();
+        this.departmentName = DepartmentName.INT_TRADE;
     }
 }

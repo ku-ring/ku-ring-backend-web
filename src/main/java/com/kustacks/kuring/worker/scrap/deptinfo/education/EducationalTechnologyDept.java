@@ -28,6 +28,6 @@ public class EducationalTechnologyDept extends EducationCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "EDUTECH", boardSeqs, menuSeqs);
         this.code = "105031";
-        this.deptName = DepartmentName.EDU_TECH.getKorName();
+        this.departmentName = DepartmentName.EDU_TECH;
     }
 }

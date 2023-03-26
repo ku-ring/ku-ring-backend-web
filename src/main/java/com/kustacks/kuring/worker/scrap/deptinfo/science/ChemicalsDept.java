@@ -27,6 +27,6 @@ public class ChemicalsDept extends ScienceCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "CHEMI", boardSeqs, menuSeqs);
         this.code = "121261";
-        this.deptName = DepartmentName.CHEMICALS.getKorName();
+        this.departmentName = DepartmentName.CHEMICALS;
     }
 }

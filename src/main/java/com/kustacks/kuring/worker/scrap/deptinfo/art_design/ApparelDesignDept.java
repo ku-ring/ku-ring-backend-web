@@ -8,7 +8,6 @@ import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
-import lombok.NoArgsConstructor;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,12 +23,12 @@ public class ApparelDesignDept extends ArtDesignCollege {
 
         List<String> professorForumIds = List.of("9723");
         List<String> forumIds = Collections.emptyList();
-        List<String> boardSeqs = List.of("1007", "1009", "1010");
-        List<String> menuSeqs = List.of("6987", "6991", "6993");
+        List<String> boardSeqs = List.of("1007");
+        List<String> menuSeqs = List.of("6987");
 
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "APPAREL", boardSeqs, menuSeqs);
         this.code = "122404";
-        this.deptName = DepartmentName.APPAREL_DESIGN.getKorName();
+        this.departmentName = DepartmentName.APPAREL_DESIGN;
     }
 }

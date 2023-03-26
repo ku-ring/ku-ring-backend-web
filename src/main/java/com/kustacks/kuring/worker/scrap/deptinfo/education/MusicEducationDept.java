@@ -28,6 +28,6 @@ public class MusicEducationDept extends EducationCollege {
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "MUSICEDU", boardSeqs, menuSeqs);
         this.code = "105011";
-        this.deptName = DepartmentName.MUSIC_EDU.getKorName();
+        this.departmentName = DepartmentName.MUSIC_EDU;
     }
 }

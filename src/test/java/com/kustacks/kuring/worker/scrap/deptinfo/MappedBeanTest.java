@@ -22,6 +22,6 @@ class MappedBeanTest {
         Map deptInfoMap = applicationContext.getBean("departmentNameDeptInfoMap", Map.class);
 
         // then
-        assertThat(deptInfoMap.size()).isEqualTo(63);
+        assertThat(deptInfoMap.size()).isEqualTo(62);
     }
 }
