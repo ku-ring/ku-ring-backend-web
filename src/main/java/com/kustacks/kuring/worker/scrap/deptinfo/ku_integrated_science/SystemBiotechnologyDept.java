@@ -8,9 +8,7 @@ import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
-import lombok.NoArgsConstructor;
 
-import java.util.Collections;
 import java.util.List;
 
 @RegisterDepartmentMap(key = DepartmentName.SYSTEM_BIO_TECH)
@@ -24,8 +22,8 @@ public class SystemBiotechnologyDept extends KuIntegratedScienceCollege {
 
         List<String> professorForumIds = List.of("14795511");
         List<String> forumIds = List.of("14715702");
-        List<String> boardSeqs = Collections.emptyList();
-        List<String> menuSeqs = Collections.emptyList();
+        List<String> boardSeqs = List.of("1544");
+        List<String> menuSeqs = List.of("11499");
 
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "SYSTEMBIO", boardSeqs, menuSeqs);

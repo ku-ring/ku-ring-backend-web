@@ -8,9 +8,7 @@ import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
-import lombok.NoArgsConstructor;
 
-import java.util.Collections;
 import java.util.List;
 
 @RegisterDepartmentMap(key = DepartmentName.INT_TRADE)
@@ -23,9 +21,9 @@ public class InternationalTradeDept extends SocialSciencesCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
 
         List<String> professorForumIds = List.of("15003249");;
-        List<String> forumIds = List.of("9517");;
-        List<String> boardSeqs = Collections.emptyList();
-        List<String> menuSeqs = Collections.emptyList();
+        List<String> forumIds = List.of("9517");
+        List<String> boardSeqs = List.of("1600");
+        List<String> menuSeqs = List.of("11770");
 
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "TRADE", boardSeqs, menuSeqs);

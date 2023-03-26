@@ -8,9 +8,7 @@ import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
-import lombok.NoArgsConstructor;
 
-import java.util.Collections;
 import java.util.List;
 
 @RegisterDepartmentMap(key = DepartmentName.MUSIC_EDU)
@@ -24,8 +22,8 @@ public class MusicEducationDept extends EducationCollege {
 
         List<String> professorForumIds = List.of("9803");
         List<String> forumIds = List.of("9801");
-        List<String> boardSeqs = Collections.emptyList();
-        List<String> menuSeqs = Collections.emptyList();
+        List<String> boardSeqs = List.of("1621");
+        List<String> menuSeqs = List.of("11972");
 
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "MUSICEDU", boardSeqs, menuSeqs);

@@ -8,9 +8,7 @@ import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
-import lombok.NoArgsConstructor;
 
-import java.util.Collections;
 import java.util.List;
 
 @RegisterDepartmentMap(key = DepartmentName.STEM_REGEN)
@@ -24,8 +22,8 @@ public class StemCellRegenerativeBioTechnologyDept extends KuIntegratedScienceCo
 
         List<String> professorForumIds = List.of("14914654");
         List<String> forumIds = List.of("14901014", "14904868");
-        List<String> boardSeqs = Collections.emptyList();
-        List<String> menuSeqs = Collections.emptyList();
+        List<String> boardSeqs = List.of("1517");
+        List<String> menuSeqs = List.of("11305");
 
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "STEMREGENERATION", boardSeqs, menuSeqs);

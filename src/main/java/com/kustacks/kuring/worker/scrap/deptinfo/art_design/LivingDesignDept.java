@@ -24,8 +24,8 @@ public class LivingDesignDept extends ArtDesignCollege {
 
         List<String> professorForumIds = Collections.emptyList();
         List<String> forumIds = List.of("15382254");
-        List<String> boardSeqs = Collections.emptyList();
-        List<String> menuSeqs = Collections.emptyList();
+        List<String> boardSeqs = List.of("1512");
+        List<String> menuSeqs = List.of("11325");
 
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "LIVINGDESIGN", boardSeqs, menuSeqs);

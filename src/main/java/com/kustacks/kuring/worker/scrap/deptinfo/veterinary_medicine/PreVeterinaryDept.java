@@ -24,8 +24,8 @@ public class PreVeterinaryDept extends VeterinaryMedicineCollege {
 
         List<String> professorForumIds = List.of("42372");
         List<String> forumIds = Collections.emptyList();
-        List<String> boardSeqs = Collections.emptyList();
-        List<String> menuSeqs = Collections.emptyList();
+        List<String> boardSeqs = List.of("475");
+        List<String> menuSeqs = List.of("3427");
 
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "VETERINARY", boardSeqs, menuSeqs);
