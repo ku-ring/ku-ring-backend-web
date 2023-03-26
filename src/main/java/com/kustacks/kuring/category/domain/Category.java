@@ -35,7 +35,7 @@ public class Category {
     }
 
     public boolean isSameName(CategoryName categoryName) {
-        return this.name.equals(categoryName);
+        return categoryName.isSameName(this.name);
     }
 
     @Override

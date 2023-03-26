@@ -1,5 +1,7 @@
 package com.kustacks.kuring.config;
 
+import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.worker.CategoryName;
 import com.kustacks.kuring.worker.DepartmentName;
 import com.kustacks.kuring.worker.client.notice.NoticeApiClient;
@@ -17,15 +19,11 @@ import java.util.Map;
 public class MappedBeanConfig {
 
     @Configuration
+    @RequiredArgsConstructor
     public static class APINoticeMappedBeanConfig {
 
         private final NoticeApiClient kuisNoticeApiClient;
         private final NoticeApiClient libraryNoticeApiClient;
-
-        public APINoticeMappedBeanConfig(NoticeApiClient kuisNoticeApiClient, NoticeApiClient libraryNoticeApiClient) {
-            this.kuisNoticeApiClient = kuisNoticeApiClient;
-            this.libraryNoticeApiClient = libraryNoticeApiClient;
-        }
 
         @Bean
         public Map<CategoryName, NoticeApiClient> noticeApiClientMap() {
@@ -40,6 +38,18 @@ public class MappedBeanConfig {
             }
 
             return map;
+        }
+    }
+
+    @Configuration
+    @RequiredArgsConstructor
+    public static class CategoryEntityNameMappedBeanConfig {
+
+        private final CategoryRepository categoryRepository;
+
+        @Bean
+        public Map<String, Category> categoryMap() {
+            return categoryRepository.findAllMap();
         }
     }
 

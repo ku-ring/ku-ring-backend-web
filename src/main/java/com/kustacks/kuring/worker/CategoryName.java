@@ -12,7 +12,8 @@ public enum CategoryName {
     STUDENT("student", "stu", "학생"),
     INDUSTRY_UNIV("industry_university", "ind", "산학"),
     NORMAL("normal", "nor", "일반"),
-    LIBRARY("library", "lib", "도서관");
+    LIBRARY("library", "lib", "도서관"),
+    DEPARTMENT("department", "dep", "학과");
 
     private String name;
     private String shortName;

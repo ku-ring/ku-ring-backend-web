@@ -80,6 +80,10 @@ public class CategoryNoticeUpdater implements Updater {
         Map<CategoryName, List<CommonNoticeFormatDto>> apiNoticesMap = new HashMap<>();
 
         for (CategoryName categoryName : CategoryName.values()) {
+            if(categoryName.isSameName(CategoryName.DEPARTMENT.getName())) {
+                continue;
+            }
+
             try {
                 List<CommonNoticeFormatDto> commonNoticeFormatDTO = noticeAPIClientMap.get(categoryName).request(categoryName);
                 apiNoticesMap.put(categoryName, commonNoticeFormatDTO);
