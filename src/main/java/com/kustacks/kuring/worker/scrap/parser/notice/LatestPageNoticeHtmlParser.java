@@ -22,7 +22,8 @@ public class LatestPageNoticeHtmlParser implements NoticeHtmlParser {
     @Override
     public List<String[]> parse(Document document) {
         try {
-            Elements rows = document.select("#noticeList > tr").select("#dispList > tr");
+            Elements rows = document.select("#noticeList > tr");
+            rows.addAll(document.select("#dispList > tr"));
             return extractNoticeListFromRows(rows);
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE, e);

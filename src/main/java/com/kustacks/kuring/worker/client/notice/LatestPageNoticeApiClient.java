@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -25,26 +24,19 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
     private static final int ARTICLE_NUMBERS_PER_PAGE = 12;
 
     private final JsoupClient jsoupClient;
-    private final LatestPageProperties latestPageProperties;
 
-    public LatestPageNoticeApiClient(JsoupClient normalJsoupClient, LatestPageProperties latestPageProperties) {
+    public LatestPageNoticeApiClient(JsoupClient normalJsoupClient) {
         this.jsoupClient = normalJsoupClient;
-        this.latestPageProperties = latestPageProperties;
     }
 
     @Override
     public List<ScrapingResultDto> request(DeptInfo deptInfo) throws InternalLogicException {
-        List<String> boardSeqs = deptInfo.getNoticeScrapInfo().getBoardSeqs();
-        List<String> menuSeqs = deptInfo.getNoticeScrapInfo().getMenuSeqs();
-        String siteId = deptInfo.getNoticeScrapInfo().getSiteId();
+        int size = getDeptInfoSize(deptInfo);
 
         List<ScrapingResultDto> reqResults = new LinkedList<>();
-        for (int i = 0; i < boardSeqs.size(); i++) {
+        for(int i = 0; i < size; i++) {
             try {
-                String boardSeq = boardSeqs.get(i);
-                String menuSeq = menuSeqs.get(i);
-
-                ScrapingResultDto resultDto = getScrapingResultDto(boardSeq, menuSeq, siteId, ARTICLE_NUMBERS_PER_PAGE);
+                ScrapingResultDto resultDto = getScrapingResultDto(i, deptInfo, ARTICLE_NUMBERS_PER_PAGE);
                 reqResults.add(resultDto);
             } catch (IOException e) {
                 throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_SCRAP, e);
@@ -57,18 +49,14 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
     }
 
     public List<ScrapingResultDto> requestAllPage(DeptInfo deptInfo) throws InternalLogicException {
-        List<String> boardSeqs = deptInfo.getNoticeScrapInfo().getBoardSeqs();
-        List<String> menuSeqs = deptInfo.getNoticeScrapInfo().getMenuSeqs();
-        String siteId = deptInfo.getNoticeScrapInfo().getSiteId();
+        int size = getDeptInfoSize(deptInfo);
 
         List<ScrapingResultDto> reqResults = new LinkedList<>();
-        for (int i = 0; i < boardSeqs.size(); i++) {
+        for (int i = 0; i < size; i++) {
             try {
-                String boardSeq = boardSeqs.get(i);
-                String menuSeq = menuSeqs.get(i);
-                int totalNoticeSize = getTotalNoticeSize(siteId, boardSeq, menuSeq);
+                int totalNoticeSize = getTotalNoticeSize(i, deptInfo);
 
-                ScrapingResultDto resultDto = getScrapingResultDto(boardSeq, menuSeq, siteId, totalNoticeSize);
+                ScrapingResultDto resultDto = getScrapingResultDto(i, deptInfo, totalNoticeSize);
                 reqResults.add(resultDto);
             } catch (IOException e) {
                 throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_SCRAP, e);
@@ -80,19 +68,22 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         return reqResults;
     }
 
-    private ScrapingResultDto getScrapingResultDto(String boardSeq, String menuSeq, String siteId, int totalNoticeSize) throws IOException {
-        String requestUrl = createRequestUrl(siteId, boardSeq, menuSeq, totalNoticeSize, PAGE_NUM); // Html 요청
-        String viewUrl = createViewUrl(siteId, boardSeq, menuSeq);
+    private int getDeptInfoSize(DeptInfo deptInfo) {
+        return deptInfo.getNoticeScrapInfo().getBoardSeqs().size();
+    }
+
+    private ScrapingResultDto getScrapingResultDto(int index, DeptInfo deptInfo, int totalNoticeSize) throws IOException {
+        String requestUrl = deptInfo.createRequestUrl(index, totalNoticeSize, PAGE_NUM);
+        String viewUrl = deptInfo.createViewUrl(index);
 
         Document document = jsoupClient.get(requestUrl, SCRAP_TIMEOUT);
 
         return new ScrapingResultDto(document, viewUrl);
     }
 
-    private int getTotalNoticeSize(String siteId, String boardSeq, String menuSeq)
-            throws IOException, IndexOutOfBoundsException, NullPointerException {
+    private int getTotalNoticeSize(int index, DeptInfo deptInfo) throws IOException, IndexOutOfBoundsException, NullPointerException {
+        String url = deptInfo.createRequestUrl(index, 1, 1);
 
-        String url = createRequestUrl(siteId, boardSeq, menuSeq, 1, 1);
         Document document = jsoupClient.get(url, SCRAP_TIMEOUT);
 
         Element totalNoticeSizeElement = document.selectFirst(".pl15 > strong");
@@ -100,27 +91,7 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
             totalNoticeSizeElement = document.selectFirst(".total_count");
         }
 
+        assert totalNoticeSizeElement != null;
         return Integer.parseInt(totalNoticeSizeElement.ownText());
-    }
-
-    private String createRequestUrl(String siteId, String boardSeq, String menuSeq, int curPage, int pageNum) {
-        return UriComponentsBuilder.fromUriString(latestPageProperties.getListUrl())
-                .queryParam("siteId", siteId)
-                .queryParam("boardSeq", boardSeq)
-                .queryParam("menuSeq", menuSeq)
-                .queryParam("curPage", curPage)
-                .queryParam("pageNum", pageNum)
-                .build()
-                .toUriString();
-    }
-
-    private String createViewUrl(String siteId, String boardSeq, String menuSeq) {
-        return UriComponentsBuilder.fromUriString(latestPageProperties.getViewUrl())
-                .queryParam("siteId", siteId)
-                .queryParam("boardSeq", boardSeq)
-                .queryParam("menuSeq", menuSeq)
-                .queryParam("seq", "")
-                .build()
-                .toUriString();
     }
 }

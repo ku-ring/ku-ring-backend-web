@@ -1,19 +1,20 @@
 package com.kustacks.kuring.worker.scrap.deptinfo;
 
 import com.kustacks.kuring.worker.DepartmentName;
+import com.kustacks.kuring.worker.client.notice.LatestPageProperties;
 import com.kustacks.kuring.worker.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.HtmlParser;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.jsoup.nodes.Document;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 public class DeptInfo {
 
+    protected LatestPageProperties latestPageProperties;
     protected String code;
     protected DepartmentName departmentName;
     protected String collegeName;
@@ -34,8 +35,31 @@ public class DeptInfo {
         return departmentName.getKorName();
     }
 
+    public String createRequestUrl(int index, int curPage, int pageNum) {
+        return UriComponentsBuilder.fromUriString(latestPageProperties.getListUrl())
+                .queryParam("siteId", noticeScrapInfo.getSiteId())
+                .queryParam("boardSeq", noticeScrapInfo.getBoardSeqs().get(index))
+                .queryParam("menuSeq", noticeScrapInfo.getMenuSeqs().get(index))
+                .queryParam("curPage", curPage)
+                .queryParam("pageNum", pageNum)
+                .buildAndExpand(departmentName.getHostPrefix())
+                .toUriString();
+    }
+
+    public String createViewUrl(int index) {
+        return UriComponentsBuilder
+                .fromUriString(latestPageProperties.getViewUrl())
+                .queryParam("siteId", noticeScrapInfo.getSiteId())
+                .queryParam("boardSeq", noticeScrapInfo.getBoardSeqs().get(index))
+                .queryParam("menuSeq", noticeScrapInfo.getMenuSeqs().get(index))
+                .queryParam("seq", "")
+                .buildAndExpand(departmentName.getHostPrefix())
+                .toUriString();
+    }
+
     @Override
     public String toString() {
         return departmentName.getName();
     }
 }
+
