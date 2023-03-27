@@ -11,16 +11,15 @@ import static com.kustacks.kuring.notice.domain.QDepartmentNotice.departmentNoti
 @RequiredArgsConstructor
 public class DepartmentNoticeQueryRepositoryImpl implements DepartmentNoticeQueryRepository {
 
-    private static final int TOTAL_NOTICE_COUNT_PER_PAGE = 12;
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<String> findTopTwentyFourArticleIdByDepartment(DepartmentName departmentName) {
+    public List<String> findArticleIdsByDepartmentWithLimit(DepartmentName departmentName, int limit) {
         return queryFactory
                 .select(departmentNotice.articleId)
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName))
-                .limit(TOTAL_NOTICE_COUNT_PER_PAGE * 2)
+                .limit(limit)
                 .fetch();
     }
 }

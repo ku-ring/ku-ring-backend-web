@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface DepartmentNoticeQueryRepository {
 
-    List<String> findTopTwentyFourArticleIdByDepartment(DepartmentName departmentName);
+    List<String> findArticleIdsByDepartmentWithLimit(DepartmentName departmentName, int limit);
 }
