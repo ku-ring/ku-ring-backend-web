@@ -15,12 +15,12 @@ public class WorkerThreadConfig {
     public ThreadPoolTaskExecutor departmentNoticeUpdaterThreadTaskExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setKeepAliveSeconds(10);
-        taskExecutor.setCorePoolSize(5);
+        taskExecutor.setCorePoolSize(6);
         taskExecutor.setMaxPoolSize(10);
         taskExecutor.setQueueCapacity(100);
         taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-        taskExecutor.setThreadNamePrefix("DeptNot-updt-");
+        taskExecutor.setThreadNamePrefix("DeptNot-thread-pool-");
         taskExecutor.initialize();
         return taskExecutor;
     }
