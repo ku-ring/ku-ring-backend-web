@@ -53,28 +53,8 @@ public class DepartmentNoticeScraperTemplate {
             String viewUrl = reqResult.getUrl();
 
             RowsDto rowsDto = deptInfo.parse(document);
-            List<String[]> importantRowList = rowsDto.getImportantRowList();
-            List<String[]> normalRowList = rowsDto.getNormalRowList();
-
-            for (String[] oneNoticeInfo : importantRowList) {
-                noticeDtoList.add(CommonNoticeFormatDto.builder()
-                        .articleId(oneNoticeInfo[0])
-                        .postedDate(oneNoticeInfo[1])
-                        .subject(oneNoticeInfo[2])
-                        .fullUrl(viewUrl + oneNoticeInfo[0])
-                        .important(true)
-                        .build());
-            }
-
-            for (String[] oneNoticeInfo : normalRowList) {
-                noticeDtoList.add(CommonNoticeFormatDto.builder()
-                        .articleId(oneNoticeInfo[0])
-                        .postedDate(oneNoticeInfo[1])
-                        .subject(oneNoticeInfo[2])
-                        .fullUrl(viewUrl + oneNoticeInfo[0])
-                        .important(false)
-                        .build());
-            }
+            noticeDtoList.addAll(rowsDto.buildImportantRowList(viewUrl));
+            noticeDtoList.addAll(rowsDto.buildNormalRowList(viewUrl));
         }
 
         return noticeDtoList;
