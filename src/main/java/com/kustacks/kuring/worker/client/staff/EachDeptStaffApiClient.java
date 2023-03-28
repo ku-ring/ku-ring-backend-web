@@ -21,6 +21,8 @@ import java.util.Map;
 @Component
 public class EachDeptStaffApiClient implements StaffApiClient {
 
+    private static final int STAFF_SCRAP_TIMEOUT = 30000;
+
     @Value("${staff.each-dept-url}")
     private String baseUrl;
 
@@ -51,7 +53,7 @@ public class EachDeptStaffApiClient implements StaffApiClient {
 
             Document document;
             try {
-                document = jsoupClient.get(url, SCRAP_TIMEOUT);
+                document = jsoupClient.get(url, STAFF_SCRAP_TIMEOUT);
             } catch(IOException e) {
                 throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);
             }
@@ -70,7 +72,7 @@ public class EachDeptStaffApiClient implements StaffApiClient {
 
                 try {
                     requestBody.put("pageNum", String.valueOf(pageNum));
-                    document = jsoupClient.post(url, SCRAP_TIMEOUT, requestBody);
+                    document = jsoupClient.post(url, STAFF_SCRAP_TIMEOUT, requestBody);
 //                    document = Jsoup.connect(url)
 //                            .data("pageNum", String.valueOf(pageNum))
 //                            .post();

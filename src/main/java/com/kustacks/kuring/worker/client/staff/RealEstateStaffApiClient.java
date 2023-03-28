@@ -16,6 +16,8 @@ import java.util.List;
 @Component
 public class RealEstateStaffApiClient implements StaffApiClient {
 
+    private static final int STAFF_SCRAP_TIMEOUT = 30000;
+
     @Value("${staff.real-estate-url}")
     private String baseUrl;
 
@@ -38,7 +40,7 @@ public class RealEstateStaffApiClient implements StaffApiClient {
 
         Document document;
         try {
-            document = jsoupClient.get(url, SCRAP_TIMEOUT);
+            document = jsoupClient.get(url, STAFF_SCRAP_TIMEOUT);
         } catch(IOException e) {
             throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);
         }

@@ -14,14 +14,13 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.kustacks.kuring.worker.client.staff.StaffApiClient.SCRAP_TIMEOUT;
-
 @Slf4j
 @Component
 public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResultDto, DeptInfo> {
 
     private static final int PAGE_NUM = 1;    // recentPage는 pageNum 인자가 1부터 시작
     private static final int ARTICLE_NUMBERS_PER_PAGE = 12;
+    private static final int LATEST_SCRAP_TIMEOUT = 300000; // 5분
 
     private final JsoupClient jsoupClient;
 
@@ -48,7 +47,8 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         return reqResults;
     }
 
-    public List<ScrapingResultDto> requestAllPage(DeptInfo deptInfo) throws InternalLogicException {
+    @Override
+    public List<ScrapingResultDto> requestAll(DeptInfo deptInfo) throws InternalLogicException {
         int size = getDeptInfoSize(deptInfo);
 
         List<ScrapingResultDto> reqResults = new LinkedList<>();
@@ -76,7 +76,7 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         String requestUrl = deptInfo.createRequestUrl(index, totalNoticeSize, PAGE_NUM);
         String viewUrl = deptInfo.createViewUrl(index);
 
-        Document document = jsoupClient.get(requestUrl, SCRAP_TIMEOUT);
+        Document document = jsoupClient.get(requestUrl, LATEST_SCRAP_TIMEOUT);
 
         return new ScrapingResultDto(document, viewUrl);
     }
@@ -84,7 +84,7 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
     private int getTotalNoticeSize(int index, DeptInfo deptInfo) throws IOException, IndexOutOfBoundsException, NullPointerException {
         String url = deptInfo.createRequestUrl(index, 1, 1);
 
-        Document document = jsoupClient.get(url, SCRAP_TIMEOUT);
+        Document document = jsoupClient.get(url, LATEST_SCRAP_TIMEOUT);
 
         Element totalNoticeSizeElement = document.selectFirst(".pl15 > strong");
         if (totalNoticeSizeElement == null) {

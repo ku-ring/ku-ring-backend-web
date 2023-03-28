@@ -20,6 +20,8 @@ import java.util.Map;
 @Component
 public class KuStaffApiClient implements StaffApiClient {
 
+    private static final int STAFF_SCRAP_TIMEOUT = 30000;
+
     private final Map<String, String> urlMap;
     private final JsoupClient jsoupClient;
 
@@ -47,7 +49,7 @@ public class KuStaffApiClient implements StaffApiClient {
 
         Document document;
         try {
-            document = jsoupClient.get(url, SCRAP_TIMEOUT);
+            document = jsoupClient.get(url, STAFF_SCRAP_TIMEOUT);
         } catch(IOException e) {
             throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);
         }

@@ -16,13 +16,12 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.kustacks.kuring.worker.client.staff.StaffApiClient.SCRAP_TIMEOUT;
-
 @Component
 public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResultDto, DeptInfo> {
 
     private static final int PAGE_NUM = 1;
     private static final int UNKNOWN_PAGE_NUM = -1;
+    private static final int ESTATE_SCRAP_TIMEOUT = 100000;
 
     private final JsoupClient jsoupClient;
     private final RealEstateProperties realEstateProperties;
@@ -39,7 +38,7 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
             String viewUrl = createViewUrl(sca);
             String reqUrl = createRequestUrl(sca, PAGE_NUM);
 
-            Document document = jsoupClient.get(reqUrl, SCRAP_TIMEOUT);
+            Document document = jsoupClient.get(reqUrl, ESTATE_SCRAP_TIMEOUT);
 
             return List.of(new ScrapingResultDto(document, viewUrl));
         } catch (IOException e) {
@@ -49,7 +48,8 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
         }
     }
 
-    public List<ScrapingResultDto> requestAllPage(DeptInfo deptInfo) throws InternalLogicException {
+    @Override
+    public List<ScrapingResultDto> requestAll(DeptInfo deptInfo) throws InternalLogicException {
         int totalPageNum = UNKNOWN_PAGE_NUM;
         int nowPageNum = 1;
         String sca = "학부";
@@ -60,7 +60,7 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
             try {
                 String requestUrl = createRequestUrl(sca, nowPageNum);
 
-                Document document = jsoupClient.get(requestUrl, SCRAP_TIMEOUT);
+                Document document = jsoupClient.get(requestUrl, ESTATE_SCRAP_TIMEOUT);
                 reqResults.add(new ScrapingResultDto(document, viewUrl));
 
                 if (totalPageNum == UNKNOWN_PAGE_NUM) {
