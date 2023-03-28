@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +40,11 @@ public class LibraryNoticeApiClient implements NoticeApiClient<CommonNoticeForma
     public List<CommonNoticeFormatDto> request(CategoryName categoryName) throws InternalLogicException {
         List<LibraryNoticeDTO> libraryNoticeDtoList = scrapLibraryNoticeDtos();
         return convertToCommonFormatDto(libraryNoticeDtoList);
+    }
+
+    @Override
+    public List<CommonNoticeFormatDto> requestAll(CategoryName categoryName) throws InternalLogicException {
+        return Collections.emptyList();
     }
 
     private List<LibraryNoticeDTO> scrapLibraryNoticeDtos() {

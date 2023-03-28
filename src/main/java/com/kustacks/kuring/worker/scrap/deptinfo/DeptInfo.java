@@ -23,8 +23,12 @@ public class DeptInfo {
     protected NoticeApiClient<ScrapingResultDto, DeptInfo> noticeApiClient;
     protected HtmlParser htmlParser;
 
-    public List<ScrapingResultDto> scrapHtml() {
+    public List<ScrapingResultDto> scrapLatestPageHtml() {
         return noticeApiClient.request(this);
+    }
+
+    public List<ScrapingResultDto> scrapAllPageHtml() {
+        return noticeApiClient.requestAll(this);
     }
 
     public List<String[]> parse(Document document) {
