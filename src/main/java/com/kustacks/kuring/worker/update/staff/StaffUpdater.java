@@ -1,18 +1,22 @@
 package com.kustacks.kuring.worker.update.staff;
 
 import com.kustacks.kuring.common.dto.StaffDto;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.domain.StaffRepository;
-import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.worker.update.Updater;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
+import com.kustacks.kuring.worker.update.Updater;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -58,8 +62,8 @@ public class StaffUpdater implements Updater {
             try {
                 scrapDeptAndConvertToMap(kuStaffDTOMap, deptInfo);
                 successDeptNames.add(deptInfo.getDeptName());
-            } catch(InternalLogicException e) {
-                log.error("[ScraperException] 스크래핑 문제 발생. 문제가 발생한 학과 = {}", deptInfo.getDeptName());
+            } catch (InternalLogicException e) {
+                log.error("[StaffScraperException] {}학과 교직원 스크래핑 문제 발생.", deptInfo.getDeptName());
                 Sentry.captureException(e);
             }
         }
@@ -75,7 +79,7 @@ public class StaffUpdater implements Updater {
 
         for (StaffDto staffDTO : scrapedStaffDtoList) {
             StaffDto mapStaffDto = kuStaffDTOMap.get(staffDTO.getEmail());
-            if(mapStaffDto == null) {
+            if (mapStaffDto == null) {
                 kuStaffDTOMap.put(staffDTO.getEmail(), staffDTO);
             } else {
                 mapStaffDto.setDeptName(mapStaffDto.getDeptName() + ", " + staffDTO.getDeptName());
@@ -93,14 +97,14 @@ public class StaffUpdater implements Updater {
         Map<String, Staff> dbStaffMap = staffRepository.findByDeptContainingMap(successDeptNames);
         List<Staff> toBeUpdateStaffs = new LinkedList<>();
         Iterator<StaffDto> kuStaffDTOIterator = kuStaffDTOMap.values().iterator();
-        while(kuStaffDTOIterator.hasNext()) {
+        while (kuStaffDTOIterator.hasNext()) {
             StaffDto staffDTO = kuStaffDTOIterator.next();
 
             Staff staff = dbStaffMap.get(staffDTO.getEmail());
-            if(staff != null) {
+            if (staff != null) {
                 StaffDto dbStaffDto = StaffDto.entityToDto(staff);
 
-                if(!staffDTO.equals(dbStaffDto)) {
+                if (!staffDTO.equals(dbStaffDto)) {
                     updateStaffEntity(staffDTO, staff);
                     toBeUpdateStaffs.add(staff);
                 }
