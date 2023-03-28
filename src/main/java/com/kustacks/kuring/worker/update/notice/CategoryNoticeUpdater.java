@@ -133,6 +133,7 @@ public class CategoryNoticeUpdater implements Updater {
                             apiNotice.getUpdatedDate(),
                             apiNotice.getSubject(),
                             noticeCategory,
+                            false,
                             apiNotice.getFullUrl()));
                 } else {
                     noticeIterator.remove();

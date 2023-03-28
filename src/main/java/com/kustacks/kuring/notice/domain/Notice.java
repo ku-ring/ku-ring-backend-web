@@ -40,7 +40,7 @@ public class Notice {
     private String subject;
 
     @Column(name = "important")
-    private Boolean important;
+    private Boolean important = false;
 
     @Embedded
     private Url url;
