@@ -1,11 +1,9 @@
-package com.kustacks.kuring.worker.scrap.parser.notice;
+package com.kustacks.kuring.worker.scrap.parser.staff;
 
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.worker.scrap.parser.HtmlParser;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
-import lombok.NoArgsConstructor;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -14,9 +12,8 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedList;
 import java.util.List;
 
-@NoArgsConstructor
 @Component
-public class RealEstateStaffHtmlParser implements HtmlParser {
+public class RealEstateStaffHtmlParser implements StaffHtmlParser {
 
     @Override
     public boolean support(DeptInfo deptInfo) {
@@ -47,7 +44,7 @@ public class RealEstateStaffHtmlParser implements HtmlParser {
 
                 result.add(oneStaffInfo);
             }
-        } catch(NullPointerException | IndexOutOfBoundsException e) {
+        } catch (NullPointerException | IndexOutOfBoundsException e) {
             throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_PARSE, e);
         }
 

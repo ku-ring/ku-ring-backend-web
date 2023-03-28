@@ -2,7 +2,6 @@ package com.kustacks.kuring.worker.scrap.parser.staff;
 
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.worker.scrap.parser.HtmlParser;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.LivingDesignDept;
@@ -20,7 +19,7 @@ import java.util.List;
 @Slf4j
 @NoArgsConstructor
 @Component
-public class StaffEachDeptHtmlParser implements HtmlParser {
+public class StaffEachDeptHtmlParser implements StaffHtmlParser {
 
     @Override
     public boolean support(DeptInfo deptInfo) {
@@ -47,13 +46,10 @@ public class StaffEachDeptHtmlParser implements HtmlParser {
                 oneStaffInfo[0] = infos.get(0).getElementsByTag("span").get(1).text();
 
                 String jobPosition = String.valueOf(infos.get(1).childNodeSize() < 2 ? "" : infos.get(1).childNode(1));
-                if(jobPosition.contains("명예") || jobPosition.contains("대우") || jobPosition.contains("휴직") || !jobPosition.contains("교수")) {
+                if (jobPosition.contains("명예") || jobPosition.contains("대우") || jobPosition.contains("휴직") || !jobPosition.contains("교수")) {
                     log.info("스크래핑 스킵 -> {} 교수", oneStaffInfo[0]);
                     continue;
                 }
-//                if() {
-//                    throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_PARSE);
-//                }
 
                 oneStaffInfo[1] = infos.get(2).childNodeSize() < 2 ? "" : String.valueOf(infos.get(2).childNode(1));
                 oneStaffInfo[2] = infos.get(3).childNodeSize() < 2 ? "" : String.valueOf(infos.get(3).childNode(1));
@@ -62,7 +58,7 @@ public class StaffEachDeptHtmlParser implements HtmlParser {
 
                 result.add(oneStaffInfo);
             }
-        } catch(NullPointerException | IndexOutOfBoundsException e) {
+        } catch (NullPointerException | IndexOutOfBoundsException e) {
             throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_PARSE, e);
         }
 

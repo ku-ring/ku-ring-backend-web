@@ -4,8 +4,8 @@ import com.kustacks.kuring.common.dto.StaffDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.client.staff.StaffApiClient;
-import com.kustacks.kuring.worker.scrap.parser.HtmlParser;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
+import com.kustacks.kuring.worker.scrap.parser.staff.StaffHtmlParser;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.springframework.retry.annotation.Backoff;
@@ -21,12 +21,12 @@ public class StaffScraper {
 
     private static final int RETRY_PERIOD = 1000 * 60; // 1분후에 실패한 크론잡 재시도
 
+    private final List<StaffHtmlParser> htmlParsers;
     private final List<StaffApiClient> staffApiClients;
-    private final List<HtmlParser> htmlParsers;
 
-    public StaffScraper(List<HtmlParser> htmlParsers, List<StaffApiClient> staffApiClients) {
-        this.staffApiClients = staffApiClients;
+    public StaffScraper(List<StaffHtmlParser> htmlParsers, List<StaffApiClient> staffApiClients) {
         this.htmlParsers = htmlParsers;
+        this.staffApiClients = staffApiClients;
     }
 
     @Retryable(value = {InternalLogicException.class}, backoff = @Backoff(delay = RETRY_PERIOD))
@@ -36,7 +36,7 @@ public class StaffScraper {
         List<StaffDto> staffDtoList = new LinkedList<>();
 
         for (StaffApiClient staffApiClient : staffApiClients) {
-            if(staffApiClient.support(deptInfo)) {
+            if (staffApiClient.support(deptInfo)) {
                 log.info("{} HTML 요청", deptInfo.getDeptName());
                 documents = staffApiClient.getHTML(deptInfo);
                 log.info("{} HTML 수신", deptInfo.getDeptName());
@@ -45,8 +45,8 @@ public class StaffScraper {
 
         // 수신한 documents HTML 파싱
         List<String[]> parseResult = new LinkedList<>();
-        for (HtmlParser htmlParser : htmlParsers) {
-            if(htmlParser.support(deptInfo)) {
+        for (StaffHtmlParser htmlParser : htmlParsers) {
+            if (htmlParser.support(deptInfo)) {
                 log.info("{} HTML 파싱 시작", deptInfo.getDeptName());
                 for (Document document : documents) {
                     parseResult.addAll(htmlParser.parse(document));
@@ -67,7 +67,7 @@ public class StaffScraper {
                     .collegeName(deptInfo.getCollegeName()).build());
         }
 
-        if(staffDtoList.size() == 0) {
+        if (staffDtoList.size() == 0) {
             throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP);
         }
 
