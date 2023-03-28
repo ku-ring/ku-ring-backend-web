@@ -12,6 +12,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class RealEstateNoticeHtmlParser implements NoticeHtmlParser {
     }
 
     @Override
-    public List<String[]> parse(Document document) {
+    public RowsDto parse(Document document) {
         List<String[]> result = new LinkedList<>();
         Elements rows = document.select(".board_list > table > tbody > tr");
         try {
@@ -47,6 +48,6 @@ public class RealEstateNoticeHtmlParser implements NoticeHtmlParser {
             throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE, e);
         }
 
-        return result;
+        return new RowsDto(Collections.emptyList(), result);
     }
 }

@@ -4,7 +4,8 @@ import com.kustacks.kuring.worker.DepartmentName;
 import com.kustacks.kuring.worker.client.notice.LatestPageProperties;
 import com.kustacks.kuring.worker.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
-import com.kustacks.kuring.worker.scrap.parser.HtmlParser;
+import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
+import com.kustacks.kuring.worker.scrap.parser.notice.RowsDto;
 import lombok.Getter;
 import org.jsoup.nodes.Document;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -21,7 +22,7 @@ public class DeptInfo {
     protected StaffScrapInfo staffScrapInfo;
     protected NoticeScrapInfo noticeScrapInfo;
     protected NoticeApiClient<ScrapingResultDto, DeptInfo> noticeApiClient;
-    protected HtmlParser htmlParser;
+    protected NoticeHtmlParser htmlParser;
 
     public List<ScrapingResultDto> scrapLatestPageHtml() {
         return noticeApiClient.request(this);
@@ -31,7 +32,7 @@ public class DeptInfo {
         return noticeApiClient.requestAll(this);
     }
 
-    public List<String[]> parse(Document document) {
+    public RowsDto parse(Document document) {
         return htmlParser.parse(document);
     }
 

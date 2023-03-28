@@ -4,6 +4,7 @@ import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
+import com.kustacks.kuring.worker.scrap.parser.notice.RowsDto;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
@@ -51,16 +52,31 @@ public class DepartmentNoticeScraperTemplate {
             Document document = reqResult.getDocument();
             String viewUrl = reqResult.getUrl();
 
-            List<String[]> parseResult = deptInfo.parse(document);
-            for (String[] oneNoticeInfo : parseResult) {
+            RowsDto rowsDto = deptInfo.parse(document);
+            List<String[]> importantRowList = rowsDto.getImportantRowList();
+            List<String[]> normalRowList = rowsDto.getNormalRowList();
+
+            for (String[] oneNoticeInfo : importantRowList) {
                 noticeDtoList.add(CommonNoticeFormatDto.builder()
                         .articleId(oneNoticeInfo[0])
                         .postedDate(oneNoticeInfo[1])
                         .subject(oneNoticeInfo[2])
                         .fullUrl(viewUrl + oneNoticeInfo[0])
+                        .important(true)
+                        .build());
+            }
+
+            for (String[] oneNoticeInfo : normalRowList) {
+                noticeDtoList.add(CommonNoticeFormatDto.builder()
+                        .articleId(oneNoticeInfo[0])
+                        .postedDate(oneNoticeInfo[1])
+                        .subject(oneNoticeInfo[2])
+                        .fullUrl(viewUrl + oneNoticeInfo[0])
+                        .important(false)
                         .build());
             }
         }
+
         return noticeDtoList;
     }
 }

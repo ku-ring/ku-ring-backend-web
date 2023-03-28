@@ -23,13 +23,16 @@ public class CommonNoticeFormatDto {
     @Setter
     private String fullUrl;
 
+    private Boolean important;
+
     @Builder
-    public CommonNoticeFormatDto(String articleId, String updatedDate, String subject, String postedDate, String fullUrl) {
+    public CommonNoticeFormatDto(String articleId, String updatedDate, String subject, String postedDate, String fullUrl, Boolean important) {
         this.articleId = articleId;
         this.updatedDate = updatedDate;
         this.subject = subject;
         this.postedDate = postedDate;
         this.fullUrl = fullUrl;
+        this.important = important;
     }
 
     public boolean isEquals(CommonNoticeFormatDto c) {

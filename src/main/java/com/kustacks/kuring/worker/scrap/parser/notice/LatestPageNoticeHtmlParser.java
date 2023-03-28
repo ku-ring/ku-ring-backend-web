@@ -20,11 +20,15 @@ public class LatestPageNoticeHtmlParser implements NoticeHtmlParser {
     }
 
     @Override
-    public List<String[]> parse(Document document) {
+    public RowsDto parse(Document document) {
         try {
-            Elements rows = document.select("#noticeList > tr");
-            rows.addAll(document.select("#dispList > tr"));
-            return extractNoticeListFromRows(rows);
+            Elements importantRows = document.select("#noticeList > tr");
+            Elements normalRows = document.select("#dispList > tr");
+
+            List<String[]> importantRowList = extractNoticeListFromRows(importantRows);
+            List<String[]> normalRowList = extractNoticeListFromRows(normalRows);
+
+            return new RowsDto(importantRowList, normalRowList);
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE, e);
         }
