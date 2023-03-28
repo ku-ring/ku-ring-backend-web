@@ -4,8 +4,9 @@ import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
 import com.kustacks.kuring.worker.DepartmentName;
-import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraper;
+import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
+import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.update.Updater;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 @Slf4j
 @Service
@@ -28,7 +30,7 @@ public class DepartmentNoticeUpdater implements Updater {
 
     private static final int TOTAL_NOTICE_COUNT_PER_PAGE = 12;
 
-    private final DepartmentNoticeScraper departmentNoticeScraper;
+    private final DepartmentNoticeScraperTemplate scrapperTemplate;
     private final List<DeptInfo> deptInfoList;
     private final DepartmentNoticeRepository departmentNoticeRepository;
     private final ThreadPoolTaskExecutor departmentNoticeUpdaterThreadTaskExecutor;
@@ -39,18 +41,30 @@ public class DepartmentNoticeUpdater implements Updater {
     @Override
     @Scheduled(cron = "0 0/20 9-18 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 9시 ~ 오후 6:55분 사이에 20분마다 업데이트 된다.
     public void update() {
-        log.info("******** 학과별 공지 업데이트 시작 ********");
+        log.info("******** 학과별 최신 공지 업데이트 시작 ********");
         startTime = System.currentTimeMillis();
 
         for (DeptInfo deptInfo : deptInfoList) {
             CompletableFuture
-                    .supplyAsync(() -> updateDepartmentAsync(deptInfo), departmentNoticeUpdaterThreadTaskExecutor)
-                    .thenAccept(scrapResults -> compareAndUpdateDB(scrapResults, deptInfo.getDeptName()));
+                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml), departmentNoticeUpdaterThreadTaskExecutor)
+                    .thenAccept(scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName()));
         }
     }
 
-    private List<CommonNoticeFormatDto> updateDepartmentAsync(DeptInfo deptInfo) {
-        List<CommonNoticeFormatDto> scrapResults = departmentNoticeScraper.scrap(deptInfo);
+    @Scheduled(cron = "0 0 2 * * *") // 전체 업데이트는 매일 새벽 2시에 진행
+    public void updateAll() {
+        log.info("******** 학과별 전체 공지 업데이트 시작 ********");
+        startTime = System.currentTimeMillis();
+
+        for (DeptInfo deptInfo : deptInfoList) {
+            CompletableFuture
+                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), departmentNoticeUpdaterThreadTaskExecutor)
+                    .thenAccept(scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName()));
+        }
+    }
+
+    private List<CommonNoticeFormatDto> updateDepartmentAsync(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) {
+        List<CommonNoticeFormatDto> scrapResults = scrapperTemplate.scrap(deptInfo, decisionMaker);
 
         // noticeAPIClient 혹은 scraper에서 새로운 공지를 감지할 때, 가장 최신에 올라온 공지를 list에 순차적으로 담는다.
         // 이 때문에 만약 같은 시간대에 감지된 두 공지가 있다면, 보다 최신 공지가 리스트의 앞 인덱스에 위치하게 되고, 이를 그대로 DB에 적용한다면
@@ -61,10 +75,10 @@ public class DepartmentNoticeUpdater implements Updater {
         return scrapResults;
     }
 
-    protected void compareAndUpdateDB(List<CommonNoticeFormatDto> scrapResults, String departmentName) {
+    private void compareLatestAndUpdateDB(List<CommonNoticeFormatDto> scrapResults, String departmentName) {
         DepartmentName departmentNameEnum = DepartmentName.fromKor(departmentName);
 
-        // DB에서 최신 48개의 공지를 가져와서
+        // DB에서 최신 60개의 공지를 가져와서
         List<String> savedArticleIds = departmentNoticeRepository.findArticleIdsByDepartmentWithLimit(departmentNameEnum, TOTAL_NOTICE_COUNT_PER_PAGE * 5);
 
         // articleId와 DepartmentName이 동일한 공지가 없다면, 새 공지로 인식한다.
