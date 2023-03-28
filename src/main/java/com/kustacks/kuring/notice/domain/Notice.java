@@ -39,6 +39,9 @@ public class Notice {
     @Column(name = "subject", length = 128, nullable = false)
     private String subject;
 
+    @Column(name = "important")
+    private Boolean important;
+
     @Embedded
     private Url url;
 
@@ -46,12 +49,13 @@ public class Notice {
     @JoinColumn(name = "category_name", nullable = false)
     private Category category;
 
-    public Notice(String articleId, String postedDate, String updatedDate, String subject, Category category, String fullUrl) {
+    public Notice(String articleId, String postedDate, String updatedDate, String subject, Category category, Boolean important, String fullUrl) {
         this.articleId = articleId;
         this.postedDate = postedDate;
         this.updatedDate = updatedDate;
         this.subject = subject;
         this.category = category;
+        this.important = important;
         this.url = new Url(fullUrl);
     }
 

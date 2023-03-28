@@ -65,7 +65,7 @@ public class DataLoader {
     private static List<Notice> buildNotices(int cnt, Category category) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new Notice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, category, "https://www.example.com"))
+                .map(i -> new Notice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, category, false, "https://www.example.com"))
                 .collect(Collectors.toList());
     }
 

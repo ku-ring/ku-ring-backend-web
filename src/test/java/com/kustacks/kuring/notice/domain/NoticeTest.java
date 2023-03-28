@@ -19,7 +19,7 @@ class NoticeTest {
             "https://library.konkuk.ac.kr/library-guide/bulletins/notice/7192", "http://www.konkuk.ac.kr/do/MessageBoard/ArticleRead.do?forum=notice&sort=6&id=5b50736&cat=0000300001",
     "http://mae.konkuk.ac.kr/noticeView.do?siteId=MAE&boardSeq=988&menuSeq=6823&categorySeq=0&curBoardDispType=LIST&curPage=12&pageNum=1&seq=179896"})
     public void create_member(String url) {
-        assertThatCode(() -> new Notice("artice_id", "postDate", "updatedDate", "subject", new Category(CategoryName.BACHELOR.getName()), url))
+        assertThatCode(() -> new Notice("artice_id", "postDate", "updatedDate", "subject", new Category(CategoryName.BACHELOR.getName()), false, url))
                 .doesNotThrowAnyException();
     }
 
@@ -27,7 +27,7 @@ class NoticeTest {
     @ParameterizedTest
     @ValueSource(strings = {"//www.example.com", "https:/www.example.com", "https://"})
     public void member_invalid_email_id(String url) {
-        assertThatThrownBy(() -> new Notice("artice_id", "postDate", "updatedDate", "subject", new Category(CategoryName.BACHELOR.getName()), url))
+        assertThatThrownBy(() -> new Notice("artice_id", "postDate", "updatedDate", "subject", new Category(CategoryName.BACHELOR.getName()), false, url))
                 .isInstanceOf(DomainLogicException.class);
     }
 
