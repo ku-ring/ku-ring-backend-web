@@ -3,13 +3,17 @@ package com.kustacks.kuring.notice.business;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.category.exception.CategoryNotFoundException;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.utils.ObjectComparator;
-import com.kustacks.kuring.worker.CategoryName;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
+import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.search.common.dto.NoticeSearchDto;
+import com.kustacks.kuring.worker.CategoryName;
+import com.kustacks.kuring.worker.DepartmentName;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -25,7 +29,10 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class NoticeService {
 
+    private static final int FIRST_PAGE_OFFSET = 0;
+
     private final NoticeRepository noticeRepository;
+    private final DepartmentNoticeRepository departmentNoticeRepository;
     private final Map<String, Category> categoryMap;
     private final CategoryName[] categoryNames;
     private final String SPACE_REGEX = "[\\s+]";
@@ -36,8 +43,9 @@ public class NoticeService {
     @Value("${notice.library-base-url}")
     private String libraryBaseUrl;
 
-    public NoticeService(NoticeRepository noticeRepository, CategoryRepository categoryRepository) {
+    public NoticeService(NoticeRepository noticeRepository, DepartmentNoticeRepository departmentNoticeRepository, CategoryRepository categoryRepository) {
         this.noticeRepository = noticeRepository;
+        this.departmentNoticeRepository = departmentNoticeRepository;
         this.categoryMap = categoryRepository.findAllMap();
         this.categoryNames = CategoryName.values();
     }
@@ -51,6 +59,31 @@ public class NoticeService {
         return new NoticeListResponse(convertBaseUrl(categoryName), noticeDtoList);
     }
 
+    public List<NoticeDto> getNoticesV2(String type, String department, int offset, int max) {
+        if (isDepartmentSearchRequest(type, department)) {
+            DepartmentName departmentName = DepartmentName.fromHostPrefix(department);
+
+            List<NoticeDto> normalNotices = departmentNoticeRepository.findNormalNoticesByDepartmentWithOffset(departmentName, PageRequest.of(offset, max));
+            if (offset == FIRST_PAGE_OFFSET) {
+                List<NoticeDto> importantNotices = departmentNoticeRepository.findImportantNoticesByDepartment(departmentName);
+                importantNotices.addAll(normalNotices);
+                normalNotices = importantNotices;
+            }
+
+            return normalNotices;
+        }
+
+        String categoryName = convertShortNameIntoLongName(type);
+        if (isDepartment(categoryName)) {
+            throw new InternalLogicException(ErrorCode.API_INVALID_PARAM);
+        }
+
+        Category category = getCategoryByName(categoryName);
+        List<NoticeDto> noticeDtoList = noticeRepository.findNoticesByCategoryWithOffset(category, PageRequest.of(offset, max));
+
+        return noticeDtoList;
+    }
+
     public List<NoticeSearchDto> findAllNoticeByContent(String content) {
         String[] splitedKeywords = splitBySpace(content);
 
@@ -60,9 +93,7 @@ public class NoticeService {
     }
 
     public List<Notice> handleSearchRequest(String keywords) {
-
-        keywords = keywords.trim();
-        String[] splitedKeywords = keywords.split(SPACE_REGEX);
+        String[] splitedKeywords = keywords.trim().split(SPACE_REGEX);
 
         // 키워드 중 공지 카테고리가 있다면, 이를 영문으로 변환
         for (int i = 0; i < splitedKeywords.length; ++i) {
@@ -73,8 +104,15 @@ public class NoticeService {
                 }
             }
         }
-
         return getNoticesBySubjectOrCategory(splitedKeywords);
+    }
+
+    private boolean isDepartmentSearchRequest(String type, String department) {
+        return type.equals("dep") && !department.isEmpty();
+    }
+
+    private boolean isDepartment(String categoryName) {
+        return CategoryName.DEPARTMENT.isSameName(categoryName);
     }
 
     private String[] splitBySpace(String content) {
