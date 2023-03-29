@@ -1,5 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
+import com.kustacks.kuring.worker.DepartmentName;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -36,6 +37,32 @@ public class NoticeStep {
                 .when().get("/api/v1/notice?type={type}&offset={offset}&max={max}")
                 .then().log().all()
                 .extract();
+    }
+
+    public static ExtractableResponse<Response> 페이지_번호와_함께_학과_공지사항_조회_요청(String category, DepartmentName departmentName, int offset) {
+        return RestAssured
+                .given().log().all()
+                .pathParam("type", category)
+                .pathParam("department", departmentName.getHostPrefix())
+                .pathParam("offset", String.valueOf(offset))
+                .pathParam("max", "10")
+                .when().get("/api/v2/notices?type={type}&department={department}&offset={offset}&max={max}")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 학과_공지_조회_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("공지 조회에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getString("data.noticeList[0].articleId")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data.noticeList[0].postedDate")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data.noticeList[0].url")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data.noticeList[0].subject")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data.noticeList[0].category")).isEqualTo("department"),
+                () -> assertThat(response.jsonPath().getBoolean("data.noticeList[0].important")).isEqualTo(true)
+        );
     }
 
     public static void 공지사항_조회_요청_실패_응답_확인(ExtractableResponse<Response> response) {
