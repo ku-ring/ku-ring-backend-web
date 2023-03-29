@@ -30,7 +30,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     @Override
     public List<NoticeDto> findNoticesByCategoryWithOffset(Category category, Pageable pageable) {
         return queryFactory
-                .select(new QNoticeDto(notice.articleId, notice.postedDate, notice.subject, notice.category.name))
+                .select(new QNoticeDto(notice.articleId, notice.postedDate, notice.url.value, notice.subject, notice.category.name, notice.important))
                 .from(notice)
                 .where(notice.category.eq(category))
                 .offset(pageable.getOffset())

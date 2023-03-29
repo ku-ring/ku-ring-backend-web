@@ -95,8 +95,19 @@ public enum DepartmentName {
         this.korName = korName;
     }
 
+    public boolean isSameHostPrefix(String name) {
+        return this.hostPrefix.equals(name);
+    }
+
     public boolean isSameKorName(String name) {
         return this.korName.equals(name);
+    }
+
+    public static DepartmentName fromHostPrefix(String hostPrefix) {
+        return Arrays.stream(DepartmentName.values())
+                .filter(d -> d.isSameHostPrefix(hostPrefix))
+                .findFirst()
+                .orElseThrow(() -> new DomainLogicException(DEPARTMENT_NOT_FOUND));
     }
 
     public static DepartmentName fromKor(String departmentName) {
