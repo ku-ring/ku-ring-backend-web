@@ -22,8 +22,8 @@ public class LatestPageNoticeHtmlParserTwo implements NoticeHtmlParser {
     @Override
     public RowsDto parse(Document document) {
         try {
-            Elements importantRows = document.select(".list_item notice");
-            Elements normalRows = document.select(".list_item").not("notice").not("thead");
+            Elements importantRows = document.select(".notice");
+            Elements normalRows = document.select(".list_item").not(".notice").not(".thead");
 
             List<String[]> importantRowList = extractNoticeListFromRows(importantRows);
             List<String[]> normalRowList = extractNoticeListFromRows(normalRows);
