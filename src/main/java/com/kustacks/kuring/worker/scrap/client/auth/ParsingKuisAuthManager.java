@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.client.auth;
+package com.kustacks.kuring.worker.scrap.client.auth;
 
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;

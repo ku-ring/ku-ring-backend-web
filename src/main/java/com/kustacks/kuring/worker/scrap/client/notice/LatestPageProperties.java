@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.client.notice;
+package com.kustacks.kuring.worker.scrap.client.notice;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

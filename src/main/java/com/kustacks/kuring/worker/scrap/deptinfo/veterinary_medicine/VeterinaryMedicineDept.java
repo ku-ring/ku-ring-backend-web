@@ -1,8 +1,8 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.veterinary_medicine;
 
 import com.kustacks.kuring.worker.DepartmentName;
-import com.kustacks.kuring.worker.client.notice.LatestPageProperties;
-import com.kustacks.kuring.worker.client.notice.NoticeApiClient;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageProperties;
+import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;

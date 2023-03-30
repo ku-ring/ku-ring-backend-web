@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.client.staff;
+package com.kustacks.kuring.worker.scrap.client.staff;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

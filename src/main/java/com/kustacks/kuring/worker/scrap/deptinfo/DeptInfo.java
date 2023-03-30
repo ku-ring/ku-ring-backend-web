@@ -1,8 +1,8 @@
 package com.kustacks.kuring.worker.scrap.deptinfo;
 
 import com.kustacks.kuring.worker.DepartmentName;
-import com.kustacks.kuring.worker.client.notice.LatestPageProperties;
-import com.kustacks.kuring.worker.client.notice.NoticeApiClient;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageProperties;
+import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
 import com.kustacks.kuring.worker.scrap.parser.notice.RowsDto;

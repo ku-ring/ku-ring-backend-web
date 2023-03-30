@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.client.staff;
+package com.kustacks.kuring.worker.scrap.client.staff;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;

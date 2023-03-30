@@ -11,7 +11,7 @@ import com.kustacks.kuring.common.utils.converter.DTOConverter;
 import com.kustacks.kuring.common.utils.converter.DateConverter;
 import com.kustacks.kuring.worker.CategoryName;
 import com.kustacks.kuring.worker.update.Updater;
-import com.kustacks.kuring.worker.client.notice.NoticeApiClient;
+import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
