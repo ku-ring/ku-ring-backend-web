@@ -3,6 +3,7 @@ package com.kustacks.kuring.worker.scrap;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
+import com.kustacks.kuring.worker.scrap.dto.ComplexNoticeFormatDto;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.RowsDto;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
@@ -18,17 +19,19 @@ import java.util.function.Function;
 @Component
 public class DepartmentNoticeScraperTemplate {
 
-    public List<CommonNoticeFormatDto> scrap(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) throws InternalLogicException {
+    public List<ComplexNoticeFormatDto> scrap(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) throws InternalLogicException {
         List<ScrapingResultDto> requestResults = requestWithDeptInfo(deptInfo, decisionMaker);
 
         log.info("[{}] HTML 파싱 시작", deptInfo.getDeptName());
-        List<CommonNoticeFormatDto> noticeDtoList = htmlParsingFromScrapingResult(deptInfo, requestResults);
+        List<ComplexNoticeFormatDto> noticeDtoList = htmlParsingFromScrapingResult(deptInfo, requestResults);
         log.info("[{}] HTML 파싱 완료", deptInfo.getDeptName());
 
-        log.info("[{}] 공지 개수 = {}", deptInfo.getDeptName(), noticeDtoList.size());
-        if (noticeDtoList.size() == 0) {
-            throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_SCRAP);
+        for (ComplexNoticeFormatDto complexNoticeFormatDto : noticeDtoList) {
+            if (complexNoticeFormatDto.getNormalNoticeSize() == 0) {
+                throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_SCRAP);
+            }
         }
+
 
         return noticeDtoList;
     }
@@ -46,15 +49,17 @@ public class DepartmentNoticeScraperTemplate {
         return reqResults;
     }
 
-    private List<CommonNoticeFormatDto> htmlParsingFromScrapingResult(DeptInfo deptInfo, List<ScrapingResultDto> requestResults) {
-        List<CommonNoticeFormatDto> noticeDtoList = new LinkedList<>();
+    private List<ComplexNoticeFormatDto> htmlParsingFromScrapingResult(DeptInfo deptInfo, List<ScrapingResultDto> requestResults) {
+        List<ComplexNoticeFormatDto> noticeDtoList = new LinkedList<>();
         for (ScrapingResultDto reqResult : requestResults) {
             Document document = reqResult.getDocument();
             String viewUrl = reqResult.getUrl();
 
             RowsDto rowsDto = deptInfo.parse(document);
-            noticeDtoList.addAll(rowsDto.buildImportantRowList(viewUrl));
-            noticeDtoList.addAll(rowsDto.buildNormalRowList(viewUrl));
+            List<CommonNoticeFormatDto> importantNoticeFormatDtos = rowsDto.buildImportantRowList(viewUrl);
+            List<CommonNoticeFormatDto> normalNoticeFormatDtos = rowsDto.buildNormalRowList(viewUrl);
+            log.info("[{}] 공지 개수 = {}", deptInfo.getDeptName(), importantNoticeFormatDtos.size() + normalNoticeFormatDtos.size());
+            noticeDtoList.add(new ComplexNoticeFormatDto(importantNoticeFormatDtos, normalNoticeFormatDtos));
         }
 
         return noticeDtoList;

@@ -17,11 +17,35 @@ public class DepartmentNoticeQueryRepositoryImpl implements DepartmentNoticeQuer
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<String> findArticleIdsByDepartmentWithLimit(DepartmentName departmentName, int limit) {
+    public List<String> findImportantArticleIdsByDepartment(DepartmentName departmentName) {
         return queryFactory
                 .select(departmentNotice.articleId)
                 .from(departmentNotice)
-                .where(departmentNotice.departmentName.eq(departmentName))
+                .where(departmentNotice.departmentName.eq(departmentName)
+                        .and(departmentNotice.important.eq(true)))
+                .orderBy(departmentNotice.articleId.asc())
+                .fetch();
+    }
+
+    @Override
+    public List<String> findNormalArticleIdsByDepartment(DepartmentName departmentName) {
+        return queryFactory
+                .select(departmentNotice.articleId)
+                .from(departmentNotice)
+                .where(departmentNotice.departmentName.eq(departmentName)
+                        .and(departmentNotice.important.eq(false)))
+                .orderBy(departmentNotice.articleId.asc())
+                .fetch();
+    }
+
+    @Override
+    public List<String> findNormalArticleIdsByDepartmentWithLimit(DepartmentName departmentName, int limit) {
+        return queryFactory
+                .select(departmentNotice.articleId)
+                .from(departmentNotice)
+                .where(departmentNotice.departmentName.eq(departmentName)
+                        .and(departmentNotice.important.eq(false)))
+                .orderBy(departmentNotice.articleId.asc())
                 .limit(limit)
                 .fetch();
     }
@@ -60,5 +84,14 @@ public class DepartmentNoticeQueryRepositoryImpl implements DepartmentNoticeQuer
                 .limit(pageable.getPageSize())
                 .orderBy(departmentNotice.postedDate.desc())
                 .fetch();
+    }
+
+    @Override
+    public void deleteAllByIdsAndDepartment(DepartmentName departmentName, List<String> articleIds) {
+        queryFactory
+                .delete(departmentNotice)
+                .where(departmentNotice.departmentName.eq(departmentName),
+                        departmentNotice.articleId.in(articleIds))
+                .execute();
     }
 }

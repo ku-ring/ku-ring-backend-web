@@ -20,7 +20,7 @@ public class WorkerThreadConfig {
         taskExecutor.setQueueCapacity(100);
         taskExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
-        taskExecutor.setThreadNamePrefix("DeptNot-thread-pool-");
+        taskExecutor.setThreadNamePrefix("Depart-thread-");
         taskExecutor.initialize();
         return taskExecutor;
     }
