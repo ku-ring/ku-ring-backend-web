@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no, address=no, email=no">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="Title" content="">
+    <meta name="Description" content="">
+    <meta name="Keywords" content="">
+    <meta name="Generator" content="">
+    <meta name="Author" content="">
+    <meta name="Robots" content="INDEX,FOLLOW">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="imagetoolbar" content="no">
+    <title> 컴퓨터공학부</title>
+    <script>
+    </script>
+    <link rel="shortcut icon" type="image/x-icon" href="/images/common/favicon.ico">
+    <link href="/css/style.css" rel="stylesheet" type="text/css" media="screen">
+    <link href="/build/theme_00/css/layout.css" rel="stylesheet" type="text/css" media="screen">
+    <link href="/build/theme_00/css/_gray.css" rel="stylesheet" type="text/css" media="screen">
+    <link href="/build/theme_00/css/sub.css" rel="stylesheet" type="text/css" media="screen">
+    <link href="/build/theme_00/css/board.css" rel="stylesheet" type="text/css" media="screen">
+    <script type="text/javascript" src="/common/js/jQuery/jquery-1.9.0.js"></script>
+    <script type="text/javascript" src="/common/js/jQuery/plugins/jquery.number.js"></script>
+    <script type="text/javascript" src="/common/js/jQuery/plugins/jquery.form.js"></script>
+    <script type="text/javascript" src="/common/js/jQuery/plugins/jquery.typer.js"></script>
+    <script type="text/javascript" src="/common/js/jQuery/json2.js"></script>
+    <script type="text/javascript" src="/common/js/util.js"></script>
+    <script type="text/javascript" src="/common/js/itsp/itspImport.js"></script>
+    <script type="text/javascript" src="/common/js/jwplayer.js"></script>
+    <script type="text/javascript" src="/common/js/itspPlayer.js?tm=1"></script>
+    <script type="text/javascript" src="/common/js/ckeditor/ckeditor.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+    <script type="text/javascript" src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script type="text/javascript" src="/common/js/bxslider/jquery.bxslider.js"></script>
+    <link rel="stylesheet" type="text/css" href="/build/theme_00/css/jquery.bxslider.css">
+    <script type="text/javascript" src="/build/theme_00/js/ui.js"></script>
+    <script type="text/javascript">
+        var data_Y_List_len = "12";
+        var data_N_List_len = "12";
+        var dispType = "LIST";
+
+        //app 전용 js는 injectFile로 호출할 것(이유 : 캐시 방지 코드를 붙임)
+        injectFile("/build/theme_00/js/notice/notice.js");
+        injectFile("/js/ready.js");
+    </script>
+</head>
+<body>
+<div id="skip">
+    <h2 class="blind">Skip Navigation</h2>
+    <ul>
+        <li><a href="#container" onclick="document.getElementById('container').tabIndex = -1;document.getElementById('container').focus();return false;">본문 바로가기</a></li>
+        <li><a href="#nav" onclick="document.getElementById('nav').tabIndex = -1;document.getElementById('nav').focus();return false;">주메뉴 바로가기</a></li>
+        <li><a href="#lnb" onclick="document.getElementById('lnb').tabIndex = -1;document.getElementById('lnb').focus();return false;">서브메뉴바로가기</a></li>
+        <li><a href="#footer" onclick="document.getElementById('footer').tabIndex = -1;document.getElementById('footer').focus();return false;">퀵메뉴 바로가기</a></li>
+    </ul>
+</div>
+<div id="wrap"> <!-- header -->
+    <script type="text/javascript">
+        var compLocale = "ko";
+    </script>
+    <div id="header">
+        <div class="site_info">
+            <ul>
+                <li><a href="/member/login.do?siteId=CSE">로그인</a></li>
+                <li><a href="https://www.konkuk.ac.kr/" target="_blank" class="on">건국대학교</a></li>
+            </ul>
+        </div>
+        <div class="wrap clearfix">
+            <div class="hgroup">
+                <h1 class="logo"><a href="/">건국대학교</a></h1>
+                <h2><a href="/">컴퓨터공학부<span class="site_en_name">Computer Science and Engineering</span></a></h2>
+            </div>
+        </div> <!-- nav -->
+        <div class="gnb">
+            <div class="gnb_inner">
+                <div class="nav">
+                    <ul class="gnb_depth1" id="nav">
+                        <li> <a href="/html.do?siteId=CSE&amp;menuSeq=6064">학과소개</a>
+                            <div class="gnb_div">
+                                <ul class="gnb_depth2">
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=6064">교육목표</a> </li>
+                                    <li><a href="/history.do?siteId=CSE&amp;menuSeq=6066">학부연혁</a> </li>
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=6068">연락처 및 위치</a> </li>
+                                </ul>
+                            </div> </li>
+                        <li> <a href="/professor.do?siteId=CSE&amp;proSeq=82&amp;menuSeq=6109">구성원</a>
+                            <div class="gnb_div">
+                                <ul class="gnb_depth2">
+                                    <li><a href="/professor.do?siteId=CSE&amp;proSeq=82&amp;menuSeq=6109">전임교원</a> </li>
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=6111">직원</a> </li>
+                                    <li><a href="/professor.do?siteId=CSE&amp;proSeq=83&amp;menuSeq=6113">명예교수</a> </li>
+                                </ul>
+                            </div> </li>
+                        <li> <a href="/html.do?siteId=CSE&amp;menuSeq=6076">학부</a>
+                            <div class="gnb_div">
+                                <ul class="gnb_depth2">
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=6076">교과과정</a> </li>
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=6078">로드맵</a> </li>
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=6080">졸업요건</a> </li>
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=11655">교외장학금</a> </li>
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=11657">비교과활동</a> </li>
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=11659">전공동아리</a> </li>
+                                </ul>
+                            </div> </li>
+                        <li> <a href="/html.do?siteId=CSE&amp;menuSeq=6087">대학원</a>
+                            <div class="gnb_div">
+                                <ul class="gnb_depth2">
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=6087">교과과정</a> </li>
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=6089">연구실 소개</a> </li>
+                                    <li><a href="/noticeList.do?siteId=CSE&amp;boardSeq=881&amp;menuSeq=6091">공지사항</a> </li>
+                                </ul>
+                            </div> </li>
+                        <li> <a href="/html.do?siteId=CSE&amp;menuSeq=6094">취업및진로</a>
+                            <div class="gnb_div">
+                                <ul class="gnb_depth2">
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=6094">가능한 진로</a> </li>
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=6245">현장실습</a> </li>
+                                    <li><a href="/html.do?siteId=CSE&amp;menuSeq=6247">스타트업 클럽</a> </li>
+                                </ul>
+                            </div> </li>
+                        <li class="on"> <a href="/noticeList.do?siteId=CSE&amp;boardSeq=882&amp;menuSeq=6097">열린마당</a>
+                            <div class="gnb_div">
+                                <ul class="gnb_depth2">
+                                    <li><a href="/noticeList.do?siteId=CSE&amp;boardSeq=882&amp;menuSeq=6097">학과공지</a> </li>
+                                    <li><a href="/noticeList.do?siteId=CSE&amp;boardSeq=883&amp;menuSeq=6099">채용정보</a> </li>
+                                    <li><a href="/noticeList.do?siteId=CSE&amp;boardSeq=912&amp;menuSeq=6277">학과소식</a> </li>
+                                </ul>
+                            </div> </li>
+                    </ul>
+                </div>
+            </div>
+        </div> <!--// nav -->
+    </div> <!-- //header --> <!-- section -->
+    <div id="container">
+        <div class="section">
+            <div class="columns_wrap"> <!-- column_side -->
+                <div class="column_side" id="lnb">
+                    <h2 class="lnb_h2"><span>열린마당</span></h2>
+                    <div class="lnb">
+                        <ul class="l_depth2">
+                            <li class="on" data-itsp-lnb-toggle> <a href="/noticeList.do?siteId=CSE&amp;boardSeq=882&amp;menuSeq=6097"> 학과공지</a> </li>
+                            <li data-itsp-lnb-toggle> <a href="/noticeList.do?siteId=CSE&amp;boardSeq=883&amp;menuSeq=6099"> 채용정보</a> </li>
+                            <li data-itsp-lnb-toggle> <a href="/noticeList.do?siteId=CSE&amp;boardSeq=912&amp;menuSeq=6277"> 학과소식</a> </li>
+                        </ul>
+                    </div>
+                </div> <!-- // column_side -->
+                <div class="column_body"> <!-- cont_head -->
+                    <div class="cont_head">
+                        <div class="location">
+                            <ul>
+                                <li> 컴퓨터공학부</li>
+                                <li>열린마당</li>
+                                <li class="here">학과공지</li>
+                            </ul>
+                        </div>
+                        <h3 class="page_tit"><span>학과공지</span></h3>
+                    </div><!-- // cont_head -->
+                    <div class="cont_section pt20">
+                        <div class="page_article">
+                            <div class="board_module">
+                                <div class="pb20">
+                                    <fieldset> <legend>게시판 검색</legend>
+                                        <ul class="board_module_srch">
+                                            <li> <select id="searchBy" title="게시판 검색 조건 선택"> <option value="all" selected>제목+내용</option> <option value="title">제목</option> <option value="content">내용</option> </select> </li>
+                                            <li><input type="text" placeholder="검색어 입력" class="inp_tf" value="" id="searchValue" data-itsp-required data-itsp-title="검색어" maxlength="100" data-itsp-len-range=",100" tabindex="1"></li>
+                                            <li data-itsp-new-search-link><button type="button" title="검색" class="bt_srch"><strong class="fs14">검색</strong></button></li>
+                                        </ul>
+                                    </fieldset>
+                                </div>
+                                <div class="pb20">
+                                    <ul class="sortings">
+                                        <li class="lst"> <span><a href="#" data-itsp-distype-change="ALBUM"><i class="fa fa-th-large"></i>앨범형</a></span> <span><a href="#" class="on" data-itsp-distype-change="LIST"><i class="fa fa-th-list"></i>게시판형</a></span> <span><a href="#" data-itsp-alarm-toogle><i class="fa fa-bell-slash-o"></i>공지숨기기</a></span> <span class="pl15"> 총 <strong>473</strong>건</span> <span class="pl15"> <select id="curPage" title="페이지 건수 선택"> <option value="4">4개씩 보기</option> <option value="8">8개씩 보기</option> <option value="12" selected>12개씩 보기</option> <option value="16">16개씩 보기</option> <option value="20">20개씩 보기</option> <option value="40">40개씩 보기</option> <option value="60">60개씩 보기</option> </select> </span> </li>
+                                    </ul>
+                                </div>
+                                <div class="post_tbl board">
+                                    <div class="post_list">
+                                        <table class="grid">
+                                            <caption>
+                                                공지목록
+                                            </caption>
+                                            <colgroup>
+                                                <col width="10%">
+                                                <col width="55%">
+                                                <col width="15%">
+                                                <col width="10%">
+                                                <col width="10%">
+                                            </colgroup>
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">번호</th>
+                                                <th scope="col">제목</th>
+                                                <th scope="col">작성자</th>
+                                                <th scope="col">작성일</th>
+                                                <th scope="col">조회</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="noticeList">
+                                            <tr class="note_box">
+                                                <td><span class="list_head">[공지]</span></td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="179413"> (필독) 2023학년도 1학기 법정 연구실 안전교육 이수 안내</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-03-02</td>
+                                                <td>64</td>
+                                            </tr>
+                                            <tr class="note_box">
+                                                <td><span class="list_head">[공지]</span></td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="175206"> (필독) 2023학년도 신입생 대상 온라인 폭력예방교육 수강 안내</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-02-13</td>
+                                                <td>123</td>
+                                            </tr>
+                                            <tr class="note_box">
+                                                <td><span class="list_head">[공지]</span></td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="128835"> [중요] 코로나19 관련 공인결석 신청 방법 및 제출서류 안내</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2022-12-20</td>
+                                                <td>60</td>
+                                            </tr>
+                                            <tr class="note_box">
+                                                <td><span class="list_head">[공지]</span></td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="127516"> [졸업] 재학생 졸업요건 관리를 위한 필수 확인사항 안내</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2022-11-14</td>
+                                                <td>392</td>
+                                            </tr>
+                                            <tr class="note_box">
+                                                <td><span class="list_head">[공지]</span></td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="126467"> (필독) 재학생, 휴학생 연락처 업데이트 요청</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2022-10-27</td>
+                                                <td>130</td>
+                                            </tr>
+                                            <tr class="note_box">
+                                                <td><span class="list_head">[공지]</span></td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="86809"> (필독) ★컴퓨터공학부 학과별 졸업요건 정리</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2022-02-08</td>
+                                                <td>2282</td>
+                                            </tr>
+                                            <tr class="note_box">
+                                                <td><span class="list_head">[공지]</span></td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="77423"> (필독) 인턴십 의무이수제 졸업요건 안내</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2021-06-23</td>
+                                                <td>1227</td>
+                                            </tr>
+                                            <tr class="note_box">
+                                                <td><span class="list_head">[공지]</span></td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="63332"> (필독) ★2023년도 교육과정 안내(교과목명 신구대비표)</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2021-01-25</td>
+                                                <td>1271</td>
+                                            </tr>
+                                            <tr class="note_box">
+                                                <td><span class="list_head">[공지]</span></td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="49567"> (필독) 교환학생 전공학점인정 관련 내규 안내</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2020-07-28</td>
+                                                <td>499</td>
+                                            </tr>
+                                            <tr class="note_box">
+                                                <td><span class="list_head">[공지]</span></td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="45419"> (필독) 현장실습 전공학점인정 관련 내규 안내</a> </td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2020-03-23</td>
+                                                <td>969</td>
+                                            </tr>
+                                            <tr class="note_box">
+                                                <td><span class="list_head">[공지]</span></td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="45417"> [컴공과-&gt;컴공학부] 컴퓨터공학부 통합으로 인한 변경사항 안내</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2020-03-23</td>
+                                                <td>1800</td>
+                                            </tr>
+                                            <tr class="note_box">
+                                                <td><span class="list_head">[공지]</span></td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="45416"> [소웨-&gt;컴공학부] 학과통합에 따른 졸업 요건에 관한 내규 안내</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2020-03-23</td>
+                                                <td>2413</td>
+                                            </tr>
+                                            </tbody>
+                                            <tbody id="dispList">
+                                            <tr>
+                                                <td>473</td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="181059"> [SW사업단] 2023 제19회 TOPCIT 정기평가 시행 접수 안내</a> <span class="list_i_new"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-03-29</td>
+                                                <td>21</td>
+                                            </tr>
+                                            <tr>
+                                                <td>472</td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="181025"> [SW사업단] 2023년 KU 전국 대학생 창업 아이디어 경진대회</a> <span class="list_i_new"></span><span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-03-28</td>
+                                                <td>24</td>
+                                            </tr>
+                                            <tr>
+                                                <td>471</td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="180946"> '인피니언테크놀로지스코리아'(독일계 전력반도체 회사) 신입직원 (교수)추천 채용 안내</a> <span class="list_i_new"></span><span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-03-24</td>
+                                                <td>36</td>
+                                            </tr>
+                                            <tr>
+                                                <td>470</td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="180876"> KISTI-NVIDIA GPU Bootcamp(1회차) 개최 안내</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-03-22</td>
+                                                <td>75</td>
+                                            </tr>
+                                            <tr>
+                                                <td>469</td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="180255"> [장학] 2023학년도 1학기 장학안내</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-03-09</td>
+                                                <td>164</td>
+                                            </tr>
+                                            <tr>
+                                                <td>468</td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="179560"> [SW사업단] 2023년 SW해외교육 프로그램 참가 및 신청 안내</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-03-03</td>
+                                                <td>202</td>
+                                            </tr>
+                                            <tr>
+                                                <td>467</td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="179410"> [수업] 객체지향프로그래밍(3189) 추가 신청 관련</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-03-02</td>
+                                                <td>95</td>
+                                            </tr>
+                                            <tr>
+                                                <td>466</td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="176329"> [WE人교육센터] 2023 건국인증비교과프로그램핸드북</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-02-22</td>
+                                                <td>83</td>
+                                            </tr>
+                                            <tr>
+                                                <td>465</td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="175284"> [장학] 2023학년도 1학기 신·편입생 국가장학금 신청 독려</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-02-15</td>
+                                                <td>139</td>
+                                            </tr>
+                                            <tr>
+                                                <td>464</td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="175233"> [SW사업단] 2023년 SW역량검증시험(TOPCIT) 시행 계획 안내</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-02-14</td>
+                                                <td>133</td>
+                                            </tr>
+                                            <tr>
+                                                <td>463</td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="175200"> [SW사업단] SW활동장학2 모집 공고_23년 1학기</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-02-13</td>
+                                                <td>178</td>
+                                            </tr>
+                                            <tr>
+                                                <td>462</td>
+                                                <td class="subject"> <a href="#" class="subject_click" data-itsp-view-link="175189"> [SW사업단] SW활동장학 모집 공고(23년 1학기)</a> <span class="list_i_add"></span></td>
+                                                <td>
+                                                    <div class="list_break ">
+                                                        관리자
+                                                    </div></td>
+                                                <td>2023-02-13</td>
+                                                <td>361</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="pt20 bor_b" id="dispAlbum" style="display:none">
+                                            <ul class="list_thumb">
+                                                <li class="list_thumb_item" data-itsp-view-link="181059">
+                                                    <div class="thumb_info"> <span class="link_thumb"> <!-- 이미지 가로 중앙 위치 스크립트 적용 -->
+                 <div style="display: none;" data-itsp-content-img>
+                  <strong><img alt="" src="/file/ckImgView.do?fileUrl=/2023/03/3c7c8b53-e3c8-4b1e-991f-8f0ce227c6cb.jpg" style="width: 7016px; height: 9934px;">2023 </strong><strong>제19회 TOPCIT 정기평가 시행 및 접수 안내</strong>
+                  <br>
+                  <br> 아래와 같이 제19회 TOPCIT 정기평가가 시행되오니, 학생분들의 많은 관심과 참여 부탁드립니다.
+                  <br>
+                  <br> <strong>1. </strong><strong>평가일시: 2023. 5. 20. (토) 09:00 ~ 12:00 / 09:10까지 입실</strong>
+                  <br> &nbsp; &nbsp;*위 일정은 코로나 19 관련 상황 및 정부 지침에 따라 일정 변동(연기 또는 취소) 가능
+                  <br>
+                  <br> <strong>[MOU </strong><strong>체결 대학으로 단체 접수 진행]</strong>
+                  <br> 2. 평가유형: 국문(단체접수)
+                  <br> <strong>3. </strong><strong>접수기간:&nbsp;2023. 4. 10.(월) ~ 4. 21.(금)까지 (09:30 ~ 17:00,&nbsp;점심시간 제외&nbsp;12:00 ~ 13:00 )</strong>
+                  <br> <strong>4. </strong><strong>접수장소: 공학관 A동 1309호(3층) SW중심대학사업단 KU OLIVE센터</strong>
+                  <br> 5. 접수방법:&nbsp;<a href="https://www.topcit.or.kr/home.do" target="loopstyle_link">TOPCIT 홈페이지</a>(<a href="https://www.topcit.or.kr)">https://www.topcit.or.kr)</a>에서 회원 가입 후&nbsp;<strong>방문 접수</strong>
+                  <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<strong>※&nbsp;단체 접수는 온라인 접수 불가</strong>
+                  <br> <strong>6. </strong><strong>응시료: 10,000원(MOU 체결 대학으로 단체접수자에 한해 응시료 10,000원)</strong>
+                  <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>&nbsp;KU OLIVE </strong><strong>센터에서 접수 10,000원(현금)&nbsp;결재</strong>
+                  <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp; <strong>→&nbsp;</strong><strong>TOPCIT&nbsp;</strong><strong>시험 종료 후</strong>&nbsp;<strong>실제 응시한 학생에 한하여 응시료 10,000원 환급,&nbsp;</strong><strong>환급기간 추후 안내</strong>
+                  <br> <strong>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; "</strong><strong>환급 기간 내 응시료 미수령시 건대 발전 기금에 학생 명의로 기부"</strong>
+                  <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<strong>※&nbsp;<u>단체 접수자만 응시 확인 후 환급 가능함</u>.(개인 접수의 경우 환급 불가)</strong>
+                  <br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+                  <br> 7. 수험표 발급 기간 및 고사장은 추후 안내 예정
+                  <br> &nbsp;
+                  <br> <strong>* </strong><strong>기존에 TOPCIT 정기평가에 응시한 학생도 제19회 TOPCIT 정기평가의 중복 응시가 가능합니다.</strong>
+                  <br>
+                  <br>
+                  <br> &nbsp;
+                 </div> <img alt="[SW사업단] 2023 제19회 TOPCIT 정기평가 시행 접수 안내" src="" data-itsp-content-img-src> </span>
+                                                    </div>
+                                                    <dl class="cont_info">
+                                                        <dt class="subject"> <span class="subject_click"> [SW사업단] 2023 제19회 TOPCIT 정기평가 시행 접수 안내</span> <span class="list_i_new"></span>
+                                                        </dt>
+                                                    </dl> </li>
+                                                <li class="list_thumb_item" data-itsp-view-link="181025">
+                                                    <div class="thumb_info"> <span class="link_thumb"> <!-- 이미지 가로 중앙 위치 스크립트 적용 --> <img alt="[SW사업단] 2023년 KU 전국 대학생 창업 아이디어 경진대회" src="/file/resizeImgSrcView.do?seq=" style="margin:auto;"> </span>
+                                                    </div>
+                                                    <dl class="cont_info">
+                                                        <dt class="subject"> <span class="subject_click"> [SW사업단] 2023년 KU 전국 대학생 창업 아이디어 경진대회</span> <span class="list_i_new"></span>
+                                                        </dt>
+                                                    </dl> </li>
+                                                <li class="list_thumb_item" data-itsp-view-link="180946">
+                                                    <div class="thumb_info"> <span class="link_thumb"> <!-- 이미지 가로 중앙 위치 스크립트 적용 --> <img alt="'인피니언테크놀로지스코리아'(독일계 전력반도체 회사) 신입직원 (교수)추천 채용 안내" src="/file/resizeImgSrcView.do?seq=" style="margin:auto;"> </span>
+                                                    </div>
+                                                    <dl class="cont_info">
+                                                        <dt class="subject"> <span class="subject_click"> '인피니언테크놀로지스코리아'(독일계 전력반도체 회사) 신입직원 (교수)추천 채용 안내</span> <span class="list_i_new"></span>
+                                                        </dt>
+                                                    </dl> </li>
+                                                <li class="list_thumb_item" data-itsp-view-link="180876">
+                                                    <div class="thumb_info"> <span class="link_thumb"> <!-- 이미지 가로 중앙 위치 스크립트 적용 --> <img alt="KISTI-NVIDIA GPU Bootcamp(1회차) 개최 안내" src="/file/resizeImgSrcView.do?seq=" style="margin:auto;"> </span>
+                                                    </div>
+                                                    <dl class="cont_info">
+                                                        <dt class="subject"> <span class="subject_click"> KISTI-NVIDIA GPU Bootcamp(1회차) 개최 안내</span>
+                                                        </dt>
+                                                    </dl> </li>
+                                                <li class="list_thumb_item" data-itsp-view-link="180255">
+                                                    <div class="thumb_info"> <span class="link_thumb"> <!-- 이미지 가로 중앙 위치 스크립트 적용 --> <img alt="[장학] 2023학년도 1학기 장학안내" src="/file/resizeImgSrcView.do?seq=" style="margin:auto;"> </span>
+                                                    </div>
+                                                    <dl class="cont_info">
+                                                        <dt class="subject"> <span class="subject_click"> [장학] 2023학년도 1학기 장학안내</span>
+                                                        </dt>
+                                                    </dl> </li>
+                                                <li class="list_thumb_item" data-itsp-view-link="179560">
+                                                    <div class="thumb_info"> <span class="link_thumb"> <!-- 이미지 가로 중앙 위치 스크립트 적용 --> <img alt="[SW사업단] 2023년 SW해외교육 프로그램 참가 및 신청 안내" src="/file/resizeImgSrcView.do?seq=" style="margin:auto;"> </span>
+                                                    </div>
+                                                    <dl class="cont_info">
+                                                        <dt class="subject"> <span class="subject_click"> [SW사업단] 2023년 SW해외교육 프로그램 참가 및 신청 안내</span>
+                                                        </dt>
+                                                    </dl> </li>
+                                                <li class="list_thumb_item" data-itsp-view-link="179410">
+                                                    <div class="thumb_info"> <span class="link_thumb"> <!-- 이미지 가로 중앙 위치 스크립트 적용 --> <img alt="[수업] 객체지향프로그래밍(3189) 추가 신청 관련" src="/file/resizeImgSrcView.do?seq=" style="margin:auto;"> </span>
+                                                    </div>
+                                                    <dl class="cont_info">
+                                                        <dt class="subject"> <span class="subject_click"> [수업] 객체지향프로그래밍(3189) 추가 신청 관련</span>
+                                                        </dt>
+                                                    </dl> </li>
+                                                <li class="list_thumb_item" data-itsp-view-link="176329">
+                                                    <div class="thumb_info"> <span class="link_thumb"> <!-- 이미지 가로 중앙 위치 스크립트 적용 --> <img alt="[WE人교육센터] 2023 건국인증비교과프로그램핸드북" src="/file/resizeImgSrcView.do?seq=" style="margin:auto;"> </span>
+                                                    </div>
+                                                    <dl class="cont_info">
+                                                        <dt class="subject"> <span class="subject_click"> [WE人교육센터] 2023 건국인증비교과프로그램핸드북</span>
+                                                        </dt>
+                                                    </dl> </li>
+                                                <li class="list_thumb_item" data-itsp-view-link="175284">
+                                                    <div class="thumb_info"> <span class="link_thumb"> <!-- 이미지 가로 중앙 위치 스크립트 적용 --> <img alt="[장학] 2023학년도 1학기 신·편입생 국가장학금 신청 독려" src="/file/resizeImgSrcView.do?seq=" style="margin:auto;"> </span>
+                                                    </div>
+                                                    <dl class="cont_info">
+                                                        <dt class="subject"> <span class="subject_click"> [장학] 2023학년도 1학기 신·편입생 국가장학금 신청 독려</span>
+                                                        </dt>
+                                                    </dl> </li>
+                                                <li class="list_thumb_item" data-itsp-view-link="175233">
+                                                    <div class="thumb_info"> <span class="link_thumb"> <!-- 이미지 가로 중앙 위치 스크립트 적용 --> <img alt="[SW사업단] 2023년 SW역량검증시험(TOPCIT) 시행 계획 안내" src="/file/resizeImgSrcView.do?seq=" style="margin:auto;"> </span>
+                                                    </div>
+                                                    <dl class="cont_info">
+                                                        <dt class="subject"> <span class="subject_click"> [SW사업단] 2023년 SW역량검증시험(TOPCIT) 시행 계획 안내</span>
+                                                        </dt>
+                                                    </dl> </li>
+                                                <li class="list_thumb_item" data-itsp-view-link="175200">
+                                                    <div class="thumb_info"> <span class="link_thumb"> <!-- 이미지 가로 중앙 위치 스크립트 적용 --> <img alt="[SW사업단] SW활동장학2 모집 공고_23년 1학기" src="/file/resizeImgSrcView.do?seq=" style="margin:auto;"> </span>
+                                                    </div>
+                                                    <dl class="cont_info">
+                                                        <dt class="subject"> <span class="subject_click"> [SW사업단] SW활동장학2 모집 공고_23년 1학기</span>
+                                                        </dt>
+                                                    </dl> </li>
+                                                <li class="list_thumb_item" data-itsp-view-link="175189">
+                                                    <div class="thumb_info"> <span class="link_thumb"> <!-- 이미지 가로 중앙 위치 스크립트 적용 --> <img alt="[SW사업단] SW활동장학 모집 공고(23년 1학기)" src="/file/resizeImgSrcView.do?seq=" style="margin:auto;"> </span>
+                                                    </div>
+                                                    <dl class="cont_info">
+                                                        <dt class="subject"> <span class="subject_click"> [SW사업단] SW활동장학 모집 공고(23년 1학기)</span>
+                                                        </dt>
+                                                    </dl> </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div> <!-- //post_tbl -->
+                                <div class="bt_list pt30"> <!--
+									권한 설정 리스트가 빈값이면 '관리자'인 사람한테 글쓰기 버튼이 보이고,
+									권한 설정 리스트에 값이 있으면 writeYn이 'Y'인 사람만 글쓰기 버튼 보임
+									 -->
+                                </div> <!-- paginate -->
+                                <div class="paginate"> <span class="list"> <strong>1</strong> <a data-itsp-page-link="2" data-itsp-cur-page-link="12">2</a> <a data-itsp-page-link="3" data-itsp-cur-page-link="12">3</a> <a data-itsp-page-link="4" data-itsp-cur-page-link="12">4</a> <a data-itsp-page-link="5" data-itsp-cur-page-link="12">5</a> <a data-itsp-page-link="6" data-itsp-cur-page-link="12">6</a> <a data-itsp-page-link="7" data-itsp-cur-page-link="12">7</a> <a data-itsp-page-link="8" data-itsp-cur-page-link="12">8</a> <a data-itsp-page-link="9" data-itsp-cur-page-link="12">9</a> <a data-itsp-page-link="10" data-itsp-cur-page-link="12">10</a> </span> <a href="#" class="roll next" data-itsp-page-link="2" data-itsp-cur-page-link="12">다음</a><a href="#" class="roll last" data-itsp-page-link="40" data-itsp-cur-page-link="12">마지막</a>
+                                </div> <!-- //paginate -->
+                            </div> <!--// board_module -->
+                        </div>
+                    </div>
+                </div> <!-- //column_body -->
+            </div>
+        </div> <!-- //section -->
+    </div> <!--// container -->
+</div> <!--// wrap --> <!-- footer -->
+<div class="footer">
+    <div class="univ_info">
+        <div class="flogo">
+            건국대학교 서울캠퍼스
+        </div>
+        <ul>
+            <li class="addr">서울시 광진구 능동로 120 건국대학교 (120 Neungdong-ro, Gwangjin-gu, Seoul 05029. KOREA)<br>학기중 근무시간 09:00~17:30(점심시간 12시~13시)</li>
+            <li class="copyright">COPYRIGHT 2020 KONKUK UNIVERSITY. ALL RIGHTS RESERVED.</li>
+            <li class="link_org"> <a href="http://www.konkuk.ac.kr/jsp/Plaza/plaza_01_13.jsp" target="_blank" style="color:#8bc34a;font-size:12px"> 개인정보처리방침</a> </li>
+        </ul>
+    </div>
+</div>
+<form name="curSearchForm" id="curSearchForm">
+    <input type="hidden" name="siteId" value="CSE">
+    <input type="hidden" name="boardSeq" value="882">
+    <input type="hidden" name="menuSeq" value="6097">
+    <input type="hidden" name="searchBy" value="">
+    <input type="hidden" name="searchValue" value="">
+    <input type="hidden" name="categorySeq" value="0">
+    <input type="hidden" name="curBoardDispType" value="LIST">
+</form>
+<form name="curPageForm" id="curPageForm">
+    <input type="hidden" name="curPage" value="12">
+    <input type="hidden" name="pageNum" value="1">
+</form> <!-- //footer -->
+</body>
+</html>
