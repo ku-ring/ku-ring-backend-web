@@ -1,6 +1,5 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.worker.DepartmentName;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -24,6 +23,19 @@ public class NoticeStep {
         );
     }
 
+    public static void 공지사항_조회_요청_응답_확인_v2(ExtractableResponse<Response> response, String category) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("공지 조회에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getString("data.noticeList[0].articleId")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data.noticeList[0].postedDate")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data.noticeList[0].url")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data.noticeList[0].subject")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data.noticeList[0].category")).isEqualTo(category)
+        );
+    }
+
     public static ExtractableResponse<Response> 공지사항_조회_요청(String category) {
         return 페이지_번호와_함께_공지사항_조회_요청(category, 0);
     }
@@ -39,11 +51,11 @@ public class NoticeStep {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 페이지_번호와_함께_학과_공지사항_조회_요청(String category, DepartmentName departmentName, int offset) {
+    public static ExtractableResponse<Response> 페이지_번호와_함께_학과_공지사항_조회_요청(String category, String hostPrefix, int offset) {
         return RestAssured
                 .given().log().all()
                 .pathParam("type", category)
-                .pathParam("department", departmentName.getHostPrefix())
+                .pathParam("department", hostPrefix)
                 .pathParam("offset", String.valueOf(offset))
                 .pathParam("max", "10")
                 .when().get("/api/v2/notices?type={type}&department={department}&offset={offset}&max={max}")
