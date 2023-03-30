@@ -2,6 +2,8 @@ package com.kustacks.kuring.notice.presentation;
 
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.notice.business.NoticeService;
+import com.kustacks.kuring.notice.common.dto.DepartmentListResponse;
+import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListLookupResponse;
 import com.kustacks.kuring.notice.common.dto.NoticeLookupResponse;
@@ -20,17 +22,18 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_SEARCH_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_SEARCH_SUCCESS;
 
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v2", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/api/v2/notices", produces = MediaType.APPLICATION_JSON_VALUE)
 public class NoticeControllerV2 {
 
     private final NoticeService noticeService;
 
-    @GetMapping("/notices")
+    @GetMapping
     public ResponseEntity<BaseResponse<NoticeListLookupResponse>> getNotices(
             @RequestParam(name = "type") String type,
             @RequestParam(name = "department", required = false) String department,
@@ -40,10 +43,17 @@ public class NoticeControllerV2 {
         return ResponseEntity.ok().body(new BaseResponse(NOTICE_SEARCH_SUCCESS, new NoticeListLookupResponse(searchResults)));
     }
 
-    @GetMapping("/notices/search")
+    @GetMapping("/search")
     public ResponseEntity<BaseResponse<NoticeLookupResponse>> searchNotice(@NotBlank @RequestParam String content) {
         List<NoticeSearchDto> noticeDtoList = noticeService.findAllNoticeByContent(content);
         NoticeLookupResponse response = new NoticeLookupResponse(noticeDtoList);
         return ResponseEntity.ok().body(new BaseResponse(NOTICE_SEARCH_SUCCESS, response));
+    }
+
+    @GetMapping("/departments")
+    public ResponseEntity<BaseResponse<DepartmentListResponse>> getSupportedDepartments() {
+        List<DepartmentNameDto> departmentNames = noticeService.lookupSupportedDepartments();
+        DepartmentListResponse response = new DepartmentListResponse(departmentNames);
+        return ResponseEntity.ok().body(new BaseResponse(DEPARTMENTS_SEARCH_SUCCESS, response));
     }
 }

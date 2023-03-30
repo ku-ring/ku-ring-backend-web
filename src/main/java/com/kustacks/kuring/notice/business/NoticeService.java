@@ -6,6 +6,7 @@ import com.kustacks.kuring.category.exception.CategoryNotFoundException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.utils.ObjectComparator;
+import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
@@ -35,6 +36,7 @@ public class NoticeService {
     private final DepartmentNoticeRepository departmentNoticeRepository;
     private final Map<String, Category> categoryMap;
     private final CategoryName[] categoryNames;
+    private final List<DepartmentNameDto> supportedDepartmentNameList;
     private final String SPACE_REGEX = "[\\s+]";
 
     @Value("${notice.normal-base-url}")
@@ -48,6 +50,11 @@ public class NoticeService {
         this.departmentNoticeRepository = departmentNoticeRepository;
         this.categoryMap = categoryRepository.findAllMap();
         this.categoryNames = CategoryName.values();
+        this.supportedDepartmentNameList = supportedDepartmentNameList();
+    }
+
+    public List<DepartmentNameDto> lookupSupportedDepartments() {
+        return supportedDepartmentNameList;
     }
 
     public NoticeListResponse getNotices(String type, int offset, int max) {
@@ -176,5 +183,13 @@ public class NoticeService {
         notices.sort(ObjectComparator.NoticeDateComparator);
 
         return notices;
+    }
+
+    private List<DepartmentNameDto> supportedDepartmentNameList() {
+        return Arrays.stream(DepartmentName.values())
+                .filter(dn -> !dn.equals(DepartmentName.BIO_SCIENCE))
+                .filter(dn -> !dn.equals(DepartmentName.COMM_DESIGN))
+                .map(DepartmentNameDto::from)
+                .collect(Collectors.toList());
     }
 }
