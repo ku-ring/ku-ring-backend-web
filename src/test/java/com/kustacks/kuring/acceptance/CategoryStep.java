@@ -62,4 +62,21 @@ public class CategoryStep {
                 .then().log().all()
                 .extract();
     }
+
+    public static void 학과_조회_응답_확인(ExtractableResponse<Response> response, int supportedDepartmentCnt) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("지원하는 학과 조회에 정공하였습니다."),
+                () -> assertThat(response.jsonPath().getList("data.departmentList").size()).isEqualTo(supportedDepartmentCnt)
+        );
+    }
+
+    public static ExtractableResponse<Response> 학과_조회_요청() {
+        return RestAssured
+                .given().log().all()
+                .when().get("/api/v2/notices/departments")
+                .then().log().all()
+                .extract();
+    }
 }

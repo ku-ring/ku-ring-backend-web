@@ -1,12 +1,13 @@
 package com.kustacks.kuring.notice.domain;
 
 import com.kustacks.kuring.category.domain.Category;
-import com.kustacks.kuring.kuapi.CategoryName;
+import com.kustacks.kuring.worker.CategoryName;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -38,16 +39,24 @@ public class Notice {
     @Column(name = "subject", length = 128, nullable = false)
     private String subject;
 
+    @Column(name = "important")
+    private Boolean important = false;
+
+    @Embedded
+    private Url url;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_name", nullable = false)
     private Category category;
 
-    public Notice(String articleId, String postedDate, String updatedDate, String subject, Category category) {
+    public Notice(String articleId, String postedDate, String updatedDate, String subject, Category category, Boolean important, String fullUrl) {
         this.articleId = articleId;
         this.postedDate = postedDate;
         this.updatedDate = updatedDate;
         this.subject = subject;
         this.category = category;
+        this.important = important;
+        this.url = new Url(fullUrl);
     }
 
     public boolean isSameCategoryName(CategoryName categoryName) {

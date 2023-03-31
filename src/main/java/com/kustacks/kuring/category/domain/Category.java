@@ -1,6 +1,6 @@
 package com.kustacks.kuring.category.domain;
 
-import com.kustacks.kuring.kuapi.CategoryName;
+import com.kustacks.kuring.worker.CategoryName;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.user.domain.UserCategory;
 import lombok.AccessLevel;
@@ -35,7 +35,7 @@ public class Category {
     }
 
     public boolean isSameName(CategoryName categoryName) {
-        return this.name.equals(categoryName);
+        return categoryName.isSameName(this.name);
     }
 
     @Override

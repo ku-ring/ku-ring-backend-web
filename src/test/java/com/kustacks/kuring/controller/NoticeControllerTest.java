@@ -82,7 +82,9 @@ public class NoticeControllerTest {
                 .articleId(articleId)
                 .postedDate(postedDate)
                 .subject(subject)
+                .url("url")
                 .category(categoryName)
+                .important(false)
                 .build());
 
         NoticeListResponse noticeListResponse = new NoticeListResponse("https://www.konkuk.ac.kr/do/MessageBoard/ArticleRead.do", noticeDtoList);
@@ -105,26 +107,28 @@ public class NoticeControllerTest {
                 .andExpect(jsonPath("baseUrl").exists())
                 .andExpect(jsonPath("noticeList").exists())
                 .andDo(document("notice-success",
-                                getDocumentRequest(),
-                                getDocumentResponse(),
-                                requestParameters(
-                                        parameterWithName("type").description("공지 카테고리 키워드")
-                                                .attributes(key("Constraints").value("bch, sch, emp, nat, stu, ind, nor, lib")),
-                                        parameterWithName("offset").description("가져올 공지의 시작 인덱스")
-                                                .attributes(key("Constraints").value("0 이상의 정수")),
-                                        parameterWithName("max").description("가져올 공지 최대 개수")
-                                                .attributes(key("Constraints").value("1 이상 30 이하의 정수"))
-                                ),
-                                responseFields(
-                                        fieldWithPath("isSuccess").type(JsonFieldType.BOOLEAN).description("성공 여부"),
-                                        fieldWithPath("resultMsg").type(JsonFieldType.STRING).description("결과 메세지"),
-                                        fieldWithPath("resultCode").type(JsonFieldType.NUMBER).description("결과 코드"),
-                                        fieldWithPath("baseUrl").type(JsonFieldType.STRING).description("공지 확인할 수 있는 url의 공통 부분"),
-                                        fieldWithPath("noticeList[].articleId").type(JsonFieldType.STRING).description("공지 ID"),
-                                        fieldWithPath("noticeList[].postedDate").type(JsonFieldType.STRING).description("공지 게시일"),
-                                        fieldWithPath("noticeList[].subject").type(JsonFieldType.STRING).description("공지 제목"),
-                                        fieldWithPath("noticeList[].category").type(JsonFieldType.STRING).description("공지 카테고리명")
-                                ))
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        requestParameters(
+                                parameterWithName("type").description("공지 카테고리 키워드")
+                                        .attributes(key("Constraints").value("bch, sch, emp, nat, stu, ind, nor, lib")),
+                                parameterWithName("offset").description("가져올 공지의 시작 인덱스")
+                                        .attributes(key("Constraints").value("0 이상의 정수")),
+                                parameterWithName("max").description("가져올 공지 최대 개수")
+                                        .attributes(key("Constraints").value("1 이상 30 이하의 정수"))
+                        ),
+                        responseFields(
+                                fieldWithPath("isSuccess").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                fieldWithPath("resultMsg").type(JsonFieldType.STRING).description("결과 메세지"),
+                                fieldWithPath("resultCode").type(JsonFieldType.NUMBER).description("결과 코드"),
+                                fieldWithPath("baseUrl").type(JsonFieldType.STRING).description("공지 확인할 수 있는 url의 공통 부분"),
+                                fieldWithPath("noticeList[].articleId").type(JsonFieldType.STRING).description("공지 ID"),
+                                fieldWithPath("noticeList[].postedDate").type(JsonFieldType.STRING).description("공지 게시일"),
+                                fieldWithPath("noticeList[].subject").type(JsonFieldType.STRING).description("공지 제목"),
+                                fieldWithPath("noticeList[].category").type(JsonFieldType.STRING).description("공지 카테고리명"),
+                                fieldWithPath("noticeList[].important").type(JsonFieldType.BOOLEAN).description("공지 중요 유무"),
+                                fieldWithPath("noticeList[].url").type(JsonFieldType.STRING).description("공지 주소")
+                        ))
 
                 );
     }

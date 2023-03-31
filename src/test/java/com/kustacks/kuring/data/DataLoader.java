@@ -2,12 +2,15 @@ package com.kustacks.kuring.data;
 
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
+import com.kustacks.kuring.notice.domain.DepartmentNotice;
+import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.domain.StaffRepository;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
+import com.kustacks.kuring.worker.DepartmentName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -27,12 +30,14 @@ public class DataLoader {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final StaffRepository staffRepository;
+    private final DepartmentNoticeRepository departmentNoticeRepository;
 
-    public DataLoader(NoticeRepository noticeRepository, CategoryRepository categoryRepository, UserRepository userRepository, StaffRepository staffRepository) {
+    public DataLoader(NoticeRepository noticeRepository, CategoryRepository categoryRepository, UserRepository userRepository, StaffRepository staffRepository, DepartmentNoticeRepository departmentNoticeRepository) {
         this.noticeRepository = noticeRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.staffRepository = staffRepository;
+        this.departmentNoticeRepository = departmentNoticeRepository;
     }
 
     /**
@@ -51,7 +56,8 @@ public class DataLoader {
         Category bachelor = new Category("bachelor");
         Category employment = new Category("employment");
         Category library = new Category("library");
-        categoryRepository.saveAll(List.of(student, bachelor, employment, library));
+        Category department = new Category("department");
+        categoryRepository.saveAll(List.of(student, bachelor, employment, library, department));
 
         List<Notice> noticeList = buildNotices(5, student);
         noticeRepository.saveAll(noticeList);
@@ -59,13 +65,26 @@ public class DataLoader {
         List<Staff> staffList = buildStaffs(5);
         staffRepository.saveAll(staffList);
 
+        List<DepartmentNotice> importantDeptNotices = buildDepartmentNotice(7, DepartmentName.COMPUTER, department, true);
+        departmentNoticeRepository.saveAll(importantDeptNotices);
+
+        List<DepartmentNotice> normalDeptNotices = buildDepartmentNotice(5, DepartmentName.COMPUTER, department, false);
+        departmentNoticeRepository.saveAll(normalDeptNotices);
+
         log.info("[init complete DataLoader]");
+    }
+
+    private List<DepartmentNotice> buildDepartmentNotice(int cnt, DepartmentName departmentName, Category category, boolean important) {
+        return Stream.iterate(0, i -> i + 1)
+                .limit(cnt)
+                .map(i -> new DepartmentNotice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, category, important, "https://www.example.com", DepartmentName.COMPUTER))
+                .collect(Collectors.toList());
     }
 
     private static List<Notice> buildNotices(int cnt, Category category) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new Notice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, category))
+                .map(i -> new Notice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, category, false, "https://www.example.com"))
                 .collect(Collectors.toList());
     }
 

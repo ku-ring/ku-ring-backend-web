@@ -29,7 +29,7 @@ public class Feedback {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "uid")
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Feedback(String content, User user) {

@@ -64,10 +64,13 @@ public enum ErrorCode {
 
     CAT_NOT_EXIST_CATEGORY("서버에서 지원하지 않는 카테고리입니다."),
 
-//    STAFF_SCRAPER_TAG_NOT_EXIST("Jsoup - 찾고자 하는 태그가 존재하지 않습니다."),
+    // STAFF_SCRAPER_TAG_NOT_EXIST("Jsoup - 찾고자 하는 태그가 존재하지 않습니다."),
     STAFF_SCRAPER_EXCEED_RETRY_LIMIT("교직원 업데이트 재시도 횟수를 초과했습니다."),
     STAFF_SCRAPER_CANNOT_SCRAP("건국대학교 홈페이지가 불안정합니다. 교직원 정보를 가져올 수 없습니다."),
     STAFF_SCRAPER_CANNOT_PARSE("교직원 페이지 HTML 파싱에 실패했습니다."),
+
+    NOTICE_SCRAPER_CANNOT_SCRAP("학과 홈페이지가 불안정합니다. 공지 정보를 가져올 수 없습니다."),
+    NOTICE_SCRAPER_CANNOT_PARSE("공지 페이지 HTML 파싱에 실패했습니다."),
 
     FB_FAIL_SUBSCRIBE("카테고리 구독에 실패했습니다."),
     FB_FAIL_UNSUBSCRIBE("카테고리 구독 해제에 실패했습니다."),
@@ -80,7 +83,13 @@ public enum ErrorCode {
 
     AD_UNAUTHENTICATED("관리자가 아닙니다."),
 
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다.");
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
+
+    /**
+     * ErrorCodes about DomainLogicException
+     */
+    DOMAIN_CANNOT_CREATE("해당 도메인을 생성할 수 없습니다."),
+    DEPARTMENT_NOT_FOUND("해당 학과를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

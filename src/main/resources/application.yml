@@ -11,7 +11,7 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL55Dialect
     database-platform: org.hibernate.dialect.MariaDB103Dialect
-    defer-datasource-initialization: true # jpa\uB85C \uD14C\uC774\uBE14 \uC0DD\uC131\uD55C \uB4A4 data.sql \uC2E4\uD589\uB418\uAC8C \uD558\uB294 \uC124\uC815
+    defer-datasource-initialization: false
     show-sql: false
     open-in-view: false
   datasource:
@@ -23,14 +23,17 @@ spring:
     password: ${DB_PASSWORD}
     username: ${DB_USER}
     url: jdbc:${DB_URL}
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    url: jdbc:${DB_URL}
+    user: ${DB_USER}
+    password: ${DB_PASSWORD}
   thymeleaf:
     cache: true
     prefix: classpath:/templates/
     suffix: .html
     enabled: true
-  sql:
-    init:
-      mode: always
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
