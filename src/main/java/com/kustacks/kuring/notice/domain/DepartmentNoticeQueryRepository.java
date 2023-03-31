@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface DepartmentNoticeQueryRepository {
 
-    List<String> findNormalArticleIdsByDepartmentWithLimit(DepartmentName departmentName, int limit);
+    List<Integer> findNormalArticleIdsByDepartmentWithLimit(DepartmentName departmentName, int limit);
 
     List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName);
 
     List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Pageable pageable);
 
-    List<String> findImportantArticleIdsByDepartment(DepartmentName departmentNameEnum);
+    List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentNameEnum);
 
-    List<String> findNormalArticleIdsByDepartment(DepartmentName departmentNameEnum);
+    List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentNameEnum);
 
     void deleteAllByIdsAndDepartment(DepartmentName departmentName, List<String> articleIds);
 

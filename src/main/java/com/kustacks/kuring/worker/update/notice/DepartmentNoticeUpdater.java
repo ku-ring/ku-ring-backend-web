@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class DepartmentNoticeUpdater implements Updater {
         }
     }
 
-    @Scheduled(cron = "0 0 2,19 * * *") // 전체 업데이트는 매일 새벽 2시, 오후 7시에 진행
+    @Scheduled(cron = "0 0 2,19 * * *") // 전체 업데이트는 매일 오전 2시, 오후 7시에 진행
     public void updateAll() {
         log.info("******** 학과별 전체 공지 업데이트 시작 ********");
         startTime = System.currentTimeMillis();
@@ -83,13 +84,13 @@ public class DepartmentNoticeUpdater implements Updater {
 
         for (ComplexNoticeFormatDto scrapResult : scrapResults) {
             // DB에서 최신 중요 공지를 가져와서
-            List<String> savedImportantArticleIds = departmentNoticeRepository.findImportantArticleIdsByDepartment(departmentNameEnum);
+            List<Integer> savedImportantArticleIds = departmentNoticeRepository.findImportantArticleIdsByDepartment(departmentNameEnum);
 
             // db와 싱크를 맞춘다
             saveNewNotices(scrapResult.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true);
 
             // DB에서 최신 60개의 일반 공지 id를 가져와서
-            List<String> savedNormalArticleIds = departmentNoticeRepository.findNormalArticleIdsByDepartmentWithLimit(departmentNameEnum, TOTAL_NOTICE_COUNT_PER_PAGE * 5);
+            List<Integer> savedNormalArticleIds = departmentNoticeRepository.findNormalArticleIdsByDepartmentWithLimit(departmentNameEnum, TOTAL_NOTICE_COUNT_PER_PAGE * 5);
 
             // db와 싱크를 맞춘다
             saveNewNotices(scrapResult.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false);
@@ -99,7 +100,7 @@ public class DepartmentNoticeUpdater implements Updater {
         log.info("[학과] 업데이트 시작으로부터 {}millis 만큼 지남", endTime - startTime);
     }
 
-    private void saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
+    private void saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
         List<DepartmentNotice> newNotices = filteringSoonSaveNotice(scrapResults, savedArticleIds, departmentNameEnum, important);
         departmentNoticeRepository.saveAllAndFlush(newNotices);
     }
@@ -109,13 +110,13 @@ public class DepartmentNoticeUpdater implements Updater {
 
         for (ComplexNoticeFormatDto scrapResult : scrapResults) {
             // DB에서 최신 중요 공지를 가져와서
-            List<String> savedImportantArticleIds = departmentNoticeRepository.findImportantArticleIdsByDepartment(departmentNameEnum);
+            List<Integer> savedImportantArticleIds = departmentNoticeRepository.findImportantArticleIdsByDepartment(departmentNameEnum);
 
             // db와 싱크를 맞춘다
             synchronizationWithDb(scrapResult.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true);
 
             // DB에서 모든 일반 공지의 id를 가져와서
-            List<String> savedNormalArticleIds = departmentNoticeRepository.findNormalArticleIdsByDepartment(departmentNameEnum);
+            List<Integer> savedNormalArticleIds = departmentNoticeRepository.findNormalArticleIdsByDepartment(departmentNameEnum);
 
             // db와 싱크를 맞춘다
             synchronizationWithDb(scrapResult.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false);
@@ -125,24 +126,23 @@ public class DepartmentNoticeUpdater implements Updater {
         log.info("[학과] 업데이트 시작으로부터 {}millis 만큼 지남", endTime - startTime);
     }
 
-    private void synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
+    private void synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
         List<DepartmentNotice> newNotices = filteringSoonSaveNotice(scrapResults, savedArticleIds, departmentNameEnum, important);
 
-        List<String> latestNoticeIds = extractIdList(scrapResults);
+        List<Integer> latestNoticeIds = extractIdList(scrapResults);
 
         List<String> deletedNoticesArticleIds = filteringSoonDeleteIds(savedArticleIds, latestNoticeIds);
 
         departmentNoticeRepository.saveAllAndFlush(newNotices);
-        // TODO : 삭제 로직 이상함
-        // TODO : articleId Long타입으로 수정
+
         departmentNoticeRepository.deleteAllByIdsAndDepartment(departmentNameEnum, deletedNoticesArticleIds);
     }
 
-    private List<DepartmentNotice> filteringSoonSaveNotice(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
+    private List<DepartmentNotice> filteringSoonSaveNotice(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
         List<DepartmentNotice> newNotices = new LinkedList<>(); // 뒤에 추가만 계속 하기 때문에 arrayList가 아닌 Linked List 사용 O(1)
         for (CommonNoticeFormatDto notice : scrapResults) {
             try {
-                if (!savedArticleIds.contains(notice.getArticleId())) { // 정렬되어있다, 이진탐색으로 O(logN)안에 수행
+                if (Collections.binarySearch(savedArticleIds, Integer.valueOf(notice.getArticleId())) < 0) { // 정렬되어있다, 이진탐색으로 O(logN)안에 수행
                     Category category = categoryMap.get("department");
                     DepartmentNotice newDepartmentNotice = convert(notice, departmentNameEnum, category, important);
                     newNotices.add(newDepartmentNotice);
@@ -153,25 +153,20 @@ public class DepartmentNoticeUpdater implements Updater {
                 log.error("postedDate = {}", notice.getPostedDate());
                 log.error("subject = {}", notice.getSubject());
             }
-
-//            if (Collections.binarySearch(savedArticleIds, notice.getArticleId()) < 0) { // 정렬되어있다, 이진탐색으로 O(logN)안에 수행
-//                Category category = categoryMap.get("department");
-//                DepartmentNotice newDepartmentNotice = convert(notice, departmentNameEnum, category);
-//                newNotices.add(newDepartmentNotice);
-//            }
         }
         return newNotices;
     }
 
-    private List<String> filteringSoonDeleteIds(List<String> savedArticleIds, List<String> latestNoticeIds) {
+    private List<String> filteringSoonDeleteIds(List<Integer> savedArticleIds, List<Integer> latestNoticeIds) {
         return savedArticleIds.stream()
-                .filter(savedArticleId -> !latestNoticeIds.contains(savedArticleId))
+                .filter(savedArticleId -> Collections.binarySearch(latestNoticeIds, savedArticleId) < 0)
+                .map(Object::toString)
                 .collect(Collectors.toList());
     }
 
-    private List<String> extractIdList(List<CommonNoticeFormatDto> scrapResults) {
+    private List<Integer> extractIdList(List<CommonNoticeFormatDto> scrapResults) {
         return scrapResults.stream()
-                .map(CommonNoticeFormatDto::getArticleId)
+                .map(scrap -> Integer.parseInt(scrap.getArticleId()))
                 .collect(Collectors.toList());
     }
 

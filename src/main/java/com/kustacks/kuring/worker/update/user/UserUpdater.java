@@ -2,10 +2,10 @@ package com.kustacks.kuring.worker.update.user;
 
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
-import com.kustacks.kuring.worker.update.Updater;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserCategoryRepository;
 import com.kustacks.kuring.user.domain.UserRepository;
+import com.kustacks.kuring.worker.update.Updater;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

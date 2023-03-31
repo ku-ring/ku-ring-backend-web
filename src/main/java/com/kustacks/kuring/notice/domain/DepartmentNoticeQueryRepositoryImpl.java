@@ -17,35 +17,35 @@ public class DepartmentNoticeQueryRepositoryImpl implements DepartmentNoticeQuer
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<String> findImportantArticleIdsByDepartment(DepartmentName departmentName) {
+    public List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentName) {
         return queryFactory
-                .select(departmentNotice.articleId)
+                .select(departmentNotice.articleId.castToNum(Integer.class))
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName)
                         .and(departmentNotice.important.eq(true)))
-                .orderBy(departmentNotice.articleId.asc())
+                .orderBy(departmentNotice.articleId.castToNum(Integer.class).asc())
                 .fetch();
     }
 
     @Override
-    public List<String> findNormalArticleIdsByDepartment(DepartmentName departmentName) {
+    public List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentName) {
         return queryFactory
-                .select(departmentNotice.articleId)
+                .select(departmentNotice.articleId.castToNum(Integer.class))
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName)
                         .and(departmentNotice.important.eq(false)))
-                .orderBy(departmentNotice.articleId.asc())
+                .orderBy(departmentNotice.articleId.castToNum(Integer.class).asc())
                 .fetch();
     }
 
     @Override
-    public List<String> findNormalArticleIdsByDepartmentWithLimit(DepartmentName departmentName, int limit) {
+    public List<Integer> findNormalArticleIdsByDepartmentWithLimit(DepartmentName departmentName, int limit) {
         return queryFactory
-                .select(departmentNotice.articleId)
+                .select(departmentNotice.articleId.castToNum(Integer.class))
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName)
                         .and(departmentNotice.important.eq(false)))
-                .orderBy(departmentNotice.articleId.asc())
+                .orderBy(departmentNotice.articleId.castToNum(Integer.class).asc())
                 .limit(limit)
                 .fetch();
     }
@@ -88,10 +88,14 @@ public class DepartmentNoticeQueryRepositoryImpl implements DepartmentNoticeQuer
 
     @Override
     public void deleteAllByIdsAndDepartment(DepartmentName departmentName, List<String> articleIds) {
+        if(articleIds.isEmpty()) {
+            return;
+        }
+
         queryFactory
                 .delete(departmentNotice)
-                .where(departmentNotice.departmentName.eq(departmentName),
-                        departmentNotice.articleId.in(articleIds))
+                .where(departmentNotice.departmentName.eq(departmentName)
+                                .and(departmentNotice.articleId.in(articleIds)))
                 .execute();
     }
 }
