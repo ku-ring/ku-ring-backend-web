@@ -10,6 +10,7 @@ plugins {
 	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 	id 'java'
 	id 'org.asciidoctor.convert' version '1.5.3'
+	id "org.flywaydb.flyway" version "9.16.1" // flyway gradle plugin 의존성
 }
 
 group = 'com.kustacks'
@@ -45,6 +46,8 @@ dependencies {
 	implementation "com.querydsl:querydsl-core:${queryDslVersion}"
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
 
+	// flyway
+	implementation 'org.flywaydb:flyway-core'
 
 	// Logging
 	implementation 'io.sentry:sentry-spring-boot-starter:5.4.0'
