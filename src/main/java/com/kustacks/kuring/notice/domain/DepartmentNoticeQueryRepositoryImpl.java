@@ -39,18 +39,6 @@ public class DepartmentNoticeQueryRepositoryImpl implements DepartmentNoticeQuer
     }
 
     @Override
-    public List<Integer> findNormalArticleIdsByDepartmentWithLimit(DepartmentName departmentName, int limit) {
-        return queryFactory
-                .select(departmentNotice.articleId.castToNum(Integer.class))
-                .from(departmentNotice)
-                .where(departmentNotice.departmentName.eq(departmentName)
-                        .and(departmentNotice.important.eq(false)))
-                .orderBy(departmentNotice.articleId.castToNum(Integer.class).asc())
-                .limit(limit)
-                .fetch();
-    }
-
-    @Override
     public List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName) {
         return queryFactory
                 .select(new QNoticeDto(

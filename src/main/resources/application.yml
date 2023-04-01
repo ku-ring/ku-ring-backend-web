@@ -3,7 +3,7 @@ server:
 
 spring:
   jpa:
-    generate-ddl: true
+    generate-ddl: false
     hibernate:
       ddl-auto: none
     properties:
