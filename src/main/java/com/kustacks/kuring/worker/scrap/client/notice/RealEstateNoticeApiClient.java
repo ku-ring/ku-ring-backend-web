@@ -26,8 +26,8 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
     private final JsoupClient jsoupClient;
     private final RealEstateProperties realEstateProperties;
 
-    public RealEstateNoticeApiClient(JsoupClient normalJsoupClient, RealEstateProperties realEstateProperties) {
-        this.jsoupClient = normalJsoupClient;
+    public RealEstateNoticeApiClient(JsoupClient proxyJsoupClient, RealEstateProperties realEstateProperties) {
+        this.jsoupClient = proxyJsoupClient;
         this.realEstateProperties = realEstateProperties;
     }
 
