@@ -9,7 +9,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQL55Dialect
+        dialect: org.hibernate.dialect.MariaDB103Dialect
     database-platform: org.hibernate.dialect.MariaDB103Dialect
     defer-datasource-initialization: false
     show-sql: false
@@ -19,10 +19,10 @@ spring:
       connectionTimeout: '30000'
       maximum-pool-size: '8'
       max-lifetime: '1800000'
-    driverClassName: org.mariadb.jdbc.Driver
     password: ${DB_PASSWORD}
     username: ${DB_USER}
     url: jdbc:${DB_URL}
+    driver-class-name: org.mariadb.jdbc.Driver
   flyway:
     enabled: true
     baseline-on-migrate: true
