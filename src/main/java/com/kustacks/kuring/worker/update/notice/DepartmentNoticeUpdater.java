@@ -30,13 +30,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DepartmentNoticeUpdater implements Updater {
 
-    private static final int TOTAL_NOTICE_COUNT_PER_PAGE = 12;
-
-    private final DepartmentNoticeScraperTemplate scrapperTemplate;
     private final List<DeptInfo> deptInfoList;
+    private final Map<String, Category> categoryMap;
+    private final DepartmentNoticeScraperTemplate scrapperTemplate;
     private final DepartmentNoticeRepository departmentNoticeRepository;
     private final ThreadPoolTaskExecutor departmentNoticeUpdaterThreadTaskExecutor;
-    private final Map<String, Category> categoryMap;
 
     private static long startTime = 0L;
 
@@ -83,14 +81,14 @@ public class DepartmentNoticeUpdater implements Updater {
         DepartmentName departmentNameEnum = DepartmentName.fromKor(departmentName);
 
         for (ComplexNoticeFormatDto scrapResult : scrapResults) {
-            // DB에서 최신 중요 공지를 가져와서
+            // DB에서 모든 중요 공지를 가져와서
             List<Integer> savedImportantArticleIds = departmentNoticeRepository.findImportantArticleIdsByDepartment(departmentNameEnum);
 
             // db와 싱크를 맞춘다
             saveNewNotices(scrapResult.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true);
 
-            // DB에서 최신 60개의 일반 공지 id를 가져와서
-            List<Integer> savedNormalArticleIds = departmentNoticeRepository.findNormalArticleIdsByDepartmentWithLimit(departmentNameEnum, TOTAL_NOTICE_COUNT_PER_PAGE * 5);
+            // DB에서 모든 일반 공지 id를 가져와서
+            List<Integer> savedNormalArticleIds = departmentNoticeRepository.findNormalArticleIdsByDepartment(departmentNameEnum);
 
             // db와 싱크를 맞춘다
             saveNewNotices(scrapResult.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false);

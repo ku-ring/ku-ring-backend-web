@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface DepartmentNoticeQueryRepository {
 
-    List<Integer> findNormalArticleIdsByDepartmentWithLimit(DepartmentName departmentName, int limit);
-
     List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName);
 
     List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Pageable pageable);
@@ -19,5 +17,4 @@ public interface DepartmentNoticeQueryRepository {
     List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentNameEnum);
 
     void deleteAllByIdsAndDepartment(DepartmentName departmentName, List<String> articleIds);
-
 }
