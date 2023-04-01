@@ -25,8 +25,8 @@ public class GeologyDept extends LiberalArtCollege {
 
         List<String> professorForumIds = List.of("7781");
         List<String> forumIds = Collections.emptyList();
-        List<String> boardSeqs = List.of("1259");
-        List<String> menuSeqs = List.of("8802");
+        List<String> boardSeqs = List.of("1036");
+        List<String> menuSeqs = List.of("7218");
 
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
         this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "KUGEO", boardSeqs, menuSeqs);
