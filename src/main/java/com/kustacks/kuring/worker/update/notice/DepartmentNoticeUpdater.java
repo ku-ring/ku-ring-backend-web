@@ -51,7 +51,7 @@ public class DepartmentNoticeUpdater implements Updater {
         }
     }
 
-    @Scheduled(cron = "0 0 2,19 * * *") // 전체 업데이트는 매일 오전 2시, 오후 7시에 진행
+    @Scheduled(cron = "0 0 2,19 * * *", zone = "Asia/Seoul") // 전체 업데이트는 매일 오전 2시, 오후 7시에 진행
     public void updateAll() {
         log.info("******** 학과별 전체 공지 업데이트 시작 ********");
         startTime = System.currentTimeMillis();
