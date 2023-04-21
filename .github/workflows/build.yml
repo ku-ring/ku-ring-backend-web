@@ -1,0 +1,65 @@
+name: SonarCloud
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  AWS_REGION: ${{ secrets.TEST_AWS_REGION }}
+  S3_BUCKET_NAME: ${{ secrets.TEST_S3_BUCKET_NAME }}
+  CODE_DEPLOY_APPLICATION_NAME: ${{ secrets.TEST_CODE_DEPLOY_APPLICATION_NAME }}
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ${{ secrets.TEST_CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
+
+  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+  DB_URL: ${{ secrets.APP_ENV_TEST_DB_URL }}
+  DB_USER: ${{ secrets.APP_ENV_TEST_DB_USER }}
+  DB_PASSWORD: ${{ secrets.APP_ENV_TEST_DB_PASSWORD }}
+  DEPLOY_ENV: ${{ secrets.APP_ENV_TEST_DEPLOY_ENV }}
+  KU_ID: ${{ secrets.APP_ENV_TEST_KU_ID }}
+  KU_PASSWORD: ${{ secrets.APP_ENV_TEST_KU_PASSWORD }}
+  SENTRY_URL: ${{ secrets.APP_ENV_SENTRY_URL }}
+  TZ: ${{ secrets.APP_ENV_TZ }}
+
+jobs:
+  build:
+    name: Build and analyze
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin' # Alternative distribution options are available
+          java-version: 11
+
+      - name: Decrypt Secrets
+        run: sh .github/workflows/decrypt.sh
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew build sonarqube --info
