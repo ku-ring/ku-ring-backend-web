@@ -1,5 +1,6 @@
 package com.kustacks.kuring.common.dto;
 
+import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +37,16 @@ public class NoticeMessageDto {
         this.subject = subject;
         this.category = category;
         this.baseUrl = baseUrl;
+    }
+
+    public static NoticeMessageDto from(DepartmentNotice departmentNotice) {
+        return NoticeMessageDto.builder()
+                .articleId(departmentNotice.getArticleId())
+                .postedDate(departmentNotice.getPostedDate())
+                .subject(departmentNotice.getSubject())
+                .category(departmentNotice.getDepartmentName().getName())
+                .baseUrl(departmentNotice.getUrl().getValue())
+                .build();
     }
 }
 

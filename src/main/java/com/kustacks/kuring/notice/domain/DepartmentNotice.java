@@ -24,4 +24,8 @@ public class DepartmentNotice extends Notice {
         super(articleId, postedDate, updatedDate, subject, category, important, fullUrl);
         this.departmentName = departmentName;
     }
+
+    public DepartmentName getDepartmentName() {
+        return departmentName;
+    }
 }
