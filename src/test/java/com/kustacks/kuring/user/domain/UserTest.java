@@ -1,5 +1,7 @@
 package com.kustacks.kuring.user.domain;
 
+import com.kustacks.kuring.worker.DepartmentName;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -30,6 +32,20 @@ class UserTest {
         User userOne = createUser(1L, "token_one");
         User userTwo = createUser(2L, "token_one");
         assertThat(userOne).isNotEqualTo(userTwo);
+    }
+
+    @DisplayName("사용자가 구독한 학과이름을 저장한다")
+    @Test
+    void add_department() {
+        // given
+        User user = createUser(1L, "token_one");
+
+        // when
+        user.subscribeDepartment(DepartmentName.KOREAN);
+        user.subscribeDepartment(DepartmentName.ENGLISH);
+
+        // then
+        assertThat(user.getSubscribedDepartmentList()).contains(DepartmentName.KOREAN, DepartmentName.ENGLISH);
     }
 
     private User createUser(Long id, String token) {

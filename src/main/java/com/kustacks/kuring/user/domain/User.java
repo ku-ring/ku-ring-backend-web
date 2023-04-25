@@ -1,6 +1,7 @@
 package com.kustacks.kuring.user.domain;
 
 import com.kustacks.kuring.feedback.domain.Feedback;
+import com.kustacks.kuring.worker.DepartmentName;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +13,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -31,6 +36,9 @@ public class User implements Serializable {
     @Embedded
     private Feedbacks feedbacks = new Feedbacks();
 
+    @Embedded
+    private Departments departments = new Departments();
+
     public User(String token) {
         this.token = token;
     }
@@ -47,6 +55,14 @@ public class User implements Serializable {
         this.feedbacks.clear();
     }
 
+    public void subscribeDepartment(DepartmentName departmentName) {
+        this.departments.add(departmentName);
+    }
+
+    public List<DepartmentName> getSubscribedDepartmentList() {
+        Set<DepartmentName> departmentNamesSet = this.departments.getDepartmentNamesSet();
+        return new ArrayList<>(departmentNamesSet);
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
