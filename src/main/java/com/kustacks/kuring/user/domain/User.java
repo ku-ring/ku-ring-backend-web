@@ -14,11 +14,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Entity
@@ -59,10 +58,27 @@ public class User implements Serializable {
         this.departments.add(departmentName);
     }
 
+    public void unsubscribeDepartment(DepartmentName departmentName) {
+        this.departments.delete(departmentName);
+    }
+
     public List<DepartmentName> getSubscribedDepartmentList() {
         Set<DepartmentName> departmentNamesSet = this.departments.getDepartmentNamesSet();
         return new ArrayList<>(departmentNamesSet);
     }
+
+    public List<DepartmentName> filteringNewDepartmentName(List<DepartmentName> newDepartmentNames) {
+        return newDepartmentNames.stream()
+                .filter(newDepartmentName -> !this.departments.contains(newDepartmentName))
+                .collect(Collectors.toList());
+    }
+
+    public List<DepartmentName> filteringOldDepartmentName(List<DepartmentName> newDepartmentNames) {
+        return this.departments.getDepartmentNamesSet().stream()
+                .filter(oldDepartmentName -> !newDepartmentNames.contains(oldDepartmentName))
+                .collect(Collectors.toList());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

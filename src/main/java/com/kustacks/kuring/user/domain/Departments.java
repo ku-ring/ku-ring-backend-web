@@ -32,7 +32,15 @@ public class Departments {
         this.departmentNamesSet.add(departmentName);
     }
 
+    public void delete(DepartmentName departmentName) {
+        this.departmentNamesSet.remove(departmentName);
+    }
+
     public Set<DepartmentName> getDepartmentNamesSet() {
         return Collections.unmodifiableSet(departmentNamesSet);
+    }
+
+    public boolean contains(DepartmentName departmentName) {
+        return this.departmentNamesSet.contains(departmentName);
     }
 }
