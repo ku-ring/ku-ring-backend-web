@@ -8,6 +8,7 @@ import com.kustacks.kuring.user.common.SubscribeDepartmentsRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,19 +34,19 @@ public class UserControllerV2 {
     private final FirebaseService firebaseService;
 
     @GetMapping("departments/subscribe")
-    public BaseResponse<List<DepartmentNameDto>> lookupUserSubscribeDepartments(@RequestHeader("User-Token") String id) {
+    public ResponseEntity<BaseResponse<List<DepartmentNameDto>>> lookupUserSubscribeDepartments(@RequestHeader("User-Token") String id) {
         firebaseService.validationToken(id);
         List<DepartmentNameDto> departmentDtos = userService.lookupSubscribeDepartmentList(id);
-        return new BaseResponse<>(DEPARTMENTS_USER_LOOKUP_SUCCESS, departmentDtos);
+        return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_USER_LOOKUP_SUCCESS, departmentDtos));
     }
 
     @PostMapping(value = "/departments/subscribe", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public BaseResponse<Void> editUserSubscribeDepartments(
+    public ResponseEntity<BaseResponse<Void>> editUserSubscribeDepartments(
             @Valid @RequestBody SubscribeDepartmentsRequest request,
             @RequestHeader("User-Token") String id
     ) {
         firebaseService.validationToken(id);
         userService.editSubscribeDepartmentList(id, request.getDepartments());
-        return new BaseResponse<>(DEPARTMENTS_SUBSCRIBE_SUCCESS, null);
+        return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_SUBSCRIBE_SUCCESS, null));
     }
 }

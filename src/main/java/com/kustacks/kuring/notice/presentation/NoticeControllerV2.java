@@ -38,19 +38,19 @@ public class NoticeControllerV2 {
             @RequestParam(name = "offset") @Min(0) int offset,
             @RequestParam(name = "max") @Min(1) @Max(30) int max) {
         List<NoticeDto> searchResults = noticeService.getNoticesV2(type, department, offset, max);
-        return ResponseEntity.ok().body(new BaseResponse(NOTICE_SEARCH_SUCCESS, searchResults));
+        return ResponseEntity.ok().body(new BaseResponse<>(NOTICE_SEARCH_SUCCESS, searchResults));
     }
 
     @GetMapping("/search")
     public ResponseEntity<BaseResponse<NoticeLookupResponse>> searchNotice(@NotBlank @RequestParam String content) {
         List<NoticeSearchDto> noticeDtoList = noticeService.findAllNoticeByContent(content);
         NoticeLookupResponse response = new NoticeLookupResponse(noticeDtoList);
-        return ResponseEntity.ok().body(new BaseResponse(NOTICE_SEARCH_SUCCESS, response));
+        return ResponseEntity.ok().body(new BaseResponse<>(NOTICE_SEARCH_SUCCESS, response));
     }
 
     @GetMapping("/departments")
     public ResponseEntity<BaseResponse<List<DepartmentNameDto>>> getSupportedDepartments() {
         List<DepartmentNameDto> departmentNames = noticeService.lookupSupportedDepartments();
-        return ResponseEntity.ok().body(new BaseResponse(DEPARTMENTS_SEARCH_SUCCESS, departmentNames));
+        return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_SEARCH_SUCCESS, departmentNames));
     }
 }
