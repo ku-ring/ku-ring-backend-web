@@ -1,9 +1,14 @@
 package com.kustacks.kuring.worker.update.notice;
 
 import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.common.dto.NoticeMessageDto;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
-import com.kustacks.kuring.worker.DepartmentName;
+import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.dto.ComplexNoticeFormatDto;
@@ -17,6 +22,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +41,7 @@ public class DepartmentNoticeUpdater implements Updater {
     private final DepartmentNoticeScraperTemplate scrapperTemplate;
     private final DepartmentNoticeRepository departmentNoticeRepository;
     private final ThreadPoolTaskExecutor departmentNoticeUpdaterThreadTaskExecutor;
+    private final FirebaseService firebaseService;
 
     private static long startTime = 0L;
 
@@ -47,7 +54,8 @@ public class DepartmentNoticeUpdater implements Updater {
         for (DeptInfo deptInfo : deptInfoList) {
             CompletableFuture
                     .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml), departmentNoticeUpdaterThreadTaskExecutor)
-                    .thenAccept(scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName()));
+                    .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName()))
+                    .thenAccept(this::sendNotificationByFcm);
         }
     }
 
@@ -77,30 +85,36 @@ public class DepartmentNoticeUpdater implements Updater {
         return scrapResults;
     }
 
-    private void compareLatestAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, String departmentName) {
+    private List<DepartmentNotice> compareLatestAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, String departmentName) {
         DepartmentName departmentNameEnum = DepartmentName.fromKor(departmentName);
 
+        List<DepartmentNotice> newNoticeList = new ArrayList<>();
         for (ComplexNoticeFormatDto scrapResult : scrapResults) {
             // DB에서 모든 중요 공지를 가져와서
             List<Integer> savedImportantArticleIds = departmentNoticeRepository.findImportantArticleIdsByDepartment(departmentNameEnum);
 
             // db와 싱크를 맞춘다
-            saveNewNotices(scrapResult.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true);
+            List<DepartmentNotice> newImportantNotices = saveNewNotices(scrapResult.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true);
+            newNoticeList.addAll(newImportantNotices);
 
             // DB에서 모든 일반 공지 id를 가져와서
             List<Integer> savedNormalArticleIds = departmentNoticeRepository.findNormalArticleIdsByDepartment(departmentNameEnum);
 
             // db와 싱크를 맞춘다
-            saveNewNotices(scrapResult.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false);
+            List<DepartmentNotice> newNormalNotices = saveNewNotices(scrapResult.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false);
+            newNoticeList.addAll(newNormalNotices);
         }
 
         long endTime = System.currentTimeMillis();
         log.info("[학과] 업데이트 시작으로부터 {}millis 만큼 지남", endTime - startTime);
+
+        return newNoticeList;
     }
 
-    private void saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
+    private List<DepartmentNotice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
         List<DepartmentNotice> newNotices = filteringSoonSaveNotice(scrapResults, savedArticleIds, departmentNameEnum, important);
         departmentNoticeRepository.saveAllAndFlush(newNotices);
+        return newNotices;
     }
 
     private void compareAllAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, String departmentName) {
@@ -179,5 +193,26 @@ public class DepartmentNoticeUpdater implements Updater {
                 .category(category)
                 .departmentName(departmentNameEnum)
                 .build();
+    }
+
+    private void sendNotificationByFcm(List<DepartmentNotice> departmentNoticeList) {
+        List<NoticeMessageDto> departmentDtoLists = departmentNoticeList.stream()
+                .map(NoticeMessageDto::from)
+                .collect(Collectors.toList());
+
+        try {
+            firebaseService.sendNoticeMessageList(departmentDtoLists);
+            log.info("FCM에 정상적으로 메세지를 전송했습니다.");
+            log.info("전송된 공지 목록은 다음과 같습니다.");
+            for (DepartmentNotice notice : departmentNoticeList) {
+                log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", notice.getArticleId(), notice.getPostedDate(), notice.getDepartmentName(), notice.getSubject());
+            }
+        } catch (FirebaseMessageSendException e) {
+            log.error("새로운 공지의 FCM 전송에 실패했습니다.");
+            throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
+        } catch (Exception e) {
+            log.error("새로운 공지를 FCM에 보내는 중 알 수 없는 오류가 발생했습니다.");
+            throw new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e);
+        }
     }
 }

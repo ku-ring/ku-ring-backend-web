@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker;
+package com.kustacks.kuring.category.domain;
 
 import lombok.Getter;
 

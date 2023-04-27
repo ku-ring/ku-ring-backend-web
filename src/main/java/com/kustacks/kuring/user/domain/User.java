@@ -1,6 +1,7 @@
 package com.kustacks.kuring.user.domain;
 
 import com.kustacks.kuring.feedback.domain.Feedback;
+import com.kustacks.kuring.notice.domain.DepartmentName;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +13,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Entity
@@ -31,6 +35,9 @@ public class User implements Serializable {
     @Embedded
     private Feedbacks feedbacks = new Feedbacks();
 
+    @Embedded
+    private Departments departments = new Departments();
+
     public User(String token) {
         this.token = token;
     }
@@ -45,6 +52,31 @@ public class User implements Serializable {
 
     public void clearFeedbacks() {
         this.feedbacks.clear();
+    }
+
+    public void subscribeDepartment(DepartmentName departmentName) {
+        this.departments.add(departmentName);
+    }
+
+    public void unsubscribeDepartment(DepartmentName departmentName) {
+        this.departments.delete(departmentName);
+    }
+
+    public List<DepartmentName> getSubscribedDepartmentList() {
+        Set<DepartmentName> departmentNamesSet = this.departments.getDepartmentNamesSet();
+        return new ArrayList<>(departmentNamesSet);
+    }
+
+    public List<DepartmentName> filteringNewDepartmentName(List<DepartmentName> newDepartmentNames) {
+        return newDepartmentNames.stream()
+                .filter(newDepartmentName -> !this.departments.contains(newDepartmentName))
+                .collect(Collectors.toList());
+    }
+
+    public List<DepartmentName> filteringOldDepartmentName(List<DepartmentName> newDepartmentNames) {
+        return this.departments.getDepartmentNamesSet().stream()
+                .filter(oldDepartmentName -> !newDepartmentNames.contains(oldDepartmentName))
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -2,8 +2,8 @@ package com.kustacks.kuring.config;
 
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryRepository;
-import com.kustacks.kuring.worker.CategoryName;
-import com.kustacks.kuring.worker.DepartmentName;
+import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;

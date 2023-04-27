@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker;
+package com.kustacks.kuring.notice.domain;
 
 import com.kustacks.kuring.common.error.DomainLogicException;
 import lombok.Getter;

@@ -3,7 +3,7 @@ package com.kustacks.kuring.worker.client.notice;
 import com.kustacks.kuring.config.JsonConfig;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.worker.CategoryName;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.worker.scrap.client.auth.KuisAuthManager;
 import com.kustacks.kuring.worker.scrap.client.notice.KuisNoticeApiClient;
 import com.kustacks.kuring.worker.update.notice.dto.request.BachelorKuisNoticeRequestBody;

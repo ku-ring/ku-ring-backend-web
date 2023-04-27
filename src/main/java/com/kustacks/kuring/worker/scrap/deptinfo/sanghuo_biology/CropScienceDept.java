@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.sanghuo_biology;
 
-import com.kustacks.kuring.worker.DepartmentName;
+import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageProperties;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;

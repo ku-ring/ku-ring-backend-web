@@ -67,7 +67,7 @@ public class CategoryStep {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("지원하는 학과 조회에 정공하였습니다."),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("지원하는 학과 조회에 성공하였습니다"),
                 () -> assertThat(response.jsonPath().getList("data.departmentList").size()).isEqualTo(supportedDepartmentCnt)
         );
     }

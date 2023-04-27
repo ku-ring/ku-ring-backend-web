@@ -28,11 +28,11 @@ public class NoticeStep {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("공지 조회에 성공하였습니다"),
-                () -> assertThat(response.jsonPath().getString("data.noticeList[0].articleId")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("data.noticeList[0].postedDate")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("data.noticeList[0].url")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("data.noticeList[0].subject")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("data.noticeList[0].category")).isEqualTo(category)
+                () -> assertThat(response.jsonPath().getString("data[0].articleId")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data[0].postedDate")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data[0].url")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data[0].subject")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data[0].category")).isEqualTo(category)
         );
     }
 
@@ -68,12 +68,12 @@ public class NoticeStep {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("공지 조회에 성공하였습니다"),
-                () -> assertThat(response.jsonPath().getString("data.noticeList[0].articleId")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("data.noticeList[0].postedDate")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("data.noticeList[0].url")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("data.noticeList[0].subject")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("data.noticeList[0].category")).isEqualTo("department"),
-                () -> assertThat(response.jsonPath().getBoolean("data.noticeList[0].important")).isEqualTo(true)
+                () -> assertThat(response.jsonPath().getString("data[0].articleId")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data[0].postedDate")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data[0].url")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data[0].subject")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data[0].category")).isEqualTo("department"),
+                () -> assertThat(response.jsonPath().getBoolean("data[0].important")).isTrue()
         );
     }
 

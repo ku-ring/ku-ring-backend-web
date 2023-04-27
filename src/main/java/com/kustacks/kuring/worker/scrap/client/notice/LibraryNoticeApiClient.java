@@ -4,7 +4,7 @@ import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.utils.converter.DTOConverter;
 import com.kustacks.kuring.common.utils.converter.LibraryNoticeDTOToCommonFormatDTOConverter;
-import com.kustacks.kuring.worker.CategoryName;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import com.kustacks.kuring.worker.update.notice.dto.response.LibraryNoticeDTO;
 import com.kustacks.kuring.worker.update.notice.dto.response.LibraryNoticeResponseDTO;

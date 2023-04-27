@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.scrap.deptinfo;
 
-import com.kustacks.kuring.worker.DepartmentName;
+import com.kustacks.kuring.notice.domain.DepartmentName;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.ElementType;
