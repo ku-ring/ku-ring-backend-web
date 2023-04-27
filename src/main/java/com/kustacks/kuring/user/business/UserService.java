@@ -11,7 +11,7 @@ import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
 import com.kustacks.kuring.user.exception.UserNotFoundException;
-import com.kustacks.kuring.worker.DepartmentName;
+import com.kustacks.kuring.notice.domain.DepartmentName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

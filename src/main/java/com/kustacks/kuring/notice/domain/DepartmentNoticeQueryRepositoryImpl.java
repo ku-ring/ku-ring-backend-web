@@ -2,7 +2,6 @@ package com.kustacks.kuring.notice.domain;
 
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.QNoticeDto;
-import com.kustacks.kuring.worker.DepartmentName;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

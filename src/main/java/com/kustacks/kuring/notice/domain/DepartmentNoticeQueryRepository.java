@@ -1,7 +1,6 @@
 package com.kustacks.kuring.notice.domain;
 
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
-import com.kustacks.kuring.worker.DepartmentName;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
