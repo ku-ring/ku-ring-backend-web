@@ -14,7 +14,7 @@ class UserTest {
 
     @DisplayName("User 생성 테스트")
     @Test
-    public void creat_user() {
+    void creat_user() {
         assertThatCode(() -> new User("token"))
                 .doesNotThrowAnyException();
     }
@@ -51,7 +51,7 @@ class UserTest {
 
     @DisplayName("신규로 저장될 학과 이름 목록을 반환한다")
     @Test
-    public void filtering_new_department_name() {
+    void filtering_new_department_name() {
         // given
         User user = createUser(1L, "token_one");
         user.subscribeDepartment(DepartmentName.KOREAN);
@@ -66,7 +66,7 @@ class UserTest {
 
     @DisplayName("이전에 저장된 학과중 이번에 삭제될 목록을 반환")
     @Test
-    public void filtering_old_department_name() {
+    void filtering_old_department_name() {
         // given
         User user = createUser(1L, "token_one");
         user.subscribeDepartment(DepartmentName.KOREAN);

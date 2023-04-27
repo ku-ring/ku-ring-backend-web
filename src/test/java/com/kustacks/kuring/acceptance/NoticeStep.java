@@ -73,7 +73,7 @@ public class NoticeStep {
                 () -> assertThat(response.jsonPath().getString("data[0].url")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getString("data[0].subject")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getString("data[0].category")).isEqualTo("department"),
-                () -> assertThat(response.jsonPath().getBoolean("data[0].important")).isEqualTo(true)
+                () -> assertThat(response.jsonPath().getBoolean("data[0].important")).isTrue()
         );
     }
 

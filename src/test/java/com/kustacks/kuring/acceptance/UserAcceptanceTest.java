@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 
 @DisplayName("인수 : 사용자")
-public class UserAcceptanceTest extends AcceptanceTest {
+class UserAcceptanceTest extends AcceptanceTest {
 
     @MockBean
     FirebaseService firebaseService;

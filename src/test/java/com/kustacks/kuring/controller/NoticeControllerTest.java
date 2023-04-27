@@ -97,7 +97,7 @@ public class NoticeControllerTest {
     private int max;
 
     @BeforeEach
-    public void setUp(RestDocumentationContextProvider restDocumentation) {
+    void setUp(RestDocumentationContextProvider restDocumentation) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation))
                 .build();
@@ -105,7 +105,7 @@ public class NoticeControllerTest {
 
     @DisplayName("공지 API - 성공")
     @Test
-    public void getNoticesSuccessTest() throws Exception {
+    void getNoticesSuccessTest() throws Exception {
 
         type = "bch";
         offset = 0;
@@ -169,7 +169,7 @@ public class NoticeControllerTest {
 
     @DisplayName("공지 API - 실패 - 잘못된 공지 카테고리")
     @Test
-    public void getNoticesFailByInvalidTypeTest() throws Exception {
+    void getNoticesFailByInvalidTypeTest() throws Exception {
         type = "invalid-type";
         offset = 0;
         max = 20;
@@ -197,7 +197,7 @@ public class NoticeControllerTest {
 
     @DisplayName("공지 API - 실패 - 잘못된 offset 혹은 max 파라미터 값")
     @Test
-    public void getNoticesFailByInvalidOffsetTest() throws Exception {
+    void getNoticesFailByInvalidOffsetTest() throws Exception {
         type = "bch";
         offset = -1;
         max = 20;
@@ -224,7 +224,7 @@ public class NoticeControllerTest {
 
     @DisplayName("서버에서 제공하는 공지 카테고리 목록 제공 API - 성공")
     @Test
-    public void getSupportedCategoriesSuccessTest() throws Exception {
+    void getSupportedCategoriesSuccessTest() throws Exception {
 
         List<Category> categories = new LinkedList<>();
         categories.add(new Category("bachelor"));
@@ -264,7 +264,7 @@ public class NoticeControllerTest {
 
     @DisplayName("특정 회원이 구독한 카테고리 목록 제공 API - 성공")
     @Test
-    public void getUserCategoriesSuccessTest() throws Exception {
+    void getUserCategoriesSuccessTest() throws Exception {
         String token = "TEST_TOKEN";
 
         List<Category> categories = new LinkedList<>();
@@ -310,7 +310,7 @@ public class NoticeControllerTest {
 
     @DisplayName("특정 회원이 구독한 카테고리 목록 제공 API - 실패 - 유효하지 않은 FCM 토큰")
     @Test
-    public void getUserCategoriesFailByInvalidTokenTest() throws Exception {
+    void getUserCategoriesFailByInvalidTokenTest() throws Exception {
         // given
         String token = "INVALID_TOKEN";
         doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(firebaseService).validationToken(token);
@@ -335,7 +335,7 @@ public class NoticeControllerTest {
 
     @DisplayName("특정 회원이 구독한 카테고리 목록 제공 API - 실패 - 필수 파라미터 누락")
     @Test
-    public void getUserCategoriesFailByMissingParamTest() throws Exception {
+    void getUserCategoriesFailByMissingParamTest() throws Exception {
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice/subscribe")
@@ -356,7 +356,7 @@ public class NoticeControllerTest {
 
     @DisplayName("특정 회원의 구독 카테고리 편집 API - 성공")
     @Test
-    public void subscribeCategoriesSuccessTest() throws Exception {
+    void subscribeCategoriesSuccessTest() throws Exception {
         // given
         SubscribeCategoriesRequest subscribeCategoriesRequest = new SubscribeCategoriesRequest("TEST_TOKEN", List.of("bachelor", "student"));
         doNothing().when(firebaseService).validationToken(anyString());
@@ -390,7 +390,7 @@ public class NoticeControllerTest {
 
     @DisplayName("특정 회원의 구독 카테고리 편집 API - 실패 - 유효하지 않은 토큰")
     @Test
-    public void subscribeCategoriesFailByInvalidToken() throws Exception {
+    void subscribeCategoriesFailByInvalidToken() throws Exception {
 
         String token = "INVALID_TOKEN";
 
@@ -423,7 +423,7 @@ public class NoticeControllerTest {
 
     @DisplayName("특정 회원의 구독 카테고리 편집 API - 실패 - 요청 body에 필수 json 필드 누락")
     @Test
-    public void subscribeCategoriesFailByMissingJsonField() throws Exception {
+    void subscribeCategoriesFailByMissingJsonField() throws Exception {
         // given
         String requestBody = "{\"categories\": [\"bachelor\", \"student\"]}";
 
@@ -446,7 +446,7 @@ public class NoticeControllerTest {
 
     @DisplayName("특정 회원의 구독 카테고리 편집 API - 실패 - 서버에서 지원하지 않는 카테고리를 수신")
     @Test
-    public void subscribeCategoriesFailByNotSupportedCategory() throws Exception {
+    void subscribeCategoriesFailByNotSupportedCategory() throws Exception {
 
         String token = "TEST_TOKEN";
 
@@ -479,7 +479,7 @@ public class NoticeControllerTest {
 
     @DisplayName("특정 회원의 구독 카테고리 편집 API - 실패 - FCM 오류로 인한 구독 및 구독 취소 실패")
     @Test
-    public void subscribeCategoriesFailByFCMError() throws Exception {
+    void subscribeCategoriesFailByFCMError() throws Exception {
 
         String token = "TEST_TOKEN";
 
