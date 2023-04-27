@@ -7,6 +7,7 @@ import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.common.firebase.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.common.firebase.exception.FirebaseUnSubscribeException;
+import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
 import com.kustacks.kuring.user.exception.UserNotFoundException;
@@ -33,6 +34,12 @@ public class UserService {
     public User getUserByToken(String token) {
         return userRepository.findByToken(token)
                 .orElseThrow(UserNotFoundException::new);
+    }
+
+    public List<DepartmentNameDto> lookupSubscribeDepartmentList(String id) {
+        User findUser = findUserByToken(id);
+        List<DepartmentName> departmentNameList = findUser.getSubscribedDepartmentList();
+        return convertDepartmentDtoList(departmentNameList);
     }
 
     public void editSubscribeDepartmentList(String userToken, List<String> departments) {
@@ -88,5 +95,11 @@ public class UserService {
             subscribedRollbackEvent.deleteNewCategoryName(removeDepartmentName.getName());
             log.info("구독 취소 = {}", removeDepartmentName.getName());
         }
+    }
+
+    private List<DepartmentNameDto> convertDepartmentDtoList(List<DepartmentName> departmentNames) {
+        return departmentNames.stream()
+                .map(DepartmentNameDto::from)
+                .collect(Collectors.toList());
     }
 }
