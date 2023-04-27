@@ -18,7 +18,7 @@ public class UserStep {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("지원하는 학과 구독에 성공하였습니다")
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("사용자의 학과 구독에 성공하였습니다")
         );
     }
 
@@ -27,8 +27,28 @@ public class UserStep {
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .body(new SubscribeDepartmentsRequest(token, departments))
+                .header("User-Token", token)
+                .body(new SubscribeDepartmentsRequest(departments))
                 .when().post("/api/v2/users/departments/subscribe")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 사용자_학과_조회_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("사용자가 구독한 학과 조회에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getList("data.name")).contains("computer_science", "korean")
+        );
+    }
+
+    public static ExtractableResponse<Response> 구독한_학과_목록_조회_요청(String token) {
+        return RestAssured
+                .given().log().all()
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", token)
+                .when().get("/api/v2/users/departments/subscribe")
                 .then().log().all()
                 .extract();
     }
