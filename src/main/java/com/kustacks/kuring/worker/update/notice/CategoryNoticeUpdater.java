@@ -9,7 +9,7 @@ import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
 import com.kustacks.kuring.common.utils.converter.DTOConverter;
 import com.kustacks.kuring.common.utils.converter.DateConverter;
-import com.kustacks.kuring.worker.CategoryName;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.worker.update.Updater;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;

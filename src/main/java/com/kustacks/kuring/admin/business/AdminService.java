@@ -10,7 +10,7 @@ import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
-import com.kustacks.kuring.worker.CategoryName;
+import com.kustacks.kuring.category.domain.CategoryName;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;

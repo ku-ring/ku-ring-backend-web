@@ -2,7 +2,7 @@ package com.kustacks.kuring.notice.domain;
 
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.common.error.DomainLogicException;
-import com.kustacks.kuring.worker.CategoryName;
+import com.kustacks.kuring.category.domain.CategoryName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
