@@ -2,10 +2,8 @@ package com.kustacks.kuring.notice.presentation;
 
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.notice.business.NoticeService;
-import com.kustacks.kuring.notice.common.dto.DepartmentListResponse;
 import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
-import com.kustacks.kuring.notice.common.dto.NoticeListLookupResponse;
 import com.kustacks.kuring.notice.common.dto.NoticeLookupResponse;
 import com.kustacks.kuring.search.common.dto.NoticeSearchDto;
 import lombok.RequiredArgsConstructor;
@@ -34,13 +32,13 @@ public class NoticeControllerV2 {
     private final NoticeService noticeService;
 
     @GetMapping
-    public ResponseEntity<BaseResponse<NoticeListLookupResponse>> getNotices(
+    public ResponseEntity<BaseResponse<List<NoticeDto>>> getNotices(
             @RequestParam(name = "type") String type,
             @RequestParam(name = "department", required = false) String department,
             @RequestParam(name = "offset") @Min(0) int offset,
             @RequestParam(name = "max") @Min(1) @Max(30) int max) {
         List<NoticeDto> searchResults = noticeService.getNoticesV2(type, department, offset, max);
-        return ResponseEntity.ok().body(new BaseResponse(NOTICE_SEARCH_SUCCESS, new NoticeListLookupResponse(searchResults)));
+        return ResponseEntity.ok().body(new BaseResponse(NOTICE_SEARCH_SUCCESS, searchResults));
     }
 
     @GetMapping("/search")
@@ -51,9 +49,8 @@ public class NoticeControllerV2 {
     }
 
     @GetMapping("/departments")
-    public ResponseEntity<BaseResponse<DepartmentListResponse>> getSupportedDepartments() {
+    public ResponseEntity<BaseResponse<List<DepartmentNameDto>>> getSupportedDepartments() {
         List<DepartmentNameDto> departmentNames = noticeService.lookupSupportedDepartments();
-        DepartmentListResponse response = new DepartmentListResponse(departmentNames);
-        return ResponseEntity.ok().body(new BaseResponse(DEPARTMENTS_SEARCH_SUCCESS, response));
+        return ResponseEntity.ok().body(new BaseResponse(DEPARTMENTS_SEARCH_SUCCESS, departmentNames));
     }
 }
