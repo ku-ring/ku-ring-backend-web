@@ -86,9 +86,8 @@ public class NoticeService {
         }
 
         Category category = getCategoryByName(categoryName);
-        List<NoticeDto> noticeDtoList = noticeRepository.findNoticesByCategoryWithOffset(category, PageRequest.of(page, size));
 
-        return noticeDtoList;
+        return noticeRepository.findNoticesByCategoryWithOffset(category, PageRequest.of(page, size));
     }
 
     public List<NoticeSearchDto> findAllNoticeByContent(String content) {
