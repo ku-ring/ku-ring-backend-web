@@ -51,14 +51,14 @@ public class NoticeStep {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 페이지_번호와_함께_학과_공지사항_조회_요청(String category, String hostPrefix, int offset) {
+    public static ExtractableResponse<Response> 페이지_번호와_함께_학과_공지사항_조회_요청(String category, String hostPrefix, int page) {
         return RestAssured
                 .given().log().all()
                 .pathParam("type", category)
                 .pathParam("department", hostPrefix)
-                .pathParam("offset", String.valueOf(offset))
-                .pathParam("max", "10")
-                .when().get("/api/v2/notices?type={type}&department={department}&offset={offset}&max={max}")
+                .pathParam("page", String.valueOf(page))
+                .pathParam("size", "10")
+                .when().get("/api/v2/notices?type={type}&department={department}&page={page}&size={size}")
                 .then().log().all()
                 .extract();
     }

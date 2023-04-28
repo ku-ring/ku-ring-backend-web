@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class NoticeService {
 
-    private static final int FIRST_PAGE_OFFSET = 0;
+    private static final int FIRST_PAGE = 0;
 
     private final NoticeRepository noticeRepository;
     private final DepartmentNoticeRepository departmentNoticeRepository;
@@ -66,12 +66,12 @@ public class NoticeService {
         return new NoticeListResponse(convertBaseUrl(categoryName), noticeDtoList);
     }
 
-    public List<NoticeDto> getNoticesV2(String type, String department, int offset, int max) {
+    public List<NoticeDto> getNoticesV2(String type, String department, int page, int size) {
         if (isDepartmentSearchRequest(type, department)) {
             DepartmentName departmentName = DepartmentName.fromHostPrefix(department);
 
-            List<NoticeDto> normalNotices = departmentNoticeRepository.findNormalNoticesByDepartmentWithOffset(departmentName, PageRequest.of(offset, max));
-            if (offset == FIRST_PAGE_OFFSET) {
+            List<NoticeDto> normalNotices = departmentNoticeRepository.findNormalNoticesByDepartmentWithOffset(departmentName, PageRequest.of(page, size));
+            if (page == FIRST_PAGE) {
                 List<NoticeDto> importantNotices = departmentNoticeRepository.findImportantNoticesByDepartment(departmentName);
                 importantNotices.addAll(normalNotices);
                 normalNotices = importantNotices;
@@ -86,9 +86,8 @@ public class NoticeService {
         }
 
         Category category = getCategoryByName(categoryName);
-        List<NoticeDto> noticeDtoList = noticeRepository.findNoticesByCategoryWithOffset(category, PageRequest.of(offset, max));
 
-        return noticeDtoList;
+        return noticeRepository.findNoticesByCategoryWithOffset(category, PageRequest.of(page, size));
     }
 
     public List<NoticeSearchDto> findAllNoticeByContent(String content) {

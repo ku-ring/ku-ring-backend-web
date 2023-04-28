@@ -75,7 +75,7 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
         noticeRequestBodies.put(CategoryName.EMPLOYMENT, employmentKuisNoticeRequestBody);
         noticeRequestBodies.put(CategoryName.NATIONAL, nationalKuisNoticeRequestBody);
         noticeRequestBodies.put(CategoryName.STUDENT, studentKuisNoticeRequestBody);
-        noticeRequestBodies.put(CategoryName.INDUSTRY_UNIV, industryUnivKuisNoticeRequestBody);
+        noticeRequestBodies.put(CategoryName.INDUSTRY_UNIVERSITY, industryUnivKuisNoticeRequestBody);
         noticeRequestBodies.put(CategoryName.NORMAL, normalKuisNoticeRequestBody);
     }
 
