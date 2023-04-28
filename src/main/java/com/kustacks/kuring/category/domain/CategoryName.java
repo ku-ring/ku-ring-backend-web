@@ -10,7 +10,7 @@ public enum CategoryName {
     EMPLOYMENT("employment", "emp", "취창업"),
     NATIONAL("national", "nat", "국제"),
     STUDENT("student", "stu", "학생"),
-    INDUSTRY_UNIV("industry_university", "ind", "산학"),
+    INDUSTRY_UNIVERSITY("industry_university", "ind", "산학"),
     NORMAL("normal", "nor", "일반"),
     LIBRARY("library", "lib", "도서관"),
     DEPARTMENT("department", "dep", "학과");
