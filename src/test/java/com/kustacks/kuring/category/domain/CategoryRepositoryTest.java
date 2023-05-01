@@ -21,14 +21,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 )
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Transactional
-public class CategoryRepositoryTest {
+class CategoryRepositoryTest {
 
     @Autowired
     private CategoryRepository categoryRepository;
 
     @DisplayName("모든 카테고리를 조회한다")
     @Test
-    public void find_all_category() {
+    void find_all_category() {
         // given
         Category student = new Category(CategoryName.STUDENT);
         Category bachelor = new Category(CategoryName.BACHELOR);
