@@ -85,7 +85,7 @@ public class FirebaseService {
             Message newMessage = Message.builder()
                     .setNotification(Notification
                             .builder()
-                            .setTitle(NOTIFICATION_TITLE)
+                            .setTitle(buildTitle(messageDto.getCategoryKorName()))
                             .setBody(messageDto.getSubject())
                             .build())
                     .putAllData(objectMapper.convertValue(messageDto, Map.class))
@@ -96,6 +96,14 @@ public class FirebaseService {
         } catch (FirebaseMessagingException exception) {
             throw new FirebaseMessageSendException();
         }
+    }
+
+    private String buildTitle(String korName) {
+        return new StringBuilder("[")
+                .append(korName)
+                .append("] ")
+                .append(NOTIFICATION_TITLE)
+                .toString();
     }
 
     public void sendNoticeMessageList(List<NoticeMessageDto> messageDtoList) throws FirebaseMessageSendException {

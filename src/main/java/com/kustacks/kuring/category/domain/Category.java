@@ -44,6 +44,10 @@ public class Category {
         return this.categoryName.getName();
     }
 
+    public String getKorName() {
+        return this.categoryName.getKorName();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
