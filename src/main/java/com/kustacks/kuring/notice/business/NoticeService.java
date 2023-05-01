@@ -6,6 +6,7 @@ import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.category.exception.CategoryNotFoundException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.notice.common.OffsetBasedPageRequest;
 import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
@@ -58,7 +59,7 @@ public class NoticeService {
         String categoryName = convertShortNameIntoLongName(type);
         Category category = getCategoryByName(categoryName);
 
-        List<NoticeDto> noticeDtoList = noticeRepository.findNoticesByCategoryWithOffset(category, PageRequest.of(offset, max));
+        List<NoticeDto> noticeDtoList = noticeRepository.findNoticesByCategoryWithOffset(category, new OffsetBasedPageRequest(offset, max));
 
         return new NoticeListResponse(convertBaseUrl(categoryName), noticeDtoList);
     }
