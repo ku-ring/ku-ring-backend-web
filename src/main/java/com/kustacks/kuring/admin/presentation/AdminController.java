@@ -197,6 +197,7 @@ public class AdminController {
                     .postedDate(fakeNoticePostedDate)
                     .category(fakeNoticeCategory)
                     .subject(fakeNoticeSubject)
+                    .categoryKorName("fakeCategoryKorName")
                     .baseUrl(CategoryName.LIBRARY.getName().equals(fakeNoticeCategory) ? libraryBaseUrl : normalBaseUrl)
                     .build());
         } catch (FirebaseMessageSendException e) {
@@ -289,6 +290,7 @@ public class AdminController {
                         .postedDate(postedDate)
                         .subject(subject)
                         .category(category)
+                        .categoryKorName("fakeCategoryKorName")
                         .baseUrl(CategoryName.LIBRARY.getName().equals(category) ? libraryBaseUrl : normalBaseUrl)
                         .build());
             } catch (FirebaseMessagingException e) {

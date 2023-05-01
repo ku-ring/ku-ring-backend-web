@@ -98,14 +98,6 @@ public class FirebaseService {
         }
     }
 
-    private String buildTitle(String korName) {
-        return new StringBuilder("[")
-                .append(korName)
-                .append("] ")
-                .append(NOTIFICATION_TITLE)
-                .toString();
-    }
-
     public void sendNoticeMessageList(List<NoticeMessageDto> messageDtoList) throws FirebaseMessageSendException {
         messageDtoList.forEach(this::sendMessage);
     }
@@ -116,6 +108,14 @@ public class FirebaseService {
 
     public void sendNoticeMessageForAdmin(String token, AdminMessageDto messageDto) throws FirebaseMessagingException {
         firebaseMessaging.send(buildMessage(token, messageDto));
+    }
+
+    private String buildTitle(String korName) {
+        return new StringBuilder("[")
+                .append(korName)
+                .append("] ")
+                .append(NOTIFICATION_TITLE)
+                .toString();
     }
 
     private <T> Message buildMessage(String token, T messageDto) {
