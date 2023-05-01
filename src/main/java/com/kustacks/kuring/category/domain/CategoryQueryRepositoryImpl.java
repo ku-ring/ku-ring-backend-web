@@ -15,7 +15,7 @@ public class CategoryQueryRepositoryImpl implements CategoryQueryRepository {
     @Override
     public List<String> getSupportedCategoryNames() {
         return queryFactory
-                .select(category.name)
+                .select(category.categoryName.stringValue().toLowerCase())
                 .from(category)
                 .fetch();
     }

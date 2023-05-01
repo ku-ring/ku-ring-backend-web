@@ -1,6 +1,7 @@
 package com.kustacks.kuring.data;
 
 import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
@@ -52,11 +53,11 @@ public class DataLoader {
         User newUser = new User(USER_FCM_TOKEN);
         userRepository.save(newUser);
 
-        Category student = new Category("student");
-        Category bachelor = new Category("bachelor");
-        Category employment = new Category("employment");
-        Category library = new Category("library");
-        Category department = new Category("department");
+        Category student = new Category(CategoryName.STUDENT);
+        Category bachelor = new Category(CategoryName.BACHELOR);
+        Category employment = new Category(CategoryName.EMPLOYMENT);
+        Category library = new Category(CategoryName.LIBRARY);
+        Category department = new Category(CategoryName.DEPARTMENT);
         categoryRepository.saveAll(List.of(student, bachelor, employment, library, department));
 
         List<Notice> noticeList = buildNotices(5, student);
@@ -77,7 +78,7 @@ public class DataLoader {
     private List<DepartmentNotice> buildDepartmentNotice(int cnt, DepartmentName departmentName, Category category, boolean important) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new DepartmentNotice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, category, important, "https://www.example.com", DepartmentName.COMPUTER))
+                .map(i -> new DepartmentNotice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, category, important, "https://www.example.com", departmentName))
                 .collect(Collectors.toList());
     }
 

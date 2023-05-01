@@ -1,27 +1,24 @@
 package com.kustacks.kuring.notice.business;
 
 import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.category.exception.CategoryNotFoundException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.common.utils.ObjectComparator;
 import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
+import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
-import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.search.common.dto.NoticeSearchDto;
-import com.kustacks.kuring.category.domain.CategoryName;
-import com.kustacks.kuring.notice.domain.DepartmentName;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -98,7 +95,7 @@ public class NoticeService {
         return noticeRepository.findAllByKeywords(keywords);
     }
 
-    public List<Notice> handleSearchRequest(String keywords) {
+    public List<NoticeSearchDto> handleSearchRequest(String keywords) {
         String[] splitedKeywords = keywords.trim().split(SPACE_REGEX);
 
         // 키워드 중 공지 카테고리가 있다면, 이를 영문으로 변환
@@ -160,28 +157,8 @@ public class NoticeService {
         return CategoryName.LIBRARY.isSameName(categoryName) ? libraryBaseUrl : normalBaseUrl;
     }
 
-    private List<Notice> getNoticesBySubjectOrCategory(String[] keywords) {
-
-        List<Notice> notices = noticeRepository.findBySubjectContainingOrCategoryNameContaining(keywords[0], keywords[0]);
-        Iterator<Notice> iterator = notices.iterator();
-
-        for (int i = 1; i < keywords.length; ++i) {
-            while (iterator.hasNext()) {
-                Notice notice = iterator.next();
-                String curKeyword = keywords[i];
-
-                if (notice.getSubject().contains(curKeyword) || notice.getCategory().getName().contains(curKeyword)) {
-
-                } else {
-                    iterator.remove();
-                }
-            }
-        }
-
-        // 날짜 내림차순 정렬
-        notices.sort(ObjectComparator.NoticeDateComparator);
-
-        return notices;
+    private List<NoticeSearchDto> getNoticesBySubjectOrCategory(String[] keywords) {
+        return noticeRepository.findAllByKeywords(Arrays.asList(keywords));
     }
 
     private List<DepartmentNameDto> supportedDepartmentNameList() {

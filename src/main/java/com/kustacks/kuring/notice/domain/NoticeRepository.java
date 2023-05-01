@@ -11,8 +11,6 @@ public interface NoticeRepository extends JpaRepository<Notice, Long>, NoticeQue
 
     List<Notice> findByCategory(Category category);
 
-    List<Notice> findBySubjectContainingOrCategoryNameContaining(String subject, String categoryName);
-
     default Map<String, Notice> findNoticeMapByCategory(Category category) {
         return findByCategory(category).stream().collect(Collectors.toMap(Notice::getArticleId, v -> v));
     }

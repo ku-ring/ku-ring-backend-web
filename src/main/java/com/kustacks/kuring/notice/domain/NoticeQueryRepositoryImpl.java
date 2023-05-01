@@ -30,7 +30,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     @Override
     public List<NoticeDto> findNoticesByCategoryWithOffset(Category category, Pageable pageable) {
         return queryFactory
-                .select(new QNoticeDto(notice.articleId, notice.postedDate, notice.url.value, notice.subject, notice.category.name, notice.important))
+                .select(new QNoticeDto(notice.articleId, notice.postedDate, notice.url.value, notice.subject, notice.category.categoryName.stringValue().toLowerCase(), notice.important))
                 .from(notice)
                 .where(notice.category.eq(category))
                 .offset(pageable.getOffset())
@@ -46,7 +46,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                         notice.articleId,
                         notice.postedDate,
                         notice.subject,
-                        notice.category.name))
+                        notice.category.categoryName.stringValue().toLowerCase()))
                 .from(notice)
                 .where(isContainSubject(keywords).or(isContainCategory(keywords)))
                 .orderBy(notice.postedDate.desc())
@@ -72,7 +72,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     private static BooleanBuilder isContainCategory(List<String> keywords) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         for (String containedName : keywords) {
-            booleanBuilder.or(notice.category.name.contains(containedName));
+            booleanBuilder.or(notice.category.categoryName.stringValue().toLowerCase().contains(containedName));
         }
 
         return booleanBuilder;

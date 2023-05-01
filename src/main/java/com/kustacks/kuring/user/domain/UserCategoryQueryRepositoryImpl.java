@@ -16,7 +16,7 @@ public class UserCategoryQueryRepositoryImpl implements UserCategoryQueryReposit
     @Override
     public List<String> getUserCategoryNamesByToken(String token) {
         return queryFactory
-                .select(userCategory.category.name)
+                .select(userCategory.category.categoryName.stringValue().toLowerCase())
                 .from(userCategory)
                 .where(userCategory.user.token.eq(token))
                 .fetch();
