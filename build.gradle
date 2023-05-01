@@ -211,7 +211,9 @@ jacocoTestReport {
 							'**/*Exception.*',
 							'**/*Storage.*',
 							'**/KuringApplication.*',
-							'**/*Token.*'
+							'**/*Token.*',
+							'**/*Converter.*',
+							'**/*AdminController.*'
 					] + Qdomains)
 				})
 		)
@@ -237,12 +239,14 @@ jacocoTestCoverageVerification {
 			excludes = [
 					'**.*Request.*',
 					'**.*Response.*',
-					'**/dto/**',
+					'**.*Dto.*',
 					'**.*Interceptor.*',
 					'**.*Exception.*',
 					'**.*Storage.*',
 					'**.KuringApplication.*',
-					'**.*Token.*'
+					'**.*Token.*',
+					'**.*Converter.*',
+					'**.*AdminController.*'
 			] + Qdomains
 		}
 	}

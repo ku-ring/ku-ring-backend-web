@@ -85,7 +85,7 @@ public class FirebaseService {
             Message newMessage = Message.builder()
                     .setNotification(Notification
                             .builder()
-                            .setTitle(NOTIFICATION_TITLE)
+                            .setTitle(buildTitle(messageDto.getCategoryKorName()))
                             .setBody(messageDto.getSubject())
                             .build())
                     .putAllData(objectMapper.convertValue(messageDto, Map.class))
@@ -108,6 +108,14 @@ public class FirebaseService {
 
     public void sendNoticeMessageForAdmin(String token, AdminMessageDto messageDto) throws FirebaseMessagingException {
         firebaseMessaging.send(buildMessage(token, messageDto));
+    }
+
+    private String buildTitle(String korName) {
+        return new StringBuilder("[")
+                .append(korName)
+                .append("] ")
+                .append(NOTIFICATION_TITLE)
+                .toString();
     }
 
     private <T> Message buildMessage(String token, T messageDto) {

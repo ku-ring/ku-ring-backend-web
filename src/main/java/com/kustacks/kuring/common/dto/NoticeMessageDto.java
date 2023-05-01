@@ -21,14 +21,17 @@ public class NoticeMessageDto {
 
     private String category;
 
+    private String categoryKorName;
+
     private String baseUrl;
 
     @Builder
-    private NoticeMessageDto(String articleId, String postedDate, String subject, String category, String baseUrl) {
+    private NoticeMessageDto(String articleId, String postedDate, String subject, String category, String categoryKorName, String baseUrl) {
         Assert.notNull(articleId, "articleId must not be null");
         Assert.notNull(postedDate, "postedDate must not be null");
         Assert.notNull(subject, "subject must not be null");
         Assert.notNull(category, "category must not be null");
+        Assert.notNull(categoryKorName, "categoryKorName must not be null");
         Assert.notNull(baseUrl, "baseUrl must not be null");
 
         this.type = "notice";
@@ -36,6 +39,7 @@ public class NoticeMessageDto {
         this.postedDate = postedDate;
         this.subject = subject;
         this.category = category;
+        this.categoryKorName = categoryKorName;
         this.baseUrl = baseUrl;
     }
 
@@ -45,6 +49,7 @@ public class NoticeMessageDto {
                 .postedDate(departmentNotice.getPostedDate())
                 .subject(departmentNotice.getSubject())
                 .category(departmentNotice.getDepartmentName().getName())
+                .categoryKorName(departmentNotice.getDepartmentName().getKorName())
                 .baseUrl(departmentNotice.getUrl().getValue())
                 .build();
     }

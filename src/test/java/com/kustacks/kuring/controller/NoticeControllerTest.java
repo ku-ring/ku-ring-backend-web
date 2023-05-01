@@ -5,6 +5,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.category.common.dto.SubscribeCategoriesRequest;
 import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.firebase.FirebaseService;
@@ -227,8 +228,8 @@ public class NoticeControllerTest {
     void getSupportedCategoriesSuccessTest() throws Exception {
 
         List<Category> categories = new LinkedList<>();
-        categories.add(new Category("bachelor"));
-        categories.add(new Category("employment"));
+        categories.add(new Category(CategoryName.BACHELOR));
+        categories.add(new Category(CategoryName.EMPLOYMENT));
 
         List<String> categoryNames = new LinkedList<>();
         categoryNames.add("bachelor");
@@ -268,8 +269,8 @@ public class NoticeControllerTest {
         String token = "TEST_TOKEN";
 
         List<Category> categories = new LinkedList<>();
-        categories.add(new Category("bachelor"));
-        categories.add(new Category("employment"));
+        categories.add(new Category(CategoryName.BACHELOR));
+        categories.add(new Category(CategoryName.EMPLOYMENT));
 
         List<String> categoryNames = new LinkedList<>();
         categoryNames.add("bachelor");
@@ -493,8 +494,8 @@ public class NoticeControllerTest {
         compareCategoriesResult.put("new", new LinkedList<>());
         compareCategoriesResult.put("remove", new LinkedList<>());
 
-        Category bachelorCategory = new Category("bachelor");
-        Category studentCategory = new Category("student");
+        Category bachelorCategory = new Category(CategoryName.BACHELOR);
+        Category studentCategory = new Category(CategoryName.STUDENT);
 
         User user = new User(token);
 
