@@ -68,7 +68,7 @@ public class NoticeService {
         if (isDepartmentSearchRequest(type, department)) {
             DepartmentName departmentName = DepartmentName.fromHostPrefix(department);
 
-            if(important) {
+            if(Boolean.TRUE.equals(important)) {
                 return departmentNoticeRepository.findImportantNoticesByDepartment(departmentName);
             } else {
                 return departmentNoticeRepository.findNormalNoticesByDepartmentWithOffset(departmentName, PageRequest.of(page, size));
