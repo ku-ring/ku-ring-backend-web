@@ -29,7 +29,7 @@ public class UserStep {
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .header("User-Token", token)
                 .body(new SubscribeDepartmentsRequest(departments))
-                .when().post("/api/v2/users/departments/subscribe")
+                .when().post("/api/v2/users/subscriptions/departments")
                 .then().log().all()
                 .extract();
     }
@@ -48,7 +48,7 @@ public class UserStep {
                 .given().log().all()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .header("User-Token", token)
-                .when().get("/api/v2/users/departments/subscribe")
+                .when().get("/api/v2/users/subscriptions/departments")
                 .then().log().all()
                 .extract();
     }
