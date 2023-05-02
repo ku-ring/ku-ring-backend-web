@@ -1,5 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
+import com.kustacks.kuring.user.common.SubscribeCategoriesRequest;
 import com.kustacks.kuring.user.common.SubscribeDepartmentsRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
@@ -14,11 +15,23 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class UserStep {
 
-    public static void 학과_구독_응답_확인(ExtractableResponse<Response> response) {
+    public static ExtractableResponse<Response> 카테고리_구독_요청_v2(String token, SubscribeCategoriesRequest reqeust) {
+        return RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", token)
+                .body(reqeust)
+                .when().post("/api/v2/users/subscriptions/categories")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 카테고리_구독_요청_응답_확인_v2(ExtractableResponse<Response> response) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("사용자의 학과 구독에 성공하였습니다")
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("사용자의 학교 공지 카테고리 구독에 성공하였습니다")
         );
     }
 
@@ -32,6 +45,14 @@ public class UserStep {
                 .when().post("/api/v2/users/subscriptions/departments")
                 .then().log().all()
                 .extract();
+    }
+
+    public static void 학과_구독_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("사용자의 학과 구독에 성공하였습니다")
+        );
     }
 
     public static void 사용자_학과_조회_응답_확인(ExtractableResponse<Response> response) {
