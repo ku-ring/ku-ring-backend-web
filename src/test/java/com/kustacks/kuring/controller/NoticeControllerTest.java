@@ -272,9 +272,9 @@ public class NoticeControllerTest {
         categories.add(new Category(CategoryName.BACHELOR));
         categories.add(new Category(CategoryName.EMPLOYMENT));
 
-        List<String> categoryNames = new LinkedList<>();
-        categoryNames.add("bachelor");
-        categoryNames.add("employment");
+        List<CategoryName> categoryNames = new LinkedList<>();
+        categoryNames.add(CategoryName.BACHELOR);
+        categoryNames.add(CategoryName.EMPLOYMENT);
 
         // given
         given(categoryService.lookUpUserCategories(token)).willReturn(categoryNames);
@@ -291,8 +291,8 @@ public class NoticeControllerTest {
                 .andExpect(jsonPath("resultMsg").value("성공"))
                 .andExpect(jsonPath("resultCode").value(200))
                 .andExpect(jsonPath("categories", hasSize(2)))
-                .andExpect(jsonPath("categories[0]").value(categoryNames.get(0)))
-                .andExpect(jsonPath("categories[1]").value(categoryNames.get(1)))
+                .andExpect(jsonPath("categories[0]").value(categoryNames.get(0).getName()))
+                .andExpect(jsonPath("categories[1]").value(categoryNames.get(1).getName()))
                 .andDo(document("category-get-user-categories-success",
                         getDocumentRequest(),
                         getDocumentResponse(),

@@ -56,7 +56,11 @@ public class NoticeController {
     @GetMapping("/subscribe")
     public CategoryListResponse getUserCategories(@RequestParam("id") @NotBlank String token) {
         firebaseService.validationToken(token);
-        List<String> categoryNames = categoryService.lookUpUserCategories(token);
+        List<String> categoryNames = categoryService.lookUpUserCategories(token)
+                .stream()
+                .map(CategoryName::getName)
+                .collect(Collectors.toList());
+
         return new CategoryListResponse(categoryNames);
     }
 

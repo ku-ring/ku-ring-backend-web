@@ -60,7 +60,7 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> lookUpUserCategories(String token) {
+    public List<CategoryName> lookUpUserCategories(String token) {
         return userCategoryRepository.getUserCategoryNamesByToken(token);
     }
 
