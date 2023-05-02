@@ -8,6 +8,7 @@ import com.kustacks.kuring.notice.common.dto.CategoryNameDto;
 import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.business.UserService;
+import com.kustacks.kuring.user.common.SubscribeCategoriesRequest;
 import com.kustacks.kuring.user.common.SubscribeDepartmentsRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_SUBSCRIBE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_USER_SUBSCRIBES_LOOKUP_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_SUBSCRIBE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_USER_SUBSCRIBES_LOOKUP_SUCCESS;
@@ -56,6 +58,16 @@ public class UserControllerV2 {
         List<DepartmentNameDto> departmentNameDtos = convertDepartmentDtoList(userService.lookupSubscribeDepartmentList(id));
 
         return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_USER_SUBSCRIBES_LOOKUP_SUCCESS, departmentNameDtos));
+    }
+
+    @PostMapping(value = "/subscriptions/categories", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BaseResponse<Void>> editUserSubscribeCategories(
+            @Valid @RequestBody SubscribeCategoriesRequest request,
+            @RequestHeader(USER_TOKEN_HEADER_KEY) String id
+    ) {
+        firebaseService.validationToken(id);
+        categoryService.editSubscribeCategoryList(id, request.getCategories());
+        return ResponseEntity.ok().body(new BaseResponse<>(CATEGORY_SUBSCRIBE_SUCCESS, null));
     }
 
     @PostMapping(value = "/subscriptions/departments", consumes = MediaType.APPLICATION_JSON_VALUE)
