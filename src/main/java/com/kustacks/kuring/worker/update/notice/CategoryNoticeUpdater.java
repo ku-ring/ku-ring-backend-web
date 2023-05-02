@@ -47,8 +47,7 @@ public class CategoryNoticeUpdater implements Updater {
                                  DateConverter ymdhmsToYmdConverter,
                                  Map<CategoryName, NoticeApiClient> noticeAPIClientMap,
                                  NoticeRepository noticeRepository,
-                                 CategoryRepository categoryRepository)
-    {
+                                 CategoryRepository categoryRepository) {
         this.firebaseService = firebaseService;
         this.dtoConverter = noticeEntityToNoticeMessageDTOConverter;
         this.dateConverter = ymdhmsToYmdConverter;
@@ -80,7 +79,7 @@ public class CategoryNoticeUpdater implements Updater {
         Map<CategoryName, List<CommonNoticeFormatDto>> apiNoticesMap = new HashMap<>();
 
         for (CategoryName categoryName : CategoryName.values()) {
-            if(categoryName.isSameName(CategoryName.DEPARTMENT.getName())) {
+            if (categoryName == CategoryName.DEPARTMENT) {
                 continue;
             }
 
@@ -89,7 +88,7 @@ public class CategoryNoticeUpdater implements Updater {
                 apiNoticesMap.put(categoryName, commonNoticeFormatDTO);
             } catch (InternalLogicException e) {
                 log.info("{}", e.getErrorCode().getMessage());
-                if(ErrorCode.KU_LOGIN_BAD_RESPONSE.equals(e.getErrorCode())) {
+                if (ErrorCode.KU_LOGIN_BAD_RESPONSE.equals(e.getErrorCode())) {
                     Sentry.captureException(e);
                 }
             }
@@ -103,7 +102,7 @@ public class CategoryNoticeUpdater implements Updater {
         // kuisNoticeResponseBody에 있는 데이터가 DB에는 없는 경우 -> DB에 공지 추가
         // DB에 있는 데이터가 kuisNoticeResponseBody에는 없는 경우 -> DB에 공지 삭제
 
-        if(categoryMap == null) {
+        if (categoryMap == null) {
             categoryMap = categoryRepository.findAllMap();
         }
 
@@ -124,10 +123,10 @@ public class CategoryNoticeUpdater implements Updater {
             // 작업이 끝난 후 dbNoticeList에 공지가 남아있다면, 해당 공지들은 DB에서 삭제 (실제 DB에 삭제)
             List<Notice> newNotices = new LinkedList<>(); // DB에 추가할 공지 임시 저장
             Iterator<CommonNoticeFormatDto> noticeIterator = commonNoticeFormatDtoList.iterator();
-            while(noticeIterator.hasNext()) {
+            while (noticeIterator.hasNext()) {
                 CommonNoticeFormatDto apiNotice = noticeIterator.next();
                 Notice notice = dbNoticeMap.get(apiNotice.getArticleId());
-                if(notice == null) {
+                if (notice == null) {
                     newNotices.add(new Notice(apiNotice.getArticleId(),
                             apiNotice.getPostedDate(),
                             apiNotice.getUpdatedDate(),
@@ -157,7 +156,7 @@ public class CategoryNoticeUpdater implements Updater {
     private List<NoticeMessageDto> createNotification(List<Notice> willBeNotiNotices) {
         List<NoticeMessageDto> willBeNotiNoticeDtoList = new ArrayList<>(willBeNotiNotices.size());
         for (Notice notice : willBeNotiNotices) {
-            if(notice.isSameCategoryName(CategoryName.LIBRARY)) {
+            if (notice.isSameCategoryName(CategoryName.LIBRARY)) {
                 // TODO: notice entity 내용을 변경해서 사용하는게 좋은 방법인지는 생각을 해봐야함
                 // 혹시나 compareAndUpdateDB에서 영속성 컨텍스트에 남아있는 notice entity의 내용이 변경되어서 저장될까봐
                 // compareAndUpdateDB에서 saveAndFlush 메서드를 사용함.
@@ -176,10 +175,10 @@ public class CategoryNoticeUpdater implements Updater {
             for (NoticeMessageDto messageDTO : willBeNotiNoticeDtoList) {
                 log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", messageDTO.getArticleId(), messageDTO.getPostedDate(), messageDTO.getCategory(), messageDTO.getSubject());
             }
-        } catch(FirebaseMessageSendException e) {
+        } catch (FirebaseMessageSendException e) {
             log.error("새로운 공지의 FCM 전송에 실패했습니다.");
             throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("새로운 공지를 FCM에 보내는 중 알 수 없는 오류가 발생했습니다.");
             throw new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e);
         }
