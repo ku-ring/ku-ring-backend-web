@@ -3,13 +3,16 @@ package com.kustacks.kuring.user.presentation;
 import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.dto.BaseResponse;
+import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.feedback.business.FeedbackService;
 import com.kustacks.kuring.notice.common.dto.CategoryNameDto;
 import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.business.UserService;
 import com.kustacks.kuring.user.common.SubscribeCategoriesRequest;
 import com.kustacks.kuring.user.common.SubscribeDepartmentsRequest;
+import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -30,6 +33,7 @@ import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_SU
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_USER_SUBSCRIBES_LOOKUP_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_SUBSCRIBE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_USER_SUBSCRIBES_LOOKUP_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.FEEDBACK_SAVE_SUCCESS;
 
 @Slf4j
 @Validated
@@ -43,6 +47,8 @@ public class UserControllerV2 {
     private final UserService userService;
     private final CategoryService categoryService;
     private final FirebaseService firebaseService;
+    private final FeedbackService feedbackService;
+
 
     @GetMapping("/subscriptions/categories")
     public ResponseEntity<BaseResponse<List<CategoryNameDto>>> lookupUserSubscribeCategories(@RequestHeader(USER_TOKEN_HEADER_KEY) String id) {
@@ -78,6 +84,17 @@ public class UserControllerV2 {
         firebaseService.validationToken(id);
         userService.editSubscribeDepartmentList(id, request.getDepartments());
         return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_SUBSCRIBE_SUCCESS, null));
+    }
+
+    @PostMapping("/feedbacks")
+    public ResponseEntity<BaseResponse<Void>> saveFeedback(
+            @Valid @RequestBody SaveFeedbackRequest request,
+            @RequestHeader(USER_TOKEN_HEADER_KEY) String id
+    ) throws APIException {
+        firebaseService.validationToken(id);
+        feedbackService.saveFeedback(id, request.getContent());
+
+        return ResponseEntity.ok().body(new BaseResponse<>(FEEDBACK_SAVE_SUCCESS, null));
     }
 
     private List<CategoryNameDto> convertCategoryNameDtoList(List<CategoryName> categoryNamesList) {
