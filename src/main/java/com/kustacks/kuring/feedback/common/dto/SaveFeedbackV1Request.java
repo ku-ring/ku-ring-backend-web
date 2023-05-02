@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SaveFeedbackRequest {
+public class SaveFeedbackV1Request {
 
     @NotBlank
     private String id;
