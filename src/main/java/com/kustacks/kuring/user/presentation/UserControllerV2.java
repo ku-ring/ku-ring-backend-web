@@ -6,6 +6,7 @@ import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.notice.common.dto.CategoryNameDto;
 import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
+import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.business.UserService;
 import com.kustacks.kuring.user.common.SubscribeDepartmentsRequest;
 import lombok.RequiredArgsConstructor;
@@ -35,39 +36,47 @@ import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS
 @RequestMapping(value = "/api/v2/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserControllerV2 {
 
+    private static final String USER_TOKEN_HEADER_KEY = "User-Token";
+
     private final UserService userService;
     private final CategoryService categoryService;
     private final FirebaseService firebaseService;
 
     @GetMapping("/subscriptions/categories")
-    public ResponseEntity<BaseResponse<List<CategoryNameDto>>> lookupUserSubscribeCategories(@RequestHeader("User-Token") String id) {
+    public ResponseEntity<BaseResponse<List<CategoryNameDto>>> lookupUserSubscribeCategories(@RequestHeader(USER_TOKEN_HEADER_KEY) String id) {
         firebaseService.validationToken(id);
-        List<CategoryNameDto> categoryNames = convertCategoryNameDtoList(categoryService.lookUpUserCategories(id));
+        List<CategoryNameDto> categoryNamesDtos = convertCategoryNameDtoList(categoryService.lookUpUserCategories(id));
 
-        return ResponseEntity.ok().body(new BaseResponse<>(CATEGORY_USER_SUBSCRIBES_LOOKUP_SUCCESS, categoryNames));
+        return ResponseEntity.ok().body(new BaseResponse<>(CATEGORY_USER_SUBSCRIBES_LOOKUP_SUCCESS, categoryNamesDtos));
     }
 
     @GetMapping("/subscriptions/departments")
-    public ResponseEntity<BaseResponse<List<DepartmentNameDto>>> lookupUserSubscribeDepartments(@RequestHeader("User-Token") String id) {
+    public ResponseEntity<BaseResponse<List<DepartmentNameDto>>> lookupUserSubscribeDepartments(@RequestHeader(USER_TOKEN_HEADER_KEY) String id) {
         firebaseService.validationToken(id);
-        List<DepartmentNameDto> departmentDtos = userService.lookupSubscribeDepartmentList(id);
-        return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_USER_SUBSCRIBES_LOOKUP_SUCCESS, departmentDtos));
+        List<DepartmentNameDto> departmentNameDtos = convertDepartmentDtoList(userService.lookupSubscribeDepartmentList(id));
+
+        return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_USER_SUBSCRIBES_LOOKUP_SUCCESS, departmentNameDtos));
     }
 
     @PostMapping(value = "/subscriptions/departments", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BaseResponse<Void>> editUserSubscribeDepartments(
             @Valid @RequestBody SubscribeDepartmentsRequest request,
-            @RequestHeader("User-Token") String id
+            @RequestHeader(USER_TOKEN_HEADER_KEY) String id
     ) {
         firebaseService.validationToken(id);
         userService.editSubscribeDepartmentList(id, request.getDepartments());
         return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_SUBSCRIBE_SUCCESS, null));
     }
 
-    private static List<CategoryNameDto> convertCategoryNameDtoList(List<CategoryName> categoryNamesList) {
-        return categoryNamesList
-                .stream()
+    private List<CategoryNameDto> convertCategoryNameDtoList(List<CategoryName> categoryNamesList) {
+        return categoryNamesList.stream()
                 .map(CategoryNameDto::from)
+                .collect(Collectors.toList());
+    }
+
+    private List<DepartmentNameDto> convertDepartmentDtoList(List<DepartmentName> departmentNames) {
+        return departmentNames.stream()
+                .map(DepartmentNameDto::from)
                 .collect(Collectors.toList());
     }
 }

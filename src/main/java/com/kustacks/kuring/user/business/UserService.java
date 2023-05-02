@@ -7,11 +7,10 @@ import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.common.firebase.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.common.firebase.exception.FirebaseUnSubscribeException;
-import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
+import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
 import com.kustacks.kuring.user.exception.UserNotFoundException;
-import com.kustacks.kuring.notice.domain.DepartmentName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,10 +35,10 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
     }
 
-    public List<DepartmentNameDto> lookupSubscribeDepartmentList(String id) {
+    @Transactional(readOnly = true)
+    public List<DepartmentName> lookupSubscribeDepartmentList(String id) {
         User findUser = findUserByToken(id);
-        List<DepartmentName> departmentNameList = findUser.getSubscribedDepartmentList();
-        return convertDepartmentDtoList(departmentNameList);
+        return findUser.getSubscribedDepartmentList();
     }
 
     public void editSubscribeDepartmentList(String userToken, List<String> departments) {
@@ -95,11 +94,5 @@ public class UserService {
             subscribedRollbackEvent.deleteNewCategoryName(removeDepartmentName.getName());
             log.info("구독 취소 = {}", removeDepartmentName.getName());
         }
-    }
-
-    private List<DepartmentNameDto> convertDepartmentDtoList(List<DepartmentName> departmentNames) {
-        return departmentNames.stream()
-                .map(DepartmentNameDto::from)
-                .collect(Collectors.toList());
     }
 }
