@@ -35,9 +35,10 @@ public class NoticeControllerV2 {
     public ResponseEntity<BaseResponse<List<NoticeDto>>> getNotices(
             @RequestParam(name = "type") String type,
             @RequestParam(name = "department", required = false) String department,
+            @RequestParam(name = "important", required = false) Boolean important,
             @RequestParam(name = "page") @Min(0) int page,
             @RequestParam(name = "size") @Min(1) @Max(30) int size) {
-        List<NoticeDto> searchResults = noticeService.getNoticesV2(type, department, page, size);
+        List<NoticeDto> searchResults = noticeService.getNoticesV2(type, department, important, page, size);
         return ResponseEntity.ok().body(new BaseResponse<>(NOTICE_SEARCH_SUCCESS, searchResults));
     }
 
