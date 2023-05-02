@@ -7,6 +7,9 @@ public enum ResponseCodeAndMessages {
     /* Notice */
     NOTICE_SEARCH_SUCCESS(HttpStatus.OK.value(), "공지 조회에 성공하였습니다"),
 
+    /* Category */
+    CATEGORY_SEARCH_SUCCESS(HttpStatus.OK.value(), "지원하는 학교 공지 카테고리 조회에 성공하였습니다"),
+
     /* Department */
     DEPARTMENTS_SEARCH_SUCCESS(HttpStatus.OK.value(), "지원하는 학과 조회에 성공하였습니다"),
     DEPARTMENTS_SUBSCRIBE_SUCCESS(HttpStatus.OK.value(), "사용자의 학과 구독에 성공하였습니다"),

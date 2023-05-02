@@ -1,7 +1,9 @@
 package com.kustacks.kuring.notice.presentation;
 
+import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.notice.business.NoticeService;
+import com.kustacks.kuring.notice.common.dto.CategoryNameDto;
 import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeLookupResponse;
@@ -19,7 +21,9 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_SEARCH_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_SEARCH_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_SEARCH_SUCCESS;
 
@@ -30,6 +34,7 @@ import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_SEAR
 public class NoticeControllerV2 {
 
     private final NoticeService noticeService;
+    private final CategoryService categoryService;
 
     @GetMapping
     public ResponseEntity<BaseResponse<List<NoticeDto>>> getNotices(
@@ -47,6 +52,16 @@ public class NoticeControllerV2 {
         List<NoticeSearchDto> noticeDtoList = noticeService.findAllNoticeByContent(content);
         NoticeLookupResponse response = new NoticeLookupResponse(noticeDtoList);
         return ResponseEntity.ok().body(new BaseResponse<>(NOTICE_SEARCH_SUCCESS, response));
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<BaseResponse<List<CategoryNameDto>>> getSupportedCategories() {
+        List<CategoryNameDto> categoryNames = categoryService.lookUpSupportedCategories()
+                .stream()
+                .map(CategoryNameDto::from)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(new BaseResponse<>(CATEGORY_SEARCH_SUCCESS, categoryNames));
     }
 
     @GetMapping("/departments")

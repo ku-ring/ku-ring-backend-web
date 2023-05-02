@@ -4,6 +4,7 @@ import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.category.common.dto.CategoryListResponse;
 import com.kustacks.kuring.category.common.dto.SubscribeCategoriesRequest;
 import com.kustacks.kuring.category.common.dto.SubscribeCategoriesResponse;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.notice.business.NoticeService;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
@@ -22,6 +23,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Validated
 @RestController
@@ -43,7 +45,11 @@ public class NoticeController {
 
     @GetMapping("/categories")
     public CategoryListResponse getSupportedCategories() {
-        List<String> categoryNames = categoryService.lookUpSupportedCategories();
+        List<String> categoryNames = categoryService.lookUpSupportedCategories()
+                .stream()
+                .map(CategoryName::getName)
+                .collect(Collectors.toList());
+
         return new CategoryListResponse(categoryNames);
     }
 

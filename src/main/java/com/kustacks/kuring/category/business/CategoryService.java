@@ -3,6 +3,7 @@ package com.kustacks.kuring.category.business;
 import com.kustacks.kuring.category.business.event.Events;
 import com.kustacks.kuring.category.business.event.SubscribedRollbackEvent;
 import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.category.exception.CategoryNotFoundException;
 import com.kustacks.kuring.common.error.APIException;
@@ -54,7 +55,7 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> lookUpSupportedCategories() {
+    public List<CategoryName> lookUpSupportedCategories() {
         return categoryRepository.getSupportedCategoryNames();
     }
 
