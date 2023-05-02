@@ -51,7 +51,7 @@ public class NoticeStep {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 페이지_번호와_함께_학과_공지사항_조회_요청(String category, String hostPrefix, Boolean important, int page) {
+    public static ExtractableResponse<Response> 페이지_번호와_함께_학교_공지사항_조회_요청(String category, String hostPrefix, Boolean important, int page) {
         return RestAssured
                 .given().log().all()
                 .pathParam("type", category)
@@ -64,7 +64,7 @@ public class NoticeStep {
                 .extract();
     }
 
-    public static void 학과_공지_조회_응답_확인(ExtractableResponse<Response> response, Boolean important) {
+    public static void 학교_공지_조회_응답_확인(ExtractableResponse<Response> response, Boolean important) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
