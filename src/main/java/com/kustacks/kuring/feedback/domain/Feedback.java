@@ -1,5 +1,6 @@
 package com.kustacks.kuring.feedback.domain;
 
+import com.kustacks.kuring.common.domain.BaseTimeEntity;
 import com.kustacks.kuring.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,7 +19,7 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Feedback {
+public class Feedback extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
