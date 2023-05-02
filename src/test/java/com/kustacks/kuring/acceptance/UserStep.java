@@ -35,6 +35,25 @@ public class UserStep {
         );
     }
 
+    public static ExtractableResponse<Response> 사용자_카테고리_구독_목록_조회_요청_v2(String id) {
+        return RestAssured
+                .given().log().all()
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", id)
+                .when().get("/api/v2/users/subscriptions/categories")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 카테고리_구독_목록_조회_요청_응답_확인_v2(ExtractableResponse<Response> response, String... categories) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("사용자가 구독한 학교 공지 카테고리 조회에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getList("data.name")).contains(categories)
+        );
+    }
+
     public static ExtractableResponse<Response> 학과_구독_요청(String token, List<String> departments) {
         return RestAssured
                 .given().log().all()
