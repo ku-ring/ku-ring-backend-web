@@ -3,7 +3,7 @@ package com.kustacks.kuring.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.category.business.CategoryService;
-import com.kustacks.kuring.category.common.dto.SubscribeCategoriesRequest;
+import com.kustacks.kuring.category.common.dto.SubscribeCategoriesV1Request;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.error.APIException;
@@ -231,9 +231,9 @@ public class NoticeControllerTest {
         categories.add(new Category(CategoryName.BACHELOR));
         categories.add(new Category(CategoryName.EMPLOYMENT));
 
-        List<String> categoryNames = new LinkedList<>();
-        categoryNames.add("bachelor");
-        categoryNames.add("employment");
+        List<CategoryName> categoryNames = new LinkedList<>();
+        categoryNames.add(CategoryName.BACHELOR);
+        categoryNames.add(CategoryName.EMPLOYMENT);
 
         // given
         given(categoryService.lookUpSupportedCategories()).willReturn(categoryNames);
@@ -248,8 +248,8 @@ public class NoticeControllerTest {
                 .andExpect(jsonPath("resultMsg").value("성공"))
                 .andExpect(jsonPath("resultCode").value(200))
                 .andExpect(jsonPath("categories", hasSize(2)))
-                .andExpect(jsonPath("categories[0]").value(categoryNames.get(0)))
-                .andExpect(jsonPath("categories[1]").value(categoryNames.get(1)))
+                .andExpect(jsonPath("categories[0]").value(categoryNames.get(0).getName()))
+                .andExpect(jsonPath("categories[1]").value(categoryNames.get(1).getName()))
                 .andDo(document("category-get-all-success",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -272,9 +272,9 @@ public class NoticeControllerTest {
         categories.add(new Category(CategoryName.BACHELOR));
         categories.add(new Category(CategoryName.EMPLOYMENT));
 
-        List<String> categoryNames = new LinkedList<>();
-        categoryNames.add("bachelor");
-        categoryNames.add("employment");
+        List<CategoryName> categoryNames = new LinkedList<>();
+        categoryNames.add(CategoryName.BACHELOR);
+        categoryNames.add(CategoryName.EMPLOYMENT);
 
         // given
         given(categoryService.lookUpUserCategories(token)).willReturn(categoryNames);
@@ -291,8 +291,8 @@ public class NoticeControllerTest {
                 .andExpect(jsonPath("resultMsg").value("성공"))
                 .andExpect(jsonPath("resultCode").value(200))
                 .andExpect(jsonPath("categories", hasSize(2)))
-                .andExpect(jsonPath("categories[0]").value(categoryNames.get(0)))
-                .andExpect(jsonPath("categories[1]").value(categoryNames.get(1)))
+                .andExpect(jsonPath("categories[0]").value(categoryNames.get(0).getName()))
+                .andExpect(jsonPath("categories[1]").value(categoryNames.get(1).getName()))
                 .andDo(document("category-get-user-categories-success",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -359,7 +359,7 @@ public class NoticeControllerTest {
     @Test
     void subscribeCategoriesSuccessTest() throws Exception {
         // given
-        SubscribeCategoriesRequest subscribeCategoriesRequest = new SubscribeCategoriesRequest("TEST_TOKEN", List.of("bachelor", "student"));
+        SubscribeCategoriesV1Request subscribeCategoriesRequest = new SubscribeCategoriesV1Request("TEST_TOKEN", List.of("bachelor", "student"));
         doNothing().when(firebaseService).validationToken(anyString());
         doNothing().when(categoryService).editSubscribeCategoryList(anyString(), any());
 
@@ -399,7 +399,7 @@ public class NoticeControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
+        SubscribeCategoriesV1Request requestDTO = new SubscribeCategoriesV1Request(token, categories);
 
         // given
         given(userService.getUserByToken(token)).willReturn(null);
@@ -455,7 +455,7 @@ public class NoticeControllerTest {
         categories.add("bachelor");
         categories.add("invalid-category");
 
-        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
+        SubscribeCategoriesV1Request requestDTO = new SubscribeCategoriesV1Request(token, categories);
 
         // given
         doThrow(new APIException(ErrorCode.API_INVALID_PARAM)).when(categoryService).editSubscribeCategoryList(any(), any());
@@ -488,7 +488,7 @@ public class NoticeControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
+        SubscribeCategoriesV1Request requestDTO = new SubscribeCategoriesV1Request(token, categories);
 
         Map<String, List<UserCategory>> compareCategoriesResult = new HashMap<>();
         compareCategoriesResult.put("new", new LinkedList<>());

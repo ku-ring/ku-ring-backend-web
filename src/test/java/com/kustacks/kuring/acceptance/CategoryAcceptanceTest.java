@@ -1,7 +1,7 @@
 package com.kustacks.kuring.acceptance;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.category.common.dto.SubscribeCategoriesRequest;
+import com.kustacks.kuring.category.common.dto.SubscribeCategoriesV1Request;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.firebase.FirebaseService;
@@ -73,7 +73,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
         doNothing().when(firebaseService).subscribe(anyString(), anyString());
 
         // when
-        var 카테고리_구독_요청_응답 = 카테고리_구독_요청(new SubscribeCategoriesRequest(USER_FCM_TOKEN, List.of("student", "employment")));
+        var 카테고리_구독_요청_응답 = 카테고리_구독_요청(new SubscribeCategoriesV1Request(USER_FCM_TOKEN, List.of("student", "employment")));
 
         // then
         카테고리_구독_요청_응답_확인(카테고리_구독_요청_응답);
@@ -92,7 +92,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
         doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(firebaseService).validationToken(anyString());
 
         // when
-        var response = 카테고리_구독_요청(new SubscribeCategoriesRequest(INVALID_USER_FCM_TOKEN, List.of("student", "employment")));
+        var response = 카테고리_구독_요청(new SubscribeCategoriesV1Request(INVALID_USER_FCM_TOKEN, List.of("student", "employment")));
 
         // then
         실패_응답_확인(response, 401);
@@ -108,7 +108,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
     void look_up_user_subscribe_category() throws FirebaseMessagingException {
         // given
         doNothing().when(firebaseService).validationToken(anyString());
-        카테고리_구독_요청(new SubscribeCategoriesRequest(USER_FCM_TOKEN, List.of("student", "employment")));
+        카테고리_구독_요청(new SubscribeCategoriesV1Request(USER_FCM_TOKEN, List.of("student", "employment")));
 
         // when
         var 조회_응답 = 사용자_카테고리_목록_조회_요청(USER_FCM_TOKEN);
@@ -132,10 +132,10 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
         doNothing().when(firebaseService).subscribe(anyString(), anyString());
         doNothing().when(firebaseService).unsubscribe(anyString(), anyString());
 
-        카테고리_구독_요청(new SubscribeCategoriesRequest(USER_FCM_TOKEN, List.of("student", "employment")));
+        카테고리_구독_요청(new SubscribeCategoriesV1Request(USER_FCM_TOKEN, List.of("student", "employment")));
 
         // when
-        var 카테고리_구독_요청_응답 = 카테고리_수정_요청(new SubscribeCategoriesRequest(USER_FCM_TOKEN, List.of("student", "library")));
+        var 카테고리_구독_요청_응답 = 카테고리_수정_요청(new SubscribeCategoriesV1Request(USER_FCM_TOKEN, List.of("student", "library")));
 
         // then
         카테고리_구독_요청_응답_확인(카테고리_구독_요청_응답);
@@ -154,7 +154,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
         doNothing().when(firebaseService).subscribe(anyString(), anyString());
 
         // when
-        var 카테고리_구독_요청_응답 = 카테고리_구독_요청(new SubscribeCategoriesRequest(null, List.of("student", "employment")));
+        var 카테고리_구독_요청_응답 = 카테고리_구독_요청(new SubscribeCategoriesV1Request(null, List.of("student", "employment")));
 
         // then
         실패_응답_확인(카테고리_구독_요청_응답, 400);
@@ -167,7 +167,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
         doNothing().when(firebaseService).subscribe(anyString(), anyString());
 
         // when
-        var 카테고리_구독_요청_응답 = 카테고리_구독_요청(new SubscribeCategoriesRequest(null, List.of("invalid-category")));
+        var 카테고리_구독_요청_응답 = 카테고리_구독_요청(new SubscribeCategoriesV1Request(null, List.of("invalid-category")));
 
         // then
         실패_응답_확인(카테고리_구독_요청_응답, 400);

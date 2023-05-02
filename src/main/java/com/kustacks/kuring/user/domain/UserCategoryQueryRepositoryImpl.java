@@ -1,5 +1,6 @@
 package com.kustacks.kuring.user.domain;
 
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -14,9 +15,9 @@ public class UserCategoryQueryRepositoryImpl implements UserCategoryQueryReposit
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<String> getUserCategoryNamesByToken(String token) {
+    public List<CategoryName> getUserCategoryNamesByToken(String token) {
         return queryFactory
-                .select(userCategory.category.categoryName.stringValue().toLowerCase())
+                .select(userCategory.category.categoryName)
                 .from(userCategory)
                 .where(userCategory.user.token.eq(token))
                 .fetch();

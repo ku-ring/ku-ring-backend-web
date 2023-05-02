@@ -64,18 +64,15 @@ public class NoticeService {
         return new NoticeListResponse(convertBaseUrl(categoryName), noticeDtoList);
     }
 
-    public List<NoticeDto> getNoticesV2(String type, String department, int page, int size) {
+    public List<NoticeDto> getNoticesV2(String type, String department, Boolean important, int page, int size) {
         if (isDepartmentSearchRequest(type, department)) {
             DepartmentName departmentName = DepartmentName.fromHostPrefix(department);
 
-            List<NoticeDto> normalNotices = departmentNoticeRepository.findNormalNoticesByDepartmentWithOffset(departmentName, PageRequest.of(page, size));
-            if (page == FIRST_PAGE) {
-                List<NoticeDto> importantNotices = departmentNoticeRepository.findImportantNoticesByDepartment(departmentName);
-                importantNotices.addAll(normalNotices);
-                normalNotices = importantNotices;
+            if(Boolean.TRUE.equals(important)) {
+                return departmentNoticeRepository.findImportantNoticesByDepartment(departmentName);
+            } else {
+                return departmentNoticeRepository.findNormalNoticesByDepartmentWithOffset(departmentName, PageRequest.of(page, size));
             }
-
-            return normalNotices;
         }
 
         String categoryName = convertShortNameIntoLongName(type);

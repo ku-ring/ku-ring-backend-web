@@ -1,6 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.category.common.dto.SubscribeCategoriesRequest;
+import com.kustacks.kuring.category.common.dto.SubscribeCategoriesV1Request;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -22,10 +22,27 @@ public class CategoryStep {
         );
     }
 
+    public static void 카테고리_조회_요청_응답_확인_v2(ExtractableResponse<Response> response, String... categories) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("지원하는 학교 공지 카테고리 조회에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getList("data.name")).contains(categories)
+        );
+    }
+
     public static ExtractableResponse<Response> 카테고리_조회_요청() {
         return RestAssured
                 .given().log().all()
                 .when().get("/api/v1/notice/categories")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 카테고리_조회_요청_v2() {
+        return RestAssured
+                .given().log().all()
+                .when().get("/api/v2/notices/categories")
                 .then().log().all()
                 .extract();
     }
@@ -38,7 +55,7 @@ public class CategoryStep {
         );
     }
 
-    public static ExtractableResponse<Response> 카테고리_구독_요청(SubscribeCategoriesRequest reqeust) {
+    public static ExtractableResponse<Response> 카테고리_구독_요청(SubscribeCategoriesV1Request reqeust) {
         return RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -49,7 +66,7 @@ public class CategoryStep {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 카테고리_수정_요청(SubscribeCategoriesRequest request) {
+    public static ExtractableResponse<Response> 카테고리_수정_요청(SubscribeCategoriesV1Request request) {
         return 카테고리_구독_요청(request);
     }
 

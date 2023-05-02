@@ -2,8 +2,9 @@ package com.kustacks.kuring.notice.presentation;
 
 import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.category.common.dto.CategoryListResponse;
-import com.kustacks.kuring.category.common.dto.SubscribeCategoriesRequest;
+import com.kustacks.kuring.category.common.dto.SubscribeCategoriesV1Request;
 import com.kustacks.kuring.category.common.dto.SubscribeCategoriesResponse;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.notice.business.NoticeService;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
@@ -22,6 +23,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Validated
 @RestController
@@ -43,19 +45,27 @@ public class NoticeController {
 
     @GetMapping("/categories")
     public CategoryListResponse getSupportedCategories() {
-        List<String> categoryNames = categoryService.lookUpSupportedCategories();
+        List<String> categoryNames = categoryService.lookUpSupportedCategories()
+                .stream()
+                .map(CategoryName::getName)
+                .collect(Collectors.toList());
+
         return new CategoryListResponse(categoryNames);
     }
 
     @GetMapping("/subscribe")
     public CategoryListResponse getUserCategories(@RequestParam("id") @NotBlank String token) {
         firebaseService.validationToken(token);
-        List<String> categoryNames = categoryService.lookUpUserCategories(token);
+        List<String> categoryNames = categoryService.lookUpUserCategories(token)
+                .stream()
+                .map(CategoryName::getName)
+                .collect(Collectors.toList());
+
         return new CategoryListResponse(categoryNames);
     }
 
     @PostMapping(value = "/subscribe", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public SubscribeCategoriesResponse editUserSubscribeCategories(@Valid @RequestBody SubscribeCategoriesRequest request) {
+    public SubscribeCategoriesResponse editUserSubscribeCategories(@Valid @RequestBody SubscribeCategoriesV1Request request) {
         firebaseService.validationToken(request.getId());
         categoryService.editSubscribeCategoryList(request.getId(), request.getCategories());
         return new SubscribeCategoriesResponse();
