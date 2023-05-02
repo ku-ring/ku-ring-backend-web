@@ -41,7 +41,7 @@ public class NoticeAcceptanceTest extends AcceptanceTest {
     @Test
     public void look_up_notice_v2() {
         // when
-        var 공지사항_조회_요청_응답 = 페이지_번호와_함께_학과_공지사항_조회_요청("stu", "", 0);
+        var 공지사항_조회_요청_응답 = 페이지_번호와_함께_학과_공지사항_조회_요청("stu", "", Boolean.FALSE, 0);
 
         // then
         공지사항_조회_요청_응답_확인_v2(공지사항_조회_요청_응답, "student");
@@ -52,14 +52,29 @@ public class NoticeAcceptanceTest extends AcceptanceTest {
      * When : 컴퓨터공학부 공지 요청시
      * Then : 컴퓨터공학부 공지 목록이 성공적으로 조회된다
      */
-    @DisplayName("[v2] 특정 학과의 공지를 조회한다.")
+    @DisplayName("[v2] 특정 학과의 중요 공지를 조회한다.")
     @Test
-    public void look_up_department_notice_v2() {
+    public void look_up_department_important_notice_v2() {
         // when
-        var 학과_공지_조회_응답 = 페이지_번호와_함께_학과_공지사항_조회_요청("dep", DepartmentName.COMPUTER.getHostPrefix(), 0);
+        var 학과_공지_조회_응답 = 페이지_번호와_함께_학과_공지사항_조회_요청("dep", DepartmentName.COMPUTER.getHostPrefix(), Boolean.TRUE, 0);
 
         // then
-        학과_공지_조회_응답_확인(학과_공지_조회_응답);
+        학과_공지_조회_응답_확인(학과_공지_조회_응답, Boolean.TRUE);
+    }
+
+    /**
+     * Given : 쿠링앱이 실행중이다
+     * When : 컴퓨터공학부 공지 요청시
+     * Then : 컴퓨터공학부 공지 목록이 성공적으로 조회된다
+     */
+    @DisplayName("[v2] 특정 학과의 일반 공지를 조회한다.")
+    @Test
+    public void look_up_department_normal_notice_v2() {
+        // when
+        var 학과_공지_조회_응답 = 페이지_번호와_함께_학과_공지사항_조회_요청("dep", DepartmentName.COMPUTER.getHostPrefix(), Boolean.FALSE, 0);
+
+        // then
+        학과_공지_조회_응답_확인(학과_공지_조회_응답, Boolean.FALSE);
     }
 
     /**
