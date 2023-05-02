@@ -33,14 +33,14 @@ public class UserControllerV2 {
     private final UserService userService;
     private final FirebaseService firebaseService;
 
-    @GetMapping("departments/subscribe")
+    @GetMapping("/subscriptions/departments")
     public ResponseEntity<BaseResponse<List<DepartmentNameDto>>> lookupUserSubscribeDepartments(@RequestHeader("User-Token") String id) {
         firebaseService.validationToken(id);
         List<DepartmentNameDto> departmentDtos = userService.lookupSubscribeDepartmentList(id);
         return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_USER_LOOKUP_SUCCESS, departmentDtos));
     }
 
-    @PostMapping(value = "/departments/subscribe", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/subscriptions/departments", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BaseResponse<Void>> editUserSubscribeDepartments(
             @Valid @RequestBody SubscribeDepartmentsRequest request,
             @RequestHeader("User-Token") String id
