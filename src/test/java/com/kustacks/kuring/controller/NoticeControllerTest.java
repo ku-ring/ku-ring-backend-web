@@ -3,7 +3,7 @@ package com.kustacks.kuring.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.category.business.CategoryService;
-import com.kustacks.kuring.category.common.dto.SubscribeCategoriesRequest;
+import com.kustacks.kuring.category.common.dto.SubscribeCategoriesV1Request;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.error.APIException;
@@ -359,7 +359,7 @@ public class NoticeControllerTest {
     @Test
     void subscribeCategoriesSuccessTest() throws Exception {
         // given
-        SubscribeCategoriesRequest subscribeCategoriesRequest = new SubscribeCategoriesRequest("TEST_TOKEN", List.of("bachelor", "student"));
+        SubscribeCategoriesV1Request subscribeCategoriesRequest = new SubscribeCategoriesV1Request("TEST_TOKEN", List.of("bachelor", "student"));
         doNothing().when(firebaseService).validationToken(anyString());
         doNothing().when(categoryService).editSubscribeCategoryList(anyString(), any());
 
@@ -399,7 +399,7 @@ public class NoticeControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
+        SubscribeCategoriesV1Request requestDTO = new SubscribeCategoriesV1Request(token, categories);
 
         // given
         given(userService.getUserByToken(token)).willReturn(null);
@@ -455,7 +455,7 @@ public class NoticeControllerTest {
         categories.add("bachelor");
         categories.add("invalid-category");
 
-        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
+        SubscribeCategoriesV1Request requestDTO = new SubscribeCategoriesV1Request(token, categories);
 
         // given
         doThrow(new APIException(ErrorCode.API_INVALID_PARAM)).when(categoryService).editSubscribeCategoryList(any(), any());
@@ -488,7 +488,7 @@ public class NoticeControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesRequest requestDTO = new SubscribeCategoriesRequest(token, categories);
+        SubscribeCategoriesV1Request requestDTO = new SubscribeCategoriesV1Request(token, categories);
 
         Map<String, List<UserCategory>> compareCategoriesResult = new HashMap<>();
         compareCategoriesResult.put("new", new LinkedList<>());

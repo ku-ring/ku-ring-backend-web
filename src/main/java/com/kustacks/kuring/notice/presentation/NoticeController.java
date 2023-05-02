@@ -2,7 +2,7 @@ package com.kustacks.kuring.notice.presentation;
 
 import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.category.common.dto.CategoryListResponse;
-import com.kustacks.kuring.category.common.dto.SubscribeCategoriesRequest;
+import com.kustacks.kuring.category.common.dto.SubscribeCategoriesV1Request;
 import com.kustacks.kuring.category.common.dto.SubscribeCategoriesResponse;
 import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.firebase.FirebaseService;
@@ -65,7 +65,7 @@ public class NoticeController {
     }
 
     @PostMapping(value = "/subscribe", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public SubscribeCategoriesResponse editUserSubscribeCategories(@Valid @RequestBody SubscribeCategoriesRequest request) {
+    public SubscribeCategoriesResponse editUserSubscribeCategories(@Valid @RequestBody SubscribeCategoriesV1Request request) {
         firebaseService.validationToken(request.getId());
         categoryService.editSubscribeCategoryList(request.getId(), request.getCategories());
         return new SubscribeCategoriesResponse();

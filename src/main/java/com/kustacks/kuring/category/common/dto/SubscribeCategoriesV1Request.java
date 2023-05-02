@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SubscribeCategoriesRequest {
+public class SubscribeCategoriesV1Request {
 
     @NotBlank
     private String id;
