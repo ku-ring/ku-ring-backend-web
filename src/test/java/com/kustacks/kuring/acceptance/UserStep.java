@@ -2,6 +2,7 @@ package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.user.common.SubscribeCategoriesRequest;
 import com.kustacks.kuring.user.common.SubscribeDepartmentsRequest;
+import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -91,5 +92,25 @@ public class UserStep {
                 .when().get("/api/v2/users/subscriptions/departments")
                 .then().log().all()
                 .extract();
+    }
+
+
+    public static ExtractableResponse<Response> 피드백_요청_v2(String token, String feedback) {
+        return RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", token)
+                .body(new SaveFeedbackRequest(feedback))
+                .when().post("/api/v2/users/feedbacks")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 피드백_요청_응답_확인_v2(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("피드백 저장에 성공하였습니다")
+        );
     }
 }
