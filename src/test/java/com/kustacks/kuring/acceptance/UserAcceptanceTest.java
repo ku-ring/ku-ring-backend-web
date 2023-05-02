@@ -109,7 +109,7 @@ class UserAcceptanceTest extends AcceptanceTest {
      */
     @DisplayName("[v2] 사용자의 피드백을 저장한다")
     @Test
-    public void request_feedback() {
+    void request_feedback() {
         // given
         doNothing().when(firebaseService).validationToken(anyString());
 
@@ -122,7 +122,7 @@ class UserAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("[v2] 잘못된 길이의 피드백을 요청시 예외가 발생한다")
     @Test
-    public void request_invalid_length_feedback() {
+    void request_invalid_length_feedback() {
         // given
         doNothing().when(firebaseService).validationToken(anyString());
 

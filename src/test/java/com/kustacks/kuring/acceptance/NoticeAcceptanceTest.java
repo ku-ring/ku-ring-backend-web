@@ -17,7 +17,7 @@ import static com.kustacks.kuring.acceptance.NoticeStep.페이지_번호와_함�
 import static com.kustacks.kuring.acceptance.NoticeStep.학교_공지_조회_응답_확인;
 
 @DisplayName("인수 : 공지사항")
-public class NoticeAcceptanceTest extends AcceptanceTest {
+class NoticeAcceptanceTest extends AcceptanceTest {
 
     /**
      * Given : 쿠링앱이 실행중이다
@@ -26,7 +26,7 @@ public class NoticeAcceptanceTest extends AcceptanceTest {
      */
     @DisplayName("학생 공지사항을 성공적으로 조회한다")
     @Test
-    public void look_up_university_notice() {
+    void look_up_university_notice() {
         // when
         var 공지사항_조회_요청_응답 = 공지사항_조회_요청("stu");
 
@@ -36,7 +36,7 @@ public class NoticeAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("[v2] 서버가 지원하는 학교 공지 카테고리 목록을 조회한다")
     @Test
-    public void look_up_support_university_category() {
+    void look_up_support_university_category() {
         // when
         var 카테고리_조회_요청_응답 = 카테고리_조회_요청_v2();
 
@@ -51,7 +51,7 @@ public class NoticeAcceptanceTest extends AcceptanceTest {
      */
     @DisplayName("[v2] 학교 공지사항을 성공적으로 조회한다")
     @Test
-    public void look_up_notice_v2() {
+    void look_up_notice_v2() {
         // when
         var 공지사항_조회_요청_응답 = 페이지_번호와_함께_학교_공지사항_조회_요청("stu", "", Boolean.FALSE, 0);
 
@@ -66,7 +66,7 @@ public class NoticeAcceptanceTest extends AcceptanceTest {
      */
     @DisplayName("[v2] 특정 학과의 중요 공지를 조회한다.")
     @Test
-    public void look_up_department_important_notice_v2() {
+    void look_up_department_important_notice_v2() {
         // when
         var 학과_공지_조회_응답 = 페이지_번호와_함께_학교_공지사항_조회_요청("dep", DepartmentName.COMPUTER.getHostPrefix(), Boolean.TRUE, 0);
 
@@ -81,7 +81,7 @@ public class NoticeAcceptanceTest extends AcceptanceTest {
      */
     @DisplayName("[v2] 특정 학과의 일반 공지를 조회한다.")
     @Test
-    public void look_up_department_normal_notice_v2() {
+    void look_up_department_normal_notice_v2() {
         // when
         var 학과_공지_조회_응답 = 페이지_번호와_함께_학교_공지사항_조회_요청("dep", DepartmentName.COMPUTER.getHostPrefix(), Boolean.FALSE, 0);
 
@@ -96,7 +96,7 @@ public class NoticeAcceptanceTest extends AcceptanceTest {
      */
     @DisplayName("잘못된 카테고리를 요청한다")
     @Test
-    public void invalid_category_request() {
+    void invalid_category_request() {
         // when
         var 공지사항_조회_요청_응답 = 공지사항_조회_요청("invalid-type");
 
@@ -111,7 +111,7 @@ public class NoticeAcceptanceTest extends AcceptanceTest {
      */
     @DisplayName("잘못된 offset을 요청한다")
     @Test
-    public void invalid_offset_request() {
+    void invalid_offset_request() {
         // when
         var 공지사항_조회_요청_응답 = 페이지_번호와_함께_공지사항_조회_요청("student", -1);
 
@@ -125,7 +125,7 @@ public class NoticeAcceptanceTest extends AcceptanceTest {
      * Then : 해당하는 공지들이 조회된다
      */
     @Test
-    public void search_notice_by_keyword() {
+    void search_notice_by_keyword() {
         // when
         var 공지_조회_응답 = 공지_조회_요청("subject contain student");
 
