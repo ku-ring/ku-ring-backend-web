@@ -15,7 +15,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQL55Dialect
+        dialect: com.kustacks.kuring.config.CustomMariaDbDialect
     defer-datasource-initialization: true
     open-in-view: false
   sql:

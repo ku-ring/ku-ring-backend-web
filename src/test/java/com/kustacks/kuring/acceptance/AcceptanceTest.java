@@ -1,8 +1,7 @@
 package com.kustacks.kuring.acceptance;
 
 
-import com.kustacks.kuring.data.DataLoader;
-import com.kustacks.kuring.data.DatabaseCleanup;
+import com.kustacks.kuring.tool.DatabaseConfigurator;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +18,12 @@ public class AcceptanceTest {
     int port;
 
     @Autowired
-    private DatabaseCleanup databaseCleanup;
-
-    @Autowired
-    private DataLoader dataLoader;
+    private DatabaseConfigurator databaseConfigurator;
 
     @BeforeEach
     public void setUp() {
         RestAssured.port = port;
-        databaseCleanup.execute();
-        dataLoader.loadData();
+        databaseConfigurator.clear();
+        databaseConfigurator.loadData();
     }
 }

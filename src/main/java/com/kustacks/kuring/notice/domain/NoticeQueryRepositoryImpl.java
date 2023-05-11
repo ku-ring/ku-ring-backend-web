@@ -6,6 +6,8 @@ import com.kustacks.kuring.notice.common.dto.QNoticeDto;
 import com.kustacks.kuring.search.common.dto.NoticeSearchDto;
 import com.kustacks.kuring.search.common.dto.QNoticeSearchDto;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,7 +65,8 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     private static BooleanBuilder isContainSubject(List<String> keywords) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         for (String containedName : keywords) {
-            booleanBuilder.or(notice.subject.contains(containedName));
+            NumberTemplate<Double> booleanTemplate = Expressions.numberTemplate(Double.class, "function('match',{0},{1})", notice.subject, "*" + containedName + "*");
+            booleanBuilder.or(booleanTemplate.gt(0));
         }
 
         return booleanBuilder;
