@@ -248,7 +248,7 @@ jacocoTestCoverageVerification {
 					'**.*Token.*',
 					'**.*Converter.*',
 					'**.*AdminController.*',
-					'**/*Dialect.*'
+					'**.*Dialect.*'
 			] + Qdomains
 		}
 	}
