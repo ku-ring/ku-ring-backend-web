@@ -65,7 +65,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     private static BooleanBuilder isContainSubject(List<String> keywords) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         for (String containedName : keywords) {
-            NumberTemplate booleanTemplate = Expressions.numberTemplate(Double.class, "function('match',{0},{1})", notice.subject, "*" + containedName + "*");
+            NumberTemplate<Double> booleanTemplate = Expressions.numberTemplate(Double.class, "function('match',{0},{1})", notice.subject, "*" + containedName + "*");
             booleanBuilder.or(booleanTemplate.gt(0));
         }
 

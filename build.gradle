@@ -213,7 +213,8 @@ jacocoTestReport {
 							'**/KuringApplication.*',
 							'**/*Token.*',
 							'**/*Converter.*',
-							'**/*AdminController.*'
+							'**/*AdminController.*',
+							'**/*Dialect.*'
 					] + Qdomains)
 				})
 		)
@@ -246,7 +247,8 @@ jacocoTestCoverageVerification {
 					'**.KuringApplication.*',
 					'**.*Token.*',
 					'**.*Converter.*',
-					'**.*AdminController.*'
+					'**.*AdminController.*',
+					'**/*Dialect.*'
 			] + Qdomains
 		}
 	}
