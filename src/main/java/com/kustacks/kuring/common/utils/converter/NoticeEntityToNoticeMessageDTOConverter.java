@@ -24,7 +24,7 @@ public class NoticeEntityToNoticeMessageDTOConverter implements DTOConverter {
                 .subject(notice.getSubject())
                 .category(notice.getCategory().getName())
                 .categoryKorName(notice.getCategory().getKorName())
-                .baseUrl(CategoryName.LIBRARY.getName().equals(notice.getCategory().getName()) ? libraryBaseUrl : normalBaseUrl)
+                .url(CategoryName.LIBRARY.getName().equals(notice.getCategory().getName()) ? libraryBaseUrl : normalBaseUrl)
                 .build();
     }
 }

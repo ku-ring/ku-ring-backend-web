@@ -1,6 +1,7 @@
 package com.kustacks.kuring.common.dto;
 
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
+import com.kustacks.kuring.notice.domain.Notice;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,16 +24,16 @@ public class NoticeMessageDto {
 
     private String categoryKorName;
 
-    private String baseUrl;
+    private String url;
 
     @Builder
-    private NoticeMessageDto(String articleId, String postedDate, String subject, String category, String categoryKorName, String baseUrl) {
+    private NoticeMessageDto(String articleId, String postedDate, String subject, String category, String categoryKorName, String url) {
         Assert.notNull(articleId, "articleId must not be null");
         Assert.notNull(postedDate, "postedDate must not be null");
         Assert.notNull(subject, "subject must not be null");
         Assert.notNull(category, "category must not be null");
         Assert.notNull(categoryKorName, "categoryKorName must not be null");
-        Assert.notNull(baseUrl, "baseUrl must not be null");
+        Assert.notNull(url, "url must not be null");
 
         this.type = "notice";
         this.articleId = articleId;
@@ -40,7 +41,18 @@ public class NoticeMessageDto {
         this.subject = subject;
         this.category = category;
         this.categoryKorName = categoryKorName;
-        this.baseUrl = baseUrl;
+        this.url = url;
+    }
+
+    public static NoticeMessageDto from(Notice notice) {
+        return NoticeMessageDto.builder()
+                .articleId(notice.getArticleId())
+                .postedDate(notice.getPostedDate())
+                .subject(notice.getSubject())
+                .category(notice.getCategory().getName())
+                .categoryKorName(notice.getCategory().getKorName())
+                .url(notice.getUrl().getValue())
+                .build();
     }
 
     public static NoticeMessageDto from(DepartmentNotice departmentNotice) {
@@ -50,7 +62,7 @@ public class NoticeMessageDto {
                 .subject(departmentNotice.getSubject())
                 .category(departmentNotice.getDepartmentName().getName())
                 .categoryKorName(departmentNotice.getDepartmentName().getKorName())
-                .baseUrl(departmentNotice.getUrl().getValue())
+                .url(departmentNotice.getUrl().getValue())
                 .build();
     }
 }
