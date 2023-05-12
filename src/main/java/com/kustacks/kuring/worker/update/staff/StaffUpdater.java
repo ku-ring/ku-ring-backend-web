@@ -98,18 +98,18 @@ public class StaffUpdater implements Updater {
         List<Staff> toBeUpdateStaffs = new LinkedList<>();
         Iterator<StaffDto> kuStaffDTOIterator = kuStaffDTOMap.values().iterator();
         while (kuStaffDTOIterator.hasNext()) {
-            StaffDto staffDTO = kuStaffDTOIterator.next();
+            StaffDto staffDto = kuStaffDTOIterator.next();
 
-            Staff staff = dbStaffMap.get(staffDTO.getEmail());
+            Staff staff = dbStaffMap.get(staffDto.getEmail());
             if (staff != null) {
                 StaffDto dbStaffDto = StaffDto.entityToDto(staff);
 
-                if (!staffDTO.equals(dbStaffDto)) {
-                    updateStaffEntity(staffDTO, staff);
+                if (!staffDto.equals(dbStaffDto)) {
+                    updateStaffEntity(staffDto, staff);
                     toBeUpdateStaffs.add(staff);
                 }
 
-                dbStaffMap.remove(staffDTO.getEmail());
+                dbStaffMap.remove(staffDto.getEmail());
                 kuStaffDTOIterator.remove();
             }
         }
@@ -132,13 +132,7 @@ public class StaffUpdater implements Updater {
         staffRepository.saveAll(toBeUpdateStaffs);
     }
 
-    private void updateStaffEntity(StaffDto staffDTO, Staff staff) {
-        staff.setName(staffDTO.getName());
-        staff.setMajor(staffDTO.getMajor());
-        staff.setLab(staffDTO.getLab());
-        staff.setPhone(staffDTO.getPhone());
-        staff.setEmail(staffDTO.getEmail());
-        staff.setDept(staffDTO.getDeptName());
-        staff.setCollege(staffDTO.getCollegeName());
+    private void updateStaffEntity(StaffDto staffDto, Staff staff) {
+        staff.changeInformation(staffDto.getName(), staffDto.getMajor(), staffDto.getLab(), staffDto.getPhone(), staffDto.getEmail(), staffDto.getDeptName(), staffDto.getCollegeName());
     }
 }
