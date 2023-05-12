@@ -16,12 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category {
 
     @Id
+    @Getter(AccessLevel.PRIVATE)
     @Column(name = "name", nullable = false)
     @Enumerated(EnumType.STRING)
     private CategoryName categoryName;
