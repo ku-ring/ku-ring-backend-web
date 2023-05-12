@@ -49,9 +49,9 @@ public class NoticeMessageDto {
                 .articleId(notice.getArticleId())
                 .postedDate(notice.getPostedDate())
                 .subject(notice.getSubject())
-                .category(notice.getCategory().getName())
-                .categoryKorName(notice.getCategory().getKorName())
-                .url(notice.getUrl().getValue())
+                .category(notice.getCategoryName())
+                .categoryKorName(notice.getCategoryKoreaName())
+                .url(notice.getUrl())
                 .build();
     }
 
@@ -60,9 +60,9 @@ public class NoticeMessageDto {
                 .articleId(departmentNotice.getArticleId())
                 .postedDate(departmentNotice.getPostedDate())
                 .subject(departmentNotice.getSubject())
-                .category(departmentNotice.getDepartmentName().getName())
-                .categoryKorName(departmentNotice.getDepartmentName().getKorName())
-                .url(departmentNotice.getUrl().getValue())
+                .category(departmentNotice.getDepartmentName())
+                .categoryKorName(departmentNotice.getDepartmentKorName())
+                .url(departmentNotice.getUrl())
                 .build();
     }
 }

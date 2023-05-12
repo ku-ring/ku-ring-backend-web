@@ -24,7 +24,9 @@ public class DepartmentNotice extends Notice {
         this.departmentName = departmentName;
     }
 
-    public DepartmentName getDepartmentName() {
-        return departmentName;
+    public String getDepartmentName() {
+        return departmentName.getName();
     }
+
+    public String getDepartmentKorName() { return departmentName.getKorName(); }
 }

@@ -14,8 +14,8 @@ public class ObjectComparator {
     public static Comparator<Notice> NoticeDateComparator
             = (a, b) -> {
 
-                boolean isALocalDateTime = a.getCategory().getName().equals("library");
-                boolean isBLocalDateTime = b.getCategory().getName().equals("library");
+                boolean isALocalDateTime = a.getCategoryName().equals("library");
+                boolean isBLocalDateTime = b.getCategoryName().equals("library");
                 DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
                 DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 

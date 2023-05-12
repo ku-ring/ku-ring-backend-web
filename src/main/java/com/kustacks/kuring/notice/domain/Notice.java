@@ -17,25 +17,28 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.util.Objects;
 
-@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notice {
 
     @Id
+    @Getter(AccessLevel.PRIVATE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
+    @Getter(AccessLevel.PUBLIC)
     @Column(name = "article_id", length = 15, nullable = false)
     private String articleId;
 
+    @Getter(AccessLevel.PUBLIC)
     @Column(name = "posted_dt", length = 32, nullable = false)
     private String postedDate;
 
     @Column(name = "updated_dt", length = 32)
     private String updatedDate;
 
+    @Getter(AccessLevel.PUBLIC)
     @Column(name = "subject", length = 128, nullable = false)
     private String subject;
 
@@ -61,6 +64,18 @@ public class Notice {
 
     public boolean isSameCategoryName(CategoryName categoryName) {
         return this.category.isSameName(categoryName);
+    }
+
+    public String getCategoryName() {
+        return this.category.getName();
+    }
+
+    public String getCategoryKoreaName() {
+        return this.category.getKorName();
+    }
+
+    public String getUrl() {
+        return this.url.getValue();
     }
 
     @Override
