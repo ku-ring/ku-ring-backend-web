@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Service
 public class CategoryNoticeUpdater implements Updater {
 
-    private final Map<CategoryName, NoticeApiClient> noticeApiClientMap;
+    private final Map<CategoryName, NoticeApiClient<CommonNoticeFormatDto, CategoryName>> noticeApiClientMap;
     private final FirebaseService firebaseService;
     private final NoticeRepository noticeRepository;
     private final CategoryRepository categoryRepository;
@@ -39,7 +39,7 @@ public class CategoryNoticeUpdater implements Updater {
     private Map<String, Category> categoryMap;
 
     public CategoryNoticeUpdater(FirebaseService firebaseService,
-                                 Map<CategoryName, NoticeApiClient> noticeApiClientMap,
+                                 Map<CategoryName, NoticeApiClient<CommonNoticeFormatDto, CategoryName>> noticeApiClientMap,
                                  NoticeRepository noticeRepository,
                                  CategoryRepository categoryRepository) {
         this.firebaseService = firebaseService;
