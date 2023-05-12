@@ -19,16 +19,17 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements Serializable {
 
     @Id
+    @Getter(AccessLevel.PRIVATE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Getter(AccessLevel.PUBLIC)
     @Column(name = "token", unique = true, length = 256, nullable = false)
     private String token;
 
