@@ -5,7 +5,7 @@ import com.kustacks.kuring.config.RetryConfig;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.category.domain.CategoryName;
-import com.kustacks.kuring.common.utils.converter.KuisNoticeDTOToCommonFormatDTOConverter;
+import com.kustacks.kuring.common.utils.converter.KuisNoticeDtoToCommonFormatDtoConverter;
 import com.kustacks.kuring.worker.scrap.client.auth.KuisAuthManager;
 import com.kustacks.kuring.worker.scrap.client.notice.KuisNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
-@SpringJUnitConfig({KuisNoticeApiClient.class, RestTemplate.class, KuisNoticeDTOToCommonFormatDTOConverter.class,
+@SpringJUnitConfig({KuisNoticeApiClient.class, RestTemplate.class, KuisNoticeDtoToCommonFormatDtoConverter.class,
         BachelorKuisNoticeRequestBody.class,
         ScholarshipKuisNoticeRequestBody.class,
         EmploymentKuisNoticeRequestBody.class,

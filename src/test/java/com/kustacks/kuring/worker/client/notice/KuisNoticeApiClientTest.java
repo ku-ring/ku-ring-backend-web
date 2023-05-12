@@ -14,7 +14,7 @@ import com.kustacks.kuring.worker.update.notice.dto.request.NormalKuisNoticeRequ
 import com.kustacks.kuring.worker.update.notice.dto.request.ScholarshipKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.StudentKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
-import com.kustacks.kuring.common.utils.converter.KuisNoticeDTOToCommonFormatDTOConverter;
+import com.kustacks.kuring.common.utils.converter.KuisNoticeDtoToCommonFormatDtoConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withUnauthorizedRequest;
 
 @SpringJUnitConfig({
-        KuisNoticeApiClient.class, RestTemplate.class, KuisNoticeDTOToCommonFormatDTOConverter.class,
+        KuisNoticeApiClient.class, RestTemplate.class, KuisNoticeDtoToCommonFormatDtoConverter.class,
         BachelorKuisNoticeRequestBody.class,
         ScholarshipKuisNoticeRequestBody.class,
         EmploymentKuisNoticeRequestBody.class,

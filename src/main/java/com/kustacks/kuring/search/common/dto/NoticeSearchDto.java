@@ -1,7 +1,6 @@
 package com.kustacks.kuring.search.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.kustacks.kuring.notice.domain.Notice;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,16 +41,6 @@ public class NoticeSearchDto {
         this.subject = subject;
         this.categoryName = categoryName;
         this.baseUrl = baseUrl;
-    }
-
-    public static NoticeSearchDto entityToDTO(Notice notice, String baseUrl) {
-        return NoticeSearchDto.builder()
-                .articleId(notice.getArticleId())
-                .postedDate(notice.getPostedDate())
-                .subject(notice.getSubject())
-                .categoryName(notice.getCategory().getName())
-                .baseUrl(baseUrl)
-                .build();
     }
 
     public void setBaseUrl(String baseUrl) {

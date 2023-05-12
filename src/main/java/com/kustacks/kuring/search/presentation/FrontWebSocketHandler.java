@@ -52,18 +52,18 @@ public class FrontWebSocketHandler extends TextWebSocketHandler {
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
 
         String payload = message.getPayload();
-        SearchRequestDto requestDTO;
+        SearchRequestDto requestDto;
 
         try {
-            requestDTO = objectMapper.readValue(payload, SearchRequestDto.class);
+            requestDto = objectMapper.readValue(payload, SearchRequestDto.class);
         } catch(IOException e) {
             exceptionHandler.sendErrorMessage(session, ErrorCode.WS_CANNOT_PARSE_JSON, ERROR_TYPE);
             log.error("", e);
             return;
         }
 
-        String type = requestDTO.getType();
-        String content = requestDTO.getContent();
+        String type = requestDto.getType();
+        String content = requestDto.getContent();
 
         if(type == null || content == null) {
             exceptionHandler.sendErrorMessage(session, ErrorCode.WS_MISSING_PARAM, ERROR_TYPE);
@@ -92,9 +92,9 @@ public class FrontWebSocketHandler extends TextWebSocketHandler {
 
     private void handleHeartBeat(WebSocketSession session) throws IOException {
 
-        HeartBeatResponseDto responseDTO = new HeartBeatResponseDto("heartbeat", LocalDateTime.now().toString());
+        HeartBeatResponseDto responseDto = new HeartBeatResponseDto("heartbeat", LocalDateTime.now().toString());
 
-        String responseString = objectMapper.writeValueAsString(responseDTO);
+        String responseString = objectMapper.writeValueAsString(responseDto);
         session.sendMessage(new TextMessage(responseString));
     }
 

@@ -1,12 +1,12 @@
 package com.kustacks.kuring.common.utils.converter;
 
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
-import com.kustacks.kuring.worker.update.notice.dto.response.KuisNoticeDTO;
+import com.kustacks.kuring.worker.update.notice.dto.response.KuisNoticeDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class KuisNoticeDTOToCommonFormatDTOConverter implements DTOConverter {
+public class KuisNoticeDtoToCommonFormatDtoConverter implements DtoConverter {
 
     @Value("${notice.normal-base-url}")
     private String normalBaseUrl;
@@ -14,13 +14,13 @@ public class KuisNoticeDTOToCommonFormatDTOConverter implements DTOConverter {
     @Override
     public Object convert(Object target) {
 
-        KuisNoticeDTO kuisNoticeDTO = (KuisNoticeDTO) target;
+        KuisNoticeDto kuisNoticeDto = (KuisNoticeDto) target;
         return CommonNoticeFormatDto.builder()
-                .articleId(kuisNoticeDTO.getArticleId())
-                .postedDate(kuisNoticeDTO.getPostedDate())
+                .articleId(kuisNoticeDto.getArticleId())
+                .postedDate(kuisNoticeDto.getPostedDate())
                 .updatedDate(null)
-                .subject(kuisNoticeDTO.getSubject())
-                .fullUrl(normalBaseUrl + "?id=" + kuisNoticeDTO.getArticleId())
+                .subject(kuisNoticeDto.getSubject())
+                .fullUrl(normalBaseUrl + "?id=" + kuisNoticeDto.getArticleId())
                 .build();
     }
 }
