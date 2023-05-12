@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class LibraryNoticeResponseDTO extends NoticeResponseDTO {
+public class LibraryNoticeResponseDto extends NoticeResponseDTO {
     @JsonProperty("success")
     private boolean success;
 
@@ -17,13 +17,13 @@ public class LibraryNoticeResponseDTO extends NoticeResponseDTO {
     private String message;
 
     @JsonProperty("data")
-    private LibraryDataDTO data;
+    private LibraryDataDto data;
 
     public int getTotalCount() {
         return this.data.getTotalCount();
     }
 
-    public List<LibraryNoticeDTO> getList() {
+    public List<LibraryNoticeDto> getList() {
         return this.data.getList();
     }
 }

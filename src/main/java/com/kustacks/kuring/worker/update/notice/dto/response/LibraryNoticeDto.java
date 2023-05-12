@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class LibraryNoticeDTO {
+public class LibraryNoticeDto {
     @JsonProperty("id")
     private String id;
 

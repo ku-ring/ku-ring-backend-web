@@ -72,9 +72,9 @@ public class StaffDto {
             return false;
         }
 
-        StaffDto staffDTO = (StaffDto) o;
-        return Objects.equals(staffDTO.getName(), name) && Objects.equals(staffDTO.getMajor(), major) && Objects.equals(staffDTO.getLab(), lab)
-                && Objects.equals(staffDTO.getPhone(), phone) && Objects.equals(staffDTO.getEmail(), email) && Objects.equals(staffDTO.getDeptName(), deptName)
-                && Objects.equals(staffDTO.getCollegeName(), collegeName);
+        StaffDto staffDto = (StaffDto) o;
+        return Objects.equals(staffDto.getName(), name) && Objects.equals(staffDto.getMajor(), major) && Objects.equals(staffDto.getLab(), lab)
+                && Objects.equals(staffDto.getPhone(), phone) && Objects.equals(staffDto.getEmail(), email) && Objects.equals(staffDto.getDeptName(), deptName)
+                && Objects.equals(staffDto.getCollegeName(), collegeName);
     }
 }

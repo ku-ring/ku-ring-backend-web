@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class LibraryDataDTO {
+public class LibraryDataDto {
     @JsonProperty("totalCount")
     private int totalCount;
 
@@ -17,5 +17,5 @@ public class LibraryDataDTO {
     private int max;
 
     @JsonProperty("list")
-    private List<LibraryNoticeDTO> list;
+    private List<LibraryNoticeDto> list;
 }

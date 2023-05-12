@@ -63,10 +63,6 @@ public class Notice {
         return this.category.isSameName(categoryName);
     }
 
-    public void setPostedDate(String postedDate) {
-        this.postedDate = postedDate;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

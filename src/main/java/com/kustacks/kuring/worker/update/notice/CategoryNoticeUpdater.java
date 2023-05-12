@@ -1,26 +1,23 @@
 package com.kustacks.kuring.worker.update.notice;
 
 import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
-import com.kustacks.kuring.common.utils.converter.DTOConverter;
-import com.kustacks.kuring.common.utils.converter.DateConverter;
-import com.kustacks.kuring.category.domain.CategoryName;
-import com.kustacks.kuring.worker.update.Updater;
-import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
-import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
+import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
+import com.kustacks.kuring.worker.update.Updater;
+import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,14 +25,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
-@Component
+@Service
 public class CategoryNoticeUpdater implements Updater {
 
-    private final Map<CategoryName, NoticeApiClient> noticeAPIClientMap;
-    private final DTOConverter dtoConverter;
-    private final DateConverter dateConverter;
+    private final Map<CategoryName, NoticeApiClient<CommonNoticeFormatDto, CategoryName>> noticeApiClientMap;
     private final FirebaseService firebaseService;
     private final NoticeRepository noticeRepository;
     private final CategoryRepository categoryRepository;
@@ -43,15 +39,11 @@ public class CategoryNoticeUpdater implements Updater {
     private Map<String, Category> categoryMap;
 
     public CategoryNoticeUpdater(FirebaseService firebaseService,
-                                 DTOConverter noticeEntityToNoticeMessageDTOConverter,
-                                 DateConverter ymdhmsToYmdConverter,
-                                 Map<CategoryName, NoticeApiClient> noticeAPIClientMap,
+                                 Map<CategoryName, NoticeApiClient<CommonNoticeFormatDto, CategoryName>> noticeApiClientMap,
                                  NoticeRepository noticeRepository,
                                  CategoryRepository categoryRepository) {
         this.firebaseService = firebaseService;
-        this.dtoConverter = noticeEntityToNoticeMessageDTOConverter;
-        this.dateConverter = ymdhmsToYmdConverter;
-        this.noticeAPIClientMap = noticeAPIClientMap;
+        this.noticeApiClientMap = noticeApiClientMap;
         this.noticeRepository = noticeRepository;
         this.categoryRepository = categoryRepository;
     }
@@ -84,7 +76,7 @@ public class CategoryNoticeUpdater implements Updater {
             }
 
             try {
-                List<CommonNoticeFormatDto> commonNoticeFormatDTO = noticeAPIClientMap.get(categoryName).request(categoryName);
+                List<CommonNoticeFormatDto> commonNoticeFormatDTO = noticeApiClientMap.get(categoryName).request(categoryName);
                 apiNoticesMap.put(categoryName, commonNoticeFormatDTO);
             } catch (InternalLogicException e) {
                 log.info("{}", e.getErrorCode().getMessage());
@@ -154,17 +146,9 @@ public class CategoryNoticeUpdater implements Updater {
     }
 
     private List<NoticeMessageDto> createNotification(List<Notice> willBeNotiNotices) {
-        List<NoticeMessageDto> willBeNotiNoticeDtoList = new ArrayList<>(willBeNotiNotices.size());
-        for (Notice notice : willBeNotiNotices) {
-            if (notice.isSameCategoryName(CategoryName.LIBRARY)) {
-                // TODO: notice entity 내용을 변경해서 사용하는게 좋은 방법인지는 생각을 해봐야함
-                // 혹시나 compareAndUpdateDB에서 영속성 컨텍스트에 남아있는 notice entity의 내용이 변경되어서 저장될까봐
-                // compareAndUpdateDB에서 saveAndFlush 메서드를 사용함.
-                notice.setPostedDate(dateConverter.convert(notice.getPostedDate()));
-            }
-            willBeNotiNoticeDtoList.add((NoticeMessageDto) dtoConverter.convert(notice));
-        }
-        return willBeNotiNoticeDtoList;
+        return willBeNotiNotices.stream()
+                .map(NoticeMessageDto::from)
+                .collect(Collectors.toList());
     }
 
     private void sendNotificationByFcm(List<NoticeMessageDto> willBeNotiNoticeDtoList) {

@@ -7,7 +7,7 @@ import com.kustacks.kuring.notice.common.dto.CategoryNameDto;
 import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeLookupResponse;
-import com.kustacks.kuring.search.common.dto.NoticeSearchDto;
+import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class KuisNoticeResponseDTO extends NoticeResponseDTO {
+public class KuisNoticeResponseDto extends NoticeResponseDTO {
     @JsonProperty("DS_LIST")
-    List<KuisNoticeDTO> kuisNoticeDTOList;
+    List<KuisNoticeDto> kuisNoticeDtoList;
 }

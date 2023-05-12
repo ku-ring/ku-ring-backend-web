@@ -13,7 +13,7 @@ import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
-import com.kustacks.kuring.search.common.dto.NoticeSearchDto;
+import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -27,8 +27,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class NoticeService {
-
-    private static final int FIRST_PAGE = 0;
 
     private final NoticeRepository noticeRepository;
     private final DepartmentNoticeRepository departmentNoticeRepository;
@@ -68,7 +66,7 @@ public class NoticeService {
         if (isDepartmentSearchRequest(type, department)) {
             DepartmentName departmentName = DepartmentName.fromHostPrefix(department);
 
-            if(Boolean.TRUE.equals(important)) {
+            if (Boolean.TRUE.equals(important)) {
                 return departmentNoticeRepository.findImportantNoticesByDepartment(departmentName);
             } else {
                 return departmentNoticeRepository.findNormalNoticesByDepartmentWithOffset(departmentName, PageRequest.of(page, size));
@@ -91,21 +89,6 @@ public class NoticeService {
         List<String> keywords = noticeCategoryNameConvertEnglish(splitedKeywords);
 
         return noticeRepository.findAllByKeywords(keywords);
-    }
-
-    public List<NoticeSearchDto> handleSearchRequest(String keywords) {
-        String[] splitedKeywords = keywords.trim().split(SPACE_REGEX);
-
-        // 키워드 중 공지 카테고리가 있다면, 이를 영문으로 변환
-        for (int i = 0; i < splitedKeywords.length; ++i) {
-            for (CategoryName categoryName : categoryNames) {
-                if (splitedKeywords[i].equals(categoryName.getKorName())) {
-                    splitedKeywords[i] = categoryName.getName();
-                    break;
-                }
-            }
-        }
-        return getNoticesBySubjectOrCategory(splitedKeywords);
     }
 
     private boolean isDepartmentSearchRequest(String type, String department) {
@@ -153,10 +136,6 @@ public class NoticeService {
 
     private String convertBaseUrl(String categoryName) {
         return CategoryName.LIBRARY.isSameName(categoryName) ? libraryBaseUrl : normalBaseUrl;
-    }
-
-    private List<NoticeSearchDto> getNoticesBySubjectOrCategory(String[] keywords) {
-        return noticeRepository.findAllByKeywords(Arrays.asList(keywords));
     }
 
     private List<DepartmentNameDto> supportedDepartmentNameList() {

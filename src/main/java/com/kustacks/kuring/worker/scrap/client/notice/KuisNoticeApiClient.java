@@ -3,8 +3,8 @@ package com.kustacks.kuring.worker.scrap.client.notice;
 import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.common.utils.converter.DTOConverter;
-import com.kustacks.kuring.common.utils.converter.KuisNoticeDTOToCommonFormatDTOConverter;
+import com.kustacks.kuring.common.utils.converter.DtoConverter;
+import com.kustacks.kuring.common.utils.converter.KuisNoticeDtoToCommonFormatDtoConverter;
 import com.kustacks.kuring.worker.scrap.client.auth.KuisAuthManager;
 import com.kustacks.kuring.worker.update.notice.dto.request.BachelorKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.EmploymentKuisNoticeRequestBody;
@@ -16,8 +16,8 @@ import com.kustacks.kuring.worker.update.notice.dto.request.NormalKuisNoticeRequ
 import com.kustacks.kuring.worker.update.notice.dto.request.ScholarshipKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.StudentKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
-import com.kustacks.kuring.worker.update.notice.dto.response.KuisNoticeDTO;
-import com.kustacks.kuring.worker.update.notice.dto.response.KuisNoticeResponseDTO;
+import com.kustacks.kuring.worker.update.notice.dto.response.KuisNoticeDto;
+import com.kustacks.kuring.worker.update.notice.dto.response.KuisNoticeResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -46,12 +46,12 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
     private String noticeUrl;
 
     private final RestTemplate restTemplate;
-    private final DTOConverter dtoConverter;
+    private final DtoConverter dtoConverter;
     private final KuisAuthManager kuisAuthManager;
     private final Map<CategoryName, KuisNoticeRequestBody> noticeRequestBodies;
 
     public KuisNoticeApiClient(KuisAuthManager parsingKuisAuthManager,
-                               KuisNoticeDTOToCommonFormatDTOConverter dtoConverter,
+                               KuisNoticeDtoToCommonFormatDtoConverter dtoConverter,
 
                                BachelorKuisNoticeRequestBody bachelorNoticeRequestBody,
                                ScholarshipKuisNoticeRequestBody scholarshipNoticeRequestBody,
@@ -92,11 +92,11 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
         HttpEntity<String> noticeRequestEntity = kuisNoticeRequests(categoryName, noticeRequestHeader);
 
         // 공지 요청 전송과 반환 Dto 생성
-        ResponseEntity<KuisNoticeResponseDTO> noticeResponse = sendKuisNoticesRequestAndResponse(noticeRequestEntity);
+        ResponseEntity<KuisNoticeResponseDto> noticeResponse = sendKuisNoticesRequestAndResponse(noticeRequestEntity);
 
-        List<KuisNoticeDTO> kuisNoticeDTOList = validateResponse(noticeResponse);
+        List<KuisNoticeDto> kuisNoticeDtoList = validateResponse(noticeResponse);
 
-        return convertToCommonFormatDTO(kuisNoticeDTOList);
+        return convertToCommonFormatDto(kuisNoticeDtoList);
     }
 
     @Override
@@ -111,10 +111,10 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
         return new HttpEntity<>(encodedNoticeRequestBody, noticeRequestHeader);
     }
 
-    private ResponseEntity<KuisNoticeResponseDTO> sendKuisNoticesRequestAndResponse(HttpEntity<String> noticeRequestEntity) {
-        ResponseEntity<KuisNoticeResponseDTO> noticeResponse;
+    private ResponseEntity<KuisNoticeResponseDto> sendKuisNoticesRequestAndResponse(HttpEntity<String> noticeRequestEntity) {
+        ResponseEntity<KuisNoticeResponseDto> noticeResponse;
         try {
-            noticeResponse = restTemplate.postForEntity(noticeUrl, noticeRequestEntity, KuisNoticeResponseDTO.class);
+            noticeResponse = restTemplate.postForEntity(noticeUrl, noticeRequestEntity, KuisNoticeResponseDto.class);
         } catch (RestClientException e) {
             log.warn("세션 갱신이 필요합니다.");
             kuisAuthManager.forceRenewing();
@@ -123,20 +123,20 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
         return noticeResponse;
     }
 
-    private List<KuisNoticeDTO> validateResponse(ResponseEntity<KuisNoticeResponseDTO> noticeResponse) {
-        KuisNoticeResponseDTO body = noticeResponse.getBody();
+    private List<KuisNoticeDto> validateResponse(ResponseEntity<KuisNoticeResponseDto> noticeResponse) {
+        KuisNoticeResponseDto body = noticeResponse.getBody();
         if (body == null) {
             kuisAuthManager.forceRenewing();
             throw new InternalLogicException(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON);
         }
 
-        List<KuisNoticeDTO> kuisNoticeDTOList = body.getKuisNoticeDTOList();
-        if (kuisNoticeDTOList == null) {
+        List<KuisNoticeDto> kuisNoticeDtoList = body.getKuisNoticeDtoList();
+        if (kuisNoticeDtoList == null) {
             kuisAuthManager.forceRenewing();
             throw new InternalLogicException(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON);
         }
 
-        return kuisNoticeDTOList;
+        return kuisNoticeDtoList;
     }
 
     private HttpHeaders createKuisNoticeRequestHeader(String sessionId) {
@@ -148,9 +148,9 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
         return httpHeaders;
     }
 
-    private List<CommonNoticeFormatDto> convertToCommonFormatDTO(List<KuisNoticeDTO> kuisNoticeDTOList) {
+    private List<CommonNoticeFormatDto> convertToCommonFormatDto(List<KuisNoticeDto> kuisNoticeDtoList) {
         List<CommonNoticeFormatDto> converted = new LinkedList<>();
-        for (KuisNoticeDTO kuisNoticeDTO : kuisNoticeDTOList) {
+        for (KuisNoticeDto kuisNoticeDTO : kuisNoticeDtoList) {
             converted.add((CommonNoticeFormatDto) dtoConverter.convert(kuisNoticeDTO));
         }
 
