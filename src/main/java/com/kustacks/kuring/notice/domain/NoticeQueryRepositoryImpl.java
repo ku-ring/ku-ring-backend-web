@@ -3,7 +3,7 @@ package com.kustacks.kuring.notice.domain;
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.QNoticeDto;
-import com.kustacks.kuring.search.common.dto.NoticeSearchDto;
+import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
 import com.kustacks.kuring.search.common.dto.QNoticeSearchDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.Expressions;

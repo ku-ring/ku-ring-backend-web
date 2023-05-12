@@ -1,4 +1,4 @@
-package com.kustacks.kuring.search.common.dto;
+package com.kustacks.kuring.notice.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.querydsl.core.annotations.QueryProjection;

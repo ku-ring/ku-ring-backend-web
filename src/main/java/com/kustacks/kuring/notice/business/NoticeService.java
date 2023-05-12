@@ -13,7 +13,7 @@ import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
-import com.kustacks.kuring.search.common.dto.NoticeSearchDto;
+import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
