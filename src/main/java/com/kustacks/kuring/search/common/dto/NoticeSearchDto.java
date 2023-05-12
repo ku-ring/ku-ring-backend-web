@@ -20,16 +20,9 @@ public class NoticeSearchDto {
 
     private String baseUrl;
 
-    @QueryProjection
-    public NoticeSearchDto(String articleId, String postedDate, String subject, String categoryName) {
-        this.articleId = articleId;
-        this.postedDate = postedDate;
-        this.subject = subject;
-        this.categoryName = categoryName;
-    }
-
     @Builder
-    private NoticeSearchDto(String articleId, String postedDate, String subject, String categoryName, String baseUrl) {
+    @QueryProjection
+    public NoticeSearchDto(String articleId, String postedDate, String subject, String categoryName, String baseUrl) {
         Assert.notNull(articleId, "articleId must not be null");
         Assert.notNull(postedDate, "postedDate must not be null");
         Assert.notNull(subject, "subject must not be null");
@@ -40,10 +33,6 @@ public class NoticeSearchDto {
         this.postedDate = postedDate;
         this.subject = subject;
         this.categoryName = categoryName;
-        this.baseUrl = baseUrl;
-    }
-
-    public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }
 }
