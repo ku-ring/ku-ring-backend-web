@@ -16,12 +16,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.util.Objects;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Feedback extends BaseTimeEntity {
 
     @Id
+    @Getter(AccessLevel.PRIVATE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
