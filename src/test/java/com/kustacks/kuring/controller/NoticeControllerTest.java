@@ -16,6 +16,7 @@ import com.kustacks.kuring.notice.presentation.NoticeController;
 import com.kustacks.kuring.user.business.UserService;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserCategory;
+import com.kustacks.kuring.user.facade.UserCommandFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,6 +79,9 @@ public class NoticeControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private UserCommandFacade userCommandFacade;
 
     @Mock
     private FirebaseMessagingException firebaseMessagingException;
@@ -361,7 +365,7 @@ public class NoticeControllerTest {
         // given
         SubscribeCategoriesV1Request subscribeCategoriesRequest = new SubscribeCategoriesV1Request("TEST_TOKEN", List.of("bachelor", "student"));
         doNothing().when(firebaseService).validationToken(anyString());
-        doNothing().when(categoryService).editSubscribeCategoryList(anyString(), any());
+        doNothing().when(userCommandFacade).editSubscribeCategories(anyString(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -403,7 +407,7 @@ public class NoticeControllerTest {
 
         // given
         given(userService.getUserByToken(token)).willReturn(null);
-        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(categoryService).editSubscribeCategoryList(anyString(), any());
+        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(userCommandFacade).editSubscribeCategories(anyString(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -458,7 +462,7 @@ public class NoticeControllerTest {
         SubscribeCategoriesV1Request requestDTO = new SubscribeCategoriesV1Request(token, categories);
 
         // given
-        doThrow(new APIException(ErrorCode.API_INVALID_PARAM)).when(categoryService).editSubscribeCategoryList(any(), any());
+        doThrow(new APIException(ErrorCode.API_INVALID_PARAM)).when(userCommandFacade).editSubscribeCategories(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -503,7 +507,7 @@ public class NoticeControllerTest {
         compareCategoriesResult.get("new").add(new UserCategory(user, studentCategory));
 
         // given
-        doThrow(new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY)).when(categoryService).editSubscribeCategoryList(any(), any());
+        doThrow(new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY)).when(userCommandFacade).editSubscribeCategories(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")

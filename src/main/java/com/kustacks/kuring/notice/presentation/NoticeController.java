@@ -8,6 +8,7 @@ import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.notice.business.NoticeService;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
+import com.kustacks.kuring.user.facade.UserCommandFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -34,6 +35,7 @@ public class NoticeController {
     private final NoticeService noticeService;
     private final CategoryService categoryService;
     private final FirebaseService firebaseService;
+    private final UserCommandFacade userCommandFacade;
 
     @GetMapping
     public NoticeListResponse getNotices(
@@ -66,8 +68,7 @@ public class NoticeController {
 
     @PostMapping(value = "/subscribe", consumes = MediaType.APPLICATION_JSON_VALUE)
     public SubscribeCategoriesResponse editUserSubscribeCategories(@Valid @RequestBody SubscribeCategoriesV1Request request) {
-        firebaseService.validationToken(request.getId());
-        categoryService.editSubscribeCategoryList(request.getId(), request.getCategories());
+        userCommandFacade.editSubscribeCategories(request.getId(), request.getCategories());
         return new SubscribeCategoriesResponse();
     }
 }
