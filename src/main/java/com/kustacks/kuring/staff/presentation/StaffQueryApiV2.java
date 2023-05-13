@@ -22,7 +22,7 @@ import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.STAFF_SEARC
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v2", produces = MediaType.APPLICATION_JSON_VALUE)
-public class StaffControllerV2 {
+public class StaffQueryApiV2 {
 
     private final StaffService staffService;
 

@@ -7,13 +7,12 @@ import com.kustacks.kuring.category.exception.CategoryNotFoundException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.notice.common.OffsetBasedPageRequest;
-import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
+import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
-import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,7 @@ public class NoticeService {
     private final DepartmentNoticeRepository departmentNoticeRepository;
     private final Map<String, Category> categoryMap;
     private final CategoryName[] categoryNames;
-    private final List<DepartmentNameDto> supportedDepartmentNameList;
+    private final DepartmentName[] supportedDepartmentNameList;
     private final String SPACE_REGEX = "[\\s+]";
 
     @Value("${notice.normal-base-url}")
@@ -46,11 +45,11 @@ public class NoticeService {
         this.departmentNoticeRepository = departmentNoticeRepository;
         this.categoryMap = categoryRepository.findAllMap();
         this.categoryNames = CategoryName.values();
-        this.supportedDepartmentNameList = supportedDepartmentNameList();
+        this.supportedDepartmentNameList = DepartmentName.values();
     }
 
-    public List<DepartmentNameDto> lookupSupportedDepartments() {
-        return supportedDepartmentNameList;
+    public List<DepartmentName> lookupSupportedDepartments() {
+        return List.of(supportedDepartmentNameList);
     }
 
     public NoticeListResponse getNotices(String type, int offset, int max) {
@@ -136,13 +135,5 @@ public class NoticeService {
 
     private String convertBaseUrl(String categoryName) {
         return CategoryName.LIBRARY.isSameName(categoryName) ? libraryBaseUrl : normalBaseUrl;
-    }
-
-    private List<DepartmentNameDto> supportedDepartmentNameList() {
-        return Arrays.stream(DepartmentName.values())
-                .filter(dn -> !dn.equals(DepartmentName.BIO_SCIENCE))
-                .filter(dn -> !dn.equals(DepartmentName.COMM_DESIGN))
-                .map(DepartmentNameDto::from)
-                .collect(Collectors.toList());
     }
 }
