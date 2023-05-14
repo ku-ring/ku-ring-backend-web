@@ -13,7 +13,7 @@ public class FeedbackStep {
 
     public static void 피드백_요청_응답_확인(ExtractableResponse<Response> response) {
         assertAll(
-                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isEqualTo(true),
+                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isTrue(),
                 () -> assertThat(response.jsonPath().getString("resultMsg")).isEqualTo("성공"),
                 () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(201)
         );

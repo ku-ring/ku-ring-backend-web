@@ -42,7 +42,7 @@ import static org.mockito.BDDMockito.given;
         JsonConfig.class, RetryConfig.class})
 @TestPropertySource("classpath:test-constants.properties")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-public class KuisNoticeApiClientRetryTest {
+class KuisNoticeApiClientRetryTest {
 
     private final NoticeApiClient kuisNoticeAPIClient;
     private final RestTemplate restTemplate;

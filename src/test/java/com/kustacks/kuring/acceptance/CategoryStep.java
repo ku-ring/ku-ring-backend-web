@@ -15,7 +15,7 @@ public class CategoryStep {
     public static void 카테고리_조회_요청_응답_확인(ExtractableResponse<Response> response, String... categories) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isEqualTo(true),
+                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isTrue(),
                 () -> assertThat(response.jsonPath().getString("resultMsg")).isEqualTo("성공"),
                 () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getList("categories")).contains(categories)
@@ -49,7 +49,7 @@ public class CategoryStep {
 
     public static void 카테고리_구독_요청_응답_확인(ExtractableResponse<Response> response) {
         assertAll(
-                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isEqualTo(true),
+                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isTrue(),
                 () -> assertThat(response.jsonPath().getString("resultMsg")).isEqualTo("성공"),
                 () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(201)
         );
@@ -85,7 +85,7 @@ public class CategoryStep {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("지원하는 학과 조회에 성공하였습니다"),
-                () -> assertThat(response.jsonPath().getList("data.departmentList").size()).isEqualTo(supportedDepartmentCnt)
+                () -> assertThat(response.jsonPath().getList("data.departmentList")).hasSize(supportedDepartmentCnt)
         );
     }
 

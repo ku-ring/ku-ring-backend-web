@@ -25,11 +25,8 @@ import java.util.stream.Collectors;
 public class StaffUpdater implements Updater {
 
     private final StaffRepository staffRepository;
-
     private final StaffScraper staffScraper;
     private final List<DeptInfo> deptInfos;
-
-    private final int STAFF_UPDATE_RETRY_PERIOD = 1000 * 60; // 1분후에 실패한 크론잡 재시도
 
     public StaffUpdater(StaffRepository staffRepository,
                         StaffScraper staffScraper,

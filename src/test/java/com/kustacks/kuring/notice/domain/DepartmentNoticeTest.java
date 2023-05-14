@@ -21,7 +21,7 @@ class DepartmentNoticeTest {
     @ValueSource(strings = {"https://www.example.com", "http://example.com:8080/path/to/resource",
             "https://library.konkuk.ac.kr/library-guide/bulletins/notice/7192", "http://www.konkuk.ac.kr/do/MessageBoard/ArticleRead.do?forum=notice&sort=6&id=5b50736&cat=0000300001",
             "http://mae.konkuk.ac.kr/noticeView.do?siteId=MAE&boardSeq=988&menuSeq=6823&categorySeq=0&curBoardDispType=LIST&curPage=12&pageNum=1&seq=179896"})
-    public void create_member(String url) {
+    void create_member(String url) {
         assertThatCode(() -> new DepartmentNotice("artice_id", "postDate", "updatedDate", "subject", new Category(CategoryName.DEPARTMENT), false, url, DepartmentName.BIOLOGICAL))
                 .doesNotThrowAnyException();
     }
@@ -29,7 +29,7 @@ class DepartmentNoticeTest {
     @DisplayName("공지의 url 형식 검증 테스트")
     @ParameterizedTest
     @ValueSource(strings = {"//www.example.com", "https:/www.example.com", "https://"})
-    public void member_invalid_email_id(String url) {
+    void member_invalid_email_id(String url) {
         assertThatThrownBy(() -> new DepartmentNotice("artice_id", "postDate", "updatedDate", "subject", new Category(CategoryName.DEPARTMENT), false, url, DepartmentName.BIOLOGICAL))
                 .isInstanceOf(DomainLogicException.class);
     }

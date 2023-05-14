@@ -19,7 +19,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,7 +68,7 @@ public class CategoryNoticeUpdater implements Updater {
     학사, 장학, 취창업, 국제, 학생, 산학, 일반, 도서관 공지 갱신
     */
     private Map<CategoryName, List<CommonNoticeFormatDto>> scrapNewNotices() {
-        Map<CategoryName, List<CommonNoticeFormatDto>> apiNoticesMap = new HashMap<>();
+        Map<CategoryName, List<CommonNoticeFormatDto>> apiNoticesMap = new EnumMap<>(CategoryName.class);
 
         for (CategoryName categoryName : CategoryName.values()) {
             if (categoryName == CategoryName.DEPARTMENT) {

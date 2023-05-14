@@ -37,7 +37,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @TestPropertySource(locations = "classpath:test-constants.properties")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-public class ParsingKuisAuthManagerTest {
+class ParsingKuisAuthManagerTest {
 
     @Value("${auth.login-url}")
     private String loginUrl;

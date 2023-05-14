@@ -13,7 +13,7 @@ public class NoticeStep {
     public static void 공지사항_조회_요청_응답_확인(ExtractableResponse<Response> response, String category) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isEqualTo(true),
+                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isTrue(),
                 () -> assertThat(response.jsonPath().getString("resultMsg")).isEqualTo("성공"),
                 () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("noticeList[0].articleId")).isNotBlank(),
@@ -81,7 +81,7 @@ public class NoticeStep {
     public static void 공지사항_조회_요청_실패_응답_확인(ExtractableResponse<Response> response) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isEqualTo(false),
+                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isFalse(),
                 () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(400)
         );
     }

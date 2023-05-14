@@ -33,8 +33,8 @@ class NoticeHtmlParserTest {
 
         // then
         assertAll(
-                () -> assertThat(important.size()).isEqualTo(12),
-                () -> assertThat(normal.size()).isEqualTo(12)
+                () -> assertThat(important).hasSize(12),
+                () -> assertThat(normal).hasSize(12)
         );
     }
 
@@ -51,8 +51,8 @@ class NoticeHtmlParserTest {
 
         // then
         assertAll(
-                () -> assertThat(important.size()).isEqualTo(28),
-                () -> assertThat(normal.size()).isEqualTo(12)
+                () -> assertThat(important).hasSize(28),
+                () -> assertThat(normal).hasSize(12)
         );
     }
 

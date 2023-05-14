@@ -17,11 +17,11 @@ class MappedBeanTest {
     ApplicationContext applicationContext;
 
     @Test
-    public void department_name_mapping_to_dept_info_success() {
+    void department_name_mapping_to_dept_info_success() {
         // when
         Map deptInfoMap = applicationContext.getBean("departmentNameDeptInfoMap", Map.class);
 
         // then
-        assertThat(deptInfoMap.size()).isEqualTo(62);
+        assertThat(deptInfoMap).hasSize(62);
     }
 }

@@ -49,7 +49,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
         JsonConfig.class})
 @TestPropertySource("classpath:test-constants.properties")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-public class KuisNoticeApiClientTest {
+class KuisNoticeApiClientTest {
 
     @Value("${notice.request-url}")
     private String noticeUrl;
