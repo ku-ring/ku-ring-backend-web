@@ -22,7 +22,7 @@ import java.util.Objects;
 public class Notice {
 
     @Id
-    @Getter(AccessLevel.PRIVATE)
+    @Getter(AccessLevel.PROTECTED)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
