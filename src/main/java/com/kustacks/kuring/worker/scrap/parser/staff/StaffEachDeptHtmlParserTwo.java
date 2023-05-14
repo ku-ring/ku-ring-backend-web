@@ -13,10 +13,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
-@NoArgsConstructor
 @Component
+@NoArgsConstructor
 public class StaffEachDeptHtmlParserTwo implements StaffHtmlParser {
+
+    private static final String regexPattern = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
 
     @Override
     public boolean support(DeptInfo deptInfo) {
@@ -68,7 +71,7 @@ public class StaffEachDeptHtmlParserTwo implements StaffHtmlParser {
                             oneStaffInfo[idx] = td.getElementsByTag("a").get(0).text();
                         } else {
                             // 이메일 파싱 텍스트가 이메일 형식이 아니라면 isEmailNotEmpty 플래그를 false로 설정
-                            if (idx == 4 && !td.text().matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$")) {
+                            if (idx == 4 && !Pattern.compile(regexPattern).matcher(td.text()).matches()) {
                                 isEmailNotEmpty = false;
                             }
                             oneStaffInfo[idx] = td.text();
@@ -79,9 +82,6 @@ public class StaffEachDeptHtmlParserTwo implements StaffHtmlParser {
                     if (isEmailNotEmpty) {
                         result.add(oneStaffInfo);
                     }
-//                else {
-//                    log.info("스크래핑 스킵 -> {} {} 교수", deptName, oneStaffInfo[0]);
-//                }
                 }
 
                 break;

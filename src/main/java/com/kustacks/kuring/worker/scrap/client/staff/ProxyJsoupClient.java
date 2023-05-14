@@ -7,77 +7,74 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 @Slf4j
 @Component
 public class ProxyJsoupClient implements JsoupClient {
 
-    private final List<ProxyInfo> proxyList;
+    private final Queue<ProxyInfo> proxyQueue;
 
     public ProxyJsoupClient() {
+        proxyQueue = new LinkedList<>();
+    }
 
-        proxyList = new LinkedList<>();
-        proxyList.add(new ProxyInfo("121.156.109.108", 	8080));
-        proxyList.add(new ProxyInfo("59.21.84.108", 	80));
-        proxyList.add(new ProxyInfo("61.255.239.33", 	8008));
-        proxyList.add(new ProxyInfo("58.75.126.235", 	4145));
+    @PostConstruct
+    public void initProxyList() {
+        proxyQueue.offer(new ProxyInfo("175.209.219.214", 8080));
+        proxyQueue.offer(new ProxyInfo("58.120.171.37", 8080));
+        proxyQueue.offer(new ProxyInfo("34.64.169.221", 80));
+        proxyQueue.offer(new ProxyInfo("140.238.8.178", 8000));
+        proxyQueue.offer(new ProxyInfo("15.164.154.142", 3128));
     }
 
     @Override
     public Document get(String url, int timeOut) throws IOException {
-
         MethodCallback methodCallback = (connection, ip, port) -> connection.proxy(ip, port).get();
         return proxyTemplate(url, timeOut, methodCallback);
     }
 
     @Override
     public Document post(String url, int timeOut, Map<String, String> requestBody) throws IOException {
-
         MethodCallback methodCallback = (connection, ip, port) -> {
             for (String key : requestBody.keySet()) {
                 connection = connection.data(key, requestBody.get(key));
             }
             return connection.proxy(ip, port).post();
         };
+
         return proxyTemplate(url, timeOut, methodCallback);
     }
 
     private Document proxyTemplate(String url, int timeOut, MethodCallback callback) throws IOException {
+        for (int idx = 0; idx < proxyQueue.size(); idx++) {
+            ProxyInfo proxyInfo = proxyQueue.peek();
+            log.info("[index:{}] proxy = {}:{}", idx, proxyInfo.getIp(), proxyInfo.getPort());
 
-        Document document = null;
-        IOException jsoupException = null;
-        int idx = 0;
-        for (ProxyInfo proxyInfo : proxyList) {
-            log.info("proxy = {}:{}", proxyInfo.getIp(), proxyInfo.getPort());
-            log.info("idx = {}", idx);
-            Connection connection = Jsoup.connect(url).timeout(timeOut);
             try {
-                document = callback.sendRequest(connection, proxyInfo.getIp(), proxyInfo.getPort());
-                log.info("{} 으로 성공!", proxyInfo.ip);
-                break;
-            } catch(IOException e) {
+                return getDocument(url, timeOut, callback, proxyInfo);
+            } catch (IOException e) {
                 log.error("Jsoup 오류 발생. {}", e.getMessage());
-                jsoupException = e;
-                ++idx;
+                proxyQueue.poll();
             }
         }
-        if(document != null) {
-            if(idx > 0) {
-                ProxyInfo bestProxy = proxyList.remove(idx);
-                proxyList.add(0, bestProxy);
-            }
-            return document;
-        } else {
-            throw jsoupException;
-        }
+
+        throw new IOException("사용 가능한 Proxy Ip가 없습니다.");
+    }
+
+    private Document getDocument(String url, int timeOut, MethodCallback callback, ProxyInfo proxyInfo) throws IOException {
+        Connection connection = Jsoup.connect(url).timeout(timeOut);
+        Document document = callback.sendRequest(connection, proxyInfo.getIp(), proxyInfo.getPort());
+        log.info("{} 으로 성공!", proxyInfo.ip);
+        return document;
     }
 
     @Getter
-    static class ProxyInfo {
+    private static class ProxyInfo {
 
         private final String ip;
         private final int port;
@@ -88,7 +85,8 @@ public class ProxyJsoupClient implements JsoupClient {
         }
     }
 
-    interface MethodCallback {
+    @FunctionalInterface
+    private interface MethodCallback {
         Document sendRequest(Connection connection, String ip, int port) throws IOException;
     }
 }
