@@ -5,6 +5,21 @@
 <h1 align="middle">쿠링</h1>
 <p align="middle">건국대학교의 공지는 우리가 책임진다!</p>
 
+<div align="center">
+    <a href="https://apps.apple.com/KR/app/id1609873520?mt=8">
+        <img src="https://img.shields.io/badge/Apple Store-f3f3f3?style=flat&logo=apple&logoColor=black">
+    </a>
+    <a href="https://play.google.com/store/apps/details?id=com.ku_stacks.ku_ring">
+        <img src="https://img.shields.io/badge/Google Store-90c8ff?style=flat&logo=Google&logoColor=white">
+    </a>
+    <a href="https://sonarcloud.io/project/overview?id=KU-Stacks_ku-ring-backend-web">
+        <img src="https://sonarcloud.io/api/project_badges/measure?project=KU-Stacks_ku-ring-backend-web&metric=coverage"/>
+    </a>
+    <a href="https://sonarcloud.io/project/overview?id=KU-Stacks_ku-ring-backend-web">
+        <img src="https://sonarcloud.io/api/project_badges/measure?project=KU-Stacks_ku-ring-backend-web&metric=alert_status"/>
+    </a>
+</div>
+
 <p align="center">
  <img src="https://user-images.githubusercontent.com/53814741/163469327-98af5c02-efc7-4c3e-8fec-9195ca6805ad.JPG" width="30%"/>
  <img src="https://user-images.githubusercontent.com/53814741/163469357-aed6a78a-4b65-4a9a-bead-d541e7eee702.JPG" width="30%"/>
