@@ -55,7 +55,7 @@ public class StaffScraper {
             }
         }
 
-        // 파싱 결과를 staffDTO로 변환
+        // 파싱 결과를 staffDto로 변환
         for (String[] oneStaffInfo : parseResult) {
             staffDtoList.add(StaffDto.builder()
                     .name(oneStaffInfo[0])
@@ -67,7 +67,7 @@ public class StaffScraper {
                     .collegeName(deptInfo.getCollegeName()).build());
         }
 
-        if (staffDtoList.size() == 0) {
+        if (staffDtoList.isEmpty()) {
             throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP);
         }
 

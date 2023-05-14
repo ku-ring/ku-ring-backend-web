@@ -19,30 +19,24 @@ import java.util.regex.Pattern;
 @Component
 public class ParsingKuisAuthManager implements KuisAuthManager {
 
+    private final static String PARSING_PATTERN = "submit\\.addParameter[(]\"(.{5,7})\",\"(.{5,7})\"[)]";
+
     @Value("${auth.login-url}")
     private String loginUrl;
-
     @Value("${auth.user-agent}")
     private String loginUserAgent;
-
     @Value("${auth.referer}")
     private String loginReferer;
-
     @Value("${auth.api-skeleton-producer-url}")
     private String apiSkeletonProducerUrl;
-
     @Value("${auth.session}")
     private String sessionId;
-
     private final KuisLoginRequestBody kuisLoginRequestBody;
     private final RestTemplate restTemplate;
     private final Encoder encoder;
-
     private String loginRequestBody;
     private boolean sessionNeedToBeRenew; // 세션 유효기간이 남아있어야 하지만, 알 수 없는 오류로 인해 세션이 유효하지 않은 경우 true로 설정됨
-    private boolean apiSkeletonNeedToBeRenew;
     private boolean isLoginPossible;
-    private final String parsingPattern = "submit\\.addParameter[(]\"(.{5,7})\",\"(.{5,7})\"[)]";
     private final Pattern pattern;
 
     public ParsingKuisAuthManager(
@@ -54,11 +48,9 @@ public class ParsingKuisAuthManager implements KuisAuthManager {
         this.kuisLoginRequestBody = kuisLoginRequestBody;
         this.encoder = requestBodyEncoder;
         this.sessionNeedToBeRenew = true;
-        this.apiSkeletonNeedToBeRenew = true;
         this.isLoginPossible = true;
         this.loginRequestBody = null;
-
-        this.pattern  = Pattern.compile(parsingPattern);
+        this.pattern  = Pattern.compile(PARSING_PATTERN);
     }
 
     @Override
@@ -81,7 +73,6 @@ public class ParsingKuisAuthManager implements KuisAuthManager {
         try {
             String apiSkeletonStr = restTemplate.getForObject(apiSkeletonProducerUrl, String.class);
             loginRequestBodyStringBuilder = renewApiSkeleton(apiSkeletonStr);
-            apiSkeletonNeedToBeRenew = false;
         } catch(RestClientException e) {
             throw new InternalLogicException(ErrorCode.KU_LOGIN_CANNOT_GET_API_SKELETON, e);
         }

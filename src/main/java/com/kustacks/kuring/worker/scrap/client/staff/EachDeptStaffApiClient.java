@@ -73,9 +73,6 @@ public class EachDeptStaffApiClient implements StaffApiClient {
                 try {
                     requestBody.put("pageNum", String.valueOf(pageNum));
                     document = jsoupClient.post(url, STAFF_SCRAP_TIMEOUT, requestBody);
-//                    document = Jsoup.connect(url)
-//                            .data("pageNum", String.valueOf(pageNum))
-//                            .post();
                 } catch(IOException e) {
                     throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);
                 }
