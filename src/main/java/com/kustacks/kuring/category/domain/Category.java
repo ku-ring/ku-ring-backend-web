@@ -1,6 +1,5 @@
 package com.kustacks.kuring.category.domain;
 
-import com.kustacks.kuring.kuapi.CategoryName;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.user.domain.UserCategory;
 import lombok.AccessLevel;
@@ -9,20 +8,23 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category {
 
     @Id
-    @Column(name = "name", length = 20, nullable = false)
-    private String name;
+    @Getter(AccessLevel.PRIVATE)
+    @Column(name = "name", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private CategoryName categoryName;
 
     @OneToMany(mappedBy = "category")
     private List<Notice> noticeList = new ArrayList<>();
@@ -30,12 +32,20 @@ public class Category {
     @OneToMany(mappedBy = "category")
     private List<UserCategory> userCategories = new ArrayList<>();
 
-    public Category(String name) {
-        this.name = name;
+    public Category(CategoryName categoryName) {
+        this.categoryName = categoryName;
     }
 
     public boolean isSameName(CategoryName categoryName) {
-        return this.name.equals(categoryName);
+        return categoryName.equals(this.categoryName);
+    }
+
+    public String getName() {
+        return this.categoryName.getName();
+    }
+
+    public String getKorName() {
+        return this.categoryName.getKorName();
     }
 
     @Override
@@ -43,11 +53,11 @@ public class Category {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
-        return Objects.equals(getName(), category.getName());
+        return getCategoryName() == category.getCategoryName();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName());
+        return Objects.hash(getCategoryName());
     }
 }

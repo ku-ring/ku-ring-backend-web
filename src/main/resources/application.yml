@@ -3,15 +3,14 @@ server:
 
 spring:
   jpa:
-    generate-ddl: true
+    generate-ddl: false
     hibernate:
       ddl-auto: none
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQL55Dialect
-    database-platform: org.hibernate.dialect.MariaDB103Dialect
-    defer-datasource-initialization: true # jpa\uB85C \uD14C\uC774\uBE14 \uC0DD\uC131\uD55C \uB4A4 data.sql \uC2E4\uD589\uB418\uAC8C \uD558\uB294 \uC124\uC815
+        dialect: com.kustacks.kuring.config.CustomMariaDbDialect
+    defer-datasource-initialization: false
     show-sql: false
     open-in-view: false
   datasource:
@@ -19,18 +18,21 @@ spring:
       connectionTimeout: '30000'
       maximum-pool-size: '8'
       max-lifetime: '1800000'
-    driverClassName: org.mariadb.jdbc.Driver
     password: ${DB_PASSWORD}
     username: ${DB_USER}
     url: jdbc:${DB_URL}
+    driver-class-name: org.mariadb.jdbc.Driver
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    url: jdbc:${DB_URL}
+    user: ${DB_USER}
+    password: ${DB_PASSWORD}
   thymeleaf:
     cache: true
     prefix: classpath:/templates/
     suffix: .html
     enabled: true
-  sql:
-    init:
-      mode: always
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false

@@ -1,5 +1,6 @@
 package com.kustacks.kuring.feedback.domain;
 
+import com.kustacks.kuring.common.domain.BaseTimeEntity;
 import com.kustacks.kuring.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,12 +16,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.util.Objects;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Feedback {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Feedback extends BaseTimeEntity {
 
     @Id
+    @Getter(AccessLevel.PRIVATE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
@@ -29,7 +30,7 @@ public class Feedback {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "uid")
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Feedback(String content, User user) {

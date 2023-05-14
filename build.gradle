@@ -10,6 +10,9 @@ plugins {
 	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 	id 'java'
 	id 'org.asciidoctor.convert' version '1.5.3'
+	id "org.flywaydb.flyway" version "9.16.1" // flyway gradle plugin 의존성
+	id "org.sonarqube" version "3.5.0.2730" // sonarqube gradle plugin 의존성
+	id 'jacoco' // jacoco gradle plugin 의존성
 }
 
 group = 'com.kustacks'
@@ -24,6 +27,14 @@ configurations {
 
 repositories {
 	mavenCentral()
+}
+
+sonarqube {
+	properties {
+		property "sonar.projectKey", "KU-Stacks_ku-ring-backend-web"
+		property "sonar.organization", "kuring1234"
+		property "sonar.host.url", "https://sonarcloud.io"
+	}
 }
 
 dependencies {
@@ -45,6 +56,8 @@ dependencies {
 	implementation "com.querydsl:querydsl-core:${queryDslVersion}"
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
 
+	// flyway
+	implementation 'org.flywaydb:flyway-core'
 
 	// Logging
 	implementation 'io.sentry:sentry-spring-boot-starter:5.4.0'
@@ -87,6 +100,11 @@ test.onlyIf { System.getenv('DEPLOY_ENV') == 'dev' }
 
 test {
 	outputs.dir snippetsDir
+
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/jacoco.exec")
+	}
+
 	useJUnitPlatform()
 	testLogging {
 		// test jvm의 standard out and standard error을 console에 출력한다.
@@ -96,6 +114,8 @@ test {
 		showStackTraces = true
 		exceptionFormat = 'full'
 	}
+
+	finalizedBy 'jacocoTestReport'
 }
 
 asciidoctor.onlyIf { System.getenv('DEPLOY_ENV') == 'dev' }
@@ -158,4 +178,90 @@ configurations {
 }
 compileQuerydsl {
 	options.annotationProcessorPath = configurations.querydsl
+}
+
+// -- Jacoco 설정 -------------------------------------------------------
+jacoco {
+	// jacoco version
+	toolVersion = '0.8.8'
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		html.enabled true // 개발자용 html
+		xml.enabled true // 소나큐브용, 경로를 추가하지 않아도 sonarcloud가 default 경로를 인식
+		csv.enabled false
+	}
+
+	// QueryDSL은 분석에서 제외시켜야 함
+	def Qdomains = []
+	for (qPattern in '**/QA'..'**/QZ') {
+		Qdomains.add(qPattern + '*')
+	}
+
+	afterEvaluate {
+		classDirectories.setFrom(
+				files(classDirectories.files.collect {
+					fileTree(dir: it, excludes: [
+							'**/*Request.*',
+							'**/*Response.*',
+							'**/dto/**',
+							'**/*Interceptor.*',
+							'**/*Exception.*',
+							'**/*Storage.*',
+							'**/KuringApplication.*',
+							'**/*Token.*',
+							'**/*Converter.*',
+							'**/*AdminController.*',
+							'**/*Dialect.*'
+					] + Qdomains)
+				})
+		)
+	}
+
+	finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+	def Qdomains = []
+	for (qPattern in '*.QA'..'*.QZ') {
+		Qdomains.add(qPattern + '*')
+	}
+
+	violationRules {
+		rule {
+			enabled = true // 활성화
+			limit {
+				element = 'CLASS'
+				minimum = 0.0
+			}
+
+			excludes = [
+					'**.*Request.*',
+					'**.*Response.*',
+					'**.*Dto.*',
+					'**.*Interceptor.*',
+					'**.*Exception.*',
+					'**.*Storage.*',
+					'**.KuringApplication.*',
+					'**.*Token.*',
+					'**.*Converter.*',
+					'**.*AdminController.*',
+					'**.*Dialect.*'
+			] + Qdomains
+		}
+	}
+}
+
+task testCoverage(type: Test) {
+	group 'verification'
+	description 'Runs the unit tests with coverage'
+
+	dependsOn(':test',
+			':jacocoTestReport',
+			':jacocoTestCoverageVerification')
+
+	tasks['jacocoTestReport'].mustRunAfter(tasks['test'])
+	tasks['jacocoTestCoverageVerification'].mustRunAfter(tasks['jacocoTestReport'])
 }

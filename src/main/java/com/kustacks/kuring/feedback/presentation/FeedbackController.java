@@ -4,7 +4,7 @@ import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.feedback.business.FeedbackService;
-import com.kustacks.kuring.feedback.common.dto.SaveFeedbackRequest;
+import com.kustacks.kuring.feedback.common.dto.SaveFeedbackV1Request;
 import com.kustacks.kuring.feedback.common.dto.SaveFeedbackResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -24,7 +24,7 @@ public class FeedbackController {
     private final FeedbackService feedbackService;
 
     @PostMapping("/feedback")
-    public SaveFeedbackResponse saveFeedback(@Valid @RequestBody SaveFeedbackRequest request) throws APIException {
+    public SaveFeedbackResponse saveFeedback(@Valid @RequestBody SaveFeedbackV1Request request) throws APIException {
         String token = request.getId();
         String content = request.getContent();
         validationContentsLength(content);

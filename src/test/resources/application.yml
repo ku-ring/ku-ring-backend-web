@@ -6,6 +6,8 @@ spring:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     p6spy:
       enable-logging: true
+  flyway:
+    enabled: false
   jpa:
     hibernate:
       ddl-auto: create
@@ -13,7 +15,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQL55Dialect
+        dialect: com.kustacks.kuring.config.CustomMariaDbDialect
     defer-datasource-initialization: true
     open-in-view: false
   sql:

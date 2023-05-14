@@ -3,7 +3,7 @@ package com.kustacks.kuring.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.common.error.APIException;
-import com.kustacks.kuring.feedback.common.dto.SaveFeedbackRequest;
+import com.kustacks.kuring.feedback.common.dto.SaveFeedbackV1Request;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.feedback.presentation.FeedbackController;
 import com.kustacks.kuring.feedback.business.FeedbackService;
@@ -78,7 +78,7 @@ public class FeedbackControllerTest {
         String token = "TEST_TOKEN";
         String content = "테스트 피드백입니다.";
 
-        SaveFeedbackRequest requestDTO = new SaveFeedbackRequest(token, content);
+        SaveFeedbackV1Request requestDTO = new SaveFeedbackV1Request(token, content);
 
         String requestBody = objectMapper.writeValueAsString(requestDTO);
 
@@ -119,7 +119,7 @@ public class FeedbackControllerTest {
         // given
         String token = "INVALID_TOKEN";
         String content = "테스트 피드백입니다.";
-        String requestBody = objectMapper.writeValueAsString(new SaveFeedbackRequest(token, content));
+        String requestBody = objectMapper.writeValueAsString(new SaveFeedbackV1Request(token, content));
 
         doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(firebaseService).validationToken(token);
 
@@ -146,7 +146,7 @@ public class FeedbackControllerTest {
         // given
         String token = "TEST_TOKEN";
         String content = "5자미만";
-        String requestBody = objectMapper.writeValueAsString(new SaveFeedbackRequest(token, content));
+        String requestBody = objectMapper.writeValueAsString(new SaveFeedbackV1Request(token, content));
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/feedback")

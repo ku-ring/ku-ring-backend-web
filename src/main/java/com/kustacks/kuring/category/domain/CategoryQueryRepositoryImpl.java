@@ -13,9 +13,9 @@ public class CategoryQueryRepositoryImpl implements CategoryQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<String> getSupportedCategoryNames() {
+    public List<CategoryName> getSupportedCategoryNames() {
         return queryFactory
-                .select(category.name)
+                .select(category.categoryName)
                 .from(category)
                 .fetch();
     }

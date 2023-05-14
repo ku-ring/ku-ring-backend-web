@@ -19,21 +19,11 @@
 <br>
 
 ## 👩‍👦‍👦 Backend Members
-|ngwoon|shine|
+|shine|ngwoon|
 |:-:|:-:|
-|<img src="https://avatars.githubusercontent.com/ngwoon?v=4" alt="ngwoon" width="100" height="100">|<img src="https://avatars.githubusercontent.com/u/60593969?v=4" alt="shine" width="100" height="100">|
-|[ngwoon](https://github.com/ngwoon)|[zbqmgldjfh](https://github.com/zbqmgldjfh)|
+|<img src="https://avatars.githubusercontent.com/u/60593969?v=4" alt="shine" width="100" height="100">|<img src="https://avatars.githubusercontent.com/ngwoon?v=4" alt="ngwoon" width="100" height="100">|
+|[zbqmgldjfh](https://github.com/zbqmgldjfh)|[ngwoon](https://github.com/ngwoon)|
 <br>
 
-## 서버 도메인
-
-### 개발 서버
-https://kuring-dev.herokuapp.com
-
-### 프로덕션 서버
-https://kuring.herokuapp.com
-
-## API 문서
-https://kuring-dev.herokuapp.com/docs/api-docs.html
 
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FKU-Stacks%2Fku-ring-backend-web&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
