@@ -22,7 +22,7 @@ public class InternationalTradeDept extends SocialSciencesCollege {
         this.htmlParser = latestPageNoticeHtmlParserTwo;
         this.latestPageProperties = latestPageProperties;
 
-        List<String> professorForumIds = List.of("15003249");;
+        List<String> professorForumIds = List.of("15003249");
         List<String> forumIds = List.of("9517");
         List<String> boardSeqs = List.of("1600");
         List<String> menuSeqs = List.of("11770");

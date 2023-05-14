@@ -27,7 +27,6 @@ public class BiologicalSciencesDept extends SanghuoBiologyCollege {
 
         List<String> professorForumIds = List.of("6182");
         List<String> forumIds = Collections.emptyList();
-//        forumIds.add("11676214");
         List<String> boardSeqs = Collections.emptyList();
         List<String> menuSeqs = Collections.emptyList();
 

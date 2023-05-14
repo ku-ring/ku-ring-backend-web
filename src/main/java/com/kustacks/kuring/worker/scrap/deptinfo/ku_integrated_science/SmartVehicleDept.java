@@ -23,7 +23,7 @@ public class SmartVehicleDept extends KuIntegratedScienceCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageProperties = latestPageProperties;
 
-        List<String> professorForumIds = List.of("15883304");;
+        List<String> professorForumIds = List.of("15883304");
         List<String> forumIds = Collections.emptyList();
         List<String> boardSeqs = List.of("405");
         List<String> menuSeqs = List.of("2681");
