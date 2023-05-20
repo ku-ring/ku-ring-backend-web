@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.scrap.client.staff;
+package com.kustacks.kuring.worker.scrap.client;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
@@ -25,6 +27,7 @@ public class ProxyJsoupClient implements JsoupClient {
 
     @PostConstruct
     public void initProxyList() {
+        proxyQueue.offer(new ProxyInfo("14.63.228.239", 80));
         proxyQueue.offer(new ProxyInfo("175.209.219.214", 8080));
         proxyQueue.offer(new ProxyInfo("58.120.171.37", 8080));
         proxyQueue.offer(new ProxyInfo("34.64.169.221", 80));
@@ -67,8 +70,11 @@ public class ProxyJsoupClient implements JsoupClient {
     }
 
     private Document getDocument(String url, int timeOut, MethodCallback callback, ProxyInfo proxyInfo) throws IOException {
-        Connection connection = Jsoup.connect(url).timeout(timeOut);
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyInfo.getIp(), proxyInfo.getPort()));
+        Connection connection = Jsoup.connect(url).proxy(proxy).timeout(timeOut);
+
         Document document = callback.sendRequest(connection, proxyInfo.getIp(), proxyInfo.getPort());
+
         log.info("{} 으로 성공!", proxyInfo.ip);
         return document;
     }

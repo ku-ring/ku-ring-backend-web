@@ -10,7 +10,7 @@ import com.kustacks.kuring.worker.client.staff.dto.TestStaffDTO;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.client.staff.EachDeptStaffApiClient;
 import com.kustacks.kuring.worker.scrap.client.staff.KuStaffApiClient;
-import com.kustacks.kuring.worker.scrap.client.staff.NormalJsoupClient;
+import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
 import com.kustacks.kuring.worker.scrap.client.staff.RealEstateStaffApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;
