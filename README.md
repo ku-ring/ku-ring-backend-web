@@ -40,5 +40,8 @@
 |[zbqmgldjfh](https://github.com/zbqmgldjfh)|[ngwoon](https://github.com/ngwoon)|
 <br>
 
+## 🔌 Infrastructures
+### CI Flow
+<img width="1231" alt="스크린샷 2023-05-15 오후 5 08 22" src="https://github.com/ku-ring/ku-ring-backend-web/assets/60593969/492e61fb-b420-42b3-ae10-834a89c50249">
 
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FKU-Stacks%2Fku-ring-backend-web&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)

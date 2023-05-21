@@ -6,6 +6,7 @@ import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.utils.converter.DtoConverter;
 import com.kustacks.kuring.common.utils.converter.KuisNoticeDtoToCommonFormatDtoConverter;
 import com.kustacks.kuring.worker.scrap.client.auth.KuisAuthManager;
+import com.kustacks.kuring.worker.scrap.client.notice.property.KuisNoticeProperties;
 import com.kustacks.kuring.worker.update.notice.dto.request.BachelorKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.EmploymentKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.IndustryUnivKuisNoticeRequestBody;
@@ -19,7 +20,6 @@ import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatD
 import com.kustacks.kuring.worker.update.notice.dto.response.KuisNoticeDto;
 import com.kustacks.kuring.worker.update.notice.dto.response.KuisNoticeResponseDto;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -39,16 +39,11 @@ import java.util.Map;
 @Component
 public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDto, CategoryName> {
 
-    @Value("${notice.referer}")
-    private String noticeReferer;
-
-    @Value("${notice.request-url}")
-    private String noticeUrl;
-
     private final RestTemplate restTemplate;
     private final DtoConverter dtoConverter;
     private final KuisAuthManager kuisAuthManager;
     private final Map<CategoryName, KuisNoticeRequestBody> noticeRequestBodies;
+    private final KuisNoticeProperties kuisNoticeProperties;
 
     public KuisNoticeApiClient(KuisAuthManager parsingKuisAuthManager,
                                KuisNoticeDtoToCommonFormatDtoConverter dtoConverter,
@@ -61,12 +56,14 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
                                IndustryUnivKuisNoticeRequestBody industryUnivKuisNoticeRequestBody,
                                NormalKuisNoticeRequestBody normalKuisNoticeRequestBody,
 
-                               RestTemplate restTemplate) {
+                               RestTemplate restTemplate,
+                               KuisNoticeProperties kuisNoticeProperties) {
 
         this.dtoConverter = dtoConverter;
         this.kuisAuthManager = parsingKuisAuthManager;
 
         this.restTemplate = restTemplate;
+        this.kuisNoticeProperties = kuisNoticeProperties;
 
         noticeRequestBodies = new HashMap<>();
         noticeRequestBodies.put(CategoryName.BACHELOR, bachelorNoticeRequestBody);
@@ -114,7 +111,7 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
     private ResponseEntity<KuisNoticeResponseDto> sendKuisNoticesRequestAndResponse(HttpEntity<String> noticeRequestEntity) {
         ResponseEntity<KuisNoticeResponseDto> noticeResponse;
         try {
-            noticeResponse = restTemplate.postForEntity(noticeUrl, noticeRequestEntity, KuisNoticeResponseDto.class);
+            noticeResponse = restTemplate.postForEntity(kuisNoticeProperties.getRequestUrl(), noticeRequestEntity, KuisNoticeResponseDto.class);
         } catch (RestClientException e) {
             log.warn("세션 갱신이 필요합니다.");
             kuisAuthManager.forceRenewing();
@@ -141,7 +138,7 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
 
     private HttpHeaders createKuisNoticeRequestHeader(String sessionId) {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.REFERER, noticeReferer);
+        httpHeaders.add(HttpHeaders.REFERER, kuisNoticeProperties.getRefererUrl());
         httpHeaders.add(HttpHeaders.COOKIE, sessionId);
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 

@@ -5,12 +5,12 @@ import com.kustacks.kuring.common.dto.StaffDto;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
-import com.kustacks.kuring.worker.scrap.client.notice.LatestPageProperties;
+import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.client.staff.dto.TestStaffDTO;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.client.staff.EachDeptStaffApiClient;
 import com.kustacks.kuring.worker.scrap.client.staff.KuStaffApiClient;
-import com.kustacks.kuring.worker.scrap.client.staff.NormalJsoupClient;
+import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
 import com.kustacks.kuring.worker.scrap.client.staff.RealEstateStaffApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;
@@ -61,7 +61,7 @@ import static org.mockserver.model.HttpResponse.response;
         NormalJsoupClient.class,
         KoreanDept.class, LivingDesignDept.class, CommunicationDesignDept.class, RealEstateDept.class,
         ObjectMapper.class})
-@EnableConfigurationProperties(value = LatestPageProperties.class)
+@EnableConfigurationProperties(value = LatestPageNoticeProperties.class)
 @TestPropertySource("classpath:test-constants.properties")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class StaffScraperTest {

@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.social_science;
 
 import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.worker.scrap.client.notice.LatestPageProperties;
+import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -16,11 +16,11 @@ import java.util.List;
 public class InternationalTradeDept extends SocialSciencesCollege {
 
     public InternationalTradeDept(NoticeApiClient<ScrapingResultDto, DeptInfo> latestPageNoticeApiClient,
-                                  NoticeHtmlParser latestPageNoticeHtmlParserTwo, LatestPageProperties latestPageProperties) {
+                                  NoticeHtmlParser latestPageNoticeHtmlParserTwo, LatestPageNoticeProperties latestPageNoticeProperties) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
         this.htmlParser = latestPageNoticeHtmlParserTwo;
-        this.latestPageProperties = latestPageProperties;
+        this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<String> professorForumIds = List.of("15003249");
         List<String> forumIds = List.of("9517");

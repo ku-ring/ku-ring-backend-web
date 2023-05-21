@@ -1,11 +1,13 @@
 package com.kustacks.kuring.worker.client.notice;
 
-import com.kustacks.kuring.config.JsonConfig;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.common.utils.converter.KuisNoticeDtoToCommonFormatDtoConverter;
+import com.kustacks.kuring.config.JsonConfig;
 import com.kustacks.kuring.worker.scrap.client.auth.KuisAuthManager;
 import com.kustacks.kuring.worker.scrap.client.notice.KuisNoticeApiClient;
+import com.kustacks.kuring.worker.scrap.client.notice.property.KuisNoticeProperties;
 import com.kustacks.kuring.worker.update.notice.dto.request.BachelorKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.EmploymentKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.IndustryUnivKuisNoticeRequestBody;
@@ -14,17 +16,17 @@ import com.kustacks.kuring.worker.update.notice.dto.request.NormalKuisNoticeRequ
 import com.kustacks.kuring.worker.update.notice.dto.request.ScholarshipKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.request.StudentKuisNoticeRequestBody;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
-import com.kustacks.kuring.common.utils.converter.KuisNoticeDtoToCommonFormatDtoConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -47,31 +49,28 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
         IndustryUnivKuisNoticeRequestBody.class,
         NormalKuisNoticeRequestBody.class,
         JsonConfig.class})
+@EnableConfigurationProperties(value = KuisNoticeProperties.class)
 @TestPropertySource("classpath:test-constants.properties")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class KuisNoticeApiClientTest {
 
-    @Value("${notice.request-url}")
-    private String noticeUrl;
-
+    private final KuisNoticeProperties kuisNoticeProperties;
     private final KuisNoticeApiClient kuisNoticeAPIClient;
     private final RestTemplate restTemplate;
 
     @MockBean
     private KuisAuthManager kuisAuthManager;
-
     private MockRestServiceServer server;
     private String testSession;
 
-    public KuisNoticeApiClientTest(KuisNoticeApiClient kuisNoticeAPIClient, RestTemplate restTemplate) {
-
+    public KuisNoticeApiClientTest(KuisNoticeApiClient kuisNoticeAPIClient, RestTemplate restTemplate, KuisNoticeProperties kuisNoticeProperties) {
         this.kuisNoticeAPIClient = kuisNoticeAPIClient;
         this.restTemplate = restTemplate;
+        this.kuisNoticeProperties = kuisNoticeProperties;
     }
 
     @BeforeEach
     void setUp() {
-
         server = MockRestServiceServer.createServer(restTemplate);
         testSession = "JSESSIONID=SESSION_ID";
     }
@@ -109,7 +108,7 @@ class KuisNoticeApiClientTest {
                 "]}";
 
         given(kuisAuthManager.getSessionId()).willReturn(testSession);
-        server.expect(requestTo(noticeUrl)).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(expectedResponseBody));
+        server.expect(requestTo(kuisNoticeProperties.getRequestUrl())).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(expectedResponseBody));
 
         // when
         List<CommonNoticeFormatDto> notices = kuisNoticeAPIClient.request(CategoryName.BACHELOR);
@@ -129,7 +128,7 @@ class KuisNoticeApiClientTest {
 
         // given
         given(kuisAuthManager.getSessionId()).willReturn(testSession);
-        server.expect(requestTo(noticeUrl)).andRespond(withUnauthorizedRequest());
+        server.expect(requestTo(kuisNoticeProperties.getRequestUrl())).andRespond(withUnauthorizedRequest());
 
         // when, then
         InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.request(CategoryName.BACHELOR));
@@ -142,7 +141,7 @@ class KuisNoticeApiClientTest {
 
         // given
         given(kuisAuthManager.getSessionId()).willReturn(testSession);
-        server.expect(requestTo(noticeUrl)).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON));
+        server.expect(requestTo(kuisNoticeProperties.getRequestUrl())).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON));
 
         //when, then
         InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.request(CategoryName.BACHELOR));
@@ -156,10 +155,21 @@ class KuisNoticeApiClientTest {
         // given
         String badResponseBody = "{\"UNKNOWN\": []}";
         given(kuisAuthManager.getSessionId()).willReturn(testSession);
-        server.expect(requestTo(noticeUrl)).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(badResponseBody));
+        server.expect(requestTo(kuisNoticeProperties.getRequestUrl())).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(badResponseBody));
 
         //when, then
         InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.request(CategoryName.BACHELOR));
         assertEquals(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON, e.getErrorCode());
+    }
+
+    @DisplayName("실패 - 로그인 세션 획득 3회 실패")
+    @Test
+    void failAfterRetry() {
+        // given
+        given(kuisAuthManager.getSessionId()).willThrow(new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE, new RestClientException("로그인 세션 획득 실패")));
+
+        // when, then
+        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.request(CategoryName.BACHELOR));
+        assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
     }
 }

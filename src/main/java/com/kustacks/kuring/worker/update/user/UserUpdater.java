@@ -5,7 +5,6 @@ import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenExcepti
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserCategoryRepository;
 import com.kustacks.kuring.user.domain.UserRepository;
-import com.kustacks.kuring.worker.update.Updater;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class UserUpdater implements Updater {
+public class UserUpdater {
 
     private final FirebaseService firebaseService;
     private final UserRepository userRepository;

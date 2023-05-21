@@ -24,16 +24,16 @@ public class NoticeMessageDto {
 
     private String categoryKorName;
 
-    private String url;
+    private String baseUrl;
 
     @Builder
-    private NoticeMessageDto(String articleId, String postedDate, String subject, String category, String categoryKorName, String url) {
+    private NoticeMessageDto(String articleId, String postedDate, String subject, String category, String categoryKorName, String baseUrl) {
         Assert.notNull(articleId, "articleId must not be null");
         Assert.notNull(postedDate, "postedDate must not be null");
         Assert.notNull(subject, "subject must not be null");
         Assert.notNull(category, "category must not be null");
         Assert.notNull(categoryKorName, "categoryKorName must not be null");
-        Assert.notNull(url, "url must not be null");
+        Assert.notNull(baseUrl, "baseUrl must not be null");
 
         this.type = "notice";
         this.articleId = articleId;
@@ -41,7 +41,7 @@ public class NoticeMessageDto {
         this.subject = subject;
         this.category = category;
         this.categoryKorName = categoryKorName;
-        this.url = url;
+        this.baseUrl = baseUrl;
     }
 
     public static NoticeMessageDto from(Notice notice) {
@@ -51,7 +51,7 @@ public class NoticeMessageDto {
                 .subject(notice.getSubject())
                 .category(notice.getCategoryName())
                 .categoryKorName(notice.getCategoryKoreaName())
-                .url(notice.getUrl())
+                .baseUrl(notice.getUrl())
                 .build();
     }
 
@@ -62,7 +62,7 @@ public class NoticeMessageDto {
                 .subject(departmentNotice.getSubject())
                 .category(departmentNotice.getDepartmentName())
                 .categoryKorName(departmentNotice.getDepartmentKorName())
-                .url(departmentNotice.getUrl())
+                .baseUrl(departmentNotice.getUrl())
                 .build();
     }
 }

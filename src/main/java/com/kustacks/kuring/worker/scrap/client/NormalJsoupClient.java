@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.scrap.client.staff;
+package com.kustacks.kuring.worker.scrap.client;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -18,8 +18,8 @@ public class NormalJsoupClient implements JsoupClient {
 
     @Override
     public Document post(String url, int timeOut, Map<String, String> requestBody) throws IOException {
-
         Connection connection = Jsoup.connect(url).timeout(timeOut);
+
         for (String key : requestBody.keySet()) {
             connection = connection.data(key, requestBody.get(key));
         }
