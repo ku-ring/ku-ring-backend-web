@@ -6,14 +6,13 @@ import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
+import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
-import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.dto.ComplexNoticeFormatDto;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
-import com.kustacks.kuring.worker.update.Updater;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DepartmentNoticeUpdater implements Updater {
+public class DepartmentNoticeUpdater {
 
     private final List<DeptInfo> deptInfoList;
     private final Map<String, Category> categoryMap;
@@ -45,7 +44,6 @@ public class DepartmentNoticeUpdater implements Updater {
 
     private static long startTime = 0L;
 
-    @Override
     @Scheduled(cron = "0 10/20 8-18 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 8:10 ~ 오후 6:55분 사이에 20분마다 업데이트 된다.
     public void update() {
         log.info("******** 학과별 최신 공지 업데이트 시작 ********");
