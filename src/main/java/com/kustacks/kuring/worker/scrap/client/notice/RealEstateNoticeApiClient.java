@@ -22,7 +22,7 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private static final int PAGE_NUM = 1;
     private static final int UNKNOWN_PAGE_NUM = -1;
-    private static final int ESTATE_SCRAP_TIMEOUT = 100000;
+    private static final int ESTATE_SCRAP_TIMEOUT = 300000;
 
     private final JsoupClient jsoupClient;
     private final RealEstateNoticeProperties realEstateNoticeProperties;

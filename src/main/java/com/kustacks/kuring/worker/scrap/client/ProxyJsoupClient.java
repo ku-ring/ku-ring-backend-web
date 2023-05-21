@@ -28,11 +28,10 @@ public class ProxyJsoupClient implements JsoupClient {
     @PostConstruct
     public void initProxyList() {
         proxyQueue.offer(new ProxyInfo("14.63.228.239", 80));
-        proxyQueue.offer(new ProxyInfo("175.209.219.214", 8080));
-        proxyQueue.offer(new ProxyInfo("58.120.171.37", 8080));
-        proxyQueue.offer(new ProxyInfo("34.64.169.221", 80));
-        proxyQueue.offer(new ProxyInfo("140.238.8.178", 8000));
-        proxyQueue.offer(new ProxyInfo("15.164.154.142", 3128));
+        proxyQueue.offer(new ProxyInfo("101.79.15.198", 80));
+        proxyQueue.offer(new ProxyInfo("222.104.128.205", 48678));
+        proxyQueue.offer(new ProxyInfo("106.244.154.91", 8080));
+        proxyQueue.offer(new ProxyInfo("103.51.205.42", 8181));
     }
 
     @Override
