@@ -1,15 +1,15 @@
 package com.kustacks.kuring.worker.scrap.client.notice;
 
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.utils.converter.DtoConverter;
 import com.kustacks.kuring.common.utils.converter.LibraryNoticeDtoToCommonFormatDtoConverter;
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.worker.scrap.client.notice.property.LibraryNoticeProperties;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import com.kustacks.kuring.worker.update.notice.dto.response.LibraryNoticeDto;
 import com.kustacks.kuring.worker.update.notice.dto.response.LibraryNoticeResponseDto;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -27,13 +27,12 @@ public class LibraryNoticeApiClient implements NoticeApiClient<CommonNoticeForma
 
     private final DtoConverter dtoConverter;
     private final RestTemplate restTemplate;
+    private final LibraryNoticeProperties libraryNoticeProperties;
 
-    @Value("${library.request-url}")
-    private String libraryUrl;
-
-    public LibraryNoticeApiClient(LibraryNoticeDtoToCommonFormatDtoConverter dtoConverter, RestTemplate restTemplate) {
+    public LibraryNoticeApiClient(LibraryNoticeDtoToCommonFormatDtoConverter dtoConverter, RestTemplate restTemplate, LibraryNoticeProperties libraryNoticeProperties) {
         this.dtoConverter = dtoConverter;
         this.restTemplate = restTemplate;
+        this.libraryNoticeProperties = libraryNoticeProperties;
     }
 
     @Override
@@ -53,7 +52,7 @@ public class LibraryNoticeApiClient implements NoticeApiClient<CommonNoticeForma
 
         List<LibraryNoticeDto> libraryNoticeDtoList = new LinkedList<>();
         for (int requestIndex = 0; requestIndex < MAX_REQUEST_COUNT; requestIndex++) {
-            String completeLibraryUrl = buildUrl(libraryUrl, offset, max);
+            String completeLibraryUrl = buildUrl(libraryNoticeProperties.getRequestUrl(), offset, max);
             LibraryNoticeResponseDto libraryNoticeResponseDto = restTemplate
                     .getForEntity(completeLibraryUrl, LibraryNoticeResponseDto.class)
                     .getBody();

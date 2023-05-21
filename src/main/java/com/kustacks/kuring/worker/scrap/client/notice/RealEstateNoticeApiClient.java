@@ -3,6 +3,7 @@ package com.kustacks.kuring.worker.scrap.client.notice;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.scrap.client.JsoupClient;
+import com.kustacks.kuring.worker.scrap.client.notice.property.RealEstateNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import org.jsoup.nodes.Document;
@@ -24,11 +25,11 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
     private static final int ESTATE_SCRAP_TIMEOUT = 100000;
 
     private final JsoupClient jsoupClient;
-    private final RealEstateProperties realEstateProperties;
+    private final RealEstateNoticeProperties realEstateNoticeProperties;
 
-    public RealEstateNoticeApiClient(JsoupClient proxyJsoupClient, RealEstateProperties realEstateProperties) {
+    public RealEstateNoticeApiClient(JsoupClient proxyJsoupClient, RealEstateNoticeProperties realEstateNoticeProperties) {
         this.jsoupClient = proxyJsoupClient;
-        this.realEstateProperties = realEstateProperties;
+        this.realEstateNoticeProperties = realEstateNoticeProperties;
     }
 
     @Override
@@ -91,7 +92,7 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private String createRequestUrl(String sca, int pageNum) {
         return UriComponentsBuilder
-                .fromUriString(realEstateProperties.getListUrl())
+                .fromUriString(realEstateNoticeProperties.getListUrl())
                 .queryParam("sca", sca)
                 .queryParam("page", pageNum)
                 .build()
@@ -100,7 +101,7 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private String createViewUrl(String sca) {
         return UriComponentsBuilder
-                .fromUriString(realEstateProperties.getViewUrl())
+                .fromUriString(realEstateNoticeProperties.getViewUrl())
                 .queryParam("sca", sca)
                 .queryParam("wr_id", "")
                 .build()

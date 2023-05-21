@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.science;
 
 import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.worker.scrap.client.notice.LatestPageProperties;
+import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -16,11 +16,11 @@ import java.util.List;
 public class MathematicsDept extends ScienceCollege {
 
     public MathematicsDept(NoticeApiClient<ScrapingResultDto, DeptInfo> latestPageNoticeApiClient,
-                           NoticeHtmlParser latestPageNoticeHtmlParserTwo, LatestPageProperties latestPageProperties) {
+                           NoticeHtmlParser latestPageNoticeHtmlParserTwo, LatestPageNoticeProperties latestPageNoticeProperties) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
         this.htmlParser = latestPageNoticeHtmlParserTwo;
-        this.latestPageProperties = latestPageProperties;
+        this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<String> professorForumIds = List.of("8663");
         List<String> forumIds = List.of("8652");

@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.engineering;
 
 import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.worker.scrap.client.notice.LatestPageProperties;
+import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -17,11 +17,11 @@ import java.util.List;
 public class AdvancedIndustrialFusionDept extends EngineeringCollege {
 
     public AdvancedIndustrialFusionDept(NoticeApiClient<ScrapingResultDto, DeptInfo> latestPageNoticeApiClient,
-                                        NoticeHtmlParser latestPageNoticeHtmlParserTwo, LatestPageProperties latestPageProperties) {
+                                        NoticeHtmlParser latestPageNoticeHtmlParserTwo, LatestPageNoticeProperties latestPageNoticeProperties) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
         this.htmlParser = latestPageNoticeHtmlParserTwo;
-        this.latestPageProperties = latestPageProperties;
+        this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<String> professorForumIds = List.of("4113024");
         List<String> forumIds = Collections.emptyList();
