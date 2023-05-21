@@ -1,16 +1,25 @@
 package com.kustacks.kuring.worker.notice;
 
-import com.kustacks.kuring.config.JsonConfig;
-import com.kustacks.kuring.config.RestTemplateConfig;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.utils.encoder.RequestBodyEncoder;
+import com.kustacks.kuring.config.JsonConfig;
+import com.kustacks.kuring.config.RestTemplateConfig;
 import com.kustacks.kuring.worker.scrap.client.auth.KuisAuthManager;
 import com.kustacks.kuring.worker.scrap.client.auth.ParsingKuisAuthManager;
+import com.kustacks.kuring.worker.scrap.client.auth.property.ParsingKuisAuthProperties;
 import com.kustacks.kuring.worker.update.notice.dto.request.KuisLoginRequestBody;
-import com.kustacks.kuring.common.utils.encoder.RequestBodyEncoder;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.TestPropertySource;
@@ -31,39 +40,33 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @SpringJUnitConfig({
-    ParsingKuisAuthManager.class, KuisLoginRequestBody.class, RequestBodyEncoder.class,
-    RestTemplateConfig.class, JsonConfig.class
+        ParsingKuisAuthManager.class, KuisLoginRequestBody.class, RequestBodyEncoder.class,
+        RestTemplateConfig.class, JsonConfig.class, ParsingKuisAuthProperties.class
 })
+@EnableConfigurationProperties(value = ParsingKuisAuthProperties.class)
 @TestPropertySource(locations = "classpath:test-constants.properties")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class ParsingKuisAuthManagerTest {
 
-    @Value("${auth.login-url}")
-    private String loginUrl;
-
-    @Value("${auth.api-skeleton-producer-url}")
-    private String apiSkeletonProducerUrl;
-
-    @Value("${auth.session}")
-    private String testCookie;
-
-    RestTemplate restTemplate;
-
     private final KuisAuthManager kuisAuthManager;
     private final String apiSkeleton;
     private final String successResponseBody = "{\"_METADATA_\":{\"success\":true}}";
     private final String failResponseBody = "{\"ERRMSGINFO\":{\"ERRMSG\":\"건국대학교에 허가되지 않은 접근입니다. 반복시도시 내부규정에 따라 해당 계정정보를 차단하며 경우에 따라 민형사상의 책임을 질 수 있습니다.\",\"STATUSCODE\":-2000,\"ERRCODE\":\"건국대학교에 허가되지 않은 접근입니다. 반복시도시 내부규정에 따라 해당 계정정보를 차단하며 경우에 따라 민형사상의 책임을 질 수 있습니다.\"}}";
+
     private MockRestServiceServer server;
+    private ParsingKuisAuthProperties parsingKuisAuthProperties;
+    private RestTemplate restTemplate;
 
     public ParsingKuisAuthManagerTest(
             KuisAuthManager parsingKuisAuthManager,
             RestTemplate restTemplate,
+            ParsingKuisAuthProperties parsingKuisAuthProperties,
             @Value("${auth.api-skeleton-file-path}") String apiSkeletonFilePath) throws IOException {
 
         this.kuisAuthManager = parsingKuisAuthManager;
         this.restTemplate = restTemplate;
-
+        this.parsingKuisAuthProperties = parsingKuisAuthProperties;
         apiSkeleton = readApiSkeleton(apiSkeletonFilePath);
     }
 
@@ -84,15 +87,17 @@ class ParsingKuisAuthManagerTest {
     void success() {
 
         // given
-        server.expect(requestTo(apiSkeletonProducerUrl)).andRespond(withSuccess().body(apiSkeleton));
-        server.expect(requestTo(loginUrl)).andExpect(method(HttpMethod.POST)).andRespond(withSuccess().body(successResponseBody));
+        server.expect(requestTo(parsingKuisAuthProperties.getApiSkeletonProducerUrl())).andRespond(withSuccess().body(apiSkeleton));
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Set-Cookie", "JSESSIONID=test_session_id;");
+        server.expect(requestTo(parsingKuisAuthProperties.getLoginUrl())).andExpect(method(HttpMethod.POST)).andRespond(withSuccess().headers(httpHeaders).body(successResponseBody));
 
         // when
         String sessionId = kuisAuthManager.getSessionId();
 
         // then
         server.verify();
-        assertEquals(testCookie, sessionId);
+        assertEquals(parsingKuisAuthProperties.getSession(), sessionId);
     }
 
     @Test
@@ -101,8 +106,10 @@ class ParsingKuisAuthManagerTest {
     void successWithSessionCache() {
 
         // given
-        server.expect(times(1), requestTo(apiSkeletonProducerUrl)).andRespond(withSuccess().body(apiSkeleton));
-        server.expect(times(1), requestTo(loginUrl)).andExpect(method(HttpMethod.POST)).andRespond(withSuccess().body(successResponseBody));
+        server.expect(times(1), requestTo(parsingKuisAuthProperties.getApiSkeletonProducerUrl())).andRespond(withSuccess().body(apiSkeleton));
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Set-Cookie", "JSESSIONID=test_session_id;");
+        server.expect(times(1), requestTo(parsingKuisAuthProperties.getLoginUrl())).andExpect(method(HttpMethod.POST)).andRespond(withSuccess().headers(httpHeaders).body(successResponseBody));
 
         // when
         String sessionId = kuisAuthManager.getSessionId();
@@ -110,8 +117,8 @@ class ParsingKuisAuthManagerTest {
 
         // then
         server.verify();
-        assertEquals(testCookie, sessionId);
-        assertEquals(testCookie, secondSessionId);
+        assertEquals(parsingKuisAuthProperties.getSession(), sessionId);
+        assertEquals(parsingKuisAuthProperties.getSession(), secondSessionId);
     }
 
     @Test
@@ -120,8 +127,8 @@ class ParsingKuisAuthManagerTest {
     void failByNoBody() {
 
         // given
-        server.expect(requestTo(apiSkeletonProducerUrl)).andRespond(withSuccess().body(apiSkeleton));
-        server.expect(requestTo(loginUrl)).andExpect(method(HttpMethod.POST)).andRespond(withSuccess());
+        server.expect(requestTo(parsingKuisAuthProperties.getApiSkeletonProducerUrl())).andRespond(withSuccess().body(apiSkeleton));
+        server.expect(requestTo(parsingKuisAuthProperties.getLoginUrl())).andExpect(method(HttpMethod.POST)).andRespond(withSuccess());
 
         // when
         InternalLogicException e = assertThrows(InternalLogicException.class, kuisAuthManager::getSessionId);
@@ -136,8 +143,8 @@ class ParsingKuisAuthManagerTest {
     void failByNoSuccessStringInBody() {
 
         // given
-        server.expect(requestTo(apiSkeletonProducerUrl)).andRespond(withSuccess().body(apiSkeleton));
-        server.expect(requestTo(loginUrl)).andExpect(method(HttpMethod.POST)).andRespond(withSuccess().body(failResponseBody));
+        server.expect(requestTo(parsingKuisAuthProperties.getApiSkeletonProducerUrl())).andRespond(withSuccess().body(apiSkeleton));
+        server.expect(requestTo(parsingKuisAuthProperties.getLoginUrl())).andExpect(method(HttpMethod.POST)).andRespond(withSuccess().body(failResponseBody));
 
         // when
         InternalLogicException e = assertThrows(InternalLogicException.class, kuisAuthManager::getSessionId);
