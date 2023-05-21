@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
@@ -19,7 +21,14 @@ import java.util.Queue;
 @Component
 public class ProxyJsoupClient implements JsoupClient {
 
+    private static final String IP_PORT_DELIMITER = ":";
+    private static final int IP_INDEX = 0;
+    private static final int PORT_INDEX = 1;
+
     private final Queue<ProxyInfo> proxyQueue;
+
+    @Value("${ip.proxy-list}")
+    private List<String> proxyList;
 
     public ProxyJsoupClient() {
         proxyQueue = new LinkedList<>();
@@ -27,11 +36,10 @@ public class ProxyJsoupClient implements JsoupClient {
 
     @PostConstruct
     public void initProxyList() {
-        proxyQueue.offer(new ProxyInfo("14.63.228.239", 80));
-        proxyQueue.offer(new ProxyInfo("101.79.15.198", 80));
-        proxyQueue.offer(new ProxyInfo("222.104.128.205", 48678));
-        proxyQueue.offer(new ProxyInfo("106.244.154.91", 8080));
-        proxyQueue.offer(new ProxyInfo("103.51.205.42", 8181));
+        for(String proxyIp : proxyList) {
+            String[] splitResults = proxyIp.split(IP_PORT_DELIMITER);
+            proxyQueue.offer(new ProxyInfo(splitResults[IP_INDEX], Integer.parseInt(splitResults[PORT_INDEX])));
+        }
     }
 
     @Override
