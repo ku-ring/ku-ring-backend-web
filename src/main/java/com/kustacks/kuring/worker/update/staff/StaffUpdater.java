@@ -6,7 +6,6 @@ import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.domain.StaffRepository;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
-import com.kustacks.kuring.worker.update.Updater;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class StaffUpdater implements Updater {
+public class StaffUpdater {
 
     private final StaffRepository staffRepository;
     private final StaffScraper staffScraper;
@@ -38,7 +37,6 @@ public class StaffUpdater implements Updater {
         this.deptInfos = deptInfos;
     }
 
-    @Override
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
     public void update() {
 

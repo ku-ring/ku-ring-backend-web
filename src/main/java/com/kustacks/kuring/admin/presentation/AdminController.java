@@ -198,7 +198,7 @@ public class AdminController {
                     .category(fakeNoticeCategory)
                     .subject(fakeNoticeSubject)
                     .categoryKorName("fakeCategoryKorName")
-                    .url(CategoryName.LIBRARY.getName().equals(fakeNoticeCategory) ? libraryBaseUrl : normalBaseUrl)
+                    .baseUrl(CategoryName.LIBRARY.getName().equals(fakeNoticeCategory) ? libraryBaseUrl : normalBaseUrl)
                     .build());
         } catch (FirebaseMessageSendException e) {
             throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
@@ -291,7 +291,7 @@ public class AdminController {
                         .subject(subject)
                         .category(category)
                         .categoryKorName("fakeCategoryKorName")
-                        .url(CategoryName.LIBRARY.getName().equals(category) ? libraryBaseUrl : normalBaseUrl)
+                        .baseUrl(CategoryName.LIBRARY.getName().equals(category) ? libraryBaseUrl : normalBaseUrl)
                         .build());
             } catch (FirebaseMessagingException e) {
                 throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);

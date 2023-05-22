@@ -2,7 +2,7 @@ package com.kustacks.kuring.worker.scrap.client.notice;
 
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
-import com.kustacks.kuring.worker.scrap.client.staff.JsoupClient;
+import com.kustacks.kuring.worker.scrap.client.JsoupClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import lombok.extern.slf4j.Slf4j;

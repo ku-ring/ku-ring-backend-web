@@ -11,7 +11,6 @@ import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendExceptio
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
-import com.kustacks.kuring.worker.update.Updater;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class CategoryNoticeUpdater implements Updater {
+public class CategoryNoticeUpdater {
 
     private final Map<CategoryName, NoticeApiClient<CommonNoticeFormatDto, CategoryName>> noticeApiClientMap;
     private final FirebaseService firebaseService;
@@ -48,7 +47,6 @@ public class CategoryNoticeUpdater implements Updater {
         this.categoryRepository = categoryRepository;
     }
 
-    @Override
     @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
     public void update() {
         log.info("========== 공지 업데이트 시작 ==========");

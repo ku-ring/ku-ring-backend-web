@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo;
 
 import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.worker.scrap.client.notice.LatestPageProperties;
+import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 public class DeptInfo {
 
-    protected LatestPageProperties latestPageProperties;
+    protected LatestPageNoticeProperties latestPageNoticeProperties;
     protected String code;
     protected DepartmentName departmentName;
     protected String collegeName;
@@ -41,7 +41,7 @@ public class DeptInfo {
     }
 
     public String createRequestUrl(int index, int curPage, int pageNum) {
-        return UriComponentsBuilder.fromUriString(latestPageProperties.getListUrl())
+        return UriComponentsBuilder.fromUriString(latestPageNoticeProperties.getListUrl())
                 .queryParam("siteId", noticeScrapInfo.getSiteId())
                 .queryParam("boardSeq", noticeScrapInfo.getBoardSeqs().get(index))
                 .queryParam("menuSeq", noticeScrapInfo.getMenuSeqs().get(index))
@@ -53,7 +53,7 @@ public class DeptInfo {
 
     public String createViewUrl(int index) {
         return UriComponentsBuilder
-                .fromUriString(latestPageProperties.getViewUrl())
+                .fromUriString(latestPageNoticeProperties.getViewUrl())
                 .queryParam("siteId", noticeScrapInfo.getSiteId())
                 .queryParam("boardSeq", noticeScrapInfo.getBoardSeqs().get(index))
                 .queryParam("menuSeq", noticeScrapInfo.getMenuSeqs().get(index))
