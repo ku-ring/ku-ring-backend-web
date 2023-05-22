@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 @Component
 public class ParsingKuisAuthManager implements KuisAuthManager {
 
-    private final String PARSING_PATTERN = "submit\\.addParameter[(]\"(.{5,7})\",\"(.{5,7})\"[)]";
-    private final String SESSION_PATTERN = "JSESSIONID=(.*?);";
+    private final static String PARSING_PATTERN = "submit\\.addParameter[(]\"(.{5,7})\",\"(.{5,7})\"[)]";
+    private final static String SESSION_PATTERN = "JSESSIONID=(.*?);";
     private final KuisLoginRequestBody kuisLoginRequestBody;
     private final RestTemplate restTemplate;
     private final Encoder encoder;
