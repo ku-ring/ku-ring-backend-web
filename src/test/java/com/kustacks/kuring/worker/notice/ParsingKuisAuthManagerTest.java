@@ -8,7 +8,7 @@ import com.kustacks.kuring.config.RestTemplateConfig;
 import com.kustacks.kuring.worker.scrap.client.auth.KuisAuthManager;
 import com.kustacks.kuring.worker.scrap.client.auth.ParsingKuisAuthManager;
 import com.kustacks.kuring.worker.scrap.client.auth.property.ParsingKuisAuthProperties;
-import com.kustacks.kuring.worker.update.notice.dto.request.KuisLoginRequestBody;
+import com.kustacks.kuring.worker.update.notice.dto.request.KuisLoginInfo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +40,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @SpringJUnitConfig({
-        ParsingKuisAuthManager.class, KuisLoginRequestBody.class, RequestBodyEncoder.class,
+        ParsingKuisAuthManager.class, KuisLoginInfo.class, RequestBodyEncoder.class,
         RestTemplateConfig.class, JsonConfig.class, ParsingKuisAuthProperties.class
 })
 @EnableConfigurationProperties(value = ParsingKuisAuthProperties.class)

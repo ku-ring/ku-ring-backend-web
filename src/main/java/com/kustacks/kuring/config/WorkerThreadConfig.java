@@ -12,7 +12,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class WorkerThreadConfig {
 
     @Bean
-    public ThreadPoolTaskExecutor departmentNoticeUpdaterThreadTaskExecutor() {
+    public ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setKeepAliveSeconds(10);
         taskExecutor.setCorePoolSize(6);
