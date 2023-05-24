@@ -1,9 +1,9 @@
 package com.kustacks.kuring.worker.update.staff.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.kustacks.kuring.worker.update.notice.dto.request.KuisRequestBody;
+import com.kustacks.kuring.worker.update.notice.dto.request.KuisInfo;
 
-public class KuisStaffRequestBody extends KuisRequestBody {
+public class KuisStaffInfo extends KuisInfo {
     @JsonProperty("Wke8,1")
     private final String v1 = "Ie3,jd";
 
@@ -49,7 +49,7 @@ public class KuisStaffRequestBody extends KuisRequestBody {
     @JsonProperty("@d1#strDeptCd")
     private String v15;
 
-    public KuisStaffRequestBody(String deptCode) {
+    public KuisStaffInfo(String deptCode) {
         this.v15 = deptCode;
     }
 }
