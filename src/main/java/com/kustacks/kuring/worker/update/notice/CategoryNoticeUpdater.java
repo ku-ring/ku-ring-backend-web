@@ -40,7 +40,7 @@ public class CategoryNoticeUpdater {
     private final NoticeRepository noticeRepository;
     private final FirebaseService firebaseService;
     private final LibraryNoticeApiClient libraryNoticeApiClient;
-    private final ThreadPoolTaskExecutor departmentNoticeUpdaterThreadTaskExecutor;
+    private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
 
     private static long startTime = 0L;
 
@@ -48,6 +48,7 @@ public class CategoryNoticeUpdater {
     학사, 장학, 취창업, 국제, 학생, 산학, 일반, 도서관 공지 갱신
     */
     @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(cron = "0 0/20 6-23 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 6:00 ~ 오후 11:55분 사이에 20분마다 업데이트 된다.
     public void update() {
         log.info("========== 공지 업데이트 시작 ==========");
         startTime = System.currentTimeMillis();
@@ -56,7 +57,7 @@ public class CategoryNoticeUpdater {
 
         for(KuisNoticeInfo kuisNoticeInfo : kuisNoticeInfoList) {
             CompletableFuture
-                    .supplyAsync(() -> updateKuisNoticeAsync(kuisNoticeInfo, KuisNoticeInfo::scrapLatestPageHtml), departmentNoticeUpdaterThreadTaskExecutor)
+                    .supplyAsync(() -> updateKuisNoticeAsync(kuisNoticeInfo, KuisNoticeInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName()))
                     .thenAccept(this::sendNotificationByFcm);
         }

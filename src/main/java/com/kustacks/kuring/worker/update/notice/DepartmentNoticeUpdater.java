@@ -39,7 +39,7 @@ public class DepartmentNoticeUpdater {
     private final Map<String, Category> categoryMap;
     private final DepartmentNoticeScraperTemplate scrapperTemplate;
     private final DepartmentNoticeRepository departmentNoticeRepository;
-    private final ThreadPoolTaskExecutor departmentNoticeUpdaterThreadTaskExecutor;
+    private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
     private final FirebaseService firebaseService;
 
     private static long startTime = 0L;
@@ -51,7 +51,7 @@ public class DepartmentNoticeUpdater {
 
         for (DeptInfo deptInfo : deptInfoList) {
             CompletableFuture
-                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml), departmentNoticeUpdaterThreadTaskExecutor)
+                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName()))
                     .thenAccept(this::sendNotificationByFcm);
         }
@@ -64,7 +64,7 @@ public class DepartmentNoticeUpdater {
 
         for (DeptInfo deptInfo : deptInfoList) {
             CompletableFuture
-                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), departmentNoticeUpdaterThreadTaskExecutor)
+                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
         }
     }
@@ -72,10 +72,6 @@ public class DepartmentNoticeUpdater {
     private List<ComplexNoticeFormatDto> updateDepartmentAsync(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) {
         List<ComplexNoticeFormatDto> scrapResults = scrapperTemplate.scrap(deptInfo, decisionMaker);
 
-        // noticeAPIClient 혹은 scraper에서 새로운 공지를 감지할 때, 가장 최신에 올라온 공지를 list에 순차적으로 담는다.
-        // 이 때문에 만약 같은 시간대에 감지된 두 공지가 있다면, 보다 최신 공지가 리스트의 앞 인덱스에 위치하게 되고, 이를 그대로 DB에 적용한다면
-        // 보다 최신인 공지가 DB에 먼저 삽입되어, kuring API 서버에서 이를 덜 신선한 공지로 판단하게 된다.
-        // 이에 commonNoticeFormatDTOList를 reverse하여 공지의 신선도 순서를 유지한다.
         for (ComplexNoticeFormatDto scrapResult : scrapResults) {
             scrapResult.reverseEachNoticeList();
         }
