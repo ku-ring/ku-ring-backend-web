@@ -131,9 +131,10 @@ class KuisNoticeApiClientTest {
         // given
         given(kuisAuthManager.getSessionId()).willReturn(testSession);
         server.expect(requestTo(kuisNoticeProperties.getRequestUrl())).andRespond(withUnauthorizedRequest());
+        BachelorKuisNoticeInfo bachelorKuisNoticeInfo = new BachelorKuisNoticeInfo(kuisNoticeAPIClient);
 
         // when, then
-        InternalLogicException e = assertThrows(InternalLogicException.class, () -> new BachelorKuisNoticeInfo(kuisNoticeAPIClient).scrapLatestPageHtml());
+        InternalLogicException e = assertThrows(InternalLogicException.class, bachelorKuisNoticeInfo::scrapLatestPageHtml);
         assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
     }
 
@@ -144,9 +145,10 @@ class KuisNoticeApiClientTest {
         // given
         given(kuisAuthManager.getSessionId()).willReturn(testSession);
         server.expect(requestTo(kuisNoticeProperties.getRequestUrl())).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON));
+        BachelorKuisNoticeInfo bachelorKuisNoticeInfo = new BachelorKuisNoticeInfo(kuisNoticeAPIClient);
 
         //when, then
-        InternalLogicException e = assertThrows(InternalLogicException.class, () -> new BachelorKuisNoticeInfo(kuisNoticeAPIClient).scrapLatestPageHtml());
+        InternalLogicException e = assertThrows(InternalLogicException.class, bachelorKuisNoticeInfo::scrapLatestPageHtml);
         assertEquals(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON, e.getErrorCode());
     }
 
@@ -158,9 +160,10 @@ class KuisNoticeApiClientTest {
         String badResponseBody = "{\"UNKNOWN\": []}";
         given(kuisAuthManager.getSessionId()).willReturn(testSession);
         server.expect(requestTo(kuisNoticeProperties.getRequestUrl())).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(badResponseBody));
+        BachelorKuisNoticeInfo bachelorKuisNoticeInfo = new BachelorKuisNoticeInfo(kuisNoticeAPIClient);
 
         //when, then
-        InternalLogicException e = assertThrows(InternalLogicException.class, () -> new BachelorKuisNoticeInfo(kuisNoticeAPIClient).scrapLatestPageHtml());
+        InternalLogicException e = assertThrows(InternalLogicException.class, bachelorKuisNoticeInfo::scrapLatestPageHtml);
         assertEquals(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON, e.getErrorCode());
     }
 
@@ -169,9 +172,10 @@ class KuisNoticeApiClientTest {
     void failAfterRetry() {
         // given
         given(kuisAuthManager.getSessionId()).willThrow(new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE, new RestClientException("로그인 세션 획득 실패")));
+        BachelorKuisNoticeInfo bachelorKuisNoticeInfo = new BachelorKuisNoticeInfo(kuisNoticeAPIClient);
 
         // when, then
-        InternalLogicException e = assertThrows(InternalLogicException.class, () -> new BachelorKuisNoticeInfo(kuisNoticeAPIClient).scrapLatestPageHtml());
+        InternalLogicException e = assertThrows(InternalLogicException.class, bachelorKuisNoticeInfo::scrapLatestPageHtml);
         assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
     }
 }

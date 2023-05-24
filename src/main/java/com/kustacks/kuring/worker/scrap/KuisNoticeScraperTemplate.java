@@ -17,7 +17,7 @@ public class KuisNoticeScraperTemplate {
     public List<CommonNoticeFormatDto> scrap(KuisNoticeInfo kuisNoticeRequestBody, Function<KuisNoticeInfo, List<CommonNoticeFormatDto>> decisionMaker) throws InternalLogicException {
         List<CommonNoticeFormatDto> requestResults = requestWithKuisInfo(kuisNoticeRequestBody, decisionMaker);
 
-        if(requestResults == null || requestResults.size() == 0) {
+        if(requestResults == null || requestResults.isEmpty()) {
             throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_SCRAP);
         }
 

@@ -89,7 +89,7 @@ public class CategoryNoticeUpdater {
         List<Notice> newNotices = synchronizationWithDb(scrapResults, savedArticleIds, categoryName);
 
         long endTime = System.currentTimeMillis();
-        log.info("[{}] 업데이트 시작으로부터 {}millis 만큼 지남", categoryName.getKorName(), endTime - this.startTime);
+        log.info("[{}] 업데이트 시작으로부터 {}millis 만큼 지남", categoryName.getKorName(), endTime - startTime);
 
         return newNotices;
     }
