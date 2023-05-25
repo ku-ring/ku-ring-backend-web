@@ -173,6 +173,7 @@ public class DepartmentNoticeUpdater {
     private List<Integer> extractIdList(List<CommonNoticeFormatDto> scrapResults) {
         return scrapResults.stream()
                 .map(scrap -> Integer.parseInt(scrap.getArticleId()))
+                .sorted()
                 .collect(Collectors.toList());
     }
 
