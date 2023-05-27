@@ -2,11 +2,7 @@ package com.kustacks.kuring.worker.update.notice;
 
 import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryName;
-import com.kustacks.kuring.common.dto.NoticeMessageDto;
-import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.worker.scrap.KuisNoticeScraperTemplate;
@@ -25,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -47,7 +42,6 @@ public class CategoryNoticeUpdater {
     /*
     학사, 장학, 취창업, 국제, 학생, 산학, 일반, 도서관 공지 갱신
     */
-    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
     @Scheduled(cron = "0 0/20 6-23 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 6:00 ~ 오후 11:55분 사이에 20분마다 업데이트 된다.
     public void update() {
         log.info("========== 공지 업데이트 시작 ==========");
@@ -59,14 +53,14 @@ public class CategoryNoticeUpdater {
             CompletableFuture
                     .supplyAsync(() -> updateKuisNoticeAsync(kuisNoticeInfo, KuisNoticeInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName()))
-                    .thenAccept(this::sendNotificationByFcm);
+                    .thenAccept(firebaseService::sendNotificationByFcm);
         }
     }
 
     private void updateLibrary() {
         List<CommonNoticeFormatDto> scrapResults = updateLibraryNotice(CategoryName.LIBRARY);
         List<Notice> notices = compareLatestAndUpdateDB(scrapResults, CategoryName.LIBRARY);
-        sendNotificationByFcm(notices);
+        firebaseService.sendNotificationByFcm(notices);
     }
 
     private List<CommonNoticeFormatDto> updateLibraryNotice(CategoryName categoryName) {
@@ -103,7 +97,9 @@ public class CategoryNoticeUpdater {
 
         noticeRepository.saveAllAndFlush(newNotices);
 
-        noticeRepository.deleteAllByIdsAndCategory(categoryName, deletedNoticesArticleIds);
+        if(!deletedNoticesArticleIds.isEmpty()) {
+            noticeRepository.deleteAllByIdsAndCategory(categoryName, deletedNoticesArticleIds);
+        }
 
         return newNotices;
     }
@@ -150,30 +146,5 @@ public class CategoryNoticeUpdater {
                 category,
                 false,
                 dto.getFullUrl());
-    }
-
-    private void sendNotificationByFcm(List<Notice> noticeList) {
-        List<NoticeMessageDto> kuisNotificationDtoList = createNotification(noticeList);
-
-        try {
-            firebaseService.sendNoticeMessageList(kuisNotificationDtoList);
-            log.info("FCM에 정상적으로 메세지를 전송했습니다.");
-            log.info("전송된 공지 목록은 다음과 같습니다.");
-            for (Notice notice : noticeList) {
-                log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", notice.getArticleId(), notice.getPostedDate(), notice.getCategoryName(), notice.getSubject());
-            }
-        } catch (FirebaseMessageSendException e) {
-            log.error("새로운 공지의 FCM 전송에 실패했습니다.");
-            throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
-        } catch (Exception e) {
-            log.error("새로운 공지를 FCM에 보내는 중 알 수 없는 오류가 발생했습니다.");
-            throw new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e);
-        }
-    }
-
-    private List<NoticeMessageDto> createNotification(List<Notice> willBeNotiNotices) {
-        return willBeNotiNotices.stream()
-                .map(NoticeMessageDto::from)
-                .collect(Collectors.toList());
     }
 }
