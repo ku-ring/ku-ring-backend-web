@@ -8,23 +8,29 @@ import com.google.firebase.messaging.Notification;
 import com.google.firebase.messaging.TopicManagementResponse;
 import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
+import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
 import com.kustacks.kuring.common.firebase.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.common.firebase.exception.FirebaseUnSubscribeException;
+import com.kustacks.kuring.notice.domain.Notice;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FirebaseService {
 
     private static final String NOTIFICATION_TITLE = "새로운 공지가 왔어요!";
-    private final String DEV_SUFFIX = ".dev";
+    private final String DEV_SUFFIX = "dev";
     private final FirebaseMessaging firebaseMessaging;
     private final ObjectMapper objectMapper;
 
@@ -98,16 +104,41 @@ public class FirebaseService {
         }
     }
 
-    public void sendNoticeMessageList(List<NoticeMessageDto> messageDtoList) throws FirebaseMessageSendException {
-        messageDtoList.forEach(this::sendMessage);
-    }
-
     public void sendNoticeMessageForAdmin(String token, NoticeMessageDto messageDto) throws FirebaseMessagingException {
         firebaseMessaging.send(buildMessage(token, messageDto));
     }
 
     public void sendNoticeMessageForAdmin(String token, AdminMessageDto messageDto) throws FirebaseMessagingException {
         firebaseMessaging.send(buildMessage(token, messageDto));
+    }
+
+    public void sendNotificationByFcm(List<? extends Notice> noticeList) {
+        List<NoticeMessageDto> notificationDtoList = createNotification(noticeList);
+
+        try {
+            this.sendNoticeMessageList(notificationDtoList);
+            log.info("FCM에 {}개의 공지 메세지를 전송했습니다.", notificationDtoList.size());
+            log.info("전송된 공지 목록은 다음과 같습니다.");
+            for (Notice notice : noticeList) {
+                log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", notice.getArticleId(), notice.getPostedDate(), notice.getCategoryName(), notice.getSubject());
+            }
+        } catch (FirebaseMessageSendException e) {
+            log.error("새로운 공지의 FCM 전송에 실패했습니다.");
+            throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
+        } catch (Exception e) {
+            log.error("새로운 공지를 FCM에 보내는 중 알 수 없는 오류가 발생했습니다.");
+            throw new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e);
+        }
+    }
+
+    private List<NoticeMessageDto> createNotification(List<? extends Notice> willBeNotiNotices) {
+        return willBeNotiNotices.stream()
+                .map(NoticeMessageDto::from)
+                .collect(Collectors.toList());
+    }
+
+    private void sendNoticeMessageList(List<NoticeMessageDto> messageDtoList) throws FirebaseMessageSendException {
+        messageDtoList.forEach(this::sendMessage);
     }
 
     private String buildTitle(String korName) {
@@ -127,8 +158,8 @@ public class FirebaseService {
 
     private StringBuilder ifDevThenAddSuffix(String topic) {
         StringBuilder topicBuilder = new StringBuilder(topic);
-        if (deployEnv.equals("dev")) {
-            topicBuilder.append(DEV_SUFFIX);
+        if (deployEnv.equals(DEV_SUFFIX)) {
+            topicBuilder.append(".").append(DEV_SUFFIX);
         }
 
         return topicBuilder;
