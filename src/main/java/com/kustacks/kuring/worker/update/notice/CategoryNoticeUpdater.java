@@ -42,7 +42,7 @@ public class CategoryNoticeUpdater {
     /*
     학사, 장학, 취창업, 국제, 학생, 산학, 일반, 도서관 공지 갱신
     */
-    @Scheduled(cron = "0 0/20 6-23 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 6:00 ~ 오후 11:55분 사이에 20분마다 업데이트 된다.
+    @Scheduled(cron = "0 0/10 6-23 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 6:00 ~ 오후 11:55분 사이에 20분마다 업데이트 된다.
     public void update() {
         log.info("========== 공지 업데이트 시작 ==========");
         startTime = System.currentTimeMillis();
@@ -77,10 +77,10 @@ public class CategoryNoticeUpdater {
 
     private List<Notice> compareLatestAndUpdateDB(List<CommonNoticeFormatDto> scrapResults, CategoryName categoryName) {
         // DB에서 모든 일반 공지 id를 가져와서
-        List<String> savedArticleIds = noticeRepository.findNormalArticleIdsByCategory(categoryName);
+        List<Notice> savedNotices = noticeRepository.findByCategory(categoryMap.get(categoryName.getName()));
 
         // db와 싱크를 맞춘다
-        List<Notice> newNotices = synchronizationWithDb(scrapResults, savedArticleIds, categoryName);
+        List<Notice> newNotices = synchronizationWithDb(scrapResults, savedNotices, categoryName);
 
         long endTime = System.currentTimeMillis();
         log.info("[{}] 업데이트 시작으로부터 {}millis 만큼 지남", categoryName.getKorName(), endTime - startTime);
@@ -88,17 +88,17 @@ public class CategoryNoticeUpdater {
         return newNotices;
     }
 
-    private List<Notice> synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, CategoryName categoryName) {
-        List<Notice> newNotices = filteringSoonSaveNotice(scrapResults, savedArticleIds, categoryName);
+    private List<Notice> synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<Notice> savedNotices, CategoryName categoryName) {
+        List<String> savedIds = savedNotices.stream().map(Notice::getArticleId).sorted().collect(Collectors.toList());
 
-        List<String> scrapNoticeIds = extractIdList(scrapResults);
+        List<Notice> newNotices = filteringSoonSaveNotices(scrapResults, savedIds, categoryName);
 
-        List<String> deletedNoticesArticleIds = filteringSoonDeleteIds(savedArticleIds, scrapNoticeIds);
+        List<Notice> soonDeletedNotices = filteringSoonDeleteNotices(savedNotices, scrapResults);
 
         noticeRepository.saveAllAndFlush(newNotices);
 
-        if(!deletedNoticesArticleIds.isEmpty()) {
-            noticeRepository.deleteAllByIdsAndCategory(categoryName, deletedNoticesArticleIds);
+        if(!soonDeletedNotices.isEmpty()) {
+            noticeRepository.deleteAll(soonDeletedNotices);
         }
 
         return newNotices;
@@ -111,14 +111,15 @@ public class CategoryNoticeUpdater {
                 .collect(Collectors.toList());
     }
 
-    private List<String> filteringSoonDeleteIds(List<String> savedArticleIds, List<String> latestNoticeIds) {
-        return savedArticleIds.stream()
-                .filter(savedArticleId -> Collections.binarySearch(latestNoticeIds, savedArticleId) < 0)
-                .map(Object::toString)
+    private List<Notice> filteringSoonDeleteNotices(List<Notice> savedNotices, List<CommonNoticeFormatDto> scrapResults) {
+        List<String> scrapNoticeIds = extractIdList(scrapResults);
+
+        return savedNotices.stream()
+                .filter(notice -> Collections.binarySearch(scrapNoticeIds, notice.getArticleId()) < 0)
                 .collect(Collectors.toList());
     }
 
-    private List<Notice> filteringSoonSaveNotice(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, CategoryName categoryName) {
+    private List<Notice> filteringSoonSaveNotices(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, CategoryName categoryName) {
         List<Notice> newNotices = new LinkedList<>(); // 뒤에 추가만 계속 하기 때문에 arrayList가 아닌 Linked List 사용 O(1)
         for (CommonNoticeFormatDto notice : scrapResults) {
             try {

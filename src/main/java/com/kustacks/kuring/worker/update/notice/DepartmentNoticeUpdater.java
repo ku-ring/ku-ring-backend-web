@@ -40,8 +40,7 @@ public class DepartmentNoticeUpdater {
 
     private static long startTime = 0L;
 
-    //@Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
-    //@Scheduled(cron = "0 10/20 8-18 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 8:10 ~ 오후 6:55분 사이에 20분마다 업데이트 된다.
+    @Scheduled(cron = "0 5/10 8-18 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 8:10 ~ 오후 6:55분 사이에 20분마다 업데이트 된다.
     public void update() {
         log.info("******** 학과별 최신 공지 업데이트 시작 ********");
         startTime = System.currentTimeMillis();
