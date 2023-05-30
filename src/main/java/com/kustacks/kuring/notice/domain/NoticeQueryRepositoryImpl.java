@@ -1,7 +1,6 @@
 package com.kustacks.kuring.notice.domain;
 
 import com.kustacks.kuring.category.domain.Category;
-import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
 import com.kustacks.kuring.notice.common.dto.QNoticeDto;
@@ -47,29 +46,6 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .where(isContainSubject(keywords).or(isContainCategory(keywords)))
                 .orderBy(notice.postedDate.desc())
                 .fetch();
-    }
-
-    @Override
-    public List<String> findNormalArticleIdsByCategory(CategoryName categoryName) {
-        return queryFactory
-                .select(notice.articleId)
-                .from(notice)
-                .where(notice.category.categoryName.eq(categoryName))
-                .orderBy(notice.articleId.asc())
-                .fetch();
-    }
-
-    @Override
-    public void deleteAllByIdsAndCategory(CategoryName categoryName, List<String> articleIds) {
-        if(articleIds.isEmpty()) {
-            return;
-        }
-
-        queryFactory
-                .delete(notice)
-                .where(notice.category.categoryName.eq(categoryName)
-                        .and(notice.articleId.in(articleIds)))
-                .execute();
     }
 
     private static BooleanBuilder isContainSubject(List<String> keywords) {
