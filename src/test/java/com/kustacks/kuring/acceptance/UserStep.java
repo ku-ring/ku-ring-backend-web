@@ -46,12 +46,12 @@ public class UserStep {
                 .extract();
     }
 
-    public static void 카테고리_구독_목록_조회_요청_응답_확인_v2(ExtractableResponse<Response> response, String... categories) {
+    public static void 카테고리_구독_목록_조회_요청_응답_확인_v2(ExtractableResponse<Response> response, List<String> departments) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("사용자가 구독한 학교 공지 카테고리 조회에 성공하였습니다"),
-                () -> assertThat(response.jsonPath().getList("data.name")).contains(categories)
+                () -> assertThat(response.jsonPath().getList("data.name")).isEqualTo(departments)
         );
     }
 
@@ -75,12 +75,12 @@ public class UserStep {
         );
     }
 
-    public static void 사용자_학과_조회_응답_확인(ExtractableResponse<Response> response) {
+    public static void 사용자_학과_조회_응답_확인(ExtractableResponse<Response> response, List<String> departments) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("사용자가 구독한 학과 조회에 성공하였습니다"),
-                () -> assertThat(response.jsonPath().getList("data.name")).contains("computer_science", "korean")
+                () -> assertThat(response.jsonPath().getList("data.name")).isEqualTo(departments)
         );
     }
 
