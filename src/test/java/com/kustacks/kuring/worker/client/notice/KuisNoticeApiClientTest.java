@@ -1,24 +1,24 @@
 package com.kustacks.kuring.worker.client.notice;
 
-import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.utils.converter.KuisNoticeDtoToCommonFormatDtoConverter;
 import com.kustacks.kuring.config.JsonConfig;
-import com.kustacks.kuring.worker.scrap.client.auth.KuisAuthManager;
+import com.kustacks.kuring.worker.scrap.client.auth.ParsingKuisAuthManager;
 import com.kustacks.kuring.worker.scrap.client.notice.KuisNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.KuisNoticeProperties;
-import com.kustacks.kuring.worker.update.notice.dto.request.BachelorKuisNoticeRequestBody;
-import com.kustacks.kuring.worker.update.notice.dto.request.EmploymentKuisNoticeRequestBody;
-import com.kustacks.kuring.worker.update.notice.dto.request.IndustryUnivKuisNoticeRequestBody;
-import com.kustacks.kuring.worker.update.notice.dto.request.NationalKuisNoticeRequestBody;
-import com.kustacks.kuring.worker.update.notice.dto.request.NormalKuisNoticeRequestBody;
-import com.kustacks.kuring.worker.update.notice.dto.request.ScholarshipKuisNoticeRequestBody;
-import com.kustacks.kuring.worker.update.notice.dto.request.StudentKuisNoticeRequestBody;
+import com.kustacks.kuring.worker.update.notice.dto.request.BachelorKuisNoticeInfo;
+import com.kustacks.kuring.worker.update.notice.dto.request.EmploymentKuisNoticeInfo;
+import com.kustacks.kuring.worker.update.notice.dto.request.IndustryUnivKuisNoticeInfo;
+import com.kustacks.kuring.worker.update.notice.dto.request.NationalKuisNoticeInfo;
+import com.kustacks.kuring.worker.update.notice.dto.request.NormalKuisNoticeInfo;
+import com.kustacks.kuring.worker.update.notice.dto.request.ScholarshipKuisNoticeInfo;
+import com.kustacks.kuring.worker.update.notice.dto.request.StudentKuisNoticeInfo;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -41,13 +41,13 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @SpringJUnitConfig({
         KuisNoticeApiClient.class, RestTemplate.class, KuisNoticeDtoToCommonFormatDtoConverter.class,
-        BachelorKuisNoticeRequestBody.class,
-        ScholarshipKuisNoticeRequestBody.class,
-        EmploymentKuisNoticeRequestBody.class,
-        NationalKuisNoticeRequestBody.class,
-        StudentKuisNoticeRequestBody.class,
-        IndustryUnivKuisNoticeRequestBody.class,
-        NormalKuisNoticeRequestBody.class,
+        BachelorKuisNoticeInfo.class,
+        ScholarshipKuisNoticeInfo.class,
+        EmploymentKuisNoticeInfo.class,
+        NationalKuisNoticeInfo.class,
+        StudentKuisNoticeInfo.class,
+        IndustryUnivKuisNoticeInfo.class,
+        NormalKuisNoticeInfo.class,
         JsonConfig.class})
 @EnableConfigurationProperties(value = KuisNoticeProperties.class)
 @TestPropertySource("classpath:test-constants.properties")
@@ -55,11 +55,13 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 class KuisNoticeApiClientTest {
 
     private final KuisNoticeProperties kuisNoticeProperties;
+
+    @InjectMocks
     private final KuisNoticeApiClient kuisNoticeAPIClient;
     private final RestTemplate restTemplate;
 
     @MockBean
-    private KuisAuthManager kuisAuthManager;
+    private ParsingKuisAuthManager kuisAuthManager;
     private MockRestServiceServer server;
     private String testSession;
 
@@ -111,7 +113,7 @@ class KuisNoticeApiClientTest {
         server.expect(requestTo(kuisNoticeProperties.getRequestUrl())).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(expectedResponseBody));
 
         // when
-        List<CommonNoticeFormatDto> notices = kuisNoticeAPIClient.request(CategoryName.BACHELOR);
+        List<CommonNoticeFormatDto> notices = new BachelorKuisNoticeInfo(kuisNoticeAPIClient).scrapLatestPageHtml();
 
         // then
         for(int i=0; i<2 ;++i) {
@@ -129,9 +131,10 @@ class KuisNoticeApiClientTest {
         // given
         given(kuisAuthManager.getSessionId()).willReturn(testSession);
         server.expect(requestTo(kuisNoticeProperties.getRequestUrl())).andRespond(withUnauthorizedRequest());
+        BachelorKuisNoticeInfo bachelorKuisNoticeInfo = new BachelorKuisNoticeInfo(kuisNoticeAPIClient);
 
         // when, then
-        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.request(CategoryName.BACHELOR));
+        InternalLogicException e = assertThrows(InternalLogicException.class, bachelorKuisNoticeInfo::scrapLatestPageHtml);
         assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
     }
 
@@ -142,9 +145,10 @@ class KuisNoticeApiClientTest {
         // given
         given(kuisAuthManager.getSessionId()).willReturn(testSession);
         server.expect(requestTo(kuisNoticeProperties.getRequestUrl())).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON));
+        BachelorKuisNoticeInfo bachelorKuisNoticeInfo = new BachelorKuisNoticeInfo(kuisNoticeAPIClient);
 
         //when, then
-        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.request(CategoryName.BACHELOR));
+        InternalLogicException e = assertThrows(InternalLogicException.class, bachelorKuisNoticeInfo::scrapLatestPageHtml);
         assertEquals(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON, e.getErrorCode());
     }
 
@@ -156,9 +160,10 @@ class KuisNoticeApiClientTest {
         String badResponseBody = "{\"UNKNOWN\": []}";
         given(kuisAuthManager.getSessionId()).willReturn(testSession);
         server.expect(requestTo(kuisNoticeProperties.getRequestUrl())).andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(badResponseBody));
+        BachelorKuisNoticeInfo bachelorKuisNoticeInfo = new BachelorKuisNoticeInfo(kuisNoticeAPIClient);
 
         //when, then
-        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.request(CategoryName.BACHELOR));
+        InternalLogicException e = assertThrows(InternalLogicException.class, bachelorKuisNoticeInfo::scrapLatestPageHtml);
         assertEquals(ErrorCode.KU_NOTICE_CANNOT_PARSE_JSON, e.getErrorCode());
     }
 
@@ -167,9 +172,10 @@ class KuisNoticeApiClientTest {
     void failAfterRetry() {
         // given
         given(kuisAuthManager.getSessionId()).willThrow(new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE, new RestClientException("로그인 세션 획득 실패")));
+        BachelorKuisNoticeInfo bachelorKuisNoticeInfo = new BachelorKuisNoticeInfo(kuisNoticeAPIClient);
 
         // when, then
-        InternalLogicException e = assertThrows(InternalLogicException.class, () -> kuisNoticeAPIClient.request(CategoryName.BACHELOR));
+        InternalLogicException e = assertThrows(InternalLogicException.class, bachelorKuisNoticeInfo::scrapLatestPageHtml);
         assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
     }
 }

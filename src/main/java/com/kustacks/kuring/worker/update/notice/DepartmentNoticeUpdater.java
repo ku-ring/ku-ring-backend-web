@@ -1,11 +1,7 @@
 package com.kustacks.kuring.worker.update.notice;
 
 import com.kustacks.kuring.category.domain.Category;
-import com.kustacks.kuring.common.dto.NoticeMessageDto;
-import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
@@ -39,21 +35,21 @@ public class DepartmentNoticeUpdater {
     private final Map<String, Category> categoryMap;
     private final DepartmentNoticeScraperTemplate scrapperTemplate;
     private final DepartmentNoticeRepository departmentNoticeRepository;
-    private final ThreadPoolTaskExecutor departmentNoticeUpdaterThreadTaskExecutor;
+    private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
     private final FirebaseService firebaseService;
 
     private static long startTime = 0L;
 
-    @Scheduled(cron = "0 10/20 8-18 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 8:10 ~ 오후 6:55분 사이에 20분마다 업데이트 된다.
+    @Scheduled(cron = "0 5/10 8-18 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 8:10 ~ 오후 6:55분 사이에 20분마다 업데이트 된다.
     public void update() {
         log.info("******** 학과별 최신 공지 업데이트 시작 ********");
         startTime = System.currentTimeMillis();
 
         for (DeptInfo deptInfo : deptInfoList) {
             CompletableFuture
-                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml), departmentNoticeUpdaterThreadTaskExecutor)
+                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName()))
-                    .thenAccept(this::sendNotificationByFcm);
+                    .thenAccept(firebaseService::sendNotificationByFcm);
         }
     }
 
@@ -64,7 +60,7 @@ public class DepartmentNoticeUpdater {
 
         for (DeptInfo deptInfo : deptInfoList) {
             CompletableFuture
-                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), departmentNoticeUpdaterThreadTaskExecutor)
+                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
         }
     }
@@ -72,10 +68,6 @@ public class DepartmentNoticeUpdater {
     private List<ComplexNoticeFormatDto> updateDepartmentAsync(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) {
         List<ComplexNoticeFormatDto> scrapResults = scrapperTemplate.scrap(deptInfo, decisionMaker);
 
-        // noticeAPIClient 혹은 scraper에서 새로운 공지를 감지할 때, 가장 최신에 올라온 공지를 list에 순차적으로 담는다.
-        // 이 때문에 만약 같은 시간대에 감지된 두 공지가 있다면, 보다 최신 공지가 리스트의 앞 인덱스에 위치하게 되고, 이를 그대로 DB에 적용한다면
-        // 보다 최신인 공지가 DB에 먼저 삽입되어, kuring API 서버에서 이를 덜 신선한 공지로 판단하게 된다.
-        // 이에 commonNoticeFormatDTOList를 reverse하여 공지의 신선도 순서를 유지한다.
         for (ComplexNoticeFormatDto scrapResult : scrapResults) {
             scrapResult.reverseEachNoticeList();
         }
@@ -145,7 +137,9 @@ public class DepartmentNoticeUpdater {
 
         departmentNoticeRepository.saveAllAndFlush(newNotices);
 
-        departmentNoticeRepository.deleteAllByIdsAndDepartment(departmentNameEnum, deletedNoticesArticleIds);
+        if(!deletedNoticesArticleIds.isEmpty()) {
+            departmentNoticeRepository.deleteAllByIdsAndDepartment(departmentNameEnum, deletedNoticesArticleIds);
+        }
     }
 
     private List<DepartmentNotice> filteringSoonSaveNotice(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
@@ -177,6 +171,7 @@ public class DepartmentNoticeUpdater {
     private List<Integer> extractIdList(List<CommonNoticeFormatDto> scrapResults) {
         return scrapResults.stream()
                 .map(scrap -> Integer.parseInt(scrap.getArticleId()))
+                .sorted()
                 .collect(Collectors.toList());
     }
 
@@ -191,26 +186,5 @@ public class DepartmentNoticeUpdater {
                 .category(category)
                 .departmentName(departmentNameEnum)
                 .build();
-    }
-
-    private void sendNotificationByFcm(List<DepartmentNotice> departmentNoticeList) {
-        List<NoticeMessageDto> departmentDtoLists = departmentNoticeList.stream()
-                .map(NoticeMessageDto::from)
-                .collect(Collectors.toList());
-
-        try {
-            firebaseService.sendNoticeMessageList(departmentDtoLists);
-            log.info("FCM에 정상적으로 메세지를 전송했습니다.");
-            log.info("전송된 공지 목록은 다음과 같습니다.");
-            for (DepartmentNotice notice : departmentNoticeList) {
-                log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", notice.getArticleId(), notice.getPostedDate(), notice.getDepartmentName(), notice.getSubject());
-            }
-        } catch (FirebaseMessageSendException e) {
-            log.error("새로운 공지의 FCM 전송에 실패했습니다.");
-            throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
-        } catch (Exception e) {
-            log.error("새로운 공지를 FCM에 보내는 중 알 수 없는 오류가 발생했습니다.");
-            throw new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e);
-        }
     }
 }

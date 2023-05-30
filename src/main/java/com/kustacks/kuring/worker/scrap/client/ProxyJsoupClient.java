@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.SocketTimeoutException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class ProxyJsoupClient implements JsoupClient {
 
     @PostConstruct
     public void initProxyList() {
-        for(String proxyIp : proxyList) {
+        for (String proxyIp : proxyList) {
             String[] splitResults = proxyIp.split(IP_PORT_DELIMITER);
             proxyQueue.offer(new ProxyInfo(splitResults[IP_INDEX], Integer.parseInt(splitResults[PORT_INDEX])));
         }
@@ -67,6 +68,8 @@ public class ProxyJsoupClient implements JsoupClient {
 
             try {
                 return getDocument(url, timeOut, callback, proxyInfo);
+            } catch (SocketTimeoutException e) {
+                log.error("Jsoup time out 오류 발생. {}", e.getMessage());
             } catch (IOException e) {
                 log.error("Jsoup 오류 발생. {}", e.getMessage());
                 proxyQueue.poll();

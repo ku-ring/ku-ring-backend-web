@@ -3,8 +3,8 @@ package com.kustacks.kuring.worker.scrap.client.auth;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.worker.scrap.client.auth.property.ParsingKuisAuthProperties;
-import com.kustacks.kuring.worker.update.notice.dto.request.KuisLoginRequestBody;
-import com.kustacks.kuring.worker.update.notice.dto.request.KuisRequestBody;
+import com.kustacks.kuring.worker.update.notice.dto.request.KuisLoginInfo;
+import com.kustacks.kuring.worker.update.notice.dto.request.KuisInfo;
 import com.kustacks.kuring.common.utils.encoder.Encoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -22,7 +22,7 @@ public class ParsingKuisAuthManager implements KuisAuthManager {
 
     private final static String PARSING_PATTERN = "submit\\.addParameter[(]\"(.{5,7})\",\"(.{5,7})\"[)]";
     private final static String SESSION_PATTERN = "JSESSIONID=(.*?);";
-    private final KuisLoginRequestBody kuisLoginRequestBody;
+    private final KuisLoginInfo kuisLoginRequestBody;
     private final RestTemplate restTemplate;
     private final Encoder encoder;
 
@@ -33,7 +33,7 @@ public class ParsingKuisAuthManager implements KuisAuthManager {
     private boolean sessionNeedToBeRenew; // 세션 유효기간이 남아있어야 하지만, 알 수 없는 오류로 인해 세션이 유효하지 않은 경우 true로 설정됨
     private boolean isLoginPossible;
 
-    public ParsingKuisAuthManager(KuisLoginRequestBody kuisLoginRequestBody, RestTemplate restTemplate,
+    public ParsingKuisAuthManager(KuisLoginInfo kuisLoginRequestBody, RestTemplate restTemplate,
                                   Encoder requestBodyEncoder, ParsingKuisAuthProperties parsingKuisAuthProperties) {
         this.kuisLoginRequestBody = kuisLoginRequestBody;
         this.restTemplate = restTemplate;
@@ -106,6 +106,7 @@ public class ParsingKuisAuthManager implements KuisAuthManager {
             }
         }
 
+        this.sessionNeedToBeRenew = true;
         throw new InternalLogicException(ErrorCode.KU_LOGIN_BAD_RESPONSE);
     }
 
@@ -123,7 +124,7 @@ public class ParsingKuisAuthManager implements KuisAuthManager {
         HttpHeaders loginRequestHeader = createLoginRequestHeader();
 
         // 로그인 본문
-        this.loginRequestBody = loginRequestBodyStringBuilder.append(KuisRequestBody.toUrlEncodedString(kuisLoginRequestBody)).toString();
+        this.loginRequestBody = loginRequestBodyStringBuilder.append(KuisInfo.toUrlEncodedString(kuisLoginRequestBody)).toString();
 
         // 로그인 요청 객체
         return new HttpEntity<>(loginRequestBody, loginRequestHeader);
