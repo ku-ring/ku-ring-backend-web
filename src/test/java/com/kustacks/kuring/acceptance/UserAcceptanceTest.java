@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
@@ -62,7 +63,7 @@ class UserAcceptanceTest extends AcceptanceTest {
         var 조회_응답 = 사용자_카테고리_구독_목록_조회_요청_v2(USER_FCM_TOKEN);
 
         // then
-        카테고리_구독_목록_조회_요청_응답_확인_v2(조회_응답, "student", "employment");
+        카테고리_구독_목록_조회_요청_응답_확인_v2(조회_응답, List.of("student", "employment"));
     }
 
     /**
@@ -87,6 +88,8 @@ class UserAcceptanceTest extends AcceptanceTest {
      * Given : 사용자가 사전에 구독한 학과들이 있다
      * When : 사용자가 구독한 학과 목록을 요청한다
      * Then : 구독한 학과 목록을 반환한다
+     * When : 사용자가 구독한 학과를 전부 취소한다
+     * Then : 구독한 학과 목록이 비어있다
      */
     @DisplayName("[v2] 사용자가 구독한 학과 목록을 조회한다")
     @Test
@@ -99,7 +102,13 @@ class UserAcceptanceTest extends AcceptanceTest {
         var 사용자_학과_조회_응답 = 구독한_학과_목록_조회_요청(USER_FCM_TOKEN);
 
         // then
-        사용자_학과_조회_응답_확인(사용자_학과_조회_응답);
+        사용자_학과_조회_응답_확인(사용자_학과_조회_응답, List.of("computer_science", "korean"));
+
+        // when
+        학과_구독_요청(USER_FCM_TOKEN, Collections.emptyList());
+
+        // then
+        사용자_학과_조회_응답_확인(구독한_학과_목록_조회_요청(USER_FCM_TOKEN), Collections.emptyList());
     }
 
     /**
