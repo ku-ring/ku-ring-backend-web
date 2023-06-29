@@ -40,6 +40,10 @@ public class DeptInfo {
         return departmentName.getKorName();
     }
 
+    public boolean isSameDepartment(DepartmentName departmentName) {
+        return this.departmentName.equals(departmentName);
+    }
+
     public String createRequestUrl(int index, int curPage, int pageNum) {
         return UriComponentsBuilder.fromUriString(latestPageNoticeProperties.getListUrl())
                 .queryParam("siteId", noticeScrapInfo.getSiteId())

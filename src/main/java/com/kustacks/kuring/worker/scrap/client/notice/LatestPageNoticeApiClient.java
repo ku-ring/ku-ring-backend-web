@@ -20,7 +20,8 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private static final int PAGE_NUM = 1;    // recentPage는 pageNum 인자가 1부터 시작
     private static final int ARTICLE_NUMBERS_PER_PAGE = 12;
-    private static final int LATEST_SCRAP_TIMEOUT = 300000; // 5분
+    private static final int LATEST_SCRAP_TIMEOUT = 60000; // 1분
+    private static final int LATEST_SCRAP_ALL_TIMEOUT = 120000; // 2분
 
     private final JsoupClient jsoupClient;
 
@@ -35,7 +36,7 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         List<ScrapingResultDto> reqResults = new LinkedList<>();
         for(int i = 0; i < size; i++) {
             try {
-                ScrapingResultDto resultDto = getScrapingResultDto(i, deptInfo, ARTICLE_NUMBERS_PER_PAGE);
+                ScrapingResultDto resultDto = getScrapingResultDto(i, deptInfo, ARTICLE_NUMBERS_PER_PAGE, LATEST_SCRAP_TIMEOUT);
                 reqResults.add(resultDto);
             } catch (IOException e) {
                 throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_SCRAP, e);
@@ -56,7 +57,7 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
             try {
                 int totalNoticeSize = getTotalNoticeSize(i, deptInfo);
 
-                ScrapingResultDto resultDto = getScrapingResultDto(i, deptInfo, totalNoticeSize);
+                ScrapingResultDto resultDto = getScrapingResultDto(i, deptInfo, totalNoticeSize, LATEST_SCRAP_ALL_TIMEOUT);
                 reqResults.add(resultDto);
             } catch (IOException e) {
                 throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_SCRAP, e);
@@ -72,11 +73,11 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         return deptInfo.getNoticeScrapInfo().getBoardSeqs().size();
     }
 
-    private ScrapingResultDto getScrapingResultDto(int index, DeptInfo deptInfo, int totalNoticeSize) throws IOException {
+    private ScrapingResultDto getScrapingResultDto(int index, DeptInfo deptInfo, int totalNoticeSize, int timeout) throws IOException {
         String requestUrl = deptInfo.createRequestUrl(index, totalNoticeSize, PAGE_NUM);
         String viewUrl = deptInfo.createViewUrl(index);
 
-        Document document = jsoupClient.get(requestUrl, LATEST_SCRAP_TIMEOUT);
+        Document document = jsoupClient.get(requestUrl, timeout);
 
         return new ScrapingResultDto(document, viewUrl);
     }
