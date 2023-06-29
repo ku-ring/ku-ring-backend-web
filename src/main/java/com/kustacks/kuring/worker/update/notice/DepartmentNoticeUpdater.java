@@ -26,6 +26,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.kustacks.kuring.notice.domain.DepartmentName.REAL_ESTATE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -40,7 +42,7 @@ public class DepartmentNoticeUpdater {
 
     private static long startTime = 0L;
 
-    @Scheduled(cron = "0 5/10 8-18 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 8:10 ~ 오후 6:55분 사이에 20분마다 업데이트 된다.
+    @Scheduled(cron = "0 5/10 8-19 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 8:10 ~ 오후 7:55분 사이에 10분마다 업데이트 된다.
     public void update() {
         log.info("******** 학과별 최신 공지 업데이트 시작 ********");
         startTime = System.currentTimeMillis();
@@ -59,6 +61,10 @@ public class DepartmentNoticeUpdater {
         startTime = System.currentTimeMillis();
 
         for (DeptInfo deptInfo : deptInfoList) {
+            if(deptInfo.isSameDepartment(REAL_ESTATE)) {
+                continue;
+            }
+
             CompletableFuture
                     .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
