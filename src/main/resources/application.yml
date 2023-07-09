@@ -1,5 +1,8 @@
 server:
   port: ${PORT:8080}
+  tomcat:
+    mbeanregistry:
+      enabled: true
 
 spring:
   jpa:
@@ -49,3 +52,12 @@ logging:
 sentry:
   traces-sample-rate: '1.0'
   dsn: ${SENTRY_URL}
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
