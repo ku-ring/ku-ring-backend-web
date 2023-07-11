@@ -114,6 +114,10 @@ public class DepartmentNoticeUpdater {
     }
 
     private void compareAllAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, String departmentName) {
+        if(scrapResults.isEmpty()) {
+            return;
+        }
+
         DepartmentName departmentNameEnum = DepartmentName.fromKor(departmentName);
 
         for (ComplexNoticeFormatDto scrapResult : scrapResults) {
