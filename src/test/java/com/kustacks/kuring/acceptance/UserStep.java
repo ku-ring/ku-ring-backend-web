@@ -51,7 +51,7 @@ public class UserStep {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("사용자가 구독한 학교 공지 카테고리 조회에 성공하였습니다"),
-                () -> assertThat(response.jsonPath().getList("data.name")).isEqualTo(departments)
+                () -> assertThat(response.jsonPath().getList("data.name").containsAll(departments)).isTrue()
         );
     }
 

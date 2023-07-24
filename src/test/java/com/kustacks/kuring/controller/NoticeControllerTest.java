@@ -14,8 +14,6 @@ import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
 import com.kustacks.kuring.notice.presentation.NoticeController;
 import com.kustacks.kuring.user.business.UserService;
-import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserCategory;
 import com.kustacks.kuring.user.facade.UserCommandFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,10 +34,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import static com.kustacks.kuring.ApiDocumentUtils.getDocumentRequest;
 import static com.kustacks.kuring.ApiDocumentUtils.getDocumentResponse;
@@ -53,9 +49,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.restdocs.snippet.Attributes.key;
@@ -281,7 +275,7 @@ public class NoticeControllerTest {
         categoryNames.add(CategoryName.EMPLOYMENT);
 
         // given
-        given(categoryService.lookUpUserCategories(token)).willReturn(categoryNames);
+        given(userService.lookUpUserCategories(token)).willReturn(categoryNames);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice/subscribe")
@@ -492,19 +486,7 @@ public class NoticeControllerTest {
         categories.add("bachelor");
         categories.add("student");
 
-        SubscribeCategoriesV1Request requestDTO = new SubscribeCategoriesV1Request(token, categories);
-
-        Map<String, List<UserCategory>> compareCategoriesResult = new HashMap<>();
-        compareCategoriesResult.put("new", new LinkedList<>());
-        compareCategoriesResult.put("remove", new LinkedList<>());
-
-        Category bachelorCategory = new Category(CategoryName.BACHELOR);
-        Category studentCategory = new Category(CategoryName.STUDENT);
-
-        User user = new User(token);
-
-        compareCategoriesResult.get("new").add(new UserCategory(user, bachelorCategory));
-        compareCategoriesResult.get("new").add(new UserCategory(user, studentCategory));
+        SubscribeCategoriesV1Request request = new SubscribeCategoriesV1Request(token, categories);
 
         // given
         doThrow(new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY)).when(userCommandFacade).editSubscribeCategories(any(), any());
@@ -513,7 +495,7 @@ public class NoticeControllerTest {
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestDTO)));
+                .content(objectMapper.writeValueAsString(request)));
 
         // then
         result.andExpect(status().isOk())
