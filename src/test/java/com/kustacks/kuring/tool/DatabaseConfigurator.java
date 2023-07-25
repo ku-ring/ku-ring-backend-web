@@ -1,8 +1,6 @@
 package com.kustacks.kuring.tool;
 
-import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryName;
-import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
@@ -35,7 +33,6 @@ public class DatabaseConfigurator implements InitializingBean {
     protected final String USER_FCM_TOKEN = "test_fcm_token";
 
     private final NoticeRepository noticeRepository;
-    private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final StaffRepository staffRepository;
     private final DepartmentNoticeRepository departmentNoticeRepository;
@@ -43,17 +40,11 @@ public class DatabaseConfigurator implements InitializingBean {
     private final JdbcTemplate jdbcTemplate;
 
     private List<String> tableNames;
-    private Category student;
-    private Category bachelor;
-    private Category employment;
-    private Category library;
-    private Category department;
 
-    public DatabaseConfigurator(NoticeRepository noticeRepository, CategoryRepository categoryRepository, UserRepository userRepository,
+    public DatabaseConfigurator(NoticeRepository noticeRepository, UserRepository userRepository,
                                 StaffRepository staffRepository, DepartmentNoticeRepository departmentNoticeRepository,
                                 DataSource dataSource, JdbcTemplate jdbcTemplate) {
         this.noticeRepository = noticeRepository;
-        this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.staffRepository = staffRepository;
         this.departmentNoticeRepository = departmentNoticeRepository;
@@ -90,7 +81,6 @@ public class DatabaseConfigurator implements InitializingBean {
         log.info("[DatabaseConfigurator] init start");
 
         initUser();
-        initCategory();
         initStaff();
         initNotice();
 
@@ -129,13 +119,13 @@ public class DatabaseConfigurator implements InitializingBean {
     }
 
     private void initNotice() {
-        List<Notice> noticeList = buildNotices(5, student);
+        List<Notice> noticeList = buildNotices(5, CategoryName.STUDENT);
         noticeRepository.saveAll(noticeList);
 
-        List<DepartmentNotice> importantDeptNotices = buildDepartmentNotice(7, DepartmentName.COMPUTER, department, true);
+        List<DepartmentNotice> importantDeptNotices = buildDepartmentNotice(7, DepartmentName.COMPUTER, CategoryName.DEPARTMENT, true);
         departmentNoticeRepository.saveAll(importantDeptNotices);
 
-        List<DepartmentNotice> normalDeptNotices = buildDepartmentNotice(5, DepartmentName.COMPUTER, department, false);
+        List<DepartmentNotice> normalDeptNotices = buildDepartmentNotice(5, DepartmentName.COMPUTER, CategoryName.DEPARTMENT, false);
         departmentNoticeRepository.saveAll(normalDeptNotices);
     }
 
@@ -144,26 +134,17 @@ public class DatabaseConfigurator implements InitializingBean {
         staffRepository.saveAll(staffList);
     }
 
-    private void initCategory() {
-        student = new Category(CategoryName.STUDENT);
-        bachelor = new Category(CategoryName.BACHELOR);
-        employment = new Category(CategoryName.EMPLOYMENT);
-        library = new Category(CategoryName.LIBRARY);
-        department = new Category(CategoryName.DEPARTMENT);
-        categoryRepository.saveAll(List.of(student, bachelor, employment, library, department));
-    }
-
-    private List<DepartmentNotice> buildDepartmentNotice(int cnt, DepartmentName departmentName, Category category, boolean important) {
+    private List<DepartmentNotice> buildDepartmentNotice(int cnt, DepartmentName departmentName, CategoryName categoryName, boolean important) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new DepartmentNotice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, category, important, "https://www.example.com", departmentName))
+                .map(i -> new DepartmentNotice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName))
                 .collect(Collectors.toList());
     }
 
-    private static List<Notice> buildNotices(int cnt, Category category) {
+    private static List<Notice> buildNotices(int cnt, CategoryName categoryName) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new Notice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, category, false, "https://www.example.com"))
+                .map(i -> new Notice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, categoryName, false, "https://www.example.com"))
                 .collect(Collectors.toList());
     }
 
