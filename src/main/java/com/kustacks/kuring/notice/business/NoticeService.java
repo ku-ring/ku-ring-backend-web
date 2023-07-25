@@ -1,8 +1,6 @@
 package com.kustacks.kuring.notice.business;
 
-import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryName;
-import com.kustacks.kuring.category.domain.CategoryRepository;
 import com.kustacks.kuring.category.exception.CategoryNotFoundException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +26,6 @@ public class NoticeService {
 
     private final NoticeRepository noticeRepository;
     private final DepartmentNoticeRepository departmentNoticeRepository;
-    private final Map<String, Category> categoryMap;
     private final CategoryName[] categoryNames;
     private final DepartmentName[] supportedDepartmentNameList;
     private final String SPACE_REGEX = "[\\s+]";
@@ -40,10 +36,9 @@ public class NoticeService {
     @Value("${notice.library-base-url}")
     private String libraryBaseUrl;
 
-    public NoticeService(NoticeRepository noticeRepository, DepartmentNoticeRepository departmentNoticeRepository, CategoryRepository categoryRepository) {
+    public NoticeService(NoticeRepository noticeRepository, DepartmentNoticeRepository departmentNoticeRepository) {
         this.noticeRepository = noticeRepository;
         this.departmentNoticeRepository = departmentNoticeRepository;
-        this.categoryMap = categoryRepository.findAllMap();
         this.categoryNames = CategoryName.values();
         this.supportedDepartmentNameList = DepartmentName.values();
     }
@@ -54,9 +49,9 @@ public class NoticeService {
 
     public NoticeListResponse getNotices(String type, int offset, int max) {
         String categoryName = convertShortNameIntoLongName(type);
-        Category category = getCategoryByName(categoryName);
 
-        List<NoticeDto> noticeDtoList = noticeRepository.findNoticesByCategoryWithOffset(category, new OffsetBasedPageRequest(offset, max));
+        List<NoticeDto> noticeDtoList = noticeRepository
+                .findNoticesByCategoryWithOffset(CategoryName.fromStringName(categoryName), new OffsetBasedPageRequest(offset, max));
 
         return new NoticeListResponse(convertBaseUrl(categoryName), noticeDtoList);
     }
@@ -77,9 +72,7 @@ public class NoticeService {
             throw new InternalLogicException(ErrorCode.API_INVALID_PARAM);
         }
 
-        Category category = getCategoryByName(categoryName);
-
-        return noticeRepository.findNoticesByCategoryWithOffset(category, PageRequest.of(page, size));
+        return noticeRepository.findNoticesByCategoryWithOffset(CategoryName.fromStringName(categoryName), PageRequest.of(page, size));
     }
 
     public List<NoticeSearchDto> findAllNoticeByContent(String content) {
@@ -115,14 +108,6 @@ public class NoticeService {
             }
         }
         return keyword;
-    }
-
-    private Category getCategoryByName(String categoryName) {
-        Category category = categoryMap.get(categoryName);
-        if (category == null) {
-            throw new CategoryNotFoundException();
-        }
-        return category;
     }
 
     private String convertShortNameIntoLongName(String typeShortName) {

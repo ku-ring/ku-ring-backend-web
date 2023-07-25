@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.category.common.dto.SubscribeCategoriesV1Request;
-import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
@@ -224,11 +223,6 @@ public class NoticeControllerTest {
     @DisplayName("서버에서 제공하는 공지 카테고리 목록 제공 API - 성공")
     @Test
     void getSupportedCategoriesSuccessTest() throws Exception {
-
-        List<Category> categories = new LinkedList<>();
-        categories.add(new Category(CategoryName.BACHELOR));
-        categories.add(new Category(CategoryName.EMPLOYMENT));
-
         List<CategoryName> categoryNames = new LinkedList<>();
         categoryNames.add(CategoryName.BACHELOR);
         categoryNames.add(CategoryName.EMPLOYMENT);
@@ -265,10 +259,6 @@ public class NoticeControllerTest {
     @Test
     void getUserCategoriesSuccessTest() throws Exception {
         String token = "TEST_TOKEN";
-
-        List<Category> categories = new LinkedList<>();
-        categories.add(new Category(CategoryName.BACHELOR));
-        categories.add(new Category(CategoryName.EMPLOYMENT));
 
         List<CategoryName> categoryNames = new LinkedList<>();
         categoryNames.add(CategoryName.BACHELOR);
