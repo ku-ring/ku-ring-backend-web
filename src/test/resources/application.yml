@@ -18,9 +18,6 @@ spring:
         dialect: com.kustacks.kuring.config.CustomMariaDbDialect
     defer-datasource-initialization: true
     open-in-view: false
-  sql:
-    init:
-      mode: always
   thymeleaf:
     cache: true
     enabled: true
