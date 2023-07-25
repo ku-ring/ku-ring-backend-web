@@ -1,5 +1,6 @@
 package com.kustacks.kuring.user.business;
 
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.common.dto.SubscribeCompareResultDto;
 import com.kustacks.kuring.user.domain.User;
@@ -34,6 +35,33 @@ public class UserService {
         return findUser.getSubscribedDepartmentList();
     }
 
+    @Transactional(readOnly = true)
+    public List<CategoryName> lookUpUserCategories(String token) {
+        User findUser = findUserByToken(token);
+        return findUser.getSubscribedCategoryList();
+    }
+
+    public SubscribeCompareResultDto<CategoryName> editSubscribeCategoryList(String userToken, List<String> newCategoryStringNames) {
+        User user = findUserByToken(userToken);
+
+        List<CategoryName> newCategoryNames = convertToEnumList(newCategoryStringNames);
+
+        List<CategoryName> savedCategoryNames = user.filteringNewCategoryName(newCategoryNames);
+        List<CategoryName> deletedCategoryNames = user.filteringOldCategoryName(newCategoryNames);
+
+        return new SubscribeCompareResultDto<>(savedCategoryNames, deletedCategoryNames);
+    }
+
+    public void subscribeCategory(String userToken, CategoryName categoryName) {
+        User user = findUserByToken(userToken);
+        user.subscribeCategory(categoryName);
+    }
+
+    public void unsubscribeCategory(String userToken, CategoryName categoryName) {
+        User user = findUserByToken(userToken);
+        user.unsubscribeCategory(categoryName);
+    }
+
     public SubscribeCompareResultDto<DepartmentName> editSubscribeDepartmentList(String userToken, List<String> departments) {
         User user = findUserByToken(userToken);
 
@@ -61,6 +89,12 @@ public class UserService {
         }
 
         return optionalUser.orElseThrow(UserNotFoundException::new);
+    }
+
+    private List<CategoryName> convertToEnumList(List<String> categories) {
+        return categories.stream()
+                .map(CategoryName::fromStringName)
+                .collect(Collectors.toList());
     }
 
     private List<DepartmentName> convertHostPrefixToEnum(List<String> departments) {

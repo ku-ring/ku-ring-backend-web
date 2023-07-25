@@ -45,7 +45,7 @@ public class DepartmentNoticeQueryRepositoryImpl implements DepartmentNoticeQuer
                         departmentNotice.postedDate,
                         departmentNotice.url.value,
                         departmentNotice.subject,
-                        departmentNotice.category.categoryName.stringValue().toLowerCase(),
+                        departmentNotice.categoryName.stringValue().toLowerCase(),
                         departmentNotice.important))
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName)
@@ -62,7 +62,7 @@ public class DepartmentNoticeQueryRepositoryImpl implements DepartmentNoticeQuer
                         departmentNotice.postedDate,
                         departmentNotice.url.value,
                         departmentNotice.subject,
-                        departmentNotice.category.categoryName.stringValue().toLowerCase(),
+                        departmentNotice.categoryName.stringValue().toLowerCase(),
                         departmentNotice.important))
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName)

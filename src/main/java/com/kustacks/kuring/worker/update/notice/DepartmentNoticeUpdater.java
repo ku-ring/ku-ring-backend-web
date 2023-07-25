@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.update.notice;
 
-import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,7 +33,6 @@ import static com.kustacks.kuring.notice.domain.DepartmentName.REAL_ESTATE;
 public class DepartmentNoticeUpdater {
 
     private final List<DeptInfo> deptInfoList;
-    private final Map<String, Category> categoryMap;
     private final DepartmentNoticeScraperTemplate scrapperTemplate;
     private final DepartmentNoticeRepository departmentNoticeRepository;
     private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
@@ -61,7 +59,7 @@ public class DepartmentNoticeUpdater {
         startTime = System.currentTimeMillis();
 
         for (DeptInfo deptInfo : deptInfoList) {
-            if(deptInfo.isSameDepartment(REAL_ESTATE)) {
+            if (deptInfo.isSameDepartment(REAL_ESTATE)) {
                 continue;
             }
 
@@ -114,7 +112,7 @@ public class DepartmentNoticeUpdater {
     }
 
     private void compareAllAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, String departmentName) {
-        if(scrapResults.isEmpty()) {
+        if (scrapResults.isEmpty()) {
             return;
         }
 
@@ -147,7 +145,7 @@ public class DepartmentNoticeUpdater {
 
         departmentNoticeRepository.saveAllAndFlush(newNotices);
 
-        if(!deletedNoticesArticleIds.isEmpty()) {
+        if (!deletedNoticesArticleIds.isEmpty()) {
             departmentNoticeRepository.deleteAllByIdsAndDepartment(departmentNameEnum, deletedNoticesArticleIds);
         }
     }
@@ -157,8 +155,7 @@ public class DepartmentNoticeUpdater {
         for (CommonNoticeFormatDto notice : scrapResults) {
             try {
                 if (Collections.binarySearch(savedArticleIds, Integer.valueOf(notice.getArticleId())) < 0) { // 정렬되어있다, 이진탐색으로 O(logN)안에 수행
-                    Category category = categoryMap.get("department");
-                    DepartmentNotice newDepartmentNotice = convert(notice, departmentNameEnum, category, important);
+                    DepartmentNotice newDepartmentNotice = convert(notice, departmentNameEnum, CategoryName.DEPARTMENT, important);
                     newNotices.add(newDepartmentNotice);
                 }
             } catch (IncorrectResultSizeDataAccessException e) {
@@ -185,7 +182,7 @@ public class DepartmentNoticeUpdater {
                 .collect(Collectors.toList());
     }
 
-    private DepartmentNotice convert(CommonNoticeFormatDto dto, DepartmentName departmentNameEnum, Category category, boolean important) {
+    private DepartmentNotice convert(CommonNoticeFormatDto dto, DepartmentName departmentNameEnum, CategoryName categoryName, boolean important) {
         return DepartmentNotice.builder()
                 .articleId(dto.getArticleId())
                 .postedDate(dto.getPostedDate())
@@ -193,7 +190,7 @@ public class DepartmentNoticeUpdater {
                 .subject(dto.getSubject())
                 .fullUrl(dto.getFullUrl())
                 .important(important)
-                .category(category)
+                .categoryName(categoryName)
                 .departmentName(departmentNameEnum)
                 .build();
     }

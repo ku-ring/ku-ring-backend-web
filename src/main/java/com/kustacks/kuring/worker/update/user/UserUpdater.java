@@ -3,7 +3,6 @@ package com.kustacks.kuring.worker.update.user;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserCategoryRepository;
 import com.kustacks.kuring.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,6 @@ public class UserUpdater {
 
     private final FirebaseService firebaseService;
     private final UserRepository userRepository;
-    private final UserCategoryRepository userCategoryRepository;
 
     @Transactional
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
@@ -36,9 +34,8 @@ public class UserUpdater {
             try {
                 firebaseService.validationToken(token);
             } catch (FirebaseInvalidTokenException e) {
-                userCategoryRepository.deleteAllByUser(user);
-                userRepository.deleteByToken(token);
-                log.info("삭제한 토큰 = {}", token);
+                userRepository.delete(user);
+                log.info("삭제한 토큰 = {}", user.getToken());
             }
         }
 
