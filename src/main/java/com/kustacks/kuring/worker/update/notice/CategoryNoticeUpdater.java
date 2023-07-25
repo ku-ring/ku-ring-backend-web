@@ -1,6 +1,5 @@
 package com.kustacks.kuring.worker.update.notice;
 
-import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.notice.domain.Notice;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -30,7 +28,6 @@ import java.util.stream.Collectors;
 public class CategoryNoticeUpdater {
 
     private final List<KuisNoticeInfo> kuisNoticeInfoList;
-    private final Map<String, Category> categoryMap;
     private final KuisNoticeScraperTemplate scrapperTemplate;
     private final NoticeRepository noticeRepository;
     private final FirebaseService firebaseService;
@@ -49,7 +46,7 @@ public class CategoryNoticeUpdater {
 
         updateLibrary(); // library는 Kuis공지가 아니라 별도로 먼저 수행한다
 
-        for(KuisNoticeInfo kuisNoticeInfo : kuisNoticeInfoList) {
+        for (KuisNoticeInfo kuisNoticeInfo : kuisNoticeInfoList) {
             CompletableFuture
                     .supplyAsync(() -> updateKuisNoticeAsync(kuisNoticeInfo, KuisNoticeInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName()))
@@ -77,10 +74,10 @@ public class CategoryNoticeUpdater {
 
     private List<Notice> compareLatestAndUpdateDB(List<CommonNoticeFormatDto> scrapResults, CategoryName categoryName) {
         // DB에서 모든 일반 공지 id를 가져와서
-        List<Notice> savedNotices = noticeRepository.findByCategory(categoryMap.get(categoryName.getName()));
+        List<String> savedArticleIds = noticeRepository.findNormalArticleIdsByCategory(categoryName);
 
         // db와 싱크를 맞춘다
-        List<Notice> newNotices = synchronizationWithDb(scrapResults, savedNotices, categoryName);
+        List<Notice> newNotices = synchronizationWithDb(scrapResults, savedArticleIds, categoryName);
 
         long endTime = System.currentTimeMillis();
         log.info("[{}] 업데이트 시작으로부터 {}millis 만큼 지남", categoryName.getKorName(), endTime - startTime);
@@ -88,17 +85,17 @@ public class CategoryNoticeUpdater {
         return newNotices;
     }
 
-    private List<Notice> synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<Notice> savedNotices, CategoryName categoryName) {
-        List<String> savedIds = savedNotices.stream().map(Notice::getArticleId).sorted().collect(Collectors.toList());
+    private List<Notice> synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, CategoryName categoryName) {
+        List<Notice> newNotices = filteringSoonSaveNotices(scrapResults, savedArticleIds, categoryName);
 
-        List<Notice> newNotices = filteringSoonSaveNotices(scrapResults, savedIds, categoryName);
+        List<String> scrapNoticeIds = extractIdList(scrapResults);
 
-        List<Notice> soonDeletedNotices = filteringSoonDeleteNotices(savedNotices, scrapResults);
+        List<String> deletedNoticesArticleIds = filteringSoonDeleteIds(savedArticleIds, scrapNoticeIds);
 
         noticeRepository.saveAllAndFlush(newNotices);
 
-        if(!soonDeletedNotices.isEmpty()) {
-            noticeRepository.deleteAll(soonDeletedNotices);
+        if (!deletedNoticesArticleIds.isEmpty()) {
+            noticeRepository.deleteAllByIdsAndCategory(categoryName, deletedNoticesArticleIds);
         }
 
         return newNotices;
@@ -111,11 +108,10 @@ public class CategoryNoticeUpdater {
                 .collect(Collectors.toList());
     }
 
-    private List<Notice> filteringSoonDeleteNotices(List<Notice> savedNotices, List<CommonNoticeFormatDto> scrapResults) {
-        List<String> scrapNoticeIds = extractIdList(scrapResults);
-
-        return savedNotices.stream()
-                .filter(notice -> Collections.binarySearch(scrapNoticeIds, notice.getArticleId()) < 0)
+    private List<String> filteringSoonDeleteIds(List<String> savedArticleIds, List<String> latestNoticeIds) {
+        return savedArticleIds.stream()
+                .filter(savedArticleId -> Collections.binarySearch(latestNoticeIds, savedArticleId) < 0)
+                .map(Object::toString)
                 .collect(Collectors.toList());
     }
 
@@ -124,8 +120,7 @@ public class CategoryNoticeUpdater {
         for (CommonNoticeFormatDto notice : scrapResults) {
             try {
                 if (Collections.binarySearch(savedArticleIds, notice.getArticleId()) < 0) { // 정렬되어있다, 이진탐색으로 O(logN)안에 수행
-                    Category category = categoryMap.get(categoryName.getName());
-                    Notice newNotice = convert(notice, category);
+                    Notice newNotice = convert(notice, categoryName);
                     newNotices.add(newNotice);
                 }
             } catch (IncorrectResultSizeDataAccessException e) {
@@ -139,12 +134,12 @@ public class CategoryNoticeUpdater {
         return newNotices;
     }
 
-    private Notice convert(CommonNoticeFormatDto dto, Category category) {
+    private Notice convert(CommonNoticeFormatDto dto, CategoryName CategoryName) {
         return new Notice(dto.getArticleId(),
                 dto.getPostedDate(),
                 dto.getUpdatedDate(),
                 dto.getSubject(),
-                category,
+                CategoryName,
                 false,
                 dto.getFullUrl());
     }

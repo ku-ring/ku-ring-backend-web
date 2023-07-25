@@ -4,13 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.admin.business.AdminService;
-import com.kustacks.kuring.category.business.CategoryService;
-import com.kustacks.kuring.category.domain.Category;
-import com.kustacks.kuring.common.annotation.CheckSession;
-import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.admin.common.dto.CategoryNameAdminDto;
 import com.kustacks.kuring.admin.common.dto.FakeUpdateResponseDto;
 import com.kustacks.kuring.admin.common.dto.LoginResponseDto;
+import com.kustacks.kuring.category.business.CategoryService;
+import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.common.annotation.CheckSession;
+import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.common.dto.ResponseDto;
 import com.kustacks.kuring.common.error.APIException;
@@ -20,7 +20,6 @@ import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
 import com.kustacks.kuring.feedback.domain.Feedback;
-import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.user.domain.User;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,7 +52,6 @@ public class AdminController {
     private final AdminService adminService;
 
     private final ObjectMapper objectMapper;
-    private final Map<String, Category> categoryMap;
 
     @Value("${server.deploy.environment}")
     private String deployEnv;
@@ -80,7 +73,6 @@ public class AdminController {
         this.adminService = adminService;
 
         this.objectMapper = objectMapper;
-        this.categoryMap = adminService.getCategoryMap();
     }
 
 
@@ -178,8 +170,8 @@ public class AdminController {
 
         fakeNoticeSubject = URLDecoder.decode(fakeNoticeSubject, StandardCharsets.UTF_8);
 
-        Category dbCategory = categoryMap.get(fakeNoticeCategory);
-        if (dbCategory == null || fakeNoticeSubject.equals("") || fakeNoticeSubject.length() > 128) {
+        CategoryName dbCategoryName = CategoryName.fromStringName(fakeNoticeCategory);
+        if (dbCategoryName == null || fakeNoticeSubject.equals("") || fakeNoticeSubject.length() > 128) {
             throw new APIException(ErrorCode.API_ADMIN_INVALID_SUBJECT);
         }
 
