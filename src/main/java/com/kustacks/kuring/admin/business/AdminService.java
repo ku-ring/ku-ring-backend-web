@@ -2,48 +2,32 @@ package com.kustacks.kuring.admin.business;
 
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.domain.AdminRepository;
-import com.kustacks.kuring.category.domain.Category;
-import com.kustacks.kuring.category.domain.CategoryRepository;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.feedback.domain.Feedback;
 import com.kustacks.kuring.feedback.domain.FeedbackRepository;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
-import com.kustacks.kuring.category.domain.CategoryName;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AdminService {
 
     private final AdminRepository adminRepository;
     private final FeedbackRepository feedbackRepository;
     private final NoticeRepository noticeRepository;
     private final UserRepository userRepository;
-    private final CategoryRepository categoryRepository;
-
-    public AdminService(AdminRepository adminRepository,
-                        FeedbackRepository feedbackRepository,
-                        NoticeRepository noticeRepository,
-                        UserRepository userRepository,
-                        CategoryRepository categoryRepository
-    ) {
-
-        this.adminRepository = adminRepository;
-        this.feedbackRepository = feedbackRepository;
-        this.noticeRepository = noticeRepository;
-        this.userRepository = userRepository;
-        this.categoryRepository = categoryRepository;
-    }
 
 
-    public List<Category> getCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryName> getCategories() {
+        return List.of(CategoryName.values());
     }
 
     public List<Notice> getNotices() {
@@ -57,11 +41,6 @@ public class AdminService {
 
     public List<User> getUsers() {
         return userRepository.findAll();
-    }
-
-
-    public HashMap<String, Category> getCategoryMap() {
-        return (HashMap<String, Category>) categoryRepository.findAllMap();
     }
 
 

@@ -1,5 +1,6 @@
 package com.kustacks.kuring.user.domain;
 
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,50 @@ class UserTest {
         User userOne = createUser(1L, "token_one");
         User userTwo = createUser(2L, "token_one");
         assertThat(userOne).isNotEqualTo(userTwo);
+    }
+
+    @DisplayName("사용자가 구독한 카테고리 이름을 저장한다")
+    @Test
+    void add_category() {
+        // given
+        User user = createUser(1L, "token_one");
+
+        // when
+        user.subscribeCategory(CategoryName.NORMAL);
+        user.subscribeCategory(CategoryName.BACHELOR);
+
+        // then
+        assertThat(user.getSubscribedCategoryList()).contains(CategoryName.NORMAL, CategoryName.BACHELOR);
+    }
+
+    @DisplayName("신규로 저장될 카테고리 이름 목록을 반환한다")
+    @Test
+    void filtering_new_category_name() {
+        // given
+        User user = createUser(1L, "token_one");
+        user.subscribeCategory(CategoryName.NORMAL);
+        user.subscribeCategory(CategoryName.BACHELOR);
+
+        // when
+        List<CategoryName> results = user.filteringNewCategoryName(List.of(CategoryName.NORMAL, CategoryName.EMPLOYMENT, CategoryName.NATIONAL));
+
+        // then
+        assertThat(results).contains(CategoryName.EMPLOYMENT, CategoryName.NATIONAL);
+    }
+
+    @DisplayName("이전에 저장된 카테고리 중 이번에 삭제될 목록을 반환")
+    @Test
+    void filtering_old_category_name() {
+        // given
+        User user = createUser(1L, "token_one");
+        user.subscribeCategory(CategoryName.NORMAL);
+        user.subscribeCategory(CategoryName.BACHELOR);
+
+        // when
+        List<CategoryName> results = user.filteringOldCategoryName(List.of(CategoryName.NORMAL, CategoryName.EMPLOYMENT, CategoryName.NATIONAL));
+
+        // then
+        assertThat(results).contains(CategoryName.BACHELOR);
     }
 
     @DisplayName("사용자가 구독한 학과이름을 저장한다")

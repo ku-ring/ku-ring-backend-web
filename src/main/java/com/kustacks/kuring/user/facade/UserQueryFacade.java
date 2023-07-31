@@ -1,6 +1,5 @@
 package com.kustacks.kuring.user.facade;
 
-import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.notice.common.dto.CategoryNameDto;
@@ -20,12 +19,11 @@ import java.util.stream.Collectors;
 public class UserQueryFacade {
 
     private final UserService userService;
-    private final CategoryService categoryService;
     private final FirebaseService firebaseService;
 
     public List<CategoryNameDto> lookupSubscribeCategories(String userToken) {
         firebaseService.validationToken(userToken);
-        return convertCategoryNameDtoList(categoryService.lookUpUserCategories(userToken));
+        return convertCategoryNameDtoList(userService.lookUpUserCategories(userToken));
     }
 
     public List<DepartmentNameDto> lookupSubscribeDepartments(String userToken) {

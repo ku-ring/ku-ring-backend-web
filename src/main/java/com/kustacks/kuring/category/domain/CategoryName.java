@@ -1,6 +1,11 @@
 package com.kustacks.kuring.category.domain;
 
+import com.kustacks.kuring.common.error.DomainLogicException;
 import lombok.Getter;
+
+import java.util.Arrays;
+
+import static com.kustacks.kuring.common.error.ErrorCode.CAT_NOT_EXIST_CATEGORY;
 
 @Getter
 public enum CategoryName {
@@ -35,5 +40,21 @@ public enum CategoryName {
 
     public boolean isSameKorName(String name) {
         return this.korName.equals(name);
+    }
+
+    public static boolean containsEnumValue(String value) {
+        try {
+            Enum.valueOf(CategoryName.class, value);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public static CategoryName fromStringName(String name) {
+        return Arrays.stream(CategoryName.values())
+                .filter(d -> d.isSameName(name))
+                .findFirst()
+                .orElseThrow(() -> new DomainLogicException(CAT_NOT_EXIST_CATEGORY));
     }
 }

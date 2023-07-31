@@ -1,7 +1,0 @@
-package com.kustacks.kuring.category.domain;
-
-import java.util.List;
-
-public interface CategoryQueryRepository {
-    List<CategoryName> getSupportedCategoryNames();
-}

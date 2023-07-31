@@ -1,5 +1,6 @@
 package com.kustacks.kuring.user.domain;
 
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.feedback.domain.Feedback;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import lombok.AccessLevel;
@@ -39,6 +40,9 @@ public class User implements Serializable {
     @Embedded
     private Departments departments = new Departments();
 
+    @Embedded
+    private Categories categories = new Categories();
+
     public User(String token) {
         this.token = token;
     }
@@ -55,6 +59,14 @@ public class User implements Serializable {
         this.feedbacks.clear();
     }
 
+    public void subscribeCategory(CategoryName categoryName) {
+        this.categories.add(categoryName);
+    }
+
+    public void unsubscribeCategory(CategoryName categoryName) {
+        this.categories.delete(categoryName);
+    }
+
     public void subscribeDepartment(DepartmentName departmentName) {
         this.departments.add(departmentName);
     }
@@ -63,9 +75,26 @@ public class User implements Serializable {
         this.departments.delete(departmentName);
     }
 
+    public List<CategoryName> getSubscribedCategoryList() {
+        Set<CategoryName> categoryNamesSet = this.categories.getCategoryNamesSet();
+        return new ArrayList<>(categoryNamesSet);
+    }
+
     public List<DepartmentName> getSubscribedDepartmentList() {
         Set<DepartmentName> departmentNamesSet = this.departments.getDepartmentNamesSet();
         return new ArrayList<>(departmentNamesSet);
+    }
+
+    public List<CategoryName> filteringNewCategoryName(List<CategoryName> newCategoryNames) {
+        return newCategoryNames.stream()
+                .filter(newCategoryName -> !this.categories.contains(newCategoryName))
+                .collect(Collectors.toList());
+    }
+
+    public List<CategoryName> filteringOldCategoryName(List<CategoryName> newCategoryNames) {
+        return this.categories.getCategoryNamesSet().stream().
+                filter(oldCategoryName -> !newCategoryNames.contains(oldCategoryName))
+                .collect(Collectors.toList());
     }
 
     public List<DepartmentName> filteringNewDepartmentName(List<DepartmentName> newDepartmentNames) {

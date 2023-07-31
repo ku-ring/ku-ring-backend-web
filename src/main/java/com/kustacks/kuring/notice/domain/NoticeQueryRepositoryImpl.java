@@ -1,6 +1,6 @@
 package com.kustacks.kuring.notice.domain;
 
-import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
 import com.kustacks.kuring.notice.common.dto.QNoticeDto;
@@ -22,11 +22,11 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<NoticeDto> findNoticesByCategoryWithOffset(Category category, Pageable pageable) {
+    public List<NoticeDto> findNoticesByCategoryWithOffset(CategoryName categoryName, Pageable pageable) {
         return queryFactory
-                .select(new QNoticeDto(notice.articleId, notice.postedDate, notice.url.value, notice.subject, notice.category.categoryName.stringValue().toLowerCase(), notice.important))
+                .select(new QNoticeDto(notice.articleId, notice.postedDate, notice.url.value, notice.subject, notice.categoryName.stringValue().toLowerCase(), notice.important))
                 .from(notice)
-                .where(notice.category.eq(category))
+                .where(notice.categoryName.eq(categoryName))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(notice.postedDate.desc())
@@ -40,12 +40,35 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                         notice.articleId,
                         notice.postedDate,
                         notice.subject,
-                        notice.category.categoryName.stringValue().toLowerCase(),
+                        notice.categoryName.stringValue().toLowerCase(),
                         notice.url.value))
                 .from(notice)
                 .where(isContainSubject(keywords).or(isContainCategory(keywords)))
                 .orderBy(notice.postedDate.desc())
                 .fetch();
+    }
+
+    @Override
+    public List<String> findNormalArticleIdsByCategory(CategoryName categoryName) {
+        return queryFactory
+                .select(notice.articleId)
+                .from(notice)
+                .where(notice.categoryName.eq(categoryName))
+                .orderBy(notice.articleId.asc())
+                .fetch();
+    }
+
+    @Override
+    public void deleteAllByIdsAndCategory(CategoryName categoryName, List<String> articleIds) {
+        if(articleIds.isEmpty()) {
+            return;
+        }
+
+        queryFactory
+                .delete(notice)
+                .where(notice.categoryName.eq(categoryName)
+                        .and(notice.articleId.in(articleIds)))
+                .execute();
     }
 
     private static BooleanBuilder isContainSubject(List<String> keywords) {
@@ -61,7 +84,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     private static BooleanBuilder isContainCategory(List<String> keywords) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         for (String containedName : keywords) {
-            booleanBuilder.or(notice.category.categoryName.stringValue().toLowerCase().contains(containedName));
+            booleanBuilder.or(notice.categoryName.stringValue().toLowerCase().contains(containedName));
         }
 
         return booleanBuilder;

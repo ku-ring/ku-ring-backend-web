@@ -1,7 +1,6 @@
 package com.kustacks.kuring.config;
 
-import com.kustacks.kuring.category.domain.Category;
-import com.kustacks.kuring.category.domain.CategoryRepository;
+
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
@@ -15,18 +14,6 @@ import java.util.Map;
 
 @Configuration
 public class MappedBeanConfig {
-
-    @Configuration
-    @RequiredArgsConstructor
-    public static class CategoryEntityNameMappedBeanConfig {
-
-        private final CategoryRepository categoryRepository;
-
-        @Bean
-        public Map<String, Category> categoryMap() {
-            return categoryRepository.findAllMap();
-        }
-    }
 
     @Configuration
     @RequiredArgsConstructor

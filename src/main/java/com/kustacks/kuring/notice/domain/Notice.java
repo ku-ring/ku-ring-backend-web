@@ -1,20 +1,11 @@
 package com.kustacks.kuring.notice.domain;
 
-import com.kustacks.kuring.category.domain.Category;
 import com.kustacks.kuring.category.domain.CategoryName;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -48,30 +39,26 @@ public class Notice {
     @Embedded
     private Url url;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_name", nullable = false)
-    private Category category;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category_name", nullable = false)
+    private CategoryName categoryName;
 
-    public Notice(String articleId, String postedDate, String updatedDate, String subject, Category category, Boolean important, String fullUrl) {
+    public Notice(String articleId, String postedDate, String updatedDate, String subject, CategoryName categoryName, Boolean important, String fullUrl) {
         this.articleId = articleId;
         this.postedDate = postedDate;
         this.updatedDate = updatedDate;
         this.subject = subject;
-        this.category = category;
+        this.categoryName = categoryName;
         this.important = important;
         this.url = new Url(fullUrl);
     }
 
-    public boolean isSameCategoryName(CategoryName categoryName) {
-        return this.category.isSameName(categoryName);
-    }
-
     public String getCategoryName() {
-        return this.category.getName();
+        return this.categoryName.getName();
     }
 
     public String getCategoryKoreaName() {
-        return this.category.getKorName();
+        return this.categoryName.getKorName();
     }
 
     public String getUrl() {

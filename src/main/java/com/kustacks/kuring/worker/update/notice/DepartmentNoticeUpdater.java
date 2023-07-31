@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.update.notice;
 
-import com.kustacks.kuring.category.domain.Category;
+import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
@@ -21,10 +21,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.kustacks.kuring.notice.domain.DepartmentName.REAL_ESTATE;
 
 @Slf4j
 @Service
@@ -32,7 +33,6 @@ import java.util.stream.Collectors;
 public class DepartmentNoticeUpdater {
 
     private final List<DeptInfo> deptInfoList;
-    private final Map<String, Category> categoryMap;
     private final DepartmentNoticeScraperTemplate scrapperTemplate;
     private final DepartmentNoticeRepository departmentNoticeRepository;
     private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
@@ -40,7 +40,7 @@ public class DepartmentNoticeUpdater {
 
     private static long startTime = 0L;
 
-    @Scheduled(cron = "0 5/10 8-18 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 8:10 ~ 오후 6:55분 사이에 20분마다 업데이트 된다.
+    @Scheduled(cron = "0 5/10 8-19 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 8:10 ~ 오후 7:55분 사이에 10분마다 업데이트 된다.
     public void update() {
         log.info("******** 학과별 최신 공지 업데이트 시작 ********");
         startTime = System.currentTimeMillis();
@@ -53,12 +53,16 @@ public class DepartmentNoticeUpdater {
         }
     }
 
-    @Scheduled(cron = "0 0 2,19 * * *", zone = "Asia/Seoul") // 전체 업데이트는 매일 오전 2시, 오후 7시에 진행
+    @Scheduled(cron = "0 0 2 * * *", zone = "Asia/Seoul") // 전체 업데이트는 매일 오전 2시에 한다.
     public void updateAll() {
         log.info("******** 학과별 전체 공지 업데이트 시작 ********");
         startTime = System.currentTimeMillis();
 
         for (DeptInfo deptInfo : deptInfoList) {
+            if (deptInfo.isSameDepartment(REAL_ESTATE)) {
+                continue;
+            }
+
             CompletableFuture
                     .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
@@ -108,6 +112,10 @@ public class DepartmentNoticeUpdater {
     }
 
     private void compareAllAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, String departmentName) {
+        if (scrapResults.isEmpty()) {
+            return;
+        }
+
         DepartmentName departmentNameEnum = DepartmentName.fromKor(departmentName);
 
         for (ComplexNoticeFormatDto scrapResult : scrapResults) {
@@ -137,7 +145,7 @@ public class DepartmentNoticeUpdater {
 
         departmentNoticeRepository.saveAllAndFlush(newNotices);
 
-        if(!deletedNoticesArticleIds.isEmpty()) {
+        if (!deletedNoticesArticleIds.isEmpty()) {
             departmentNoticeRepository.deleteAllByIdsAndDepartment(departmentNameEnum, deletedNoticesArticleIds);
         }
     }
@@ -147,8 +155,7 @@ public class DepartmentNoticeUpdater {
         for (CommonNoticeFormatDto notice : scrapResults) {
             try {
                 if (Collections.binarySearch(savedArticleIds, Integer.valueOf(notice.getArticleId())) < 0) { // 정렬되어있다, 이진탐색으로 O(logN)안에 수행
-                    Category category = categoryMap.get("department");
-                    DepartmentNotice newDepartmentNotice = convert(notice, departmentNameEnum, category, important);
+                    DepartmentNotice newDepartmentNotice = convert(notice, departmentNameEnum, CategoryName.DEPARTMENT, important);
                     newNotices.add(newDepartmentNotice);
                 }
             } catch (IncorrectResultSizeDataAccessException e) {
@@ -175,7 +182,7 @@ public class DepartmentNoticeUpdater {
                 .collect(Collectors.toList());
     }
 
-    private DepartmentNotice convert(CommonNoticeFormatDto dto, DepartmentName departmentNameEnum, Category category, boolean important) {
+    private DepartmentNotice convert(CommonNoticeFormatDto dto, DepartmentName departmentNameEnum, CategoryName categoryName, boolean important) {
         return DepartmentNotice.builder()
                 .articleId(dto.getArticleId())
                 .postedDate(dto.getPostedDate())
@@ -183,7 +190,7 @@ public class DepartmentNoticeUpdater {
                 .subject(dto.getSubject())
                 .fullUrl(dto.getFullUrl())
                 .important(important)
-                .category(category)
+                .categoryName(categoryName)
                 .departmentName(departmentNameEnum)
                 .build();
     }
