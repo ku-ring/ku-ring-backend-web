@@ -17,7 +17,7 @@ public enum DepartmentName {
     HISTORY("khistory", "khistory", "사학과"),
     GEOLOGY("geology", "kugeo", "지리학과"),
     MEDIA_COMM("media_communication", "comm", "미디어커뮤니케이션학과"),
-    CULTURE_CONT("culture_content", "culturecontents", "문화컨텐츠학과"),
+    CULTURE_CONT("culture_content", "culturecontents", "문화콘텐츠학과"),
 
     MATH("math", "math", "수학과"),
     PHYSICS("physics", "phys", "물리학과"),
