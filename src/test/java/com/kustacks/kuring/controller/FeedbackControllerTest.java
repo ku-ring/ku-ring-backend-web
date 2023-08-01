@@ -5,7 +5,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.feedback.common.dto.SaveFeedbackV1Request;
 import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.feedback.presentation.FeedbackController;
+import com.kustacks.kuring.feedback.presentation.FeedbackControllerV1;
 import com.kustacks.kuring.feedback.business.FeedbackService;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 //import org.junit.Before;
@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class})
-@WebMvcTest(FeedbackController.class)
+@WebMvcTest(FeedbackControllerV1.class)
 public class FeedbackControllerTest {
 
 //    @Rule

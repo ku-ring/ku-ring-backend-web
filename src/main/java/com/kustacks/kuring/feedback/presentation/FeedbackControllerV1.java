@@ -18,7 +18,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
-public class FeedbackController {
+public class FeedbackControllerV1 {
 
     private final FirebaseService firebaseService;
     private final FeedbackService feedbackService;

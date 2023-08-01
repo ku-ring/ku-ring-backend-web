@@ -11,7 +11,7 @@ import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.notice.business.NoticeService;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
-import com.kustacks.kuring.notice.presentation.NoticeController;
+import com.kustacks.kuring.notice.presentation.NoticeControllerV1;
 import com.kustacks.kuring.user.business.UserService;
 import com.kustacks.kuring.user.facade.UserCommandFacade;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,7 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(RestDocumentationExtension.class)
-@WebMvcTest(NoticeController.class)
+@WebMvcTest(NoticeControllerV1.class)
 public class NoticeControllerTest {
 
     private MockMvc mockMvc;

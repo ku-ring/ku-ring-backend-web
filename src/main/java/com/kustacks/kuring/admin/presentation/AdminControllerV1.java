@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Controller
 @RequestMapping(value = "/admin")
-public class AdminController {
+public class AdminControllerV1 {
 
     private final CategoryService categoryService;
     private final FirebaseService firebaseService;
@@ -62,7 +62,7 @@ public class AdminController {
     @Value("${notice.library-base-url}")
     private String libraryBaseUrl;
 
-    public AdminController(
+    public AdminControllerV1(
             CategoryService categoryService,
             FirebaseService firebaseService,
             AdminService adminService,

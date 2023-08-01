@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/notice", produces = MediaType.APPLICATION_JSON_VALUE)
-public class NoticeController {
+public class NoticeControllerV1 {
 
     private final NoticeService noticeService;
     private final CategoryService categoryService;
