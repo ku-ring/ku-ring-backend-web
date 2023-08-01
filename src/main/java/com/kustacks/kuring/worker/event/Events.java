@@ -1,4 +1,4 @@
-package com.kustacks.kuring.category.business.event;
+package com.kustacks.kuring.worker.event;
 
 import org.springframework.context.ApplicationEventPublisher;
 

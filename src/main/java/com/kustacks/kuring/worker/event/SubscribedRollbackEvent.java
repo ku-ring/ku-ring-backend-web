@@ -1,4 +1,4 @@
-package com.kustacks.kuring.category.business.event;
+package com.kustacks.kuring.worker.event;
 
 import java.util.HashMap;
 import java.util.LinkedList;

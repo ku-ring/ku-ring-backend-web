@@ -1,4 +1,4 @@
-package com.kustacks.kuring.category.business.event;
+package com.kustacks.kuring.worker.event;
 
 import com.kustacks.kuring.common.exception.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
