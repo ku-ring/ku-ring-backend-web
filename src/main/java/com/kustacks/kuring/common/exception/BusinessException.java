@@ -1,5 +1,6 @@
 package com.kustacks.kuring.common.exception;
 
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import lombok.Getter;
 
 @Getter

@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.scrap.parser.notice;
 
-import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;

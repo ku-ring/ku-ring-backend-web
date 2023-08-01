@@ -8,7 +8,7 @@ import com.google.firebase.messaging.Notification;
 import com.google.firebase.messaging.TopicManagementResponse;
 import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
-import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;

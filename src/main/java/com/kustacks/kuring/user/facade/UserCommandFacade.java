@@ -1,10 +1,10 @@
 package com.kustacks.kuring.user.facade;
 
-import com.kustacks.kuring.category.business.event.Events;
-import com.kustacks.kuring.category.business.event.SubscribedRollbackEvent;
+import com.kustacks.kuring.worker.event.Events;
+import com.kustacks.kuring.worker.event.SubscribedRollbackEvent;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.common.exception.APIException;
-import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.common.firebase.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.common.firebase.exception.FirebaseUnSubscribeException;

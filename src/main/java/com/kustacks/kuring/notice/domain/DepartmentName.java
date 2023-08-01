@@ -1,11 +1,11 @@
 package com.kustacks.kuring.notice.domain;
 
-import com.kustacks.kuring.common.exception.DomainLogicException;
+import com.kustacks.kuring.common.exception.NotFoundException;
 import lombok.Getter;
 
 import java.util.Arrays;
 
-import static com.kustacks.kuring.common.exception.ErrorCode.DEPARTMENT_NOT_FOUND;
+import static com.kustacks.kuring.common.exception.code.ErrorCode.DEPARTMENT_NOT_FOUND;
 
 @Getter
 public enum DepartmentName {
@@ -107,13 +107,13 @@ public enum DepartmentName {
         return Arrays.stream(DepartmentName.values())
                 .filter(d -> d.isSameHostPrefix(hostPrefix))
                 .findFirst()
-                .orElseThrow(() -> new DomainLogicException(DEPARTMENT_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(DEPARTMENT_NOT_FOUND));
     }
 
     public static DepartmentName fromKor(String departmentName) {
         return Arrays.stream(DepartmentName.values())
                 .filter(d -> d.isSameKorName(departmentName))
                 .findFirst()
-                .orElseThrow(() -> new DomainLogicException(DEPARTMENT_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(DEPARTMENT_NOT_FOUND));
     }
 }

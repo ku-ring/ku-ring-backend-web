@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.event;
 
-import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.common.firebase.exception.FirebaseSubscribeException;

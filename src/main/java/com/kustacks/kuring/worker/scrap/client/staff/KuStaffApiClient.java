@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.scrap.client.staff;
 
-import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.worker.scrap.client.JsoupClient;

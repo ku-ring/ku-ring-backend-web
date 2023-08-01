@@ -3,7 +3,7 @@ package com.kustacks.kuring.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.common.exception.APIException;
-import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.notice.business.NoticeService;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
@@ -179,7 +179,7 @@ public class NoticeControllerTest {
                 .queryParam("max", String.valueOf(max)));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY.getMessage()))
                 .andExpect(jsonPath("resultCode").value(HttpStatus.BAD_REQUEST.value()))
@@ -205,7 +205,7 @@ public class NoticeControllerTest {
                 .queryParam("max", String.valueOf(max)));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_INVALID_PARAM.getMessage()))
                 .andExpect(jsonPath("resultCode").value(HttpStatus.BAD_REQUEST.value()))
@@ -299,7 +299,7 @@ public class NoticeControllerTest {
                 .queryParam("id", token));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_FB_INVALID_TOKEN.getMessage()))
                 .andExpect(jsonPath("resultCode").value(ErrorCode.API_FB_INVALID_TOKEN.getHttpStatus().value()))
@@ -320,7 +320,7 @@ public class NoticeControllerTest {
                 .accept(MediaType.APPLICATION_JSON));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_MISSING_PARAM.getMessage()))
                 .andExpect(jsonPath("resultCode").value(ErrorCode.API_MISSING_PARAM.getHttpStatus().value()))
@@ -388,7 +388,7 @@ public class NoticeControllerTest {
                 .content(objectMapper.writeValueAsString(requestDTO)));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_FB_INVALID_TOKEN.getMessage()))
                 .andExpect(jsonPath("resultCode").value(ErrorCode.API_FB_INVALID_TOKEN.getHttpStatus().value()))
@@ -411,7 +411,7 @@ public class NoticeControllerTest {
                 .content(requestBody));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_MISSING_PARAM.getMessage()))
                 .andExpect(jsonPath("resultCode").value(ErrorCode.API_MISSING_PARAM.getHttpStatus().value()))
@@ -443,7 +443,7 @@ public class NoticeControllerTest {
                 .content(objectMapper.writeValueAsString(requestDTO)));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_INVALID_PARAM.getMessage()))
                 .andExpect(jsonPath("resultCode").value(ErrorCode.API_INVALID_PARAM.getHttpStatus().value()))
@@ -476,7 +476,7 @@ public class NoticeControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY.getMessage()))
                 .andExpect(jsonPath("resultCode").value(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY.getHttpStatus().value()))

@@ -1,11 +1,11 @@
 package com.kustacks.kuring.notice.domain;
 
-import com.kustacks.kuring.common.exception.DomainLogicException;
+import com.kustacks.kuring.common.exception.NotFoundException;
 import lombok.Getter;
 
 import java.util.Arrays;
 
-import static com.kustacks.kuring.common.exception.ErrorCode.CAT_NOT_EXIST_CATEGORY;
+import static com.kustacks.kuring.common.exception.code.ErrorCode.CAT_NOT_EXIST_CATEGORY;
 
 @Getter
 public enum CategoryName {
@@ -55,6 +55,6 @@ public enum CategoryName {
         return Arrays.stream(CategoryName.values())
                 .filter(d -> d.isSameName(name))
                 .findFirst()
-                .orElseThrow(() -> new DomainLogicException(CAT_NOT_EXIST_CATEGORY));
+                .orElseThrow(() -> new NotFoundException(CAT_NOT_EXIST_CATEGORY));
     }
 }

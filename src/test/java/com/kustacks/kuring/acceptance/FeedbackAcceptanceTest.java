@@ -5,6 +5,7 @@ import com.kustacks.kuring.common.firebase.FirebaseService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 
 import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
 import static com.kustacks.kuring.acceptance.FeedbackStep.피드백_요청;
@@ -46,6 +47,6 @@ public class FeedbackAcceptanceTest extends AcceptanceTest {
         var 피드백_요청_응답 = 피드백_요청(USER_FCM_TOKEN, "5자미만");
 
         // then
-        실패_응답_확인(피드백_요청_응답, 400);
+        실패_응답_확인(피드백_요청_응답, HttpStatus.BAD_REQUEST);
     }
 }

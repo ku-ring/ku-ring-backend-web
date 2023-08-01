@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.common.exception.APIException;
 import com.kustacks.kuring.feedback.common.dto.SaveFeedbackV1Request;
-import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.feedback.presentation.FeedbackControllerV1;
 import com.kustacks.kuring.feedback.business.FeedbackService;
 import com.kustacks.kuring.common.firebase.FirebaseService;
@@ -130,7 +130,7 @@ public class FeedbackControllerTest {
                 .content(requestBody));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_FB_INVALID_TOKEN.getMessage()))
                 .andExpect(jsonPath("resultCode").value(ErrorCode.API_FB_INVALID_TOKEN.getHttpStatus().value()))
@@ -155,7 +155,7 @@ public class FeedbackControllerTest {
                 .content(requestBody));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_FD_INVALID_CONTENT.getMessage()))
                 .andExpect(jsonPath("resultCode").value(ErrorCode.API_FD_INVALID_CONTENT.getHttpStatus().value()))

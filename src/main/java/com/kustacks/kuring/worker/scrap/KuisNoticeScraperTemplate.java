@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.scrap;
 
-import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.worker.update.notice.dto.request.KuisNoticeInfo;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;

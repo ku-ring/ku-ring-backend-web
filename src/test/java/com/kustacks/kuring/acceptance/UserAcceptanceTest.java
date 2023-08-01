@@ -5,6 +5,7 @@ import com.kustacks.kuring.user.common.SubscribeCategoriesRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
 import java.util.List;
@@ -139,6 +140,6 @@ class UserAcceptanceTest extends AcceptanceTest {
         var 피드백_요청_응답 = 피드백_요청_v2(USER_FCM_TOKEN, "5자미만");
 
         // then
-        실패_응답_확인(피드백_요청_응답, 400);
+        실패_응답_확인(피드백_요청_응답, HttpStatus.BAD_REQUEST);
     }
 }

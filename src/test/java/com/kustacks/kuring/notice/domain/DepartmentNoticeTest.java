@@ -1,6 +1,6 @@
 package com.kustacks.kuring.notice.domain;
 
-import com.kustacks.kuring.common.exception.DomainLogicException;
+import com.kustacks.kuring.common.exception.InternalLogicException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class DepartmentNoticeTest {
     @ValueSource(strings = {"//www.example.com", "https:/www.example.com", "https://"})
     void member_invalid_email_id(String url) {
         assertThatThrownBy(() -> new DepartmentNotice("artice_id", "postDate", "updatedDate", "subject", CategoryName.DEPARTMENT, false, url, DepartmentName.BIOLOGICAL))
-                .isInstanceOf(DomainLogicException.class);
+                .isInstanceOf(InternalLogicException.class);
     }
 
     @DisplayName("동등성 검증 테스트")

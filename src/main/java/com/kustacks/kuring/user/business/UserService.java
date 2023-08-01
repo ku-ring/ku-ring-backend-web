@@ -1,11 +1,12 @@
 package com.kustacks.kuring.user.business;
 
+import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.common.dto.SubscribeCompareResultDto;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
-import com.kustacks.kuring.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public User getUserByToken(String token) {
         return userRepository.findByToken(token)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 
     @Transactional(readOnly = true)
@@ -88,7 +89,7 @@ public class UserService {
             optionalUser = Optional.of(userRepository.save(new User(token)));
         }
 
-        return optionalUser.orElseThrow(UserNotFoundException::new);
+        return optionalUser.orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 
     private List<CategoryName> convertToEnumList(List<String> categories) {

@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.scrap.parser.staff;
 
-import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;

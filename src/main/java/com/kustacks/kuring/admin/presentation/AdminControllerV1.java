@@ -13,7 +13,7 @@ import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.common.dto.ResponseDto;
 import com.kustacks.kuring.common.exception.APIException;
-import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;

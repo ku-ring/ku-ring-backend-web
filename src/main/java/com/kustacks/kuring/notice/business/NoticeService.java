@@ -1,8 +1,8 @@
 package com.kustacks.kuring.notice.business;
 
 import com.kustacks.kuring.notice.domain.CategoryName;
-import com.kustacks.kuring.category.exception.CategoryNotFoundException;
-import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.NotFoundException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.notice.common.OffsetBasedPageRequest;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
@@ -115,7 +115,7 @@ public class NoticeService {
                 .filter(categoryName -> categoryName.isSameShortName(typeShortName))
                 .findFirst()
                 .map(CategoryName::getName)
-                .orElseThrow(CategoryNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY));
     }
 
     private String convertBaseUrl(String categoryName) {
