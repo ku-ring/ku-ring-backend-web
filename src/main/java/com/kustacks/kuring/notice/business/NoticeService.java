@@ -1,6 +1,6 @@
 package com.kustacks.kuring.notice.business;
 
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.category.exception.CategoryNotFoundException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;

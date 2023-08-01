@@ -1,6 +1,6 @@
 package com.kustacks.kuring.user.business;
 
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.common.dto.SubscribeCompareResultDto;
 import com.kustacks.kuring.user.domain.User;

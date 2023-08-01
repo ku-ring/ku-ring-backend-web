@@ -1,6 +1,6 @@
 package com.kustacks.kuring.user.domain;
 
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

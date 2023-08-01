@@ -4,7 +4,7 @@ import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.category.common.dto.CategoryListResponse;
 import com.kustacks.kuring.category.common.dto.SubscribeCategoriesV1Request;
 import com.kustacks.kuring.category.common.dto.SubscribeCategoriesResponse;
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.notice.business.NoticeService;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;

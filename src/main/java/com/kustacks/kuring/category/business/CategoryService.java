@@ -1,6 +1,6 @@
 package com.kustacks.kuring.category.business;
 
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

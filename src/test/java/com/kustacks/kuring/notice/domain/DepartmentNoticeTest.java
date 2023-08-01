@@ -1,6 +1,5 @@
 package com.kustacks.kuring.notice.domain;
 
-import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.error.DomainLogicException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

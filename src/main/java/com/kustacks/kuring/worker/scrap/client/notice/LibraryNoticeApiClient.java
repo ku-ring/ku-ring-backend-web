@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.scrap.client.notice;
 
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.error.InternalLogicException;
 import com.kustacks.kuring.common.utils.converter.DtoConverter;

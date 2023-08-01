@@ -1,6 +1,5 @@
 package com.kustacks.kuring.notice.domain;
 
-import com.kustacks.kuring.category.domain.CategoryName;
 import com.kustacks.kuring.common.error.DomainLogicException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -8,7 +8,7 @@ import com.kustacks.kuring.admin.common.dto.CategoryNameAdminDto;
 import com.kustacks.kuring.admin.common.dto.FakeUpdateResponseDto;
 import com.kustacks.kuring.admin.common.dto.LoginResponseDto;
 import com.kustacks.kuring.category.business.CategoryService;
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.common.annotation.CheckSession;
 import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;

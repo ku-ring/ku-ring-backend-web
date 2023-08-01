@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.update.notice.dto.request;
 
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.worker.scrap.client.notice.KuisNoticeApiClient;
 import org.springframework.stereotype.Component;
 
