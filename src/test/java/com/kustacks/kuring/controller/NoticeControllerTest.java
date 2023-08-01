@@ -2,16 +2,15 @@ package com.kustacks.kuring.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.category.business.CategoryService;
-import com.kustacks.kuring.notice.presentation.dto.SubscribeCategoriesV1Request;
-import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.common.error.ErrorCode;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import com.kustacks.kuring.notice.business.NoticeService;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.presentation.NoticeControllerV1;
+import com.kustacks.kuring.notice.presentation.dto.SubscribeCategoriesV1Request;
 import com.kustacks.kuring.user.business.UserService;
 import com.kustacks.kuring.user.facade.UserCommandFacade;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,9 +62,6 @@ public class NoticeControllerTest {
 
     @MockBean
     private NoticeService noticeService;
-
-    @MockBean
-    private CategoryService categoryService;
 
     @MockBean
     private FirebaseService firebaseService;
@@ -223,12 +219,6 @@ public class NoticeControllerTest {
     @DisplayName("서버에서 제공하는 공지 카테고리 목록 제공 API - 성공")
     @Test
     void getSupportedCategoriesSuccessTest() throws Exception {
-        List<CategoryName> categoryNames = new LinkedList<>();
-        categoryNames.add(CategoryName.BACHELOR);
-        categoryNames.add(CategoryName.EMPLOYMENT);
-
-        // given
-        given(categoryService.lookUpSupportedCategories()).willReturn(categoryNames);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice/categories")
@@ -239,9 +229,7 @@ public class NoticeControllerTest {
                 .andExpect(jsonPath("isSuccess").value(true))
                 .andExpect(jsonPath("resultMsg").value("성공"))
                 .andExpect(jsonPath("resultCode").value(200))
-                .andExpect(jsonPath("categories", hasSize(2)))
-                .andExpect(jsonPath("categories[0]").value(categoryNames.get(0).getName()))
-                .andExpect(jsonPath("categories[1]").value(categoryNames.get(1).getName()))
+                .andExpect(jsonPath("categories", hasSize(9)))
                 .andDo(document("category-get-all-success",
                         getDocumentRequest(),
                         getDocumentResponse(),

@@ -1,6 +1,5 @@
 package com.kustacks.kuring.notice.presentation;
 
-import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.notice.presentation.dto.CategoryListResponse;
 import com.kustacks.kuring.notice.presentation.dto.SubscribeCategoriesV1Request;
 import com.kustacks.kuring.notice.presentation.dto.SubscribeCategoriesResponse;
@@ -26,6 +25,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Validated
 @RestController
@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 public class NoticeControllerV1 {
 
     private final NoticeService noticeService;
-    private final CategoryService categoryService;
     private final FirebaseService firebaseService;
     private final UserService userService;
     private final UserCommandFacade userCommandFacade;
@@ -49,8 +48,7 @@ public class NoticeControllerV1 {
 
     @GetMapping("/categories")
     public CategoryListResponse getSupportedCategories() {
-        List<String> categoryNames = categoryService.lookUpSupportedCategories()
-                .stream()
+        List<String> categoryNames = Stream.of(CategoryName.values())
                 .map(CategoryName::getName)
                 .collect(Collectors.toList());
 

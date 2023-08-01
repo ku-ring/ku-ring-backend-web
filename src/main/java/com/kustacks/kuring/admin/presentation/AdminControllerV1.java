@@ -7,7 +7,6 @@ import com.kustacks.kuring.admin.business.AdminService;
 import com.kustacks.kuring.admin.common.dto.CategoryNameAdminDto;
 import com.kustacks.kuring.admin.common.dto.FakeUpdateResponseDto;
 import com.kustacks.kuring.admin.common.dto.LoginResponseDto;
-import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.common.annotation.CheckSession;
 import com.kustacks.kuring.common.dto.AdminMessageDto;
@@ -41,13 +40,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Controller
 @RequestMapping(value = "/admin")
 public class AdminControllerV1 {
 
-    private final CategoryService categoryService;
     private final FirebaseService firebaseService;
     private final AdminService adminService;
 
@@ -62,19 +61,11 @@ public class AdminControllerV1 {
     @Value("${notice.library-base-url}")
     private String libraryBaseUrl;
 
-    public AdminControllerV1(
-            CategoryService categoryService,
-            FirebaseService firebaseService,
-            AdminService adminService,
-            ObjectMapper objectMapper) {
-
-        this.categoryService = categoryService;
+    public AdminControllerV1(FirebaseService firebaseService, AdminService adminService, ObjectMapper objectMapper) {
         this.firebaseService = firebaseService;
         this.adminService = adminService;
-
         this.objectMapper = objectMapper;
     }
-
 
     @CheckSession
     @GetMapping("/{type}")
@@ -318,8 +309,7 @@ public class AdminControllerV1 {
     }
 
     public List<CategoryNameAdminDto> getCategoryDtoList() {
-        return categoryService.lookUpSupportedCategories()
-                .stream()
+        return Stream.of(CategoryName.values())
                 .map(categoryName -> new CategoryNameAdminDto(categoryName.getName()))
                 .collect(Collectors.toList());
     }
