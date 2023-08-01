@@ -1,4 +1,4 @@
-package com.kustacks.kuring.common.firebase;
+package com.kustacks.kuring.message.firebase;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -10,10 +10,10 @@ import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
-import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
-import com.kustacks.kuring.common.firebase.exception.FirebaseMessageSendException;
-import com.kustacks.kuring.common.firebase.exception.FirebaseSubscribeException;
-import com.kustacks.kuring.common.firebase.exception.FirebaseUnSubscribeException;
+import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.message.firebase.exception.FirebaseMessageSendException;
+import com.kustacks.kuring.message.firebase.exception.FirebaseSubscribeException;
+import com.kustacks.kuring.message.firebase.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.notice.domain.Notice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

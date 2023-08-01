@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.update.notice;
 
 import com.kustacks.kuring.notice.domain.CategoryName;
-import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;

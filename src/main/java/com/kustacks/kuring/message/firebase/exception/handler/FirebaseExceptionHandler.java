@@ -1,7 +1,7 @@
-package com.kustacks.kuring.common.firebase.exception.handler;
+package com.kustacks.kuring.message.firebase.exception.handler;
 
 import com.kustacks.kuring.common.dto.ErrorResponse;
-import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

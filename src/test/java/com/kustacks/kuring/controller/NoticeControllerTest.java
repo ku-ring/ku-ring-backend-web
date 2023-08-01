@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.common.exception.APIException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.notice.business.NoticeService;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;

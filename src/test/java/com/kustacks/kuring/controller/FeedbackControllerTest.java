@@ -7,7 +7,7 @@ import com.kustacks.kuring.feedback.common.dto.SaveFeedbackV1Request;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.feedback.presentation.FeedbackControllerV1;
 import com.kustacks.kuring.feedback.business.FeedbackService;
-import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.message.firebase.FirebaseService;
 //import org.junit.Before;
 //import org.junit.Rule;
 //import org.junit.Test;

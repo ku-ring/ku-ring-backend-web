@@ -1,6 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.user.common.SubscribeCategoriesRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

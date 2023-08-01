@@ -2,9 +2,9 @@ package com.kustacks.kuring.worker.event;
 
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
-import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.common.firebase.exception.FirebaseSubscribeException;
-import com.kustacks.kuring.common.firebase.exception.FirebaseUnSubscribeException;
+import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.message.firebase.exception.FirebaseSubscribeException;
+import com.kustacks.kuring.message.firebase.exception.FirebaseUnSubscribeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
