@@ -1,4 +1,4 @@
-package com.kustacks.kuring.category.common.dto;
+package com.kustacks.kuring.notice.presentation.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
