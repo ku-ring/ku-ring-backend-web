@@ -1,4 +1,4 @@
-package com.kustacks.kuring.common.error;
+package com.kustacks.kuring.common.exception;
 
 import io.sentry.Sentry;
 import org.slf4j.Logger;

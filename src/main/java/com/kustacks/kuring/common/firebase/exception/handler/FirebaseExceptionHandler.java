@@ -1,6 +1,6 @@
 package com.kustacks.kuring.common.firebase.exception.handler;
 
-import com.kustacks.kuring.common.error.ErrorResponse;
+import com.kustacks.kuring.common.exception.ErrorResponse;
 import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;

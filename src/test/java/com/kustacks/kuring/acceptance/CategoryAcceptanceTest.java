@@ -2,8 +2,8 @@ package com.kustacks.kuring.acceptance;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.notice.presentation.dto.SubscribeCategoriesV1Request;
-import com.kustacks.kuring.common.error.APIException;
-import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.exception.APIException;
+import com.kustacks.kuring.common.exception.ErrorCode;
 import com.kustacks.kuring.common.firebase.FirebaseService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

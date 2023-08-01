@@ -1,4 +1,4 @@
-package com.kustacks.kuring.common.error;
+package com.kustacks.kuring.common.exception;
 
 public class APIException extends BusinessException {
     public APIException(ErrorCode errorCode) {

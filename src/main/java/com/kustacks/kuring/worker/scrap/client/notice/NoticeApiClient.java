@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.scrap.client.notice;
 
-import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.exception.InternalLogicException;
 
 import java.util.List;
 

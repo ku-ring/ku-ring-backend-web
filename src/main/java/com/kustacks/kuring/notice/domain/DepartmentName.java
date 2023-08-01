@@ -1,11 +1,11 @@
 package com.kustacks.kuring.notice.domain;
 
-import com.kustacks.kuring.common.error.DomainLogicException;
+import com.kustacks.kuring.common.exception.DomainLogicException;
 import lombok.Getter;
 
 import java.util.Arrays;
 
-import static com.kustacks.kuring.common.error.ErrorCode.DEPARTMENT_NOT_FOUND;
+import static com.kustacks.kuring.common.exception.ErrorCode.DEPARTMENT_NOT_FOUND;
 
 @Getter
 public enum DepartmentName {

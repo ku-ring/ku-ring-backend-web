@@ -1,11 +1,11 @@
 package com.kustacks.kuring.notice.domain;
 
-import com.kustacks.kuring.common.error.DomainLogicException;
+import com.kustacks.kuring.common.exception.DomainLogicException;
 import lombok.Getter;
 
 import java.util.Arrays;
 
-import static com.kustacks.kuring.common.error.ErrorCode.CAT_NOT_EXIST_CATEGORY;
+import static com.kustacks.kuring.common.exception.ErrorCode.CAT_NOT_EXIST_CATEGORY;
 
 @Getter
 public enum CategoryName {

@@ -2,8 +2,8 @@ package com.kustacks.kuring.notice.business;
 
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.category.exception.CategoryNotFoundException;
-import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.notice.common.OffsetBasedPageRequest;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;

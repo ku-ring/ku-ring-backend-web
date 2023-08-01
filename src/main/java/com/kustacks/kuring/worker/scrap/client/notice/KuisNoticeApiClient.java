@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.scrap.client.notice;
 
-import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.utils.converter.KuisNoticeDtoToCommonFormatDtoConverter;
 import com.kustacks.kuring.worker.scrap.client.auth.ParsingKuisAuthManager;
 import com.kustacks.kuring.worker.scrap.client.notice.property.KuisNoticeProperties;

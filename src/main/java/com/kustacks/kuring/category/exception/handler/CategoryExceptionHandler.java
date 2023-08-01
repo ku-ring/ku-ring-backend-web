@@ -1,7 +1,7 @@
 package com.kustacks.kuring.category.exception.handler;
 
 import com.kustacks.kuring.category.exception.CategoryNotFoundException;
-import com.kustacks.kuring.common.error.ErrorResponse;
+import com.kustacks.kuring.common.exception.ErrorResponse;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;

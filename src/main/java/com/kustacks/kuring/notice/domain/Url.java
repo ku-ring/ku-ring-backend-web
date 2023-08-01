@@ -1,7 +1,7 @@
 package com.kustacks.kuring.notice.domain;
 
-import com.kustacks.kuring.common.error.DomainLogicException;
-import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.exception.DomainLogicException;
+import com.kustacks.kuring.common.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.kustacks.kuring.common.error;
+package com.kustacks.kuring.common.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

@@ -1,7 +1,7 @@
 package com.kustacks.kuring.user.exception.handler;
 
-import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.ErrorResponse;
+import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.ErrorResponse;
 import com.kustacks.kuring.user.exception.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;

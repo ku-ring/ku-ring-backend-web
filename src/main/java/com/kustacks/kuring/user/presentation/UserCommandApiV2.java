@@ -1,7 +1,7 @@
 package com.kustacks.kuring.user.presentation;
 
 import com.kustacks.kuring.common.dto.BaseResponse;
-import com.kustacks.kuring.common.error.APIException;
+import com.kustacks.kuring.common.exception.APIException;
 import com.kustacks.kuring.user.common.SubscribeCategoriesRequest;
 import com.kustacks.kuring.user.common.SubscribeDepartmentsRequest;
 import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;

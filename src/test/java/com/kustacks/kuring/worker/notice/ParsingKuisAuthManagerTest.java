@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.notice;
 
-import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.exception.ErrorCode;
+import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.utils.encoder.RequestBodyEncoder;
 import com.kustacks.kuring.config.JsonConfig;
 import com.kustacks.kuring.config.RestTemplateConfig;

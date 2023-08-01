@@ -1,7 +1,7 @@
 package com.kustacks.kuring.common.firebase.exception;
 
-import com.kustacks.kuring.common.error.BusinessException;
-import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.exception.BusinessException;
+import com.kustacks.kuring.common.exception.ErrorCode;
 
 public class FirebaseMessageSendException extends BusinessException {
 

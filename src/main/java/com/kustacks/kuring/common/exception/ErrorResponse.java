@@ -1,4 +1,4 @@
-package com.kustacks.kuring.common.error;
+package com.kustacks.kuring.common.exception;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
