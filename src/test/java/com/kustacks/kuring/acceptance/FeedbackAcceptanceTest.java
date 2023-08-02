@@ -44,7 +44,7 @@ public class FeedbackAcceptanceTest extends AcceptanceTest {
         doNothing().when(firebaseService).validationToken(anyString());
 
         // when
-        var 피드백_요청_응답 = 피드백_요청(USER_FCM_TOKEN, "5자미만");
+        var 피드백_요청_응답 = 피드백_요청(USER_FCM_TOKEN, "");
 
         // then
         실패_응답_확인(피드백_요청_응답, HttpStatus.BAD_REQUEST);

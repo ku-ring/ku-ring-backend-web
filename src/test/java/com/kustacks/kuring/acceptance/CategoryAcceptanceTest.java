@@ -1,9 +1,8 @@
 package com.kustacks.kuring.acceptance;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
+import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.notice.presentation.dto.SubscribeCategoriesV1Request;
-import com.kustacks.kuring.common.exception.APIException;
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,10 +86,10 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
      */
     @DisplayName("사용자가 잘못된 토큰과 함께 카테고리 구독시 실패한다")
     @Test
-    void user_subscribe_category_with_invalid_token() throws FirebaseMessagingException {
+    void user_subscribe_category_with_invalid_token() {
         // given
         doNothing().when(firebaseService).subscribe(anyString(), anyString());
-        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(firebaseService).validationToken(anyString());
+        doThrow(new FirebaseInvalidTokenException()).when(firebaseService).validationToken(anyString());
 
         // when
         var response = 카테고리_구독_요청(new SubscribeCategoriesV1Request(INVALID_USER_FCM_TOKEN, List.of("student", "employment")));
@@ -106,7 +105,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
      */
     @DisplayName("사용자가 구독한 카테고리 목록을 조회한다")
     @Test
-    void look_up_user_subscribe_category() throws FirebaseMessagingException {
+    void look_up_user_subscribe_category() {
         // given
         doNothing().when(firebaseService).validationToken(anyString());
         카테고리_구독_요청(new SubscribeCategoriesV1Request(USER_FCM_TOKEN, List.of("student", "employment")));

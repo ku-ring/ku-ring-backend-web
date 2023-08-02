@@ -1,11 +1,10 @@
 package com.kustacks.kuring.feedback.presentation;
 
 import com.kustacks.kuring.common.exception.APIException;
-import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.feedback.business.FeedbackService;
-import com.kustacks.kuring.feedback.common.dto.SaveFeedbackV1Request;
 import com.kustacks.kuring.feedback.common.dto.SaveFeedbackResponse;
+import com.kustacks.kuring.feedback.common.dto.SaveFeedbackV1Request;
+import com.kustacks.kuring.message.firebase.FirebaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,17 +26,10 @@ public class FeedbackControllerV1 {
     public SaveFeedbackResponse saveFeedback(@Valid @RequestBody SaveFeedbackV1Request request) throws APIException {
         String token = request.getId();
         String content = request.getContent();
-        validationContentsLength(content);
 
         firebaseService.validationToken(token);
         feedbackService.saveFeedback(token, content);
 
         return new SaveFeedbackResponse();
-    }
-
-    private static void validationContentsLength(String content) {
-        if (content.length() < 5 || content.length() > 256) {
-            throw new APIException(ErrorCode.API_FD_INVALID_CONTENT);
-        }
     }
 }

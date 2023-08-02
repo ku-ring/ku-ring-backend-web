@@ -2,20 +2,16 @@ package com.kustacks.kuring.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.common.exception.APIException;
-import com.kustacks.kuring.feedback.common.dto.SaveFeedbackV1Request;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.feedback.presentation.FeedbackControllerV1;
 import com.kustacks.kuring.feedback.business.FeedbackService;
+import com.kustacks.kuring.feedback.common.dto.SaveFeedbackV1Request;
+import com.kustacks.kuring.feedback.presentation.FeedbackControllerV1;
 import com.kustacks.kuring.message.firebase.FirebaseService;
-//import org.junit.Before;
-//import org.junit.Rule;
-//import org.junit.Test;
+import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-//import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -121,7 +117,7 @@ public class FeedbackControllerTest {
         String content = "테스트 피드백입니다.";
         String requestBody = objectMapper.writeValueAsString(new SaveFeedbackV1Request(token, content));
 
-        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(firebaseService).validationToken(token);
+        doThrow(new FirebaseInvalidTokenException()).when(firebaseService).validationToken(token);
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/feedback")
@@ -145,7 +141,7 @@ public class FeedbackControllerTest {
     public void saveFeedbackFailByInvalidContentLength() throws Exception {
         // given
         String token = "TEST_TOKEN";
-        String content = "5자미만";
+        String content = "";
         String requestBody = objectMapper.writeValueAsString(new SaveFeedbackV1Request(token, content));
 
         // when
@@ -157,8 +153,8 @@ public class FeedbackControllerTest {
         // then
         result.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("isSuccess").value(false))
-                .andExpect(jsonPath("resultMsg").value(ErrorCode.API_FD_INVALID_CONTENT.getMessage()))
-                .andExpect(jsonPath("resultCode").value(ErrorCode.API_FD_INVALID_CONTENT.getHttpStatus().value()))
+                .andExpect(jsonPath("resultMsg").value(ErrorCode.API_MISSING_PARAM.getMessage()))
+                .andExpect(jsonPath("resultCode").value(ErrorCode.API_MISSING_PARAM.getHttpStatus().value()))
                 .andDo(document("save-feedback-fail-invalid-content-length",
                         getDocumentRequest(),
                         getDocumentResponse())
