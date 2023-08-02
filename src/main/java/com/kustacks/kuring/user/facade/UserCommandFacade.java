@@ -55,7 +55,11 @@ public class UserCommandFacade {
         unsubscribeUserCategory(userToken, deletedCategoryNames, subscribedRollbackEvent);
     }
 
-    private void subscribeUserCategory(String token, List<CategoryName> newCategoryNames, SubscribedRollbackEvent subscribedRollbackEvent) {
+    private void subscribeUserCategory(
+            String token,
+            List<CategoryName> newCategoryNames,
+            SubscribedRollbackEvent subscribedRollbackEvent) throws FirebaseSubscribeException
+    {
         for (CategoryName newCategoryName : newCategoryNames) {
             firebaseService.subscribe(token, newCategoryName.getName());
             userService.subscribeCategory(token, newCategoryName);
@@ -64,7 +68,11 @@ public class UserCommandFacade {
         }
     }
 
-    private void unsubscribeUserCategory(String token, List<CategoryName> removeCategoryNames, SubscribedRollbackEvent subscribedRollbackEvent) {
+    private void unsubscribeUserCategory(
+            String token,
+            List<CategoryName> removeCategoryNames,
+            SubscribedRollbackEvent subscribedRollbackEvent) throws FirebaseUnSubscribeException
+    {
         for (CategoryName removeCategoryName : removeCategoryNames) {
             firebaseService.unsubscribe(token, removeCategoryName.getName());
             userService.unsubscribeCategory(token, removeCategoryName);

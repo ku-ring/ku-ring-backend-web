@@ -1,7 +1,7 @@
 package com.kustacks.kuring.user.business;
 
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.NotFoundException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.common.dto.SubscribeCompareResultDto;
@@ -42,7 +42,8 @@ public class UserService {
         return findUser.getSubscribedCategoryList();
     }
 
-    public SubscribeCompareResultDto<CategoryName> editSubscribeCategoryList(String userToken, List<String> newCategoryStringNames) {
+    public SubscribeCompareResultDto<CategoryName> editSubscribeCategoryList(
+            String userToken, List<String> newCategoryStringNames) {
         User user = findUserByToken(userToken);
 
         List<CategoryName> newCategoryNames = convertToEnumList(newCategoryStringNames);

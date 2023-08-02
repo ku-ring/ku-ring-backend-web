@@ -72,10 +72,10 @@ public enum ErrorCode {
     NOTICE_SCRAPER_CANNOT_SCRAP("학과 홈페이지가 불안정합니다. 공지 정보를 가져올 수 없습니다."),
     NOTICE_SCRAPER_CANNOT_PARSE("공지 페이지 HTML 파싱에 실패했습니다."),
 
-    FB_FAIL_SUBSCRIBE("카테고리 구독에 실패했습니다."),
-    FB_FAIL_UNSUBSCRIBE("카테고리 구독 해제에 실패했습니다."),
-    FB_FAIL_ROLLBACK("카테고리 편집 중 transaction fail이 발생했고, 이를 복구하는데 실패했습니다."),
-    FB_FAIL_SEND("FCM 메세지 전송에 실패했습니다."),
+    FB_FAIL_SUBSCRIBE(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 구독에 실패했습니다."),
+    FB_FAIL_UNSUBSCRIBE(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 구독 해제에 실패했습니다."),
+    FB_FAIL_ROLLBACK(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 편집 중 transaction fail이 발생했고, 이를 복구하는데 실패했습니다."),
+    FB_FAIL_SEND(HttpStatus.INTERNAL_SERVER_ERROR, "FCM 메세지 전송에 실패했습니다."),
 
     WS_CANNOT_PARSE_JSON("JSON 문자열을 객체로 변환하는데 실패했습니다."),
     WS_CANNOT_STRINGIFY("객체를 JSON 문자열로 변경하는데 실패했습니다."),

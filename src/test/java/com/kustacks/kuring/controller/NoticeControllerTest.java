@@ -2,9 +2,11 @@ package com.kustacks.kuring.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.common.exception.APIException;
+import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.message.firebase.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.notice.business.NoticeService;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
@@ -168,7 +170,7 @@ public class NoticeControllerTest {
         offset = 0;
         max = 20;
 
-        given(noticeService.getNotices(type, offset, max)).willThrow(new APIException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY));
+        given(noticeService.getNotices(type, offset, max)).willThrow(new NotFoundException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY));
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice")
@@ -290,7 +292,7 @@ public class NoticeControllerTest {
     void getUserCategoriesFailByInvalidTokenTest() throws Exception {
         // given
         String token = "INVALID_TOKEN";
-        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(firebaseService).validationToken(token);
+        doThrow(new FirebaseInvalidTokenException()).when(firebaseService).validationToken(token);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice/subscribe")
@@ -379,7 +381,7 @@ public class NoticeControllerTest {
 
         // given
         given(userService.getUserByToken(token)).willReturn(null);
-        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(userCommandFacade).editSubscribeCategories(anyString(), any());
+        doThrow(new FirebaseInvalidTokenException()).when(userCommandFacade).editSubscribeCategories(anyString(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -434,7 +436,7 @@ public class NoticeControllerTest {
         SubscribeCategoriesV1Request requestDTO = new SubscribeCategoriesV1Request(token, categories);
 
         // given
-        doThrow(new APIException(ErrorCode.API_INVALID_PARAM)).when(userCommandFacade).editSubscribeCategories(any(), any());
+        doThrow(new FirebaseSubscribeException()).when(userCommandFacade).editSubscribeCategories(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -443,10 +445,10 @@ public class NoticeControllerTest {
                 .content(objectMapper.writeValueAsString(requestDTO)));
 
         // then
-        result.andExpect(status().isBadRequest())
+        result.andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("isSuccess").value(false))
-                .andExpect(jsonPath("resultMsg").value(ErrorCode.API_INVALID_PARAM.getMessage()))
-                .andExpect(jsonPath("resultCode").value(ErrorCode.API_INVALID_PARAM.getHttpStatus().value()))
+                .andExpect(jsonPath("resultMsg").value(ErrorCode.FB_FAIL_SUBSCRIBE.getMessage()))
+                .andExpect(jsonPath("resultCode").value(ErrorCode.FB_FAIL_SUBSCRIBE.getHttpStatus().value()))
                 .andDo(document("category-subscribe-categories-fail-not-supported-category",
                         getDocumentRequest(),
                         getDocumentResponse())
@@ -467,7 +469,7 @@ public class NoticeControllerTest {
         SubscribeCategoriesV1Request request = new SubscribeCategoriesV1Request(token, categories);
 
         // given
-        doThrow(new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY)).when(userCommandFacade).editSubscribeCategories(any(), any());
+        doThrow(new FirebaseSubscribeException()).when(userCommandFacade).editSubscribeCategories(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -478,8 +480,8 @@ public class NoticeControllerTest {
         // then
         result.andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("isSuccess").value(false))
-                .andExpect(jsonPath("resultMsg").value(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY.getMessage()))
-                .andExpect(jsonPath("resultCode").value(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY.getHttpStatus().value()))
+                .andExpect(jsonPath("resultMsg").value(ErrorCode.FB_FAIL_SUBSCRIBE.getMessage()))
+                .andExpect(jsonPath("resultCode").value(ErrorCode.FB_FAIL_SUBSCRIBE.getHttpStatus().value()))
                 .andDo(document("category-subscribe-categories-fail-firebase-error",
                         getDocumentRequest(),
                         getDocumentResponse())
