@@ -2,12 +2,12 @@ package com.kustacks.kuring.common.exception;
 
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 
-public class APIException extends BusinessException {
-    public APIException(ErrorCode errorCode) {
+public class AdminException extends BusinessException {
+    public AdminException(ErrorCode errorCode) {
         super(errorCode);
     }
 
-    public APIException(ErrorCode errorCode, Exception e) {
+    public AdminException(ErrorCode errorCode, Exception e) {
         super(errorCode, e);
     }
 }

@@ -1,6 +1,5 @@
 package com.kustacks.kuring.feedback.presentation;
 
-import com.kustacks.kuring.common.exception.APIException;
 import com.kustacks.kuring.feedback.business.FeedbackService;
 import com.kustacks.kuring.feedback.common.dto.SaveFeedbackResponse;
 import com.kustacks.kuring.feedback.common.dto.SaveFeedbackV1Request;
@@ -23,7 +22,7 @@ public class FeedbackControllerV1 {
     private final FeedbackService feedbackService;
 
     @PostMapping("/feedback")
-    public SaveFeedbackResponse saveFeedback(@Valid @RequestBody SaveFeedbackV1Request request) throws APIException {
+    public SaveFeedbackResponse saveFeedback(@Valid @RequestBody SaveFeedbackV1Request request) {
         String token = request.getId();
         String content = request.getContent();
 

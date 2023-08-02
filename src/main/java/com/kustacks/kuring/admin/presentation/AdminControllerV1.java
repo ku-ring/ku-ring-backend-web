@@ -12,7 +12,7 @@ import com.kustacks.kuring.common.annotation.CheckSession;
 import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.common.dto.ResponseDto;
-import com.kustacks.kuring.common.exception.APIException;
+import com.kustacks.kuring.common.exception.AdminException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.message.firebase.FirebaseService;
@@ -156,14 +156,14 @@ public class AdminControllerV1 {
         String fakeNoticeSubject = requestBody.get("subject");
         String fakeNoticeArticleId = requestBody.get("articleId");
         if (fakeNoticeCategory == null || fakeNoticeSubject == null) {
-            throw new APIException(ErrorCode.API_ADMIN_MISSING_PARAM);
+            throw new AdminException(ErrorCode.API_ADMIN_MISSING_PARAM);
         }
 
         fakeNoticeSubject = URLDecoder.decode(fakeNoticeSubject, StandardCharsets.UTF_8);
 
         CategoryName dbCategoryName = CategoryName.fromStringName(fakeNoticeCategory);
         if (dbCategoryName == null || fakeNoticeSubject.equals("") || fakeNoticeSubject.length() > 128) {
-            throw new APIException(ErrorCode.API_ADMIN_INVALID_SUBJECT);
+            throw new AdminException(ErrorCode.API_ADMIN_INVALID_SUBJECT);
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -184,7 +184,7 @@ public class AdminControllerV1 {
                     .baseUrl(CategoryName.LIBRARY.getName().equals(fakeNoticeCategory) ? libraryBaseUrl : normalBaseUrl)
                     .build());
         } catch (FirebaseMessageSendException e) {
-            throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
+            throw new AdminException(ErrorCode.API_FB_SERVER_ERROR, e);
         }
 
         return new ResponseDto(true, "성공", 200);
@@ -204,13 +204,13 @@ public class AdminControllerV1 {
 
         String token = requestBody.get("token");
         if (token == null || token.equals("")) {
-            throw new APIException(ErrorCode.API_MISSING_PARAM);
+            throw new AdminException(ErrorCode.API_MISSING_PARAM);
         }
 
         try {
             adminService.checkToken(token);
         } catch (InternalLogicException e) {
-            throw new APIException(ErrorCode.API_ADMIN_UNAUTHENTICATED, e);
+            throw new AdminException(ErrorCode.API_ADMIN_UNAUTHENTICATED, e);
         }
 
         HttpSession session = request.getSession(true);
@@ -232,13 +232,13 @@ public class AdminControllerV1 {
 
         boolean isAuthenticated = adminService.checkToken(auth);
         if (!isAuthenticated) {
-            throw new APIException(ErrorCode.API_ADMIN_UNAUTHENTICATED);
+            throw new AdminException(ErrorCode.API_ADMIN_UNAUTHENTICATED);
         }
 
         try {
             firebaseService.validationToken(token);
         } catch (FirebaseInvalidTokenException e) {
-            throw new APIException(ErrorCode.API_ADMIN_INVALID_FCM, e);
+            throw new AdminException(ErrorCode.API_ADMIN_INVALID_FCM, e);
         }
 
         if ("notice".equals(type)) {
@@ -254,17 +254,17 @@ public class AdminControllerV1 {
 
             boolean isCategorySupported = adminService.checkCategory(category);
             if (!isCategorySupported) {
-                throw new APIException(ErrorCode.API_ADMIN_INVALID_CATEGORY);
+                throw new AdminException(ErrorCode.API_ADMIN_INVALID_CATEGORY);
             }
 
             boolean isSubjectValid = adminService.checkSubject(subject);
             if (!isSubjectValid) {
-                throw new APIException(ErrorCode.API_ADMIN_INVALID_SUBJECT);
+                throw new AdminException(ErrorCode.API_ADMIN_INVALID_SUBJECT);
             }
 
             boolean isPostedDateValid = adminService.checkPostedDate(postedDate);
             if (!isPostedDateValid) {
-                throw new APIException(ErrorCode.API_ADMIN_INVALID_POSTED_DATE);
+                throw new AdminException(ErrorCode.API_ADMIN_INVALID_POSTED_DATE);
             }
 
             try {
@@ -277,7 +277,7 @@ public class AdminControllerV1 {
                         .baseUrl(CategoryName.LIBRARY.getName().equals(category) ? libraryBaseUrl : normalBaseUrl)
                         .build());
             } catch (FirebaseMessagingException e) {
-                throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
+                throw new AdminException(ErrorCode.API_FB_SERVER_ERROR, e);
             }
         } else if ("admin".equals(type)) {
             String title = reqBody.get("title");
@@ -288,21 +288,21 @@ public class AdminControllerV1 {
 
             boolean isTitleValid = adminService.checkTitle(title);
             if (!isTitleValid) {
-                throw new APIException(ErrorCode.API_ADMIN_INVALID_TITLE);
+                throw new AdminException(ErrorCode.API_ADMIN_INVALID_TITLE);
             }
 
             boolean isBodyValid = adminService.checkBody(body);
             if (!isBodyValid) {
-                throw new APIException(ErrorCode.API_ADMIN_INVALID_BODY);
+                throw new AdminException(ErrorCode.API_ADMIN_INVALID_BODY);
             }
 
             try {
                 firebaseService.sendNoticeMessageForAdmin(token, new AdminMessageDto(title, body));
             } catch (FirebaseMessagingException e) {
-                throw new APIException(ErrorCode.API_FB_SERVER_ERROR, e);
+                throw new AdminException(ErrorCode.API_FB_SERVER_ERROR, e);
             }
         } else {
-            throw new APIException(ErrorCode.API_ADMIN_INVALID_TYPE);
+            throw new AdminException(ErrorCode.API_ADMIN_INVALID_TYPE);
         }
 
         return new FakeUpdateResponseDto();

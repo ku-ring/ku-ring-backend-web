@@ -31,8 +31,8 @@ public class CommonExceptionHandler {
                 .body(new ErrorResponse(exception.getErrorCode()));
     }
 
-    @ExceptionHandler(APIException.class)
-    public ResponseEntity<ErrorResponse> APIExceptionHandler(APIException exception) {
+    @ExceptionHandler(AdminException.class)
+    public ResponseEntity<ErrorResponse> AdminExceptionHandler(AdminException exception) {
         log.error("[APIException] {}", exception.getErrorCode().getMessage(), exception);
         return ResponseEntity.status(exception.getErrorCode().getHttpStatus())
                 .body(new ErrorResponse(exception.getErrorCode()));
