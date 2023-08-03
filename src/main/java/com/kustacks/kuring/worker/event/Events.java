@@ -1,9 +1,11 @@
 package com.kustacks.kuring.worker.event;
 
+import lombok.NoArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Objects;
 
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class Events {
 
     private static ApplicationEventPublisher publisher;

@@ -14,7 +14,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class subscribedRollbackEventHandler {
+public class SubscribedRollbackEventHandler {
 
     private final FirebaseService firebaseService;
 
