@@ -2,7 +2,7 @@ package com.kustacks.kuring.admin.business;
 
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.domain.AdminRepository;
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.feedback.domain.Feedback;
 import com.kustacks.kuring.feedback.domain.FeedbackRepository;
 import com.kustacks.kuring.notice.domain.Notice;

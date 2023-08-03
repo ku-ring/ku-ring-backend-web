@@ -1,7 +1,7 @@
 package com.kustacks.kuring.notice.domain;
 
-import com.kustacks.kuring.common.error.DomainLogicException;
-import com.kustacks.kuring.common.error.ErrorCode;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.common.exception.InternalLogicException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +23,7 @@ public class Url {
 
     public Url(String fullUrl) {
         if (!this.isValidUrl(fullUrl)) {
-            throw new DomainLogicException(ErrorCode.DOMAIN_CANNOT_CREATE);
+            throw new InternalLogicException(ErrorCode.DOMAIN_CANNOT_CREATE);
         }
 
         this.value = fullUrl;

@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.update.user;
 
-import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.common.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;

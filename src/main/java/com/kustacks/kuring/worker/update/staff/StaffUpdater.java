@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.update.staff;
 
 import com.kustacks.kuring.common.dto.StaffDto;
-import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.domain.StaffRepository;
 import com.kustacks.kuring.worker.scrap.StaffScraper;

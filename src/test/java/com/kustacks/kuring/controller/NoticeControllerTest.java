@@ -2,16 +2,17 @@ package com.kustacks.kuring.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.category.business.CategoryService;
-import com.kustacks.kuring.category.common.dto.SubscribeCategoriesV1Request;
-import com.kustacks.kuring.category.domain.CategoryName;
-import com.kustacks.kuring.common.error.APIException;
-import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.common.exception.NotFoundException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.message.firebase.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.notice.business.NoticeService;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
-import com.kustacks.kuring.notice.presentation.NoticeController;
+import com.kustacks.kuring.notice.domain.CategoryName;
+import com.kustacks.kuring.notice.presentation.NoticeControllerV1;
+import com.kustacks.kuring.notice.presentation.dto.SubscribeCategoriesV1Request;
 import com.kustacks.kuring.user.business.UserService;
 import com.kustacks.kuring.user.facade.UserCommandFacade;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,16 +57,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(RestDocumentationExtension.class)
-@WebMvcTest(NoticeController.class)
+@WebMvcTest(NoticeControllerV1.class)
 public class NoticeControllerTest {
 
     private MockMvc mockMvc;
 
     @MockBean
     private NoticeService noticeService;
-
-    @MockBean
-    private CategoryService categoryService;
 
     @MockBean
     private FirebaseService firebaseService;
@@ -172,7 +170,7 @@ public class NoticeControllerTest {
         offset = 0;
         max = 20;
 
-        given(noticeService.getNotices(type, offset, max)).willThrow(new APIException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY));
+        given(noticeService.getNotices(type, offset, max)).willThrow(new NotFoundException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY));
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice")
@@ -183,7 +181,7 @@ public class NoticeControllerTest {
                 .queryParam("max", String.valueOf(max)));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY.getMessage()))
                 .andExpect(jsonPath("resultCode").value(HttpStatus.BAD_REQUEST.value()))
@@ -209,7 +207,7 @@ public class NoticeControllerTest {
                 .queryParam("max", String.valueOf(max)));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_INVALID_PARAM.getMessage()))
                 .andExpect(jsonPath("resultCode").value(HttpStatus.BAD_REQUEST.value()))
@@ -223,12 +221,6 @@ public class NoticeControllerTest {
     @DisplayName("서버에서 제공하는 공지 카테고리 목록 제공 API - 성공")
     @Test
     void getSupportedCategoriesSuccessTest() throws Exception {
-        List<CategoryName> categoryNames = new LinkedList<>();
-        categoryNames.add(CategoryName.BACHELOR);
-        categoryNames.add(CategoryName.EMPLOYMENT);
-
-        // given
-        given(categoryService.lookUpSupportedCategories()).willReturn(categoryNames);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice/categories")
@@ -239,9 +231,7 @@ public class NoticeControllerTest {
                 .andExpect(jsonPath("isSuccess").value(true))
                 .andExpect(jsonPath("resultMsg").value("성공"))
                 .andExpect(jsonPath("resultCode").value(200))
-                .andExpect(jsonPath("categories", hasSize(2)))
-                .andExpect(jsonPath("categories[0]").value(categoryNames.get(0).getName()))
-                .andExpect(jsonPath("categories[1]").value(categoryNames.get(1).getName()))
+                .andExpect(jsonPath("categories", hasSize(9)))
                 .andDo(document("category-get-all-success",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -302,7 +292,7 @@ public class NoticeControllerTest {
     void getUserCategoriesFailByInvalidTokenTest() throws Exception {
         // given
         String token = "INVALID_TOKEN";
-        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(firebaseService).validationToken(token);
+        doThrow(new FirebaseInvalidTokenException()).when(firebaseService).validationToken(token);
 
         // when
         ResultActions result = mockMvc.perform(get("/api/v1/notice/subscribe")
@@ -311,7 +301,7 @@ public class NoticeControllerTest {
                 .queryParam("id", token));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_FB_INVALID_TOKEN.getMessage()))
                 .andExpect(jsonPath("resultCode").value(ErrorCode.API_FB_INVALID_TOKEN.getHttpStatus().value()))
@@ -332,7 +322,7 @@ public class NoticeControllerTest {
                 .accept(MediaType.APPLICATION_JSON));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_MISSING_PARAM.getMessage()))
                 .andExpect(jsonPath("resultCode").value(ErrorCode.API_MISSING_PARAM.getHttpStatus().value()))
@@ -391,7 +381,7 @@ public class NoticeControllerTest {
 
         // given
         given(userService.getUserByToken(token)).willReturn(null);
-        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(userCommandFacade).editSubscribeCategories(anyString(), any());
+        doThrow(new FirebaseInvalidTokenException()).when(userCommandFacade).editSubscribeCategories(anyString(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -400,7 +390,7 @@ public class NoticeControllerTest {
                 .content(objectMapper.writeValueAsString(requestDTO)));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_FB_INVALID_TOKEN.getMessage()))
                 .andExpect(jsonPath("resultCode").value(ErrorCode.API_FB_INVALID_TOKEN.getHttpStatus().value()))
@@ -423,7 +413,7 @@ public class NoticeControllerTest {
                 .content(requestBody));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("isSuccess").value(false))
                 .andExpect(jsonPath("resultMsg").value(ErrorCode.API_MISSING_PARAM.getMessage()))
                 .andExpect(jsonPath("resultCode").value(ErrorCode.API_MISSING_PARAM.getHttpStatus().value()))
@@ -446,7 +436,7 @@ public class NoticeControllerTest {
         SubscribeCategoriesV1Request requestDTO = new SubscribeCategoriesV1Request(token, categories);
 
         // given
-        doThrow(new APIException(ErrorCode.API_INVALID_PARAM)).when(userCommandFacade).editSubscribeCategories(any(), any());
+        doThrow(new FirebaseSubscribeException()).when(userCommandFacade).editSubscribeCategories(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -455,10 +445,10 @@ public class NoticeControllerTest {
                 .content(objectMapper.writeValueAsString(requestDTO)));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("isSuccess").value(false))
-                .andExpect(jsonPath("resultMsg").value(ErrorCode.API_INVALID_PARAM.getMessage()))
-                .andExpect(jsonPath("resultCode").value(ErrorCode.API_INVALID_PARAM.getHttpStatus().value()))
+                .andExpect(jsonPath("resultMsg").value(ErrorCode.FB_FAIL_SUBSCRIBE.getMessage()))
+                .andExpect(jsonPath("resultCode").value(ErrorCode.FB_FAIL_SUBSCRIBE.getHttpStatus().value()))
                 .andDo(document("category-subscribe-categories-fail-not-supported-category",
                         getDocumentRequest(),
                         getDocumentResponse())
@@ -479,7 +469,7 @@ public class NoticeControllerTest {
         SubscribeCategoriesV1Request request = new SubscribeCategoriesV1Request(token, categories);
 
         // given
-        doThrow(new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY)).when(userCommandFacade).editSubscribeCategories(any(), any());
+        doThrow(new FirebaseSubscribeException()).when(userCommandFacade).editSubscribeCategories(any(), any());
 
         // when
         ResultActions result = mockMvc.perform(post("/api/v1/notice/subscribe")
@@ -488,10 +478,10 @@ public class NoticeControllerTest {
                 .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isOk())
+        result.andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("isSuccess").value(false))
-                .andExpect(jsonPath("resultMsg").value(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY.getMessage()))
-                .andExpect(jsonPath("resultCode").value(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY.getHttpStatus().value()))
+                .andExpect(jsonPath("resultMsg").value(ErrorCode.FB_FAIL_SUBSCRIBE.getMessage()))
+                .andExpect(jsonPath("resultCode").value(ErrorCode.FB_FAIL_SUBSCRIBE.getHttpStatus().value()))
                 .andDo(document("category-subscribe-categories-fail-firebase-error",
                         getDocumentRequest(),
                         getDocumentResponse())

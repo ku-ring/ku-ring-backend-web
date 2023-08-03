@@ -1,8 +1,8 @@
 package com.kustacks.kuring.worker.scrap;
 
 import com.kustacks.kuring.common.dto.StaffDto;
-import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.worker.scrap.client.staff.StaffApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.parser.staff.StaffHtmlParser;

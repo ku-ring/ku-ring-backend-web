@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.update.notice.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.worker.scrap.client.notice.KuisNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;

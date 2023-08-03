@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.scrap.parser.staff;
 
-import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.parser.HtmlParser;
 import org.jsoup.nodes.Document;

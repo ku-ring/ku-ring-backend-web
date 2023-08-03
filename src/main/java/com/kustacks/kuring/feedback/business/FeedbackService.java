@@ -1,8 +1,9 @@
 package com.kustacks.kuring.feedback.business;
 
+import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
-import com.kustacks.kuring.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,8 @@ public class FeedbackService {
         if(optionalUser.isEmpty()) {
             optionalUser = Optional.of(userRepository.save(new User(token)));
         }
-        User findUser = optionalUser.orElseThrow(UserNotFoundException::new);
+
+        User findUser = optionalUser.orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
         findUser.addFeedback(content);
     }

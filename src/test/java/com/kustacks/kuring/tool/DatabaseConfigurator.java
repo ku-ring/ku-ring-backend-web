@@ -1,6 +1,6 @@
 package com.kustacks.kuring.tool;
 
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;

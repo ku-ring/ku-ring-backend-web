@@ -1,7 +1,7 @@
 package com.kustacks.kuring.user.facade;
 
-import com.kustacks.kuring.category.domain.CategoryName;
-import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.notice.domain.CategoryName;
+import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.notice.common.dto.CategoryNameDto;
 import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
 import com.kustacks.kuring.notice.domain.DepartmentName;

@@ -1,12 +1,8 @@
 package com.kustacks.kuring.notice.facade;
 
-import com.kustacks.kuring.category.business.CategoryService;
 import com.kustacks.kuring.notice.business.NoticeService;
-import com.kustacks.kuring.notice.common.dto.CategoryNameDto;
-import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
-import com.kustacks.kuring.notice.common.dto.NoticeDto;
-import com.kustacks.kuring.notice.common.dto.NoticeLookupResponse;
-import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
+import com.kustacks.kuring.notice.common.dto.*;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,7 +18,6 @@ import java.util.stream.Collectors;
 public class NoticeQueryFacade {
 
     private final NoticeService noticeService;
-    private final CategoryService categoryService;
 
     public List<NoticeDto> getNotices(String type, String department, Boolean important, int page, int size) {
         return noticeService.getNoticesV2(type, department, important, page, size);
@@ -33,8 +29,7 @@ public class NoticeQueryFacade {
     }
 
     public List<CategoryNameDto> getSupportedCategories() {
-        return categoryService.lookUpSupportedCategories()
-                .stream()
+        return Stream.of(CategoryName.values())
                 .map(CategoryNameDto::from)
                 .collect(Collectors.toList());
     }
