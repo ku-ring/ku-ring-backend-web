@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.scrap.parser.notice;
 
-import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.error.InternalLogicException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

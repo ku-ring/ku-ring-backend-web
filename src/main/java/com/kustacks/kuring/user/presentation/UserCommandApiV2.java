@@ -1,7 +1,6 @@
 package com.kustacks.kuring.user.presentation;
 
 import com.kustacks.kuring.common.dto.BaseResponse;
-import com.kustacks.kuring.common.error.APIException;
 import com.kustacks.kuring.user.common.SubscribeCategoriesRequest;
 import com.kustacks.kuring.user.common.SubscribeDepartmentsRequest;
 import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;
@@ -11,17 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_SUBSCRIBE_SUCCESS;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_SUBSCRIBE_SUCCESS;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.FEEDBACK_SAVE_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
 
 @Slf4j
 @Validated
@@ -56,7 +49,7 @@ public class UserCommandApiV2 {
     public ResponseEntity<BaseResponse<Void>> saveFeedback(
             @Valid @RequestBody SaveFeedbackRequest request,
             @RequestHeader(USER_TOKEN_HEADER_KEY) String id
-    ) throws APIException {
+    ) {
         userCommandFacade.saveFeedback(id, request.getContent());
         return ResponseEntity.ok().body(new BaseResponse<>(FEEDBACK_SAVE_SUCCESS, null));
     }

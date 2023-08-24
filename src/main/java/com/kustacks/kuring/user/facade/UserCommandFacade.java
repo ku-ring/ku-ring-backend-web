@@ -1,17 +1,15 @@
 package com.kustacks.kuring.user.facade;
 
-import com.kustacks.kuring.category.business.event.Events;
-import com.kustacks.kuring.category.business.event.SubscribedRollbackEvent;
-import com.kustacks.kuring.category.domain.CategoryName;
-import com.kustacks.kuring.common.error.APIException;
-import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.firebase.FirebaseService;
-import com.kustacks.kuring.common.firebase.exception.FirebaseSubscribeException;
-import com.kustacks.kuring.common.firebase.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.feedback.business.FeedbackService;
+import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.message.firebase.exception.FirebaseSubscribeException;
+import com.kustacks.kuring.message.firebase.exception.FirebaseUnSubscribeException;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.business.UserService;
 import com.kustacks.kuring.user.common.dto.SubscribeCompareResultDto;
+import com.kustacks.kuring.worker.event.Events;
+import com.kustacks.kuring.worker.event.SubscribedRollbackEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -46,19 +44,22 @@ public class UserCommandFacade {
         feedbackService.saveFeedback(userToken, feedback);
     }
 
-    private void editUserCategoryList(String userToken, List<CategoryName> savedCategoryNames, List<CategoryName> deletedCategoryNames) {
-        try {
-            SubscribedRollbackEvent subscribedRollbackEvent = new SubscribedRollbackEvent(userToken);
-            Events.raise(subscribedRollbackEvent);
+    private void editUserCategoryList(
+            String userToken, List<CategoryName> savedCategoryNames, List<CategoryName> deletedCategoryNames)
+            throws FirebaseSubscribeException, FirebaseUnSubscribeException
+    {
+        SubscribedRollbackEvent subscribedRollbackEvent = new SubscribedRollbackEvent(userToken);
+        Events.raise(subscribedRollbackEvent);
 
-            subscribeUserCategory(userToken, savedCategoryNames, subscribedRollbackEvent);
-            unsubscribeUserCategory(userToken, deletedCategoryNames, subscribedRollbackEvent);
-        } catch (FirebaseSubscribeException | FirebaseUnSubscribeException e) {
-            throw new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY, e);
-        }
+        subscribeUserCategory(userToken, savedCategoryNames, subscribedRollbackEvent);
+        unsubscribeUserCategory(userToken, deletedCategoryNames, subscribedRollbackEvent);
     }
 
-    private void subscribeUserCategory(String token, List<CategoryName> newCategoryNames, SubscribedRollbackEvent subscribedRollbackEvent) {
+    private void subscribeUserCategory(
+            String token,
+            List<CategoryName> newCategoryNames,
+            SubscribedRollbackEvent subscribedRollbackEvent) throws FirebaseSubscribeException
+    {
         for (CategoryName newCategoryName : newCategoryNames) {
             firebaseService.subscribe(token, newCategoryName.getName());
             userService.subscribeCategory(token, newCategoryName);
@@ -67,7 +68,11 @@ public class UserCommandFacade {
         }
     }
 
-    private void unsubscribeUserCategory(String token, List<CategoryName> removeCategoryNames, SubscribedRollbackEvent subscribedRollbackEvent) {
+    private void unsubscribeUserCategory(
+            String token,
+            List<CategoryName> removeCategoryNames,
+            SubscribedRollbackEvent subscribedRollbackEvent) throws FirebaseUnSubscribeException
+    {
         for (CategoryName removeCategoryName : removeCategoryNames) {
             firebaseService.unsubscribe(token, removeCategoryName.getName());
             userService.unsubscribeCategory(token, removeCategoryName);
@@ -76,16 +81,15 @@ public class UserCommandFacade {
         }
     }
 
-    private void editDepartmentNameList(String userToken, List<DepartmentName> savedDepartmentNames, List<DepartmentName> deletedDepartmentNames) {
-        try {
-            SubscribedRollbackEvent subscribedRollbackEvent = new SubscribedRollbackEvent(userToken);
-            Events.raise(subscribedRollbackEvent);
+    private void editDepartmentNameList(
+            String userToken, List<DepartmentName> savedDepartmentNames, List<DepartmentName> deletedDepartmentNames)
+            throws FirebaseSubscribeException, FirebaseUnSubscribeException
+    {
+        SubscribedRollbackEvent subscribedRollbackEvent = new SubscribedRollbackEvent(userToken);
+        Events.raise(subscribedRollbackEvent);
 
-            subscribeDepartment(userToken, savedDepartmentNames, subscribedRollbackEvent);
-            unsubscribeDepartment(userToken, deletedDepartmentNames, subscribedRollbackEvent);
-        } catch (FirebaseSubscribeException | FirebaseUnSubscribeException e) {
-            throw new APIException(ErrorCode.API_FB_CANNOT_EDIT_CATEGORY, e);
-        }
+        subscribeDepartment(userToken, savedDepartmentNames, subscribedRollbackEvent);
+        unsubscribeDepartment(userToken, deletedDepartmentNames, subscribedRollbackEvent);
     }
 
     private void subscribeDepartment(String userToken, List<DepartmentName> newDepartmentNames, SubscribedRollbackEvent subscribedRollbackEvent) {

@@ -1,7 +1,6 @@
 package com.kustacks.kuring.notice.domain;
 
-import com.kustacks.kuring.category.domain.CategoryName;
-import com.kustacks.kuring.common.error.DomainLogicException;
+import com.kustacks.kuring.common.exception.InternalLogicException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -27,7 +26,7 @@ class NoticeTest {
     @ValueSource(strings = {"//www.example.com", "https:/www.example.com", "https://"})
     void member_invalid_email_id(String url) {
         assertThatThrownBy(() -> new Notice("artice_id", "postDate", "updatedDate", "subject", CategoryName.BACHELOR, false, url))
-                .isInstanceOf(DomainLogicException.class);
+                .isInstanceOf(InternalLogicException.class);
     }
 
 }

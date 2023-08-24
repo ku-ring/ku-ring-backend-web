@@ -1,13 +1,13 @@
 package com.kustacks.kuring.acceptance;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.category.common.dto.SubscribeCategoriesV1Request;
-import com.kustacks.kuring.common.error.APIException;
-import com.kustacks.kuring.common.error.ErrorCode;
-import com.kustacks.kuring.common.firebase.FirebaseService;
+import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.notice.presentation.dto.SubscribeCategoriesV1Request;
+import com.kustacks.kuring.message.firebase.FirebaseService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -86,16 +86,16 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
      */
     @DisplayName("사용자가 잘못된 토큰과 함께 카테고리 구독시 실패한다")
     @Test
-    void user_subscribe_category_with_invalid_token() throws FirebaseMessagingException {
+    void user_subscribe_category_with_invalid_token() {
         // given
         doNothing().when(firebaseService).subscribe(anyString(), anyString());
-        doThrow(new APIException(ErrorCode.API_FB_INVALID_TOKEN)).when(firebaseService).validationToken(anyString());
+        doThrow(new FirebaseInvalidTokenException()).when(firebaseService).validationToken(anyString());
 
         // when
         var response = 카테고리_구독_요청(new SubscribeCategoriesV1Request(INVALID_USER_FCM_TOKEN, List.of("student", "employment")));
 
         // then
-        실패_응답_확인(response, 401);
+        실패_응답_확인(response, HttpStatus.UNAUTHORIZED);
     }
 
     /**
@@ -105,7 +105,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
      */
     @DisplayName("사용자가 구독한 카테고리 목록을 조회한다")
     @Test
-    void look_up_user_subscribe_category() throws FirebaseMessagingException {
+    void look_up_user_subscribe_category() {
         // given
         doNothing().when(firebaseService).validationToken(anyString());
         카테고리_구독_요청(new SubscribeCategoriesV1Request(USER_FCM_TOKEN, List.of("student", "employment")));
@@ -157,7 +157,7 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
         var 카테고리_구독_요청_응답 = 카테고리_구독_요청(new SubscribeCategoriesV1Request(null, List.of("student", "employment")));
 
         // then
-        실패_응답_확인(카테고리_구독_요청_응답, 400);
+        실패_응답_확인(카테고리_구독_요청_응답, HttpStatus.BAD_REQUEST);
     }
 
     @DisplayName("잘못된 카테고리 구독 요청시 예외 발생")
@@ -170,6 +170,6 @@ public class CategoryAcceptanceTest extends AcceptanceTest {
         var 카테고리_구독_요청_응답 = 카테고리_구독_요청(new SubscribeCategoriesV1Request(null, List.of("invalid-category")));
 
         // then
-        실패_응답_확인(카테고리_구독_요청_응답, 400);
+        실패_응답_확인(카테고리_구독_요청_응답, HttpStatus.BAD_REQUEST);
     }
 }

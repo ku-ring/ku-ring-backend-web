@@ -80,7 +80,7 @@ public class NoticeStep {
 
     public static void 공지사항_조회_요청_실패_응답_확인(ExtractableResponse<Response> response) {
         assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
                 () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isFalse(),
                 () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(400)
         );

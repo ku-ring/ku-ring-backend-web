@@ -1,6 +1,6 @@
 package com.kustacks.kuring.notice.common.dto;
 
-import com.kustacks.kuring.category.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
