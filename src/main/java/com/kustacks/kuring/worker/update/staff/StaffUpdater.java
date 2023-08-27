@@ -30,7 +30,6 @@ public class StaffUpdater {
 
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
     public void update() {
-
         log.info("========== 교직원 업데이트 시작 ==========");
 
         // www.konkuk.ac.kr 에서 스크래핑하므로, kuis 로그인 필요 없음
@@ -49,7 +48,7 @@ public class StaffUpdater {
                 scrapDeptAndConvertToMap(kuStaffDTOMap, deptInfo);
                 successDeptNames.add(deptInfo.getDeptName());
             } catch (InternalLogicException e) {
-                log.error("[StaffScraperException] {}학과 교직원 스크래핑 문제 발생.", deptInfo.getDeptName());
+                log.warn("[StaffScraperException] {}학과 교직원 스크래핑 문제 발생.", deptInfo.getDeptName());
             }
         }
 
@@ -99,17 +98,17 @@ public class StaffUpdater {
             }
         }
 
-        log.info("=== 삭제할 교직원 리스트 ===");
+        log.debug("=== 삭제할 교직원 리스트 ===");
         for (String key : dbStaffMap.keySet()) {
-            log.info("{} {} {}", dbStaffMap.get(key).getCollege(), dbStaffMap.get(key).getDept(), dbStaffMap.get(key).getName());
+            log.debug("{} {} {}", dbStaffMap.get(key).getCollege(), dbStaffMap.get(key).getDept(), dbStaffMap.get(key).getName());
         }
-        log.info("=== 업데이트할 교직원 리스트 ===");
+        log.debug("=== 업데이트할 교직원 리스트 ===");
         for (Staff toBeUpdateStaff : toBeUpdateStaffs) {
-            log.info("{} {} {}", toBeUpdateStaff.getCollege(), toBeUpdateStaff.getDept(), toBeUpdateStaff.getName());
+            log.debug("{} {} {}", toBeUpdateStaff.getCollege(), toBeUpdateStaff.getDept(), toBeUpdateStaff.getName());
         }
-        log.info("=== 추가할 교직원 리스트 ===");
+        log.debug("=== 추가할 교직원 리스트 ===");
         for (String key : kuStaffDTOMap.keySet()) {
-            log.info("{} {} {}", kuStaffDTOMap.get(key).getCollegeName(), kuStaffDTOMap.get(key).getDeptName(), kuStaffDTOMap.get(key).getName());
+            log.debug("{} {} {}", kuStaffDTOMap.get(key).getCollegeName(), kuStaffDTOMap.get(key).getDeptName(), kuStaffDTOMap.get(key).getName());
         }
 
         staffRepository.deleteAll(dbStaffMap.values());
