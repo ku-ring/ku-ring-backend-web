@@ -4,8 +4,6 @@ spring:
     username: test # 테스트컨테이너 용이라 노출되도 상관없다
     password: test1234
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    p6spy:
-      enable-logging: true
   flyway:
     enabled: false
   jpa:
@@ -34,3 +32,8 @@ testcontainers:
 logging:
   level:
     p6spy: debug
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
