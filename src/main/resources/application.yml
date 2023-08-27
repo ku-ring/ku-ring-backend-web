@@ -50,9 +50,7 @@ logging:
     org:
       apache:
         coyote:
-          http11: info
-  file:
-    name: classpath:/kuring.log
+          http11: off
 
 management:
   endpoint:

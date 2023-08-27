@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 이 곳에 추가할 properties를 넣는다. -->
+    <property name="LOGS_ABSOLUTE_PATH" value="./logs/kuring"/>
+
+    <!-- appender(어디에 출력할 지)에서 콘솔에 출력되는 형식을 지정한다. -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative] %magenta([%thread]) %highlight(%-5level) %cyan(%logger{36}) - %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <!-- Info 레벨의 이름을 가진 로그를 저장할 방식을 지정한다. -->
+    <appender name="INFO_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_ABSOLUTE_PATH}/info.log</file> <!-- 파일을 저장할 경로를 정한다, 도커 사용 시 볼륨매핑 해주어야함 -->
+        <!-- filters 종류 키워드로 확인 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter"> <!-- 지정한 레벨과 같은 로그이벤트 필터링 수행 -->
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch> <!-- 해당 레벨만 기록한다. -->
+            <onMismatch>DENY</onMismatch> <!-- 지정 레벨과 맞지 않으면 onMisMatch 에 지정에 따라 수행, DENY -> print 하지않음 -->
+        </filter> <!-- 레벨별 필터링이 필요없을 경우 filter class 관련된 부분을 삭제하면 됨-->
+        <encoder>
+            <Pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative] %magenta([%thread]) %highlight(%-5level) %cyan(%logger{36}) - %msg%n</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_ABSOLUTE_PATH}/was-logs/info/info.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern> <!-- 해당 패턴 네이밍으로 이전 파일이 기록됨 -->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>50MB</maxFileSize> <!-- 한 파일의 최대 용량 -->
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory> <!-- 한 파일의 최대 저장 기한 -->
+            <totalSizeCap>500MB</totalSizeCap> <!-- 전체 로그파일 크기 제한, 1기가 넘으면 오래된거 삭제 -->
+        </rollingPolicy>
+    </appender>
+
+    <appender name="WARN_OR_MORE_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_ABSOLUTE_PATH}/warn-or-more.log</file>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter"> <!-- 지정레벨 이상의 로그만 print 하는 필터 -->
+            <level>WARN</level>
+        </filter>
+        <encoder>
+            <Pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative] %magenta([%thread]) %highlight(%-5level) %cyan(%logger{36}) - %msg%n</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS_ABSOLUTE_PATH}/was-logs/warn-or-more/warn-or-more.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>50MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory> <!-- 한 파일의 최대 저장 기한 -->
+            <totalSizeCap>500MB</totalSizeCap> <!-- 전체 로그파일 크기 제한, 1기가 넘으면 오래된거 삭제 -->
+        </rollingPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="WARN_OR_MORE_LOG"/>
+        <appender-ref ref="INFO_LOG"/>
+    </root>
+</configuration>
