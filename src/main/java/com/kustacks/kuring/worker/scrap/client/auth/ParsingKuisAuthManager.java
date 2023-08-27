@@ -49,7 +49,7 @@ public class ParsingKuisAuthManager implements KuisAuthManager {
         }
 
         if (!this.sessionNeedToBeRenew) {  // apiSkeletonNeedToBeRenew가 true 이면 sessionNeedToBeRenew는 항상 true이므로 sessionNeedToBeRenew만 검사함.
-            log.info("세션아이디 갱신 안하고 바로 리턴");
+            log.debug("세션아이디 갱신 안하고 바로 리턴");
             return parsingKuisAuthProperties.getSession();
         }
 
@@ -136,7 +136,7 @@ public class ParsingKuisAuthManager implements KuisAuthManager {
             throw new InternalLogicException(ErrorCode.KU_LOGIN_NO_RESPONSE_BODY);
         }
 
-        log.info(body);
+        log.debug(body);
         return !body.contains("success");
     }
 
