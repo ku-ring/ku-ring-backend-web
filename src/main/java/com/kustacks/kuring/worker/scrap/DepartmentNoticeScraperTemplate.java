@@ -32,7 +32,6 @@ public class DepartmentNoticeScraperTemplate {
             }
         }
 
-
         return noticeDtoList;
     }
 
