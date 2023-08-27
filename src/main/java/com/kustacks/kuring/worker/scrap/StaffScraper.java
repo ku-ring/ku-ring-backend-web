@@ -37,9 +37,9 @@ public class StaffScraper {
 
         for (StaffApiClient staffApiClient : staffApiClients) {
             if (staffApiClient.support(deptInfo)) {
-                log.info("{} HTML 요청", deptInfo.getDeptName());
+                log.debug("{} HTML 요청", deptInfo.getDeptName());
                 documents = staffApiClient.getHTML(deptInfo);
-                log.info("{} HTML 수신", deptInfo.getDeptName());
+                log.debug("{} HTML 수신", deptInfo.getDeptName());
             }
         }
 
@@ -47,11 +47,11 @@ public class StaffScraper {
         List<String[]> parseResult = new LinkedList<>();
         for (StaffHtmlParser htmlParser : htmlParsers) {
             if (htmlParser.support(deptInfo)) {
-                log.info("{} HTML 파싱 시작", deptInfo.getDeptName());
+                log.debug("{} HTML 파싱 시작", deptInfo.getDeptName());
                 for (Document document : documents) {
                     parseResult.addAll(htmlParser.parse(document));
                 }
-                log.info("{} HTML 파싱 완료", deptInfo.getDeptName());
+                log.debug("{} HTML 파싱 완료", deptInfo.getDeptName());
             }
         }
 
@@ -70,6 +70,7 @@ public class StaffScraper {
         if (staffDtoList.isEmpty()) {
             throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP);
         }
+        log.info("[{}] 파싱된 교직원 수 = {}", deptInfo.getDeptName(), staffDtoList.size());
 
         return staffDtoList;
     }

@@ -47,7 +47,7 @@ public class StaffEachDeptHtmlParser implements StaffHtmlParser {
 
                 String jobPosition = String.valueOf(infos.get(1).childNodeSize() < 2 ? "" : infos.get(1).childNode(1));
                 if (jobPosition.contains("명예") || jobPosition.contains("대우") || jobPosition.contains("휴직") || !jobPosition.contains("교수")) {
-                    log.info("스크래핑 스킵 -> {} 교수", oneStaffInfo[0]);
+                    log.debug("스크래핑 스킵 -> {} 교수", oneStaffInfo[0]);
                     continue;
                 }
 

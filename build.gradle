@@ -64,10 +64,6 @@ dependencies {
 	// flyway
 	implementation 'org.flywaydb:flyway-core'
 
-	// Logging
-	implementation 'io.sentry:sentry-spring-boot-starter:5.4.0'
-	implementation 'io.sentry:sentry-logback:5.4.0'
-
 	// DevTool
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

@@ -2,10 +2,8 @@ package com.kustacks.kuring.common.interceptor;
 
 import com.kustacks.kuring.common.annotation.CheckSession;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.lang.Nullable;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,8 +30,8 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         HttpSession session = request.getSession(false);
         if(session != null) {
-            log.info("sessionId = {}", session.getId());
-            log.info("lastAccessedTime = {}", session.getLastAccessedTime());
+            log.debug("sessionId = {}", session.getId());
+            log.debug("lastAccessedTime = {}", session.getLastAccessedTime());
         }
 
         boolean isSessionFromCookie = session != null;
@@ -41,7 +39,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         
         // 세션이 있어야 하는 경우 - 없으면 로그인 페이지로 이동
         if(isSessionRequired) {
-            log.info("isSessionFromCookie = {}", isSessionFromCookie);
+            log.debug("isSessionFromCookie = {}", isSessionFromCookie);
             if(isSessionFromCookie) {
                 return true;
             } else {
@@ -59,15 +57,5 @@ public class AuthInterceptor implements HandlerInterceptor {
                 return true;
             }
         }
-    }
-
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-                            @Nullable ModelAndView modelAndView) throws Exception {
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-                                 @Nullable Exception ex) throws Exception {
     }
 }
