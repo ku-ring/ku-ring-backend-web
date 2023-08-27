@@ -83,12 +83,12 @@ public class LibraryNoticeApiClient implements NoticeApiClient<CommonNoticeForma
 
     private void validateResponse(int requestIndex, LibraryNoticeResponseDto libraryNoticeResponseDto) {
         if (libraryNoticeResponseDto == null) {
-            log.error("도서관 공지 {}번째 요청에 대한 응답의 body가 없습니다.", requestIndex + 1);
+            log.warn("도서관 공지 {}번째 요청에 대한 응답의 body가 없습니다.", requestIndex + 1);
             throw new InternalLogicException(ErrorCode.LIB_CANNOT_PARSE_JSON);
         }
 
         if (!libraryNoticeResponseDto.isSuccess()) {
-            log.error("도서관 공지 {}번째 요청에 대한 응답이 fail입니다.", requestIndex + 1);
+            log.warn("도서관 공지 {}번째 요청에 대한 응답이 fail입니다.", requestIndex + 1);
             throw new InternalLogicException(ErrorCode.LIB_BAD_RESPONSE);
         }
     }
