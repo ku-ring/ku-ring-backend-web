@@ -6,16 +6,11 @@ import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.domain.StaffRepository;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
-import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -27,12 +22,8 @@ public class StaffUpdater {
     private final StaffScraper staffScraper;
     private final List<DeptInfo> deptInfos;
 
-    public StaffUpdater(StaffRepository staffRepository,
-                        StaffScraper staffScraper,
-                        List<DeptInfo> deptInfos) {
-
+    public StaffUpdater(StaffRepository staffRepository, StaffScraper staffScraper, List<DeptInfo> deptInfos) {
         this.staffRepository = staffRepository;
-
         this.staffScraper = staffScraper;
         this.deptInfos = deptInfos;
     }
@@ -59,7 +50,6 @@ public class StaffUpdater {
                 successDeptNames.add(deptInfo.getDeptName());
             } catch (InternalLogicException e) {
                 log.error("[StaffScraperException] {}학과 교직원 스크래핑 문제 발생.", deptInfo.getDeptName());
-                Sentry.captureException(e);
             }
         }
 
