@@ -52,9 +52,7 @@ public class FirebaseService {
             TopicManagementResponse response = firebaseMessaging
                     .subscribeToTopic(List.of(token), ifDevThenAddSuffix(topic).toString());
 
-            if (response.getFailureCount() > 0) {
-                throw new FirebaseSubscribeException();
-            }
+            responseLoggingAndException(response, "subscribe");
         } catch (FirebaseMessagingException | FirebaseSubscribeException exception) {
             throw new FirebaseSubscribeException();
         }
@@ -65,9 +63,7 @@ public class FirebaseService {
             TopicManagementResponse response = firebaseMessaging
                     .unsubscribeFromTopic(List.of(token), ifDevThenAddSuffix(topic).toString());
 
-            if (response.getFailureCount() > 0) {
-                throw new FirebaseUnSubscribeException();
-            }
+            responseLoggingAndException(response, "unsubscribe");
         } catch (FirebaseMessagingException | FirebaseUnSubscribeException exception) {
             throw new FirebaseUnSubscribeException();
         }
@@ -118,12 +114,12 @@ public class FirebaseService {
         try {
             this.sendNoticeMessageList(notificationDtoList);
             log.info("FCM에 {}개의 공지 메세지를 전송했습니다.", notificationDtoList.size());
-            log.info("전송된 공지 목록은 다음과 같습니다.");
+            log.debug("전송된 공지 목록은 다음과 같습니다.");
             for (Notice notice : noticeList) {
-                log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", notice.getArticleId(), notice.getPostedDate(), notice.getCategoryName(), notice.getSubject());
+                log.debug("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}", notice.getArticleId(), notice.getPostedDate(), notice.getCategoryName(), notice.getSubject());
             }
         } catch (FirebaseMessageSendException e) {
-            log.error("새로운 공지의 FCM 전송에 실패했습니다.");
+            log.warn("새로운 공지의 FCM 전송에 실패했습니다.");
             throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
         } catch (Exception e) {
             log.error("새로운 공지를 FCM에 보내는 중 알 수 없는 오류가 발생했습니다.");
@@ -139,6 +135,16 @@ public class FirebaseService {
 
     private void sendNoticeMessageList(List<NoticeMessageDto> messageDtoList) throws FirebaseMessageSendException {
         messageDtoList.forEach(this::sendMessage);
+    }
+
+    private static void responseLoggingAndException(TopicManagementResponse response, String methodName) throws FirebaseSubscribeException {
+        if (response.getFailureCount() > 0) {
+            log.warn("[{}] 구독 실패", methodName);
+            throw new FirebaseSubscribeException();
+        } else if (response.getFailureCount() > 3) {
+            log.error("[{}] 구독 실패", methodName);
+            throw new FirebaseSubscribeException();
+        }
     }
 
     private String buildTitle(String korName) {
