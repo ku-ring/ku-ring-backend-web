@@ -60,7 +60,7 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
                 ScrapingResultDto resultDto = getScrapingResultDto(i, deptInfo, totalNoticeSize, LATEST_SCRAP_ALL_TIMEOUT);
                 reqResults.add(resultDto);
             } catch (IOException e) {
-                log.info("Department Scrap all IOException: {}", e.getMessage());
+                log.warn("Department Scrap all IOException: {}", e.getMessage());
             } catch (NullPointerException | IndexOutOfBoundsException e) {
                 throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE, e);
             }

@@ -169,10 +169,10 @@ public class AdminControllerV1 {
         LocalDateTime now = LocalDateTime.now();
         String fakeNoticePostedDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        log.info("fake articleId = {}", fakeNoticeArticleId);
-        log.info("fake postedDate = {}", fakeNoticePostedDate);
-        log.info("fake subject = {}", fakeNoticeSubject);
-        log.info("fake category = {}", fakeNoticeCategory);
+        log.debug("fake articleId = {}", fakeNoticeArticleId);
+        log.debug("fake postedDate = {}", fakeNoticePostedDate);
+        log.debug("fake subject = {}", fakeNoticeSubject);
+        log.debug("fake category = {}", fakeNoticeCategory);
 
         try {
             firebaseService.sendMessage(NoticeMessageDto.builder()
@@ -227,8 +227,8 @@ public class AdminControllerV1 {
         String auth = reqBody.get("auth");
         String type = reqBody.get("type");
 
-        log.info("fcm 토큰 = {}", token);
-        log.info("인증 토큰 = {}\n", auth);
+        log.debug("fcm 토큰 = {}", token);
+        log.debug("인증 토큰 = {}\n", auth);
 
         boolean isAuthenticated = adminService.checkToken(auth);
         if (!isAuthenticated) {
@@ -247,10 +247,10 @@ public class AdminControllerV1 {
             String subject = reqBody.get("subject");
             String category = reqBody.get("category");
 
-            log.info("제목 = {}", subject);
-            log.info("아이디 = {}", articleId);
-            log.info("게시일 = {}", postedDate);
-            log.info("카테고리 = {}", category);
+            log.debug("제목 = {}", subject);
+            log.debug("아이디 = {}", articleId);
+            log.debug("게시일 = {}", postedDate);
+            log.debug("카테고리 = {}", category);
 
             boolean isCategorySupported = adminService.checkCategory(category);
             if (!isCategorySupported) {
@@ -283,8 +283,8 @@ public class AdminControllerV1 {
             String title = reqBody.get("title");
             String body = reqBody.get("body");
 
-            log.info("제목 = {}", title);
-            log.info("내용 = {}", body);
+            log.debug("제목 = {}", title);
+            log.debug("내용 = {}", body);
 
             boolean isTitleValid = adminService.checkTitle(title);
             if (!isTitleValid) {

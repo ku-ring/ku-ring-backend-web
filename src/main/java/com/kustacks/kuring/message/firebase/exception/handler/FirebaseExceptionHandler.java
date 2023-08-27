@@ -13,7 +13,7 @@ public class FirebaseExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> firebaseCommonExceptionHandler(FirebaseBusinessException exception) {
-        log.error("[FirebaseBusinessException] {}", exception.getMessage());
+        log.warn("[FirebaseBusinessException] {}", exception.getMessage());
 
         return ResponseEntity.status(exception.getErrorCode().getHttpStatus())
                 .body(new ErrorResponse(exception.getErrorCode()));

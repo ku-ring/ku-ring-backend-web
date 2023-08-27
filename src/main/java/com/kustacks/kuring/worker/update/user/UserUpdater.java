@@ -35,7 +35,7 @@ public class UserUpdater {
                 firebaseService.validationToken(token);
             } catch (FirebaseInvalidTokenException e) {
                 userRepository.delete(user);
-                log.info("삭제한 토큰 = {}", user.getToken());
+                log.debug("삭제한 토큰 = {}", user.getToken());
             }
         }
 
