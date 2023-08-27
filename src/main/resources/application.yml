@@ -49,10 +49,6 @@ logging:
   file:
     name: classpath:/kuring.log
 
-sentry:
-  traces-sample-rate: '1.0'
-  dsn: ${SENTRY_URL}
-
 management:
   endpoint:
     health:

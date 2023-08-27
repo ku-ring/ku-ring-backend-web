@@ -31,9 +31,6 @@ testcontainers:
   reuse:
     enable: true
 
-sentry:
-  dsn: ""
-
 logging:
   level:
     p6spy: debug
