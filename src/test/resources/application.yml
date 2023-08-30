@@ -33,6 +33,9 @@ logging:
   level:
     p6spy: debug
 
+sentry:
+  dsn: ""
+
 decorator:
   datasource:
     p6spy:

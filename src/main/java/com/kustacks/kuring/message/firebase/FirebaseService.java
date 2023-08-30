@@ -141,9 +141,6 @@ public class FirebaseService {
         if (response.getFailureCount() > 0) {
             log.warn("[{}] 구독 실패", methodName);
             throw new FirebaseSubscribeException();
-        } else if (response.getFailureCount() > 3) {
-            log.error("[{}] 구독 실패", methodName);
-            throw new FirebaseSubscribeException();
         }
     }
 
