@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <!-- 이 곳에 추가할 properties를 넣는다. -->
-    <property name="LOGS_ABSOLUTE_PATH" value="./logs/kuring"/>
+    <property name="LOGS_ABSOLUTE_PATH" value="./logs"/>
 
     <!-- appender(어디에 출력할 지)에서 콘솔에 출력되는 형식을 지정한다. -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
