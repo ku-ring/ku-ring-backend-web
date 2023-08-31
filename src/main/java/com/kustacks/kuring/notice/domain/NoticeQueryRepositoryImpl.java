@@ -10,6 +10,7 @@ import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
+    @Transactional(readOnly = true)
     @Override
     public List<NoticeDto> findNoticesByCategoryWithOffset(CategoryName categoryName, Pageable pageable) {
         return queryFactory
@@ -32,6 +34,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .fetch();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<NoticeSearchDto> findAllByKeywords(List<String> keywords) {
         return queryFactory
@@ -47,6 +50,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .fetch();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<String> findNormalArticleIdsByCategory(CategoryName categoryName) {
         return queryFactory
@@ -57,6 +61,7 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .fetch();
     }
 
+    @Transactional
     @Override
     public void deleteAllByIdsAndCategory(CategoryName categoryName, List<String> articleIds) {
         if(articleIds.isEmpty()) {
