@@ -26,6 +26,6 @@ class AdminTest {
         admin.addRole(AdminRole.ROLE_ROOT);
 
         // then
-        assertThat(admin.getRoles()).contains(AdminRole.ROLE_CLIENT, AdminRole.ROLE_ROOT);
+        assertThat(admin.getAuthorities()).contains("ROLE_CLIENT", "ROLE_ROOT");
     }
 }
