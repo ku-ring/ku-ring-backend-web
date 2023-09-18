@@ -61,3 +61,9 @@ management:
     web:
       exposure:
         include: "*"
+
+security:
+  jwt:
+    token:
+      secret-key: ${JWT_SECRET_KEY}
+      expire-length: ${EXPIRE_LENGTH}
