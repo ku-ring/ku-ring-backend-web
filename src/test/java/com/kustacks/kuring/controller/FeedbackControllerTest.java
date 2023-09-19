@@ -2,6 +2,7 @@ package com.kustacks.kuring.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
+import com.kustacks.kuring.auth.AuthConfig;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.feedback.business.FeedbackService;
 import com.kustacks.kuring.feedback.common.dto.SaveFeedbackV1Request;
@@ -16,6 +17,8 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -36,11 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class})
-@WebMvcTest(FeedbackControllerV1.class)
+@WebMvcTest(controllers = FeedbackControllerV1.class, excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = AuthConfig.class)})
 public class FeedbackControllerTest {
-
-//    @Rule
-//    public JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     @Autowired
     private WebApplicationContext webApplicationContext;

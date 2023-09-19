@@ -1,16 +1,18 @@
 package com.kustacks.kuring.admin.domain;
 
+import com.kustacks.kuring.auth.userdetails.UserDetails;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "admin")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Admin {
+public class Admin implements UserDetails {
 
     @Id
     @Getter(AccessLevel.PROTECTED)
@@ -35,8 +37,22 @@ public class Admin {
         this.adminRoles.add(adminRole);
     }
 
-    public List<AdminRole> getRoles() {
-        return this.adminRoles.getRoles();
+    @Override
+    public String getPrincipal() {
+        return this.loginId;
+    }
+
+    @Override
+    public List<String> getAuthorities() {
+        return this.adminRoles.getRoles()
+                .stream()
+                .map(AdminRole::name)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isValidCredentials(String credentials) {
+        return this.password.equals(credentials);
     }
 }
 

@@ -13,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AdminRoles implements Serializable {
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "admin_roles",
             joinColumns = @JoinColumn(name = "id"))
