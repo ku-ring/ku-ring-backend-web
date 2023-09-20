@@ -1,15 +1,11 @@
 package com.kustacks.kuring.message.firebase;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
-import com.google.firebase.messaging.TopicManagementResponse;
+import com.google.firebase.messaging.*;
 import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.message.firebase.exception.FirebaseMessageSendException;
 import com.kustacks.kuring.message.firebase.exception.FirebaseSubscribeException;
@@ -17,7 +13,6 @@ import com.kustacks.kuring.message.firebase.exception.FirebaseUnSubscribeExcepti
 import com.kustacks.kuring.notice.domain.Notice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,11 +26,10 @@ public class FirebaseService {
 
     private static final String NOTIFICATION_TITLE = "새로운 공지가 왔어요!";
     private static final String DEV_SUFFIX = "dev";
+
     private final FirebaseMessaging firebaseMessaging;
     private final ObjectMapper objectMapper;
-
-    @Value("${server.deploy.environment}")
-    private String deployEnv;
+    private final ServerProperties serverProperties;
 
     public void validationToken(String token) throws FirebaseInvalidTokenException {
         try {
@@ -158,7 +152,7 @@ public class FirebaseService {
 
     private StringBuilder ifDevThenAddSuffix(String topic) {
         StringBuilder topicBuilder = new StringBuilder(topic);
-        if (deployEnv.equals(DEV_SUFFIX)) {
+        if (serverProperties.isSameEnvironment(DEV_SUFFIX)) {
             topicBuilder.append(".").append(DEV_SUFFIX);
         }
 
