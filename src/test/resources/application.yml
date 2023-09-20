@@ -41,5 +41,5 @@ logging:
 security:
   jwt:
     token:
-      secret-key: ${JWT_SECRET_KEY}
-      expire-length: ${JWT_EXPIRE_LENGTH}
+      secret-key: test-secret-key-test-secret-key-test-secret-key-test-secret-key
+      expire-length: 3600000
