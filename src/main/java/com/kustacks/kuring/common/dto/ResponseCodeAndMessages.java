@@ -22,7 +22,13 @@ public enum ResponseCodeAndMessages {
     STAFF_SEARCH_SUCCESS(HttpStatus.OK.value(), "교직원 조회에 성공하였습니다"),
 
     /* Feedback */
-    FEEDBACK_SAVE_SUCCESS(HttpStatus.OK.value(), "피드백 저장에 성공하였습니다");
+    FEEDBACK_SAVE_SUCCESS(HttpStatus.OK.value(), "피드백 저장에 성공하였습니다"),
+
+    /**
+     * ErrorCodes about auth
+     */
+    AUTH_AUTHENTICATION_SUCCESS(HttpStatus.OK.value(), "인증에 성공하였습니다"),
+    AUTH_AUTHENTICATION_FAIL(HttpStatus.UNAUTHORIZED.value(), "인증에 실패하였습니다");
 
     private final int code;
     private final String message;

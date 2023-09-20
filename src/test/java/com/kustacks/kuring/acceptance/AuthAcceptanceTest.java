@@ -11,7 +11,7 @@ public class AuthAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("Bearer Auth login")
     @Test
-    void myInfoWithBearerAuth() {
+    void bearer_auth_login_success() {
         // given
         String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
 

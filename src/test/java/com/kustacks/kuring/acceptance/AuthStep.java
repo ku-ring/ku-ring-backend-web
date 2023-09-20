@@ -13,7 +13,7 @@ public class AuthStep {
 
     public static String 로그인_되어_있음(String loginId, String password) {
         ExtractableResponse<Response> response = 로그인_요청(loginId, password);
-        return response.jsonPath().getString("accessToken");
+        return response.jsonPath().getString("data.accessToken");
     }
 
     public static ExtractableResponse<Response> 로그인_요청(String loginId, String password) {
