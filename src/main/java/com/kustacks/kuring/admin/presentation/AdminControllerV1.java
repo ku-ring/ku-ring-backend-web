@@ -7,22 +7,23 @@ import com.kustacks.kuring.admin.business.AdminService;
 import com.kustacks.kuring.admin.common.dto.CategoryNameAdminDto;
 import com.kustacks.kuring.admin.common.dto.FakeUpdateResponseDto;
 import com.kustacks.kuring.admin.common.dto.LoginResponseDto;
-import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.common.annotation.CheckSession;
 import com.kustacks.kuring.common.dto.AdminMessageDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.common.dto.ResponseDto;
 import com.kustacks.kuring.common.exception.AdminException;
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.feedback.domain.Feedback;
 import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.message.firebase.ServerProperties;
 import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.message.firebase.exception.FirebaseMessageSendException;
-import com.kustacks.kuring.feedback.domain.Feedback;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.user.domain.User;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,28 +45,15 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 @RequestMapping(value = "/admin")
 public class AdminControllerV1 {
 
     private final FirebaseService firebaseService;
     private final AdminService adminService;
-
     private final ObjectMapper objectMapper;
-
-    @Value("${server.deploy.environment}")
-    private String deployEnv;
-
-    @Value("${notice.normal-base-url}")
-    private String normalBaseUrl;
-
-    @Value("${notice.library-base-url}")
-    private String libraryBaseUrl;
-
-    public AdminControllerV1(FirebaseService firebaseService, AdminService adminService, ObjectMapper objectMapper) {
-        this.firebaseService = firebaseService;
-        this.adminService = adminService;
-        this.objectMapper = objectMapper;
-    }
+    private final NoticeProperties noticeProperties;
+    private final ServerProperties serverProperties;
 
     @CheckSession
     @GetMapping("/{type}")
@@ -108,7 +96,7 @@ public class AdminControllerV1 {
         model.addAttribute("users", users);
 
         model.addAttribute("subUnsub", true);
-        model.addAttribute("fakeUpdate", "dev".equals(deployEnv));
+        model.addAttribute("fakeUpdate", "dev".equals(serverProperties.getEnvironment()));
 
         return "thymeleaf/main";
     }
@@ -132,7 +120,7 @@ public class AdminControllerV1 {
     @GetMapping("/service/fake-update")
     public String fakeUpdatePage(Model model) throws JsonProcessingException {
 
-        if (!"dev".equals(deployEnv)) {
+        if (!"dev".equals(serverProperties.getEnvironment())) {
             return "thymeleaf/404";
         }
 
@@ -181,7 +169,7 @@ public class AdminControllerV1 {
                     .category(fakeNoticeCategory)
                     .subject(fakeNoticeSubject)
                     .categoryKorName("fakeCategoryKorName")
-                    .baseUrl(CategoryName.LIBRARY.getName().equals(fakeNoticeCategory) ? libraryBaseUrl : normalBaseUrl)
+                    .baseUrl(CategoryName.LIBRARY.getName().equals(fakeNoticeCategory) ? noticeProperties.getLibraryBaseUrl() : noticeProperties.getNormalBaseUrl())
                     .build());
         } catch (FirebaseMessageSendException e) {
             throw new AdminException(ErrorCode.API_FB_SERVER_ERROR, e);
@@ -274,7 +262,7 @@ public class AdminControllerV1 {
                         .subject(subject)
                         .category(category)
                         .categoryKorName("fakeCategoryKorName")
-                        .baseUrl(CategoryName.LIBRARY.getName().equals(category) ? libraryBaseUrl : normalBaseUrl)
+                        .baseUrl(CategoryName.LIBRARY.getName().equals(category) ? noticeProperties.getLibraryBaseUrl() : noticeProperties.getNormalBaseUrl())
                         .build());
             } catch (FirebaseMessagingException e) {
                 throw new AdminException(ErrorCode.API_FB_SERVER_ERROR, e);
