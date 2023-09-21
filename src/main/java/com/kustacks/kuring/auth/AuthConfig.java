@@ -14,6 +14,8 @@ import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -32,11 +34,16 @@ public class AuthConfig implements WebMvcConfigurer {
         registry.addInterceptor(new SecurityContextPersistenceFilter());
 
         registry.addInterceptor(new AdminTokenAuthenticationFilter(
-                adminDetailsService, jwtTokenProvider, objectMapper,
+                adminDetailsService, passwordEncoder(), jwtTokenProvider, objectMapper,
                 adminLoginSuccessHandler(), adminLoginFailureHandler()))
                 .addPathPatterns("/api/v2/admin/login");
 
         registry.addInterceptor(new BearerTokenAuthenticationFilter(jwtTokenProvider)).addPathPatterns("/api/v2/admin/login/request");
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Override

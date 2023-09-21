@@ -57,6 +57,9 @@ dependencies {
 	implementation "com.querydsl:querydsl-core:${queryDslVersion}"
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
 
+	// password encoder
+	implementation 'org.springframework.security:spring-security-crypto:5.7.5'
+
 	// jwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 

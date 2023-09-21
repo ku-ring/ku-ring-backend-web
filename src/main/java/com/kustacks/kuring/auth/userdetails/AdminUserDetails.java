@@ -24,6 +24,11 @@ public class AdminUserDetails implements UserDetails {
     }
 
     @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
     public List<String> getAuthorities() {
         return authorities;
     }

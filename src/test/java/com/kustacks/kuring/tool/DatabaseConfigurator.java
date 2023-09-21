@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -39,13 +40,14 @@ public class DatabaseConfigurator implements InitializingBean {
     private final DepartmentNoticeRepository departmentNoticeRepository;
     private final DataSource dataSource;
     private final JdbcTemplate jdbcTemplate;
+    private final PasswordEncoder passwordEncoder;
 
     private List<String> tableNames;
 
     public DatabaseConfigurator(NoticeRepository noticeRepository, UserRepository userRepository,
                                 StaffRepository staffRepository, AdminRepository adminRepository,
                                 DepartmentNoticeRepository departmentNoticeRepository,
-                                DataSource dataSource, JdbcTemplate jdbcTemplate) {
+                                DataSource dataSource, JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
         this.noticeRepository = noticeRepository;
         this.userRepository = userRepository;
         this.staffRepository = staffRepository;
@@ -53,6 +55,7 @@ public class DatabaseConfigurator implements InitializingBean {
         this.departmentNoticeRepository = departmentNoticeRepository;
         this.dataSource = dataSource;
         this.jdbcTemplate = jdbcTemplate;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -118,7 +121,8 @@ public class DatabaseConfigurator implements InitializingBean {
     }
 
     private void initAdmin() {
-        Admin admin = new Admin(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
+        String encodePassword = passwordEncoder.encode(ADMIN_PASSWORD);
+        Admin admin = new Admin(ADMIN_LOGIN_ID, encodePassword);
         admin.addRole(AdminRole.ROLE_ROOT);
         adminRepository.save(admin);
     }

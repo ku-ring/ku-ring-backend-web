@@ -43,6 +43,11 @@ public class Admin implements UserDetails {
     }
 
     @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
     public List<String> getAuthorities() {
         return this.adminRoles.getRoles()
                 .stream()

@@ -7,6 +7,7 @@ import com.kustacks.kuring.auth.handler.AuthenticationSuccessHandler;
 import com.kustacks.kuring.auth.token.AdminLoginTokenRequest;
 import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.auth.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -15,12 +16,13 @@ import java.util.stream.Collectors;
 public class AdminTokenAuthenticationFilter extends AuthenticationNonChainingFilter {
 
     public AdminTokenAuthenticationFilter(UserDetailsService userDetailsService,
+                                          PasswordEncoder passwordEncoder,
                                           JwtTokenProvider jwtTokenProvider,
                                           ObjectMapper objectMapper,
                                           AuthenticationSuccessHandler successHandler,
                                           AuthenticationFailureHandler failureHandler)
     {
-        super(userDetailsService, jwtTokenProvider, objectMapper, successHandler, failureHandler);
+        super(userDetailsService, passwordEncoder, jwtTokenProvider, objectMapper, successHandler, failureHandler);
     }
 
     @Override

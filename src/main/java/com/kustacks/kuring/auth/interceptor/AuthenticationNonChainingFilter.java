@@ -10,6 +10,7 @@ import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.auth.userdetails.UserDetails;
 import com.kustacks.kuring.auth.userdetails.UserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import java.io.IOException;
 public abstract class AuthenticationNonChainingFilter implements HandlerInterceptor {
 
     protected final UserDetailsService userDetailsService;
+    protected final PasswordEncoder passwordEncoder;
     protected final JwtTokenProvider jwtTokenProvider;
     protected final ObjectMapper objectMapper;
     protected final AuthenticationSuccessHandler successHandler;
@@ -47,7 +49,7 @@ public abstract class AuthenticationNonChainingFilter implements HandlerIntercep
             throw new AuthenticationException();
         }
 
-        if (!userDetails.isValidCredentials(credentials)) {
+        if (isNotMatchPassword(credentials, userDetails)) {
             throw new AuthenticationException();
         }
 
@@ -63,4 +65,8 @@ public abstract class AuthenticationNonChainingFilter implements HandlerIntercep
     }
 
     protected abstract AuthenticationToken convert(HttpServletRequest request) throws IOException;
+
+    private boolean isNotMatchPassword(String password, UserDetails userDetails) {
+        return !passwordEncoder.matches(password, userDetails.getPassword());
+    }
 }
