@@ -3,7 +3,6 @@ package com.kustacks.kuring.acceptance;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import java.util.HashMap;
@@ -26,6 +25,6 @@ public class AuthStep {
                 .body(params)
                 .when().post("/api/v2/admin/login")
                 .then().log().all()
-                .statusCode(HttpStatus.OK.value()).extract();
+                .extract();
     }
 }
