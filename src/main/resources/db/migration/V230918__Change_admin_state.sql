@@ -1,12 +1,17 @@
-TRUNCATE TABLE 'admin';
+drop table if exists `admin`;
+drop table if exists `admin_roles`;
 
-ALTER TABLE 'admin' DROP COLUMN 'token';
-ALTER TABLE 'admin' DROP COLUMN 'owner';
+create table admin (
+   id integer not null auto_increment,
+   admin_login_id varchar(255) not null,
+   admin_password varchar(255) not null,
+   primary key (id)
+);
 
-ALTER TABLE 'admin' ADD 'admin_login_id' varchar(256) not null;
-ALTER TABLE 'admin' ADD 'admin_password' varchar(256) not null;
+create table admin_roles (
+    id integer not null,
+    role varchar(256) not null
+);
 
-create table 'admin_roles' (
-    id bigint not null foreign key references 'admin'('id'),
-    'role' varchar(256) not null
-)
+alter table admin_roles
+add constraint adr_fk_name foreign key (id) references admin (id);
