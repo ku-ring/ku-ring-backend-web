@@ -2,7 +2,6 @@ package com.kustacks.kuring.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kustacks.kuring.admin.business.AdminDetailsService;
-import com.kustacks.kuring.auth.authorization.AuthenticationPrincipalArgumentResolver;
 import com.kustacks.kuring.auth.context.SecurityContextPersistenceFilter;
 import com.kustacks.kuring.auth.handler.AuthenticationFailureHandler;
 import com.kustacks.kuring.auth.handler.AuthenticationSuccessHandler;
@@ -18,8 +17,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -44,11 +41,6 @@ public class AuthConfig implements WebMvcConfigurer {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-    @Override
-    public void addArgumentResolvers(List argumentResolvers) {
-        argumentResolvers.add(new AuthenticationPrincipalArgumentResolver());
     }
 
     @Bean
