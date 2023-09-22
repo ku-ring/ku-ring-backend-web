@@ -195,7 +195,10 @@ configurations {
 compileQuerydsl {
 	options.annotationProcessorPath = configurations.querydsl
 }
-
+compileQuerydsl.doFirst {
+	if(file(querydslDir).exists())
+		delete(file(querydslDir))
+}
 // -- Jacoco 설정 -------------------------------------------------------
 jacoco {
 	// jacoco version
