@@ -1,5 +1,6 @@
 package com.kustacks.kuring.auth.token;
 
+import com.kustacks.kuring.auth.exception.UnauthorizedException;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -28,11 +29,27 @@ public class JwtTokenProvider {
     }
 
     public String getPrincipal(String token) {
-        return Jwts.parser().setSigningKey(jwtTokenProperties.getSecretKey()).parseClaimsJws(token).getBody().getSubject();
+        try{
+            return Jwts.parser()
+                    .setSigningKey(jwtTokenProperties.getSecretKey())
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new UnauthorizedException();
+        }
     }
 
     public List<String> getRoles(String token) {
-        return Jwts.parser().setSigningKey(jwtTokenProperties.getSecretKey()).parseClaimsJws(token).getBody().get("roles", List.class);
+        try{
+            return Jwts.parser()
+                    .setSigningKey(jwtTokenProperties.getSecretKey())
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .get("roles", List.class);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new UnauthorizedException();
+        }
     }
 
     public boolean validateToken(String token) {
