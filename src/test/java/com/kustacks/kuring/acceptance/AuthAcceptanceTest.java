@@ -9,7 +9,7 @@ import static com.kustacks.kuring.acceptance.AuthStep.로그인_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("인수 : 인증")
-public class AuthAcceptanceTest extends AcceptanceTest {
+class AuthAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("Bearer Auth login")
     @Test

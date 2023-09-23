@@ -10,7 +10,7 @@ class AuthorizationExtractorTest {
 
     @Test
     @DisplayName("사용자의 토큰을 추출한다")
-    public void extract_user_id_and_roles() {
+    void extract_user_id_and_roles() {
         // given
         String userToken = "test-token";
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -25,7 +25,7 @@ class AuthorizationExtractorTest {
 
     @Test
     @DisplayName("토큰 형식이 Bearer로 시작하지 않으면 빈 문자열을 반환한다")
-    public void extract_not_start_bearer() {
+    void extract_not_start_bearer() {
         // given
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Authorization", "token");
@@ -39,7 +39,7 @@ class AuthorizationExtractorTest {
 
     @Test
     @DisplayName("토큰에 헤더는 있지만 토큰이 존재하지 않으면 빈 문자열을 반환한다")
-    public void extract_not_exist_token() {
+    void extract_not_exist_token() {
         // given
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Authorization", "Bearer ");
@@ -53,7 +53,7 @@ class AuthorizationExtractorTest {
 
     @Test
     @DisplayName("토큰이 존재하지 않으면 빈 문자열을 반환한다")
-    public void extract_not_exist_header() {
+    void extract_not_exist_header() {
         // given
         MockHttpServletRequest request = new MockHttpServletRequest();
 

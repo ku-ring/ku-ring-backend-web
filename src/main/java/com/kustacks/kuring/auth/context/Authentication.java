@@ -1,9 +1,8 @@
 package com.kustacks.kuring.auth.context;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class Authentication implements Serializable {
+public class Authentication {
     private Object principal;
     private List<String> authorities;
 
