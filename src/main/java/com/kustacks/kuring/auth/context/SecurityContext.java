@@ -1,8 +1,6 @@
 package com.kustacks.kuring.auth.context;
 
-import java.io.Serializable;
-
-public class SecurityContext implements Serializable {
+public class SecurityContext {
     private Authentication authentication;
 
     public SecurityContext() {
