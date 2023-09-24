@@ -35,7 +35,7 @@ public class AuthConfig implements WebMvcConfigurer {
                 adminLoginSuccessHandler(), adminLoginFailureHandler()))
                 .addPathPatterns("/api/v2/admin/login");
 
-        registry.addInterceptor(new BearerTokenAuthenticationFilter(jwtTokenProvider)).addPathPatterns("/api/v2/admin/login/request");
+        registry.addInterceptor(new BearerTokenAuthenticationFilter(jwtTokenProvider)).addPathPatterns("/api/v2/admin/**");
     }
 
     @Bean
