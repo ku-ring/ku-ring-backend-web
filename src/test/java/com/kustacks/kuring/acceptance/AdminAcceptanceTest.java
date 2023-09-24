@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("인수 : 관리자")
-public class AdminAcceptanceTest extends AcceptanceTest {
+class AdminAcceptanceTest extends AcceptanceTest {
 
     /**
      * Given : 등록된 Admin이 있다.
