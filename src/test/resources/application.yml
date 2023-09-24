@@ -37,3 +37,9 @@ sentry:
 logging:
   level:
     p6spy: debug
+
+security:
+  jwt:
+    token:
+      secret-key: test-secret-key-test-secret-key-test-secret-key-test-secret-key
+      expire-length: 3600000

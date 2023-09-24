@@ -45,7 +45,8 @@ public class AdminService {
 
 
     public boolean checkToken(String token) {
-        Admin admin = adminRepository.findByToken(token);
+        Admin admin = adminRepository.findByLoginId(token)
+                .orElseThrow(RuntimeException::new);
         return admin != null;
     }
 
