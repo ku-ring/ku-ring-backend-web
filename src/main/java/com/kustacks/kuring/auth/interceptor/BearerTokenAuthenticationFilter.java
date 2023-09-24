@@ -7,19 +7,17 @@ import com.kustacks.kuring.auth.authentication.AuthorizationType;
 import com.kustacks.kuring.auth.exception.UnauthorizedException;
 import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.auth.userdetails.AdminUserDetails;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class BearerTokenAuthenticationFilter extends AuthenticationChainingFilter {
 
     private static final String BEARER_DELIMITER = "Bearer ";
-    private JwtTokenProvider jwtTokenProvider;
-
-    public BearerTokenAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public AuthenticationToken convert(HttpServletRequest request) {
