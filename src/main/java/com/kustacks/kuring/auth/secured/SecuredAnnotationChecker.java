@@ -17,6 +17,10 @@ import java.util.stream.Collectors;
 @Aspect
 @Component
 public class SecuredAnnotationChecker {
+
+    private static final String ROLE_CLIENT = "ROLE_CLIENT";
+    private static final String ROLE_ROOT = "ROLE_ROOT";
+
     @Before("@annotation(com.kustacks.kuring.auth.secured.Secured)")
     public void checkAuthorities(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -27,13 +31,17 @@ public class SecuredAnnotationChecker {
                 .collect(Collectors.toList());
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication.getAuthorities().size() == 1 && authentication.getAuthorities().contains("ROLE_ROOT")) {
-            authentication.getAuthorities().add("ROLE_CLIENT");
+        if(isRoleRoot(authentication)) {
+            authentication.getAuthorities().add(ROLE_CLIENT);
         }
 
         authentication.getAuthorities().stream()
                 .filter(values::contains)
                 .findFirst()
                 .orElseThrow(() -> new RoleAuthenticationException("권한이 없습니다."));
+    }
+
+    private static boolean isRoleRoot(Authentication authentication) {
+        return authentication.getAuthorities().size() == 1 && authentication.getAuthorities().contains(ROLE_ROOT);
     }
 }
