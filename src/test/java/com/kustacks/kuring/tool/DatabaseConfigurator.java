@@ -30,8 +30,10 @@ public class DatabaseConfigurator implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(DatabaseConfigurator.class);
     protected final String USER_FCM_TOKEN = "test_fcm_token";
-    protected static final String ADMIN_LOGIN_ID = "admin@email.com";
-    protected static final String ADMIN_PASSWORD = "admin_password";
+    protected static final String ADMIN_ROOT_LOGIN_ID = "admin@email.com";
+    protected static final String ADMIN_ROOT_PASSWORD = "admin_password";
+    protected static final String ADMIN_CLIENT_LOGIN_ID = "client@email.com";
+    protected static final String ADMIN_CLIENT_PASSWORD = "client_password";
 
     private final NoticeRepository noticeRepository;
     private final UserRepository userRepository;
@@ -121,9 +123,14 @@ public class DatabaseConfigurator implements InitializingBean {
     }
 
     private void initAdmin() {
-        String encodePassword = passwordEncoder.encode(ADMIN_PASSWORD);
-        Admin admin = new Admin(ADMIN_LOGIN_ID, encodePassword);
+        String encodePassword = passwordEncoder.encode(ADMIN_ROOT_PASSWORD);
+        Admin admin = new Admin(ADMIN_ROOT_LOGIN_ID, encodePassword);
         admin.addRole(AdminRole.ROLE_ROOT);
+        adminRepository.save(admin);
+
+        encodePassword = passwordEncoder.encode(ADMIN_CLIENT_PASSWORD);
+        admin = new Admin(ADMIN_CLIENT_LOGIN_ID, encodePassword);
+        admin.addRole(AdminRole.ROLE_CLIENT);
         adminRepository.save(admin);
     }
 

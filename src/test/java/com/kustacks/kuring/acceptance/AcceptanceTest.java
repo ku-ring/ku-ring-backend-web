@@ -16,6 +16,8 @@ public class AcceptanceTest {
     protected static final String ADMIN_PASSWORD = "admin_password";
     protected static final String USER_FCM_TOKEN = "test_fcm_token";
     protected static final String INVALID_USER_FCM_TOKEN = "invalid_fcm_token";
+    protected static final String ADMIN_CLIENT_LOGIN_ID = "client@email.com";
+    protected static final String ADMIN_CLIENT_PASSWORD = "client_password";
 
     @LocalServerPort
     int port;
