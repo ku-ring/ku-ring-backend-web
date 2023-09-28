@@ -90,6 +90,7 @@ public class DatabaseConfigurator implements InitializingBean {
 
         initAdmin();
         initUser();
+        initFeedback();
         initStaff();
         initNotice();
 
@@ -137,6 +138,15 @@ public class DatabaseConfigurator implements InitializingBean {
     private void initUser() {
         User newUser = new User(USER_FCM_TOKEN);
         userRepository.save(newUser);
+    }
+
+    private void initFeedback() {
+        User findUser = userRepository.findByToken(USER_FCM_TOKEN).get();
+        findUser.addFeedback("test feedback 1");
+        findUser.addFeedback("test feedback 2");
+        findUser.addFeedback("test feedback 3");
+        findUser.addFeedback("test feedback 4");
+        findUser.addFeedback("test feedback 5");
     }
 
     private void initNotice() {
