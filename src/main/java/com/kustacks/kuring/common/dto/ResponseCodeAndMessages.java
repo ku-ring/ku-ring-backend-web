@@ -23,6 +23,7 @@ public enum ResponseCodeAndMessages {
 
     /* Feedback */
     FEEDBACK_SAVE_SUCCESS(HttpStatus.OK.value(), "피드백 저장에 성공하였습니다"),
+    FEEDBACK_SEARCH_SUCCESS(HttpStatus.OK.value(), "피드백 조회에 성공하였습니다"),
 
     /**
      * ErrorCodes about auth

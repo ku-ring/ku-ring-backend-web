@@ -47,6 +47,8 @@ public class User implements Serializable {
         this.token = token;
     }
 
+    public Long getId() {return id;}
+
     public void addFeedback(String content) {
         this.feedbacks.add(new Feedback(content, this));
     }

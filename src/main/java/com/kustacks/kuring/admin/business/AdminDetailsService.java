@@ -15,8 +15,8 @@ public class AdminDetailsService implements UserDetailsService {
     private final AdminRepository adminRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) {
-        return adminRepository.findByLoginId(email)
+    public UserDetails loadUserByUsername(String loginId) {
+        return adminRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 }

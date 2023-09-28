@@ -38,6 +38,14 @@ public class Feedback extends BaseTimeEntity {
         this.user = user;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public Long getUserId() {
+        return user.getId();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
