@@ -2,6 +2,7 @@ package com.kustacks.kuring.admin.common;
 
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.domain.AdminRepository;
+import com.kustacks.kuring.admin.domain.AdminRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +24,9 @@ public class InitAdmin implements InitializingBean {
 
         if(optionalAdmin.isEmpty()) {
             String encodedPassword = passwordEncoder.encode(adminProperties.getPassword());
-            adminRepository.save(new Admin(adminProperties.getId(), encodedPassword));
+            Admin admin = new Admin(adminProperties.getId(), encodedPassword);
+            admin.addRole(AdminRole.ROLE_ROOT);
+            adminRepository.save(admin);
         }
     }
 }
