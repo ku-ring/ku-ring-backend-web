@@ -49,7 +49,7 @@ public class DepartmentNoticeUpdater {
             CompletableFuture
                     .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName()))
-                    .thenAccept(firebaseService::sendNotificationByFcm);
+                    .thenAccept(firebaseService::sendNotificationList);
         }
     }
 
