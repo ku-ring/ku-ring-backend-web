@@ -3,6 +3,7 @@ package com.kustacks.kuring.user.business;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.message.firebase.ServerProperties;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.common.dto.SubscribeCompareResultDto;
@@ -25,8 +26,11 @@ import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SU
 @RequiredArgsConstructor
 public class UserService {
 
+    private static final String DEV_SUFFIX = "dev";
+
     private final UserRepository userRepository;
     private final FirebaseService firebaseService;
+    private final ServerProperties serverProperties;
 
     @Transactional(readOnly = true)
     public User getUserByToken(String token) {
@@ -92,7 +96,7 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findByToken(token);
         if (optionalUser.isEmpty()) {
             optionalUser = Optional.of(userRepository.save(new User(token)));
-            firebaseService.subscribe(token, ALL_DEVICE_SUBSCRIBED_TOPIC);
+            firebaseService.subscribe(token, ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
         }
 
         return optionalUser.orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -108,5 +112,14 @@ public class UserService {
         return departments.stream()
                 .map(DepartmentName::fromHostPrefix)
                 .collect(Collectors.toList());
+    }
+
+    private String ifDevThenAddSuffix(String topic) {
+        StringBuilder topicBuilder = new StringBuilder(topic);
+        if (serverProperties.isSameEnvironment(DEV_SUFFIX)) {
+            topicBuilder.append(".").append(DEV_SUFFIX);
+        }
+
+        return topicBuilder.toString();
     }
 }

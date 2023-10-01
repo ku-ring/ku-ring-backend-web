@@ -90,7 +90,7 @@ public class FirebaseService {
                             .setBody(messageDto.getSubject())
                             .build())
                     .putAllData(objectMapper.convertValue(messageDto, Map.class))
-                    .setTopic(ifDevThenAddSuffix(messageDto.getCategory()).toString())
+                    .setTopic(ifDevThenAddSuffix(messageDto.getCategory()))
                     .build();
 
             firebaseMessaging.send(newMessage);
@@ -108,7 +108,7 @@ public class FirebaseService {
                             .setBody(messageDto.getBody())
                             .build())
                     .putAllData(objectMapper.convertValue(messageDto, Map.class))
-                    .setTopic(ALL_DEVICE_SUBSCRIBED_TOPIC)
+                    .setTopic(ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC))
                     .build();
 
             firebaseMessaging.send(newMessage);
@@ -154,12 +154,12 @@ public class FirebaseService {
                 .toString();
     }
 
-    private StringBuilder ifDevThenAddSuffix(String topic) {
+    private String ifDevThenAddSuffix(String topic) {
         StringBuilder topicBuilder = new StringBuilder(topic);
         if (serverProperties.isSameEnvironment(DEV_SUFFIX)) {
             topicBuilder.append(".").append(DEV_SUFFIX);
         }
 
-        return topicBuilder;
+        return topicBuilder.toString();
     }
 }
