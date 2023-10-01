@@ -22,12 +22,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdminCommandFacade {
-
-    private static final String ALL_DEVICE_SUBSCRIBED_TOPIC = "allDevice";
 
     private final FirebaseService firebaseService;
     private final NoticeProperties noticeProperties;
