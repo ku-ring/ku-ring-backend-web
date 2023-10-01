@@ -5,9 +5,9 @@ import com.kustacks.kuring.admin.business.AdminDetailsService;
 import com.kustacks.kuring.admin.common.dto.AdminNotificationDto;
 import com.kustacks.kuring.admin.common.dto.RealNotificationRequest;
 import com.kustacks.kuring.admin.common.dto.TestNotificationRequest;
+import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.presentation.NoticeProperties;
 import com.kustacks.kuring.auth.context.Authentication;
-import com.kustacks.kuring.auth.userdetails.AdminUserDetails;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.message.firebase.ServerProperties;
@@ -56,10 +56,10 @@ public class AdminCommandFacade {
 
     @Transactional(readOnly = true)
     public void createRealNoticeForAllUser(RealNotificationRequest request, Authentication authentication) {
-        AdminUserDetails adminUserDetails = (AdminUserDetails) adminDetailsService
+        Admin admin = (Admin) adminDetailsService
                 .loadUserByUsername(authentication.getPrincipal().toString());
 
-        if(!passwordEncoder.matches(request.getAdminPassword(), adminUserDetails.getPassword())) {
+        if(!passwordEncoder.matches(request.getAdminPassword(), admin.getPassword())) {
             throw new IllegalArgumentException("관리자 비밀번호가 일치하지 않습니다.");
         }
 
