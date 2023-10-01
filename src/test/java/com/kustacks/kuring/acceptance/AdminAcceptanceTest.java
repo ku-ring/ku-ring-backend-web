@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import static com.kustacks.kuring.acceptance.AdminStep.사용자_피드백_조회_요청;
+import static com.kustacks.kuring.acceptance.AdminStep.피드백_조회_확인;
 import static com.kustacks.kuring.acceptance.AuthStep.로그인_되어_있음;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,31 +18,21 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class AdminAcceptanceTest extends AcceptanceTest {
 
     /**
-     * Given : 등록된 Admin이 있다.
-     * When : hello에 접근시
-     * Then : 성공적으로 hello를 반환받는다.
+     * given : 사전에 등록된 어드민가 피드백들이 이다
+     * when : 어드민이 피드백 조회시
+     * then : 성공적으로 조회된다
      */
+    @DisplayName("사용자 피드백 조회")
     @Test
-    void hello_controller_test() {
+    void role_root_admin_search_feedbacks() {
         // given
         String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
 
         // when
-        ExtractableResponse<Response> response = RestAssured
-                .given().log().all()
-                .header("Authorization", "Bearer " + accessToken)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .when().get("/api/v2/admin/hello")
-                .then().log().all()
-                .extract();
+        var 사용자_피드백 = 사용자_피드백_조회_요청(accessToken);
 
         // then
-        assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("인증에 성공하였습니다"),
-                () -> assertThat(response.jsonPath().getString("data")).isEqualTo("hello")
-        );
+        피드백_조회_확인(사용자_피드백);
     }
 
     /**

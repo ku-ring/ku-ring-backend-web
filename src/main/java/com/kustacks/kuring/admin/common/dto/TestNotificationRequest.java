@@ -1,14 +1,14 @@
 package com.kustacks.kuring.admin.common.dto;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CategoryNameAdminDto {
+public class TestNotificationRequest {
 
-    private String name;
+    private String category;
+    private String subject;
+    private String articleId;
 }

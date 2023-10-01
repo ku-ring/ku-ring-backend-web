@@ -50,14 +50,14 @@ public class CategoryNoticeUpdater {
             CompletableFuture
                     .supplyAsync(() -> updateKuisNoticeAsync(kuisNoticeInfo, KuisNoticeInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName()))
-                    .thenAccept(firebaseService::sendNotificationByFcm);
+                    .thenAccept(firebaseService::sendNotificationList);
         }
     }
 
     private void updateLibrary() {
         List<CommonNoticeFormatDto> scrapResults = updateLibraryNotice(CategoryName.LIBRARY);
         List<Notice> notices = compareLatestAndUpdateDB(scrapResults, CategoryName.LIBRARY);
-        firebaseService.sendNotificationByFcm(notices);
+        firebaseService.sendNotificationList(notices);
     }
 
     private List<CommonNoticeFormatDto> updateLibraryNotice(CategoryName categoryName) {

@@ -2,6 +2,7 @@ package com.kustacks.kuring.user.business;
 
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.common.dto.SubscribeCompareResultDto;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
+
 @Slf4j
 @Service
 @Transactional
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final FirebaseService firebaseService;
 
     @Transactional(readOnly = true)
     public User getUserByToken(String token) {
@@ -88,6 +92,7 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findByToken(token);
         if (optionalUser.isEmpty()) {
             optionalUser = Optional.of(userRepository.save(new User(token)));
+            firebaseService.subscribe(token, ALL_DEVICE_SUBSCRIBED_TOPIC);
         }
 
         return optionalUser.orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
