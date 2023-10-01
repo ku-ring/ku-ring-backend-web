@@ -12,10 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_REAL_NOTICE_CREATE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_TEST_NOTICE_CREATE_SUCCESS;
@@ -45,5 +42,12 @@ public class AdminCommandApiV2 {
     {
         adminCommandFacade.createRealNoticeForAllUser(request, authentication);
         return ResponseEntity.ok().body(new BaseResponse<>(ADMIN_REAL_NOTICE_CREATE_SUCCESS, null));
+    }
+
+    @Secured(AdminRole.ROLE_ROOT)
+    @GetMapping("/subscribe/all")
+    public ResponseEntity<Void> subscribe() {
+        adminCommandFacade.subscribeAllUserSameTopic();
+        return ResponseEntity.ok().build();
     }
 }
