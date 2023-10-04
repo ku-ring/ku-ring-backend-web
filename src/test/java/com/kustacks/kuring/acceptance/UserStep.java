@@ -1,5 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
+import com.kustacks.kuring.auth.dto.UserRegisterRequest;
 import com.kustacks.kuring.user.common.SubscribeCategoriesRequest;
 import com.kustacks.kuring.user.common.SubscribeDepartmentsRequest;
 import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;
@@ -15,6 +16,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class UserStep {
+
+    public static ExtractableResponse<Response> 회원_가입_요청(String token) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(new UserRegisterRequest(token))
+                .when().post("/api/v2/users")
+                .then().log().all()
+                .extract();
+    }
 
     public static ExtractableResponse<Response> 카테고리_구독_요청_v2(String token, SubscribeCategoriesRequest reqeust) {
         return RestAssured

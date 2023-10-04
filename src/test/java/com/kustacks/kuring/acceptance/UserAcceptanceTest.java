@@ -1,5 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
+import com.kustacks.kuring.auth.exception.RegisterException;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.user.common.SubscribeCategoriesRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -11,24 +12,46 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.구독한_학과_목록_조회_요청;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_카테고리_구독_목록_조회_요청_v2;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_학과_조회_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_목록_조회_요청_응답_확인_v2;
-import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_요청_v2;
-import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_요청_응답_확인_v2;
-import static com.kustacks.kuring.acceptance.UserStep.피드백_요청_v2;
-import static com.kustacks.kuring.acceptance.UserStep.피드백_요청_응답_확인_v2;
-import static com.kustacks.kuring.acceptance.UserStep.학과_구독_요청;
-import static com.kustacks.kuring.acceptance.UserStep.학과_구독_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 
 @DisplayName("인수 : 사용자")
 class UserAcceptanceTest extends AcceptanceTest {
 
     @MockBean
     FirebaseService firebaseService;
+
+    /**
+     * Given: 가입되지 않은 사용자가 있다
+     * When: 토큰과 함께 가입 요청을 보내온다
+     * Then: 성공적으로 가입한다
+     */
+    @DisplayName("사용자 가입 성공")
+    @Test
+    void user_register_success() {
+        // given
+        doNothing().when(firebaseService).subscribe(anyString(), anyString());
+
+        var 회원_가입_응답 = 회원_가입_요청("test_register_token");
+
+        // when, then
+        assertThat(회원_가입_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @DisplayName("사용자 가입 실패")
+    @Test
+    void user_register_fail() {
+        // given
+        doThrow(new RegisterException()).when(firebaseService).subscribe(anyString(), anyString());
+
+        var 회원_가입_응답 = 회원_가입_요청("test_register_token");
+
+        // when, then
+        assertThat(회원_가입_응답.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
 
     /**
      * Given : 구독한 카테고리가 없는 사용자가 있다
