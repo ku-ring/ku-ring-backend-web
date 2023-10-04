@@ -34,7 +34,7 @@ public class AuthConfig implements WebMvcConfigurer {
         registry.addInterceptor(new SecurityContextPersistenceFilter());
 
         registry.addInterceptor(new AdminTokenAuthenticationFilter(
-                adminDetailsService, passwordEncoder(), jwtTokenProvider, objectMapper,
+                adminDetailsService, passwordEncoder(), objectMapper,
                 adminLoginSuccessHandler(), adminLoginFailureHandler()))
                 .addPathPatterns("/api/v2/admin/login");
 

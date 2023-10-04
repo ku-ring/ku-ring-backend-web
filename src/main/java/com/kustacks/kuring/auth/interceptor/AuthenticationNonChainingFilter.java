@@ -6,7 +6,6 @@ import com.kustacks.kuring.auth.authentication.AuthenticationToken;
 import com.kustacks.kuring.auth.context.Authentication;
 import com.kustacks.kuring.auth.handler.AuthenticationFailureHandler;
 import com.kustacks.kuring.auth.handler.AuthenticationSuccessHandler;
-import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.auth.userdetails.UserDetails;
 import com.kustacks.kuring.auth.userdetails.UserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ public abstract class AuthenticationNonChainingFilter implements HandlerIntercep
 
     protected final UserDetailsService userDetailsService;
     protected final PasswordEncoder passwordEncoder;
-    protected final JwtTokenProvider jwtTokenProvider;
     protected final ObjectMapper objectMapper;
     protected final AuthenticationSuccessHandler successHandler;
     protected final AuthenticationFailureHandler failureHandler;
