@@ -22,7 +22,6 @@ import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SU
 @RequiredArgsConstructor
 public class UserRegisterNonChainingFilter implements HandlerInterceptor {
 
-    private static final String DEV_SUFFIX = "dev";
     private static final String REGISTER_HTTP_METHOD = "POST";
 
     private final ServerProperties serverProperties;
@@ -51,7 +50,7 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
 
     private void register(String userFcmToken) {
         userRepository.save(new User(userFcmToken));
-        firebaseService.subscribe(userFcmToken, ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
+        firebaseService.subscribe(userFcmToken, serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
     }
 
     public String convert(HttpServletRequest request) throws IOException {
@@ -68,14 +67,5 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
 
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, Exception failed) throws IOException {
         failureHandler.onAuthenticationFailure(request, response, failed);
-    }
-
-    private String ifDevThenAddSuffix(String topic) {
-        StringBuilder topicBuilder = new StringBuilder(topic);
-        if (serverProperties.isSameEnvironment(DEV_SUFFIX)) {
-            topicBuilder.append(".").append(DEV_SUFFIX);
-        }
-
-        return topicBuilder.toString();
     }
 }
