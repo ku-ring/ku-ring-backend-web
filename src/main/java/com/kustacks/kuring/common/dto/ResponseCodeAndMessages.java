@@ -29,6 +29,10 @@ public enum ResponseCodeAndMessages {
     ADMIN_TEST_NOTICE_CREATE_SUCCESS(HttpStatus.OK.value(), "테스트 공지 생성에 성공하였습니다"),
     ADMIN_REAL_NOTICE_CREATE_SUCCESS(HttpStatus.OK.value(), "실제 공지 생성에 성공하였습니다"),
 
+    /* User */
+    USER_REGISTER_SUCCESS(HttpStatus.OK.value(), "회원가입에 성공하였습니다"),
+    USER_REGISTER_FAIL(HttpStatus.BAD_REQUEST.value(), "회원가입에 실패하였습니다"),
+
     /**
      * ErrorCodes about auth
      */
