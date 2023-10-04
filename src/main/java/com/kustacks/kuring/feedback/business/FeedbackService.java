@@ -25,8 +25,6 @@ import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SU
 @RequiredArgsConstructor
 public class FeedbackService {
 
-    private static final String DEV_SUFFIX = "dev";
-
     private final UserRepository userRepository;
     private final FeedbackRepository feedbackRepository;
     private final FirebaseService firebaseService;
@@ -36,7 +34,7 @@ public class FeedbackService {
         Optional<User> optionalUser = userRepository.findByToken(token);
         if(optionalUser.isEmpty()) {
             optionalUser = Optional.of(userRepository.save(new User(token)));
-            firebaseService.subscribe(token, ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
+            firebaseService.subscribe(token, serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
         }
 
         User findUser = optionalUser.orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -51,14 +49,5 @@ public class FeedbackService {
                 .stream()
                 .map(FeedbackDto::from)
                 .collect(Collectors.toList());
-    }
-
-    private String ifDevThenAddSuffix(String topic) {
-        StringBuilder topicBuilder = new StringBuilder(topic);
-        if (serverProperties.isSameEnvironment(DEV_SUFFIX)) {
-            topicBuilder.append(".").append(DEV_SUFFIX);
-        }
-
-        return topicBuilder.toString();
     }
 }

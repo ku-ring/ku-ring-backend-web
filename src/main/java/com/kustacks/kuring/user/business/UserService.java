@@ -26,8 +26,6 @@ import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SU
 @RequiredArgsConstructor
 public class UserService {
 
-    private static final String DEV_SUFFIX = "dev";
-
     private final UserRepository userRepository;
     private final FirebaseService firebaseService;
     private final ServerProperties serverProperties;
@@ -96,7 +94,7 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findByToken(token);
         if (optionalUser.isEmpty()) {
             optionalUser = Optional.of(userRepository.save(new User(token)));
-            firebaseService.subscribe(token, ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
+            firebaseService.subscribe(token, serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
         }
 
         return optionalUser.orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -112,14 +110,5 @@ public class UserService {
         return departments.stream()
                 .map(DepartmentName::fromHostPrefix)
                 .collect(Collectors.toList());
-    }
-
-    private String ifDevThenAddSuffix(String topic) {
-        StringBuilder topicBuilder = new StringBuilder(topic);
-        if (serverProperties.isSameEnvironment(DEV_SUFFIX)) {
-            topicBuilder.append(".").append(DEV_SUFFIX);
-        }
-
-        return topicBuilder.toString();
     }
 }

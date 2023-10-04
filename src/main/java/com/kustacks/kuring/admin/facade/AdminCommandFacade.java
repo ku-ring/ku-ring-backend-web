@@ -29,7 +29,6 @@ import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SU
 @Service
 @RequiredArgsConstructor
 public class AdminCommandFacade {
-    private static final String DEV_SUFFIX = "dev";
 
     private final FirebaseService firebaseService;
     private final NoticeProperties noticeProperties;
@@ -44,7 +43,7 @@ public class AdminCommandFacade {
 
         CategoryName testCategoryName = CategoryName.fromStringName(request.getCategory());
 
-        firebaseService.sendNotification(NoticeMessageDto.builder()
+        firebaseService.sendTestNotification(NoticeMessageDto.builder()
                 .articleId(request.getArticleId())
                 .postedDate(testNoticePostedDate)
                 .category(testCategoryName.getName())
@@ -71,7 +70,7 @@ public class AdminCommandFacade {
      */
     @Transactional(readOnly = true)
     public void subscribeAllUserSameTopic() {
-        String topic = ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC);
+        String topic = serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC);
 
         FirebaseMessaging instance = FirebaseMessaging.getInstance();
         List<String> allToken = userRepository.findAllToken();
@@ -81,14 +80,5 @@ public class AdminCommandFacade {
             List<String> subList = allToken.subList(i, Math.min(i + 500, size));
             instance.subscribeToTopicAsync(subList, topic);
         }
-    }
-
-    private String ifDevThenAddSuffix(String topic) {
-        StringBuilder topicBuilder = new StringBuilder(topic);
-        if (serverProperties.isSameEnvironment(DEV_SUFFIX)) {
-            topicBuilder.append(".").append(DEV_SUFFIX);
-        }
-
-        return topicBuilder.toString();
     }
 }
