@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -82,21 +83,11 @@ public class FirebaseService {
      * @throws FirebaseMessageSendException
      */
     public void sendNotification(NoticeMessageDto messageDto) throws FirebaseMessageSendException {
-        try {
-            Message newMessage = Message.builder()
-                    .setNotification(Notification
-                            .builder()
-                            .setTitle(buildTitle(messageDto.getCategoryKorName()))
-                            .setBody(messageDto.getSubject())
-                            .build())
-                    .putAllData(objectMapper.convertValue(messageDto, Map.class))
-                    .setTopic(ifDevThenAddSuffix(messageDto.getCategory()))
-                    .build();
+        sendBaseNotification(messageDto, this::ifDevThenAddSuffix);
+    }
 
-            firebaseMessaging.send(newMessage);
-        } catch (FirebaseMessagingException exception) {
-            throw new FirebaseMessageSendException();
-        }
+    public void sendTestNotification(NoticeMessageDto messageDto) throws FirebaseMessageSendException {
+        sendBaseNotification(messageDto, this::addDevSuffix);
     }
 
     public void sendNotificationByAdmin(AdminNotificationDto messageDto) {
@@ -136,6 +127,24 @@ public class FirebaseService {
         }
     }
 
+    private void sendBaseNotification(NoticeMessageDto messageDto, Function<String, String> suffixUtil) throws FirebaseMessageSendException {
+        try {
+            Message newMessage = Message.builder()
+                    .setNotification(Notification
+                            .builder()
+                            .setTitle(buildTitle(messageDto.getCategoryKorName()))
+                            .setBody(messageDto.getSubject())
+                            .build())
+                    .putAllData(objectMapper.convertValue(messageDto, Map.class))
+                    .setTopic(suffixUtil.apply(messageDto.getCategory()))
+                    .build();
+
+            firebaseMessaging.send(newMessage);
+        } catch (FirebaseMessagingException exception) {
+            throw new FirebaseMessageSendException();
+        }
+    }
+
     private List<NoticeMessageDto> createNotification(List<? extends Notice> willBeNotiNotices) {
         return willBeNotiNotices.stream()
                 .map(NoticeMessageDto::from)
@@ -161,5 +170,11 @@ public class FirebaseService {
         }
 
         return topicBuilder.toString();
+    }
+
+    private String addDevSuffix(String topic) {
+        return new StringBuilder(topic)
+                .append(".").append(DEV_SUFFIX)
+                .toString();
     }
 }

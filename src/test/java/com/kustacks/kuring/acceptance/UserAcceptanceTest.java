@@ -29,7 +29,7 @@ class UserAcceptanceTest extends AcceptanceTest {
      * When: 토큰과 함께 가입 요청을 보내온다
      * Then: 성공적으로 가입한다
      */
-    @DisplayName("사용자 가입 성공")
+    @DisplayName("[V2] 사용자 가입 성공")
     @Test
     void user_register_success() {
         // given
@@ -41,7 +41,7 @@ class UserAcceptanceTest extends AcceptanceTest {
         assertThat(회원_가입_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
 
-    @DisplayName("사용자 가입 실패")
+    @DisplayName("[V2] 사용자 가입 실패")
     @Test
     void user_register_fail() {
         // given

@@ -44,7 +44,7 @@ public class AdminCommandFacade {
 
         CategoryName testCategoryName = CategoryName.fromStringName(request.getCategory());
 
-        firebaseService.sendNotification(NoticeMessageDto.builder()
+        firebaseService.sendTestNotification(NoticeMessageDto.builder()
                 .articleId(request.getArticleId())
                 .postedDate(testNoticePostedDate)
                 .category(testCategoryName.getName())
