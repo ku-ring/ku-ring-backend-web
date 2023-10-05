@@ -11,10 +11,16 @@ public class AdminNotificationDto {
     private String type;
     private String title;
     private String body;
+    private String url;
 
-    public AdminNotificationDto(String title, String body) {
+    public AdminNotificationDto(String title, String body, String url) {
         this.type = "admin";
         this.title = title;
         this.body = body;
+        this.url = url;
+    }
+
+    public static AdminNotificationDto from(RealNotificationRequest request) {
+        return new AdminNotificationDto(request.getTitle(), request.getBody(), request.getUrl());
     }
 }

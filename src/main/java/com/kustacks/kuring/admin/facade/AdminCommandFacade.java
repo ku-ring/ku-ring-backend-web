@@ -62,7 +62,7 @@ public class AdminCommandFacade {
             throw new IllegalArgumentException("관리자 비밀번호가 일치하지 않습니다.");
         }
 
-        firebaseService.sendNotificationByAdmin(new AdminNotificationDto(request.getTitle(), request.getBody()));
+        firebaseService.sendNotificationByAdmin(AdminNotificationDto.from(request));
     }
 
     /**

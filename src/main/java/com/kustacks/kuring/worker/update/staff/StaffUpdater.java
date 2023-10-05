@@ -27,12 +27,8 @@ public class StaffUpdater {
     private final StaffScraper staffScraper;
     private final List<DeptInfo> deptInfos;
 
-    public StaffUpdater(StaffRepository staffRepository,
-                        StaffScraper staffScraper,
-                        List<DeptInfo> deptInfos) {
-
+    public StaffUpdater(StaffRepository staffRepository, StaffScraper staffScraper, List<DeptInfo> deptInfos) {
         this.staffRepository = staffRepository;
-
         this.staffScraper = staffScraper;
         this.deptInfos = deptInfos;
     }
