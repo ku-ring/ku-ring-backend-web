@@ -1,10 +1,11 @@
 package com.kustacks.kuring.worker.update.notice;
 
-import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.worker.scrap.KuisNoticeScraperTemplate;
+import com.kustacks.kuring.worker.scrap.client.auth.ParsingKuisAuthManager;
 import com.kustacks.kuring.worker.scrap.client.notice.LibraryNoticeApiClient;
 import com.kustacks.kuring.worker.update.notice.dto.request.KuisNoticeInfo;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
@@ -33,6 +34,7 @@ public class CategoryNoticeUpdater {
     private final FirebaseService firebaseService;
     private final LibraryNoticeApiClient libraryNoticeApiClient;
     private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
+    private final ParsingKuisAuthManager parsingKuisAuthManager;
 
     private static long startTime = 0L;
 
@@ -41,6 +43,11 @@ public class CategoryNoticeUpdater {
     */
     @Scheduled(cron = "0 0/10 6-23 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 6:00 ~ 오후 11:55분 사이에 20분마다 업데이트 된다.
     public void update() {
+        log.info("========== Session 갱신 시작 ==========");
+        if(parsingKuisAuthManager.isSessionNeedToBeRenew()) {
+            parsingKuisAuthManager.sessionRenew();
+        }
+
         log.info("========== 공지 업데이트 시작 ==========");
         startTime = System.currentTimeMillis();
 

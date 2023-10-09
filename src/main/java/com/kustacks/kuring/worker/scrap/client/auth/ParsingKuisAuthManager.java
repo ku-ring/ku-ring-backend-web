@@ -1,13 +1,16 @@
 package com.kustacks.kuring.worker.scrap.client.auth;
 
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
-import com.kustacks.kuring.worker.scrap.client.auth.property.ParsingKuisAuthProperties;
-import com.kustacks.kuring.worker.update.notice.dto.request.KuisLoginInfo;
-import com.kustacks.kuring.worker.update.notice.dto.request.KuisInfo;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.utils.encoder.Encoder;
+import com.kustacks.kuring.worker.scrap.client.auth.property.ParsingKuisAuthProperties;
+import com.kustacks.kuring.worker.update.notice.dto.request.KuisInfo;
+import com.kustacks.kuring.worker.update.notice.dto.request.KuisLoginInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -42,6 +45,14 @@ public class ParsingKuisAuthManager implements KuisAuthManager {
         initProperties();
     }
 
+    public void sessionRenew() {
+        log.info("세션아이디 갱신시작");
+        StringBuilder loginRequestBodyStringBuilder = refreshLoginRequestBody();
+        HttpEntity<String> loginRequestEntity = requestLoginAndReturnHttpEntity(loginRequestBodyStringBuilder);
+        loginAndRefreshSession(loginRequestEntity);
+        log.info("세션아이디 갱신완료");
+    }
+
     @Override
     public String getSessionId() {
         if (!this.isLoginPossible) {
@@ -53,21 +64,16 @@ public class ParsingKuisAuthManager implements KuisAuthManager {
             return parsingKuisAuthProperties.getSession();
         }
 
-        log.info("세션아이디 갱신시작");
-
-        StringBuilder loginRequestBodyStringBuilder = refreshLoginRequestBody();
-
-        HttpEntity<String> loginRequestEntity = requestLoginAndReturnHttpEntity(loginRequestBodyStringBuilder);
-
-        loginAndRefreshSession(loginRequestEntity);
-
-        log.info("세션아이디 갱신완료");
-
+        sessionRenew();
         return this.parsingKuisAuthProperties.getSession();
     }
 
     public void forceRenewing() {
         this.sessionNeedToBeRenew = true;
+    }
+
+    public boolean isSessionNeedToBeRenew() {
+        return this.sessionNeedToBeRenew;
     }
 
     private void initProperties() {

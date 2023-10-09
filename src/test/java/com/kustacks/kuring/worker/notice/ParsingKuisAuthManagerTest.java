@@ -43,30 +43,25 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class ParsingKuisAuthManagerTest {
 
+    private final String failResponseBody = "{\"ERRMSGINFO\":{\"ERRMSG\":\"건국대학교에 허가되지 않은 접근입니다. 반복시도시 내부규정에 따라 해당 계정정보를 차단하며 경우에 따라 민형사상의 책임을 질 수 있습니다.\",\"STATUSCODE\":-2000,\"ERRCODE\":\"건국대학교에 허가되지 않은 접근입니다. 반복시도시 내부규정에 따라 해당 계정정보를 차단하며 경우에 따라 민형사상의 책임을 질 수 있습니다.\"}}";
+    private final String successResponseBody = "{\"_METADATA_\":{\"success\":true}}";
+    private final ParsingKuisAuthProperties parsingKuisAuthProperties;
     private final KuisAuthManager kuisAuthManager;
     private final String apiSkeleton;
-    private final String successResponseBody = "{\"_METADATA_\":{\"success\":true}}";
-    private final String failResponseBody = "{\"ERRMSGINFO\":{\"ERRMSG\":\"건국대학교에 허가되지 않은 접근입니다. 반복시도시 내부규정에 따라 해당 계정정보를 차단하며 경우에 따라 민형사상의 책임을 질 수 있습니다.\",\"STATUSCODE\":-2000,\"ERRCODE\":\"건국대학교에 허가되지 않은 접근입니다. 반복시도시 내부규정에 따라 해당 계정정보를 차단하며 경우에 따라 민형사상의 책임을 질 수 있습니다.\"}}";
 
     private MockRestServiceServer server;
-    private ParsingKuisAuthProperties parsingKuisAuthProperties;
     private RestTemplate restTemplate;
 
     public ParsingKuisAuthManagerTest(
             KuisAuthManager parsingKuisAuthManager,
             RestTemplate restTemplate,
             ParsingKuisAuthProperties parsingKuisAuthProperties,
-            @Value("${auth.api-skeleton-file-path}") String apiSkeletonFilePath) throws IOException {
-
+            @Value("${auth.api-skeleton-file-path}") String apiSkeletonFilePath) throws IOException
+    {
         this.kuisAuthManager = parsingKuisAuthManager;
         this.restTemplate = restTemplate;
         this.parsingKuisAuthProperties = parsingKuisAuthProperties;
         apiSkeleton = readApiSkeleton(apiSkeletonFilePath);
-    }
-
-    @AfterEach
-    void setUpAfter() {
-        kuisAuthManager.forceRenewing();
     }
 
     @BeforeEach
@@ -79,12 +74,13 @@ class ParsingKuisAuthManagerTest {
     @Order(1)
     @DisplayName("성공 - 로그인 후 세션ID 권한 획득")
     void success() {
-
         // given
-        server.expect(requestTo(parsingKuisAuthProperties.getApiSkeletonProducerUrl())).andRespond(withSuccess().body(apiSkeleton));
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Set-Cookie", "JSESSIONID=test_session_id;");
-        server.expect(requestTo(parsingKuisAuthProperties.getLoginUrl())).andExpect(method(HttpMethod.POST)).andRespond(withSuccess().headers(httpHeaders).body(successResponseBody));
+        server.expect(requestTo(parsingKuisAuthProperties.getApiSkeletonProducerUrl())).
+                andRespond(withSuccess().body(apiSkeleton));
+
+        server.expect(requestTo(parsingKuisAuthProperties.getLoginUrl()))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess().headers(buildJSessionHeader()).body(successResponseBody));
 
         // when
         String sessionId = kuisAuthManager.getSessionId();
@@ -98,12 +94,13 @@ class ParsingKuisAuthManagerTest {
     @Order(2)
     @DisplayName("성공 - 기존에 사용한 세션ID 반환")
     void successWithSessionCache() {
-
         // given
-        server.expect(times(1), requestTo(parsingKuisAuthProperties.getApiSkeletonProducerUrl())).andRespond(withSuccess().body(apiSkeleton));
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Set-Cookie", "JSESSIONID=test_session_id;");
-        server.expect(times(1), requestTo(parsingKuisAuthProperties.getLoginUrl())).andExpect(method(HttpMethod.POST)).andRespond(withSuccess().headers(httpHeaders).body(successResponseBody));
+        server.expect(times(1), requestTo(parsingKuisAuthProperties.getApiSkeletonProducerUrl()))
+                .andRespond(withSuccess().body(apiSkeleton));
+
+        server.expect(times(1), requestTo(parsingKuisAuthProperties.getLoginUrl()))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess().headers(buildJSessionHeader()).body(successResponseBody));
 
         // when
         String sessionId = kuisAuthManager.getSessionId();
@@ -119,10 +116,13 @@ class ParsingKuisAuthManagerTest {
     @Order(3)
     @DisplayName("실패 - 응답 body가 없음")
     void failByNoBody() {
-
         // given
-        server.expect(requestTo(parsingKuisAuthProperties.getApiSkeletonProducerUrl())).andRespond(withSuccess().body(apiSkeleton));
-        server.expect(requestTo(parsingKuisAuthProperties.getLoginUrl())).andExpect(method(HttpMethod.POST)).andRespond(withSuccess());
+        server.expect(requestTo(parsingKuisAuthProperties.getApiSkeletonProducerUrl()))
+                .andRespond(withSuccess().body(apiSkeleton));
+
+        server.expect(requestTo(parsingKuisAuthProperties.getLoginUrl()))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess());
 
         // when
         InternalLogicException e = assertThrows(InternalLogicException.class, kuisAuthManager::getSessionId);
@@ -135,16 +135,30 @@ class ParsingKuisAuthManagerTest {
     @Order(4)
     @DisplayName("실패 - 응답 body에 success 문자열이 없음 (kuis 로그인 방식이 바뀜 or api skeleton 최신화 안됨)")
     void failByNoSuccessStringInBody() {
-
         // given
-        server.expect(requestTo(parsingKuisAuthProperties.getApiSkeletonProducerUrl())).andRespond(withSuccess().body(apiSkeleton));
-        server.expect(requestTo(parsingKuisAuthProperties.getLoginUrl())).andExpect(method(HttpMethod.POST)).andRespond(withSuccess().body(failResponseBody));
+        server.expect(requestTo(parsingKuisAuthProperties.getApiSkeletonProducerUrl()))
+                .andRespond(withSuccess().body(apiSkeleton));
+
+        server.expect(requestTo(parsingKuisAuthProperties.getLoginUrl()))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess().body(failResponseBody));
 
         // when
         InternalLogicException e = assertThrows(InternalLogicException.class, kuisAuthManager::getSessionId);
 
         // then
         assertEquals(ErrorCode.KU_LOGIN_BAD_RESPONSE, e.getErrorCode());
+    }
+
+    @AfterEach
+    void setUpAfter() {
+        kuisAuthManager.forceRenewing();
+    }
+
+    private static HttpHeaders buildJSessionHeader() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Set-Cookie", "JSESSIONID=test_session_id;");
+        return httpHeaders;
     }
 
     private String readApiSkeleton(String path) throws IOException {
