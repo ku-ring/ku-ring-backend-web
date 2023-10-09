@@ -5,7 +5,6 @@ import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.utils.encoder.RequestBodyEncoder;
 import com.kustacks.kuring.config.JsonConfig;
 import com.kustacks.kuring.config.RestTemplateConfig;
-import com.kustacks.kuring.worker.scrap.client.auth.KuisAuthManager;
 import com.kustacks.kuring.worker.scrap.client.auth.ParsingKuisAuthManager;
 import com.kustacks.kuring.worker.scrap.client.auth.property.ParsingKuisAuthProperties;
 import com.kustacks.kuring.worker.update.notice.dto.request.KuisLoginInfo;
@@ -46,14 +45,14 @@ class ParsingKuisAuthManagerTest {
     private final String failResponseBody = "{\"ERRMSGINFO\":{\"ERRMSG\":\"건국대학교에 허가되지 않은 접근입니다. 반복시도시 내부규정에 따라 해당 계정정보를 차단하며 경우에 따라 민형사상의 책임을 질 수 있습니다.\",\"STATUSCODE\":-2000,\"ERRCODE\":\"건국대학교에 허가되지 않은 접근입니다. 반복시도시 내부규정에 따라 해당 계정정보를 차단하며 경우에 따라 민형사상의 책임을 질 수 있습니다.\"}}";
     private final String successResponseBody = "{\"_METADATA_\":{\"success\":true}}";
     private final ParsingKuisAuthProperties parsingKuisAuthProperties;
-    private final KuisAuthManager kuisAuthManager;
+    private final ParsingKuisAuthManager kuisAuthManager;
     private final String apiSkeleton;
 
     private MockRestServiceServer server;
     private RestTemplate restTemplate;
 
     public ParsingKuisAuthManagerTest(
-            KuisAuthManager parsingKuisAuthManager,
+            ParsingKuisAuthManager parsingKuisAuthManager,
             RestTemplate restTemplate,
             ParsingKuisAuthProperties parsingKuisAuthProperties,
             @Value("${auth.api-skeleton-file-path}") String apiSkeletonFilePath) throws IOException

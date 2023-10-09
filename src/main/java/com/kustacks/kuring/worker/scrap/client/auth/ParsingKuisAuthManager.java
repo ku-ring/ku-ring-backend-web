@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 @Component
-public class ParsingKuisAuthManager implements KuisAuthManager {
+public class ParsingKuisAuthManager {
 
     private final static String PARSING_PATTERN = "submit\\.addParameter[(]\"(.{5,7})\",\"(.{5,7})\"[)]";
     private final static String SESSION_PATTERN = "JSESSIONID=(.*?);";
@@ -53,7 +53,6 @@ public class ParsingKuisAuthManager implements KuisAuthManager {
         log.info("세션아이디 갱신완료");
     }
 
-    @Override
     public String getSessionId() {
         if (!this.isLoginPossible) {
             throw new InternalLogicException(ErrorCode.KU_LOGIN_IMPOSSIBLE);
