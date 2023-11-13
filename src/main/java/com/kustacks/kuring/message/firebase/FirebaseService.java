@@ -1,15 +1,11 @@
 package com.kustacks.kuring.message.firebase;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
-import com.google.firebase.messaging.TopicManagementResponse;
-import com.kustacks.kuring.common.dto.AdminMessageDto;
+import com.google.firebase.messaging.*;
+import com.kustacks.kuring.admin.common.dto.AdminNotificationDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.message.firebase.exception.FirebaseMessageSendException;
 import com.kustacks.kuring.message.firebase.exception.FirebaseSubscribeException;
@@ -17,11 +13,11 @@ import com.kustacks.kuring.message.firebase.exception.FirebaseUnSubscribeExcepti
 import com.kustacks.kuring.notice.domain.Notice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,12 +26,11 @@ import java.util.stream.Collectors;
 public class FirebaseService {
 
     private static final String NOTIFICATION_TITLE = "새로운 공지가 왔어요!";
-    private static final String DEV_SUFFIX = "dev";
+    public static final String ALL_DEVICE_SUBSCRIBED_TOPIC = "allDevice";
+
     private final FirebaseMessaging firebaseMessaging;
     private final ObjectMapper objectMapper;
-
-    @Value("${server.deploy.environment}")
-    private String deployEnv;
+    private final ServerProperties serverProperties;
 
     public void validationToken(String token) throws FirebaseInvalidTokenException {
         try {
@@ -50,7 +45,7 @@ public class FirebaseService {
     public void subscribe(String token, String topic) throws FirebaseSubscribeException {
         try {
             TopicManagementResponse response = firebaseMessaging
-                    .subscribeToTopic(List.of(token), ifDevThenAddSuffix(topic).toString());
+                    .subscribeToTopic(List.of(token), serverProperties.ifDevThenAddSuffix(topic));
 
             if (response.getFailureCount() > 0) {
                 throw new FirebaseSubscribeException();
@@ -63,7 +58,7 @@ public class FirebaseService {
     public void unsubscribe(String token, String topic) throws FirebaseUnSubscribeException {
         try {
             TopicManagementResponse response = firebaseMessaging
-                    .unsubscribeFromTopic(List.of(token), ifDevThenAddSuffix(topic).toString());
+                    .unsubscribeFromTopic(List.of(token), serverProperties.ifDevThenAddSuffix(topic));
 
             if (response.getFailureCount() > 0) {
                 throw new FirebaseUnSubscribeException();
@@ -86,16 +81,24 @@ public class FirebaseService {
      * @param messageDto
      * @throws FirebaseMessageSendException
      */
-    public void sendMessage(NoticeMessageDto messageDto) throws FirebaseMessageSendException {
+    public void sendNotification(NoticeMessageDto messageDto) throws FirebaseMessageSendException {
+        sendBaseNotification(messageDto, serverProperties::ifDevThenAddSuffix);
+    }
+
+    public void sendTestNotification(NoticeMessageDto messageDto) throws FirebaseMessageSendException {
+        sendBaseNotification(messageDto, serverProperties::addDevSuffix);
+    }
+
+    public void sendNotificationByAdmin(AdminNotificationDto messageDto) {
         try {
             Message newMessage = Message.builder()
                     .setNotification(Notification
                             .builder()
-                            .setTitle(buildTitle(messageDto.getCategoryKorName()))
-                            .setBody(messageDto.getSubject())
+                            .setTitle(messageDto.getTitle())
+                            .setBody(messageDto.getBody())
                             .build())
                     .putAllData(objectMapper.convertValue(messageDto, Map.class))
-                    .setTopic(ifDevThenAddSuffix(messageDto.getCategory()).toString())
+                    .setTopic(serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC))
                     .build();
 
             firebaseMessaging.send(newMessage);
@@ -104,15 +107,7 @@ public class FirebaseService {
         }
     }
 
-    public void sendNoticeMessageForAdmin(String token, NoticeMessageDto messageDto) throws FirebaseMessagingException {
-        firebaseMessaging.send(buildMessage(token, messageDto));
-    }
-
-    public void sendNoticeMessageForAdmin(String token, AdminMessageDto messageDto) throws FirebaseMessagingException {
-        firebaseMessaging.send(buildMessage(token, messageDto));
-    }
-
-    public void sendNotificationByFcm(List<? extends Notice> noticeList) {
+    public void sendNotificationList(List<? extends Notice> noticeList) {
         List<NoticeMessageDto> notificationDtoList = createNotification(noticeList);
 
         try {
@@ -131,6 +126,24 @@ public class FirebaseService {
         }
     }
 
+    private void sendBaseNotification(NoticeMessageDto messageDto, Function<String, String> suffixUtil) throws FirebaseMessageSendException {
+        try {
+            Message newMessage = Message.builder()
+                    .setNotification(Notification
+                            .builder()
+                            .setTitle(buildTitle(messageDto.getCategoryKorName()))
+                            .setBody(messageDto.getSubject())
+                            .build())
+                    .putAllData(objectMapper.convertValue(messageDto, Map.class))
+                    .setTopic(suffixUtil.apply(messageDto.getCategory()))
+                    .build();
+
+            firebaseMessaging.send(newMessage);
+        } catch (FirebaseMessagingException exception) {
+            throw new FirebaseMessageSendException();
+        }
+    }
+
     private List<NoticeMessageDto> createNotification(List<? extends Notice> willBeNotiNotices) {
         return willBeNotiNotices.stream()
                 .map(NoticeMessageDto::from)
@@ -138,7 +151,7 @@ public class FirebaseService {
     }
 
     private void sendNoticeMessageList(List<NoticeMessageDto> messageDtoList) throws FirebaseMessageSendException {
-        messageDtoList.forEach(this::sendMessage);
+        messageDtoList.forEach(this::sendNotification);
     }
 
     private String buildTitle(String korName) {
@@ -147,21 +160,5 @@ public class FirebaseService {
                 .append("] ")
                 .append(NOTIFICATION_TITLE)
                 .toString();
-    }
-
-    private <T> Message buildMessage(String token, T messageDto) {
-        return Message.builder()
-                .putAllData(objectMapper.convertValue(messageDto, Map.class))
-                .setToken(token)
-                .build();
-    }
-
-    private StringBuilder ifDevThenAddSuffix(String topic) {
-        StringBuilder topicBuilder = new StringBuilder(topic);
-        if (deployEnv.equals(DEV_SUFFIX)) {
-            topicBuilder.append(".").append(DEV_SUFFIX);
-        }
-
-        return topicBuilder;
     }
 }

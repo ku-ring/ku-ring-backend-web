@@ -57,6 +57,12 @@ dependencies {
 	implementation "com.querydsl:querydsl-core:${queryDslVersion}"
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
 
+	// password encoder
+	implementation 'org.springframework.security:spring-security-crypto:5.7.5'
+
+	// jwt
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
 	// monitoring
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'io.micrometer:micrometer-registry-prometheus'
@@ -123,6 +129,11 @@ test {
 	finalizedBy 'jacocoTestReport'
 }
 
+//Querydsl 추가, 자동 생성된 Q클래스 gradle clean으로 제거
+clean {
+	delete file('src/main/generated')
+}
+
 asciidoctor.onlyIf { System.getenv('DEPLOY_ENV') == 'dev' }
 
 asciidoctor {
@@ -184,7 +195,10 @@ configurations {
 compileQuerydsl {
 	options.annotationProcessorPath = configurations.querydsl
 }
-
+compileQuerydsl.doFirst {
+	if(file(querydslDir).exists())
+		delete(file(querydslDir))
+}
 // -- Jacoco 설정 -------------------------------------------------------
 jacoco {
 	// jacoco version

@@ -24,6 +24,8 @@ env:
   KU_PASSWORD: ${{ secrets.APP_ENV_TEST_KU_PASSWORD }}
   SENTRY_URL: ${{ secrets.APP_ENV_SENTRY_URL }}
   TZ: ${{ secrets.APP_ENV_TZ }}
+  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+  JWT_EXPIRE_LENGTH: ${{ secrets.JWT_EXPIRE_LENGTH }}
 
 jobs:
   build:

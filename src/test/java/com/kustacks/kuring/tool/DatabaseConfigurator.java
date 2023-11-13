@@ -1,11 +1,9 @@
 package com.kustacks.kuring.tool;
 
-import com.kustacks.kuring.notice.domain.CategoryName;
-import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.notice.domain.DepartmentNotice;
-import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
-import com.kustacks.kuring.notice.domain.Notice;
-import com.kustacks.kuring.notice.domain.NoticeRepository;
+import com.kustacks.kuring.admin.domain.Admin;
+import com.kustacks.kuring.admin.domain.AdminRepository;
+import com.kustacks.kuring.admin.domain.AdminRole;
+import com.kustacks.kuring.notice.domain.*;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.domain.StaffRepository;
 import com.kustacks.kuring.user.domain.User;
@@ -14,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -31,25 +30,34 @@ public class DatabaseConfigurator implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(DatabaseConfigurator.class);
     protected final String USER_FCM_TOKEN = "test_fcm_token";
+    protected static final String ADMIN_ROOT_LOGIN_ID = "admin@email.com";
+    protected static final String ADMIN_ROOT_PASSWORD = "admin_password";
+    protected static final String ADMIN_CLIENT_LOGIN_ID = "client@email.com";
+    protected static final String ADMIN_CLIENT_PASSWORD = "client_password";
 
     private final NoticeRepository noticeRepository;
     private final UserRepository userRepository;
     private final StaffRepository staffRepository;
+    private final AdminRepository adminRepository;
     private final DepartmentNoticeRepository departmentNoticeRepository;
     private final DataSource dataSource;
     private final JdbcTemplate jdbcTemplate;
+    private final PasswordEncoder passwordEncoder;
 
     private List<String> tableNames;
 
     public DatabaseConfigurator(NoticeRepository noticeRepository, UserRepository userRepository,
-                                StaffRepository staffRepository, DepartmentNoticeRepository departmentNoticeRepository,
-                                DataSource dataSource, JdbcTemplate jdbcTemplate) {
+                                StaffRepository staffRepository, AdminRepository adminRepository,
+                                DepartmentNoticeRepository departmentNoticeRepository,
+                                DataSource dataSource, JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
         this.noticeRepository = noticeRepository;
         this.userRepository = userRepository;
         this.staffRepository = staffRepository;
+        this.adminRepository = adminRepository;
         this.departmentNoticeRepository = departmentNoticeRepository;
         this.dataSource = dataSource;
         this.jdbcTemplate = jdbcTemplate;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -80,7 +88,9 @@ public class DatabaseConfigurator implements InitializingBean {
     public void loadData() {
         log.info("[DatabaseConfigurator] init start");
 
+        initAdmin();
         initUser();
+        initFeedback();
         initStaff();
         initNotice();
 
@@ -113,9 +123,30 @@ public class DatabaseConfigurator implements InitializingBean {
         jdbcTemplate.execute("CREATE FULLTEXT INDEX idx_notice_subject ON notice (subject)");
     }
 
+    private void initAdmin() {
+        String encodePassword = passwordEncoder.encode(ADMIN_ROOT_PASSWORD);
+        Admin admin = new Admin(ADMIN_ROOT_LOGIN_ID, encodePassword);
+        admin.addRole(AdminRole.ROLE_ROOT);
+        adminRepository.save(admin);
+
+        encodePassword = passwordEncoder.encode(ADMIN_CLIENT_PASSWORD);
+        admin = new Admin(ADMIN_CLIENT_LOGIN_ID, encodePassword);
+        admin.addRole(AdminRole.ROLE_CLIENT);
+        adminRepository.save(admin);
+    }
+
     private void initUser() {
         User newUser = new User(USER_FCM_TOKEN);
         userRepository.save(newUser);
+    }
+
+    private void initFeedback() {
+        User findUser = userRepository.findByToken(USER_FCM_TOKEN).get();
+        findUser.addFeedback("test feedback 1");
+        findUser.addFeedback("test feedback 2");
+        findUser.addFeedback("test feedback 3");
+        findUser.addFeedback("test feedback 4");
+        findUser.addFeedback("test feedback 5");
     }
 
     private void initNotice() {
