@@ -125,10 +125,13 @@ Bounded Context(BC)는 동일한 문맥으로 효율적으로 업무 용어(도�
    <summary> 본문 확인 (👈 Click)</summary>
 
 ---
+
 ## 1. 의미있는 이름과 함수
+
 코드를 다시 되돌아보았을 때, 당시에는 이해할 수 있을 정도의 이름으로 지었다고 생각했으나 명확하게 와닿지 않는 네이밍들이 있었습니다.  
 따라서 주석이 필요 없을 정도로 명확하게 변수명과 함수명을 수정하였습니다. 
 함수에 대해서는 Clean Code에서 5줄 이내를 권장하고 있었습니다. 코드를 되돌아본 결과 생각보다 함수가 긴 것들이 존재했고 충분히 줄일 수 있는 수준의 내용들이었기에 할 수 있는 한에서 5줄 내외를 지키도록 수정했습니다.
+
 ---
 
 ## 2. 레거시 코드의 양방향 연관관계를 단방향으로!
@@ -352,8 +355,6 @@ ___
 따라서 이후부터는 환경 자체를 동일하게 만든 Test 컨테이너를 사용하여 프로덕션 환경과 동일환 환경변수 환경에서 테스트를 진행하도록 하였습니다.    
 테스트에서 수행 시간이 조금 길어졌지만, 테스트의 목적에 부합하도록 동작하게 되었습니다.
 
-
-
 ---
 
 ## 8. CI / 정적분석기(SonarCloud, jacoco)를 사용한 코드 컨벤션에 대한 코드리뷰 자동화
@@ -466,7 +467,7 @@ dev, local 환경에서는 단순히 ddl을 create-drop 또는 update 옵션을 
 <img width="850" alt="스크린샷 2023-05-15 오후 5 08 22" src="https://github.com/ku-ring/ku-ring-backend-web/assets/60593969/492e61fb-b420-42b3-ae10-834a89c50249">
 
 ### CD Flow
-<img width="850" alt="image" src="https://github.com/ku-ring/ku-ring-backend-web/assets/60593969/70a807b4-a489-47c8-a90f-7e76ab674b54">
+<img width="850" alt="image" src="https://github.com/ku-ring/ku-ring-backend-web/assets/60593969/9ec6dbff-3560-412a-9bc1-a687b510ac66">
 
 ### CD Detail Flow (Test Server)
 <img width="850" alt="image" src="https://github.com/ku-ring/ku-ring-backend-web/assets/60593969/47827e3d-2137-43e7-beda-6725ab0c36ff">
