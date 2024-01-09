@@ -1,7 +1,6 @@
-package com.kustacks.kuring.feedback.domain;
+package com.kustacks.kuring.user.domain;
 
 import com.kustacks.kuring.common.domain.BaseTimeEntity;
-import com.kustacks.kuring.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

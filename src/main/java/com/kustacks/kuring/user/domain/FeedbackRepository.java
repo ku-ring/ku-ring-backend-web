@@ -1,4 +1,4 @@
-package com.kustacks.kuring.feedback.domain;
+package com.kustacks.kuring.user.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

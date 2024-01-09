@@ -1,6 +1,5 @@
 package com.kustacks.kuring.user.domain;
 
-import com.kustacks.kuring.feedback.domain.Feedback;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.CascadeType;
