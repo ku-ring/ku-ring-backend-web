@@ -1,6 +1,6 @@
 package com.kustacks.kuring.user.facade;
 
-import com.kustacks.kuring.feedback.business.FeedbackService;
+import com.kustacks.kuring.user.business.FeedbackService;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.message.firebase.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.message.firebase.exception.FirebaseUnSubscribeException;

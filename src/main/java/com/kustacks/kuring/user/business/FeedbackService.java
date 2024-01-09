@@ -1,9 +1,9 @@
-package com.kustacks.kuring.feedback.business;
+package com.kustacks.kuring.user.business;
 
 import com.kustacks.kuring.admin.common.dto.FeedbackDto;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.NotFoundException;
-import com.kustacks.kuring.feedback.domain.FeedbackRepository;
+import com.kustacks.kuring.user.domain.FeedbackRepository;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.message.firebase.ServerProperties;
 import com.kustacks.kuring.user.domain.User;

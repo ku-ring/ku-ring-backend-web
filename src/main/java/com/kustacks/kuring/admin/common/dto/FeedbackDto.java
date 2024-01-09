@@ -1,6 +1,6 @@
 package com.kustacks.kuring.admin.common.dto;
 
-import com.kustacks.kuring.feedback.domain.Feedback;
+import com.kustacks.kuring.user.domain.Feedback;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
