@@ -1,7 +1,7 @@
 package com.kustacks.kuring.user.facade;
 
 import com.kustacks.kuring.admin.common.dto.FeedbackDto;
-import com.kustacks.kuring.feedback.business.FeedbackService;
+import com.kustacks.kuring.user.business.FeedbackService;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.notice.common.dto.CategoryNameDto;

@@ -1,19 +1,11 @@
-package com.kustacks.kuring.feedback.domain;
+package com.kustacks.kuring.user.domain;
 
 import com.kustacks.kuring.common.domain.BaseTimeEntity;
-import com.kustacks.kuring.user.domain.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -26,20 +18,20 @@ public class Feedback extends BaseTimeEntity {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "content", length = 256, nullable = false)
-    private String content;
+    @Embedded
+    private Content content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     public Feedback(String content, User user) {
-        this.content = content;
+        this.content = new Content(content);
         this.user = user;
     }
 
     public String getContent() {
-        return content;
+        return content.getValue();
     }
 
     public Long getUserId() {
