@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
 
@@ -30,8 +31,8 @@ public class FeedbackTest {
     public void feedback_equals() {
         // given
         User user = new User("token");
-        Feedback feedback1 = new Feedback("contents1", user);
-        Feedback feedback2 = new Feedback("contents2", user);
+        Feedback feedback1 = createFeedback(1, "contents1", user);
+        Feedback feedback2 = createFeedback(1, "contents2", user);
 
         // when, then
         assertThat(feedback1).isEqualTo(feedback2);
@@ -90,5 +91,11 @@ public class FeedbackTest {
                         "sadjlafkj;lkdjalkfjads", "본문 내용은 256자 이하여야 합니다"),
                 Arguments.of("", "본문은 공백일 수 없습니다")
         );
+    }
+
+    private Feedback createFeedback(long id, String content, User user) {
+        Feedback feedback = new Feedback(content, user);
+        ReflectionTestUtils.setField(feedback, "id", id);
+        return feedback;
     }
 }
