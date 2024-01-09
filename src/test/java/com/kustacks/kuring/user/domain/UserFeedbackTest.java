@@ -1,9 +1,16 @@
 package com.kustacks.kuring.user.domain;
 
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UserFeedbackTest {
 
@@ -34,5 +41,31 @@ public class UserFeedbackTest {
 
         // then
         assertThat(user.getAllFeedback().size()).isEqualTo(0);
+    }
+
+    @DisplayName("256자 초과의 피드백은 예외를 발생시킨다")
+    @ParameterizedTest
+    @MethodSource("invalidLengthContentsInputProvider")
+    public void invalid_length_feedback(String content, String errorMessage) {
+        // given
+        User user = new User("token");
+
+        // when
+        ThrowingCallable actual = () -> user.addFeedback(content);
+
+        // then
+        assertThatThrownBy(actual)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(errorMessage);
+    }
+
+    private static Stream<Arguments> invalidLengthContentsInputProvider() {
+        return Stream.of(
+                Arguments.of("https://www.google.com/search?q=%EC%95%88%EB%8dsfajaslkfjasdkfjkldsafjlsadkjf" +
+                        "lksajfldkadsfajaslkfjasdkfjkldsafjlsadkjflksajfldkajlafkj;lkdjalkfjads;jfalksdfjlasjf;" +
+                        "ljlfsaddsfajaslkfjasdkfjkldsafjlsadkjflksajfldkajlafkj;lkdjalkfjads;jfalksdfjlasjf;ljlf" +
+                        "sadjlafkj;lkdjalkfjads", "본문 내용은 256자 이하여야 합니다"),
+                Arguments.of("", "본문은 공백일 수 없습니다")
+        );
     }
 }
