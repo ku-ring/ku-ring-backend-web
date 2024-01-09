@@ -11,6 +11,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
+@DisplayName("도메인 : User")
 class UserTest {
 
     @DisplayName("User 생성 테스트")

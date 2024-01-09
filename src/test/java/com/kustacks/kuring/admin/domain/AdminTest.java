@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
+@DisplayName("도메인 : Admin")
 class AdminTest {
 
     @DisplayName("Admin 생성 테스트")

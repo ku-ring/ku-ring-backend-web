@@ -9,10 +9,33 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
-public class UserFeedbackTest {
+@DisplayName("도메인 : Feedback")
+public class FeedbackTest {
+
+    @DisplayName("피드백을 생성할 수 있다")
+    @Test
+    public void create_feedback() {
+        // given
+        User user = new User("token");
+
+        // when, then
+        assertThatCode(() -> new Feedback("contents!", user))
+                .doesNotThrowAnyException();
+    }
+
+    @DisplayName("피드백 동등성 확인")
+    @Test
+    public void feedback_equals() {
+        // given
+        User user = new User("token");
+        Feedback feedback1 = new Feedback("contents1", user);
+        Feedback feedback2 = new Feedback("contents2", user);
+
+        // when, then
+        assertThat(feedback1).isEqualTo(feedback2);
+    }
 
     @DisplayName("피드백을 추가할 수 있다")
     @Test
