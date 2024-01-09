@@ -17,7 +17,7 @@ public class FeedbackTest {
 
     @DisplayName("피드백을 생성할 수 있다")
     @Test
-    public void create_feedback() {
+    void create_feedback() {
         // given
         User user = new User("token");
 
@@ -28,7 +28,7 @@ public class FeedbackTest {
 
     @DisplayName("피드백 동등성 확인")
     @Test
-    public void feedback_equals() {
+    void feedback_equals() {
         // given
         User user = new User("token");
         Feedback feedback1 = createFeedback(1, "contents1", user);
@@ -40,7 +40,7 @@ public class FeedbackTest {
 
     @DisplayName("피드백을 추가할 수 있다")
     @Test
-    public void add_feedback() {
+    void add_feedback() {
         // given
         User user = new User("token");
 
@@ -54,7 +54,7 @@ public class FeedbackTest {
 
     @DisplayName("피드백을 모두 지울 수 있다")
     @Test
-    public void clear_all_feedback() {
+    void clear_all_feedback() {
         // given
         User user = new User("token");
         user.addFeedback("피드백1");
@@ -70,7 +70,7 @@ public class FeedbackTest {
     @DisplayName("256자 초과의 피드백은 예외를 발생시킨다")
     @ParameterizedTest
     @MethodSource("invalidLengthContentsInputProvider")
-    public void invalid_length_feedback(String content, String errorMessage) {
+    void invalid_length_feedback(String content, String errorMessage) {
         // given
         User user = new User("token");
 
