@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("도메인 : Feedback")
-public class FeedbackTest {
+class FeedbackTest {
 
     @DisplayName("피드백을 생성할 수 있다")
     @Test
@@ -49,7 +49,7 @@ public class FeedbackTest {
         user.addFeedback("피드백2");
 
         // then
-        assertThat(user.getAllFeedback().size()).isEqualTo(2);
+        assertThat(user.getAllFeedback()).hasSize(2);
     }
 
     @DisplayName("피드백을 모두 지울 수 있다")
@@ -64,7 +64,7 @@ public class FeedbackTest {
         user.clearFeedbacks();
 
         // then
-        assertThat(user.getAllFeedback().size()).isEqualTo(0);
+        assertThat(user.getAllFeedback()).hasSize(0);
     }
 
     @DisplayName("256자 초과의 피드백은 예외를 발생시킨다")
