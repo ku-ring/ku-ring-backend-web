@@ -42,7 +42,10 @@ public class Notice {
     @Column(name = "category_name", nullable = false)
     private CategoryName categoryName;
 
-    public Notice(String articleId, String postedDate, String updatedDate, String subject, CategoryName categoryName, Boolean important, String fullUrl) {
+    public Notice(String articleId, String postedDate, String updatedDate,
+                  String subject, CategoryName categoryName, Boolean important,
+                  String fullUrl)
+    {
         this.articleId = articleId;
         this.postedDate = postedDate;
         this.updatedDate = updatedDate;

@@ -19,7 +19,10 @@ public class DepartmentNotice extends Notice {
     private DepartmentName departmentName;
 
     @Builder
-    public DepartmentNotice(String articleId, String postedDate, String updatedDate, String subject, CategoryName categoryName, Boolean important, String fullUrl, DepartmentName departmentName) {
+    public DepartmentNotice(String articleId, String postedDate, String updatedDate,
+                            String subject, CategoryName categoryName, Boolean important,
+                            String fullUrl, DepartmentName departmentName)
+    {
         super(articleId, postedDate, updatedDate, subject, categoryName, important, fullUrl);
         this.departmentName = departmentName;
     }

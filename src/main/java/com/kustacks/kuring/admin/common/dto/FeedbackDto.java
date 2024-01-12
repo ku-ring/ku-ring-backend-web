@@ -1,15 +1,13 @@
 package com.kustacks.kuring.admin.common.dto;
 
-import com.kustacks.kuring.user.domain.Feedback;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FeedbackDto {
 
@@ -17,7 +15,10 @@ public class FeedbackDto {
     private Long userId;
     private LocalDateTime createdAt;
 
-    public static FeedbackDto from(Feedback feedback) {
-        return new FeedbackDto(feedback.getContent(), feedback.getUserId(), feedback.getCreatedAt());
+    @QueryProjection
+    public FeedbackDto(String contents, Long userId, LocalDateTime createdAt) {
+        this.contents = contents;
+        this.userId = userId;
+        this.createdAt = createdAt;
     }
 }
