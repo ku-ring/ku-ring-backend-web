@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class User implements Serializable {
 
     @Id
-    @Getter(AccessLevel.PRIVATE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;

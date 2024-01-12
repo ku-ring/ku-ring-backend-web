@@ -162,9 +162,12 @@ JPA 프로그래밍의 저자, 김영한 선생님의 의견을 빌리자면 다
 다음 글의 3번 “양방향 연관관계 주의점”을 보면 이해할 수 있다.
 https://blogshine.tistory.com/345    
 
-아예 User에서 UserCategory를 삭제하는 편이 더 좋을것 같다. 양방향 연관관계가 필수적인 포인트가 아니기 때문이다! → **User에서 제거!**    
+아예 User에서 UserCategory를 삭제하는 편이 더 좋을것 같다. 양방향 연관관계가 필수적인 포인트가 아니기 때문이다! → **User에서 제거!**     
+
 <img width="483" alt="image" src="https://github.com/ku-ring/ku-ring-backend-web/assets/60593969/74154306-43ad-42d3-a523-7803823b9227">    
+
 테이블 구조에 변화는 없기에 적용가능
+
 ---
 
 ## 3. 공지 Scrap작업 multi-threading 처리로 시간 개선하기
@@ -419,6 +422,9 @@ Querydsl 도입으로 다음과 같은 이점을 얻었습니다.
 ----
 
 ## 2. Flyway
+
+<img width="300" src="https://github.com/ku-ring/ku-ring-backend-web/assets/60593969/c6df0ca7-48a5-4b32-9e19-4298b9a64313">
+
 dev, local 환경에서는 단순히 ddl을 create-drop 또는 update 옵션을 사용하고 있었기에 DB에 대해 고민할 필요가 없었습니다.   
 하지만 운영환경에서는 ddl을 validate 또는 none 옵션을 사용해야하기 때문에 초기에는 DB script를 뽑아서 별도로 관리를 했습니다.   
 이후 기능이 추가되면서 script가 변경되는 일이 빈번해졌고, 매번 일일이 스크립트를 관리하는 것이 번거로울 뿐 아니라 실수하기 딱 좋은 부분이라 Flyway를 도입하여 데이터베이스 형상관리를 진행했습니다.
