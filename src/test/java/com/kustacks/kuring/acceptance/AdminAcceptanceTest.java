@@ -30,7 +30,7 @@ class AdminAcceptanceTest extends AcceptanceTest {
      * when : 어드민이 피드백 조회시
      * then : 성공적으로 조회된다
      */
-    @DisplayName("사용자 피드백 조회")
+    @DisplayName("[v2] 사용자 피드백 조회")
     @Test
     void role_root_admin_search_feedbacks() {
         // given
@@ -48,7 +48,7 @@ class AdminAcceptanceTest extends AcceptanceTest {
      * when : 테스트 공지를 발송하면
      * then : 성공적으로 발송된다.
      */
-    @DisplayName("테스트 공지 발송")
+    @DisplayName("[v2] 테스트 공지 발송")
     @Test
     void role_root_admin_create_test_notification() {
         // given
@@ -80,7 +80,7 @@ class AdminAcceptanceTest extends AcceptanceTest {
      * When : ROLE_ROOT의 API에 접근시
      * Then : 응답받을 수 있다
      */
-    @DisplayName("Root -> Root API 접근 테스트")
+    @DisplayName("[v2] Root -> Root API 접근 테스트")
     @Test
     void role_root_admin_call_root_api_test() {
         // given
@@ -109,7 +109,7 @@ class AdminAcceptanceTest extends AcceptanceTest {
      * When : ROLE_CLIENT의 API에 접근시
      * Then : 응답받을 수 있다
      */
-    @DisplayName("Root -> Client API 접근 테스트")
+    @DisplayName("[v2] Root -> Client API 접근 테스트")
     @Test
     void role_root_admin_call_client_api_test() {
         // given
@@ -138,7 +138,7 @@ class AdminAcceptanceTest extends AcceptanceTest {
      * When : ROLE_CLIENT의 API에 접근시
      * Then : 응답받을 수 있다
      */
-    @DisplayName("Client -> Client API 접근 테스트")
+    @DisplayName("[v2] Client -> Client API 접근 테스트")
     @Test
     void role_client_admin_call_client_api_test() {
         // given
@@ -167,7 +167,7 @@ class AdminAcceptanceTest extends AcceptanceTest {
      * When : ROLE_ROOT의 API에 접근시
      * Then : 응답받을 수 없다
      */
-    @DisplayName("Client -> Root API 접근 테스트")
+    @DisplayName("[v2] Client -> Root API 접근 테스트")
     @Test
     void role_client_admin_call_root_api_test() {
         // given
