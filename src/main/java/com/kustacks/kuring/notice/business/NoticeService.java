@@ -26,7 +26,7 @@ public class NoticeService {
 
     private final NoticeRepository noticeRepository;
     private final DepartmentNoticeRepository departmentNoticeRepository;
-    private final CategoryName[] categoryNames;
+    private final CategoryName[] supportedCategoryNameList;
     private final DepartmentName[] supportedDepartmentNameList;
     private final String SPACE_REGEX = "[\\s+]";
 
@@ -39,7 +39,7 @@ public class NoticeService {
     public NoticeService(NoticeRepository noticeRepository, DepartmentNoticeRepository departmentNoticeRepository) {
         this.noticeRepository = noticeRepository;
         this.departmentNoticeRepository = departmentNoticeRepository;
-        this.categoryNames = CategoryName.values();
+        this.supportedCategoryNameList = CategoryName.values();
         this.supportedDepartmentNameList = DepartmentName.values();
     }
 
@@ -102,7 +102,7 @@ public class NoticeService {
     }
 
     private String convertEnglish(String keyword) {
-        for (CategoryName categoryName : categoryNames) {
+        for (CategoryName categoryName : supportedCategoryNameList) {
             if (categoryName.isSameKorName(keyword)) {
                 return categoryName.getName();
             }
@@ -111,7 +111,7 @@ public class NoticeService {
     }
 
     private String convertShortNameIntoLongName(String typeShortName) {
-        return Arrays.stream(categoryNames)
+        return Arrays.stream(supportedCategoryNameList)
                 .filter(categoryName -> categoryName.isSameShortName(typeShortName))
                 .findFirst()
                 .map(CategoryName::getName)

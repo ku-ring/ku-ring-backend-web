@@ -2,7 +2,7 @@ package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.auth.exception.RegisterException;
 import com.kustacks.kuring.message.firebase.FirebaseService;
-import com.kustacks.kuring.user.common.SubscribeCategoriesRequest;
+import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,7 +29,7 @@ class UserAcceptanceTest extends AcceptanceTest {
      * When: 토큰과 함께 가입 요청을 보내온다
      * Then: 성공적으로 가입한다
      */
-    @DisplayName("[V2] 사용자 가입 성공")
+    @DisplayName("[v2] 사용자 가입 성공")
     @Test
     void user_register_success() {
         // given
@@ -41,7 +41,7 @@ class UserAcceptanceTest extends AcceptanceTest {
         assertThat(회원_가입_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
 
-    @DisplayName("[V2] 사용자 가입 실패")
+    @DisplayName("[v2] 사용자 가입 실패")
     @Test
     void user_register_fail() {
         // given
@@ -65,10 +65,10 @@ class UserAcceptanceTest extends AcceptanceTest {
         doNothing().when(firebaseService).subscribe(anyString(), anyString());
 
         // when
-        var 카테고리_구독_요청_응답 = 카테고리_구독_요청_v2(USER_FCM_TOKEN, new SubscribeCategoriesRequest(List.of("student", "employment")));
+        var 카테고리_구독_요청_응답 = 카테고리_구독_요청(USER_FCM_TOKEN, new SubscribeCategoriesRequest(List.of("student", "employment")));
 
         // then
-        카테고리_구독_요청_응답_확인_v2(카테고리_구독_요청_응답);
+        카테고리_구독_요청_응답_확인(카테고리_구독_요청_응답);
     }
 
     /**
@@ -81,13 +81,13 @@ class UserAcceptanceTest extends AcceptanceTest {
     void look_up_user_subscribe_category() {
         // given
         doNothing().when(firebaseService).validationToken(anyString());
-        카테고리_구독_요청_v2(USER_FCM_TOKEN, new SubscribeCategoriesRequest(List.of("student", "employment")));
+        카테고리_구독_요청(USER_FCM_TOKEN, new SubscribeCategoriesRequest(List.of("student", "employment")));
 
         // when
-        var 조회_응답 = 사용자_카테고리_구독_목록_조회_요청_v2(USER_FCM_TOKEN);
+        var 조회_응답 = 사용자_카테고리_구독_목록_조회_요청(USER_FCM_TOKEN);
 
         // then
-        카테고리_구독_목록_조회_요청_응답_확인_v2(조회_응답, List.of("student", "employment"));
+        카테고리_구독_목록_조회_요청_응답_확인(조회_응답, List.of("student", "employment"));
     }
 
     /**

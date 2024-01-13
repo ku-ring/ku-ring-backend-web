@@ -1,45 +1,19 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.notice.presentation.dto.SubscribeCategoriesV1Request;
+import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import static com.kustacks.kuring.acceptance.AcceptanceTest.USER_FCM_TOKEN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class CategoryStep {
 
-    public static void 카테고리_조회_요청_응답_확인(ExtractableResponse<Response> response, String... categories) {
-        assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isTrue(),
-                () -> assertThat(response.jsonPath().getString("resultMsg")).isEqualTo("성공"),
-                () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getList("categories")).contains(categories)
-        );
-    }
-
-    public static void 카테고리_조회_요청_응답_확인_v2(ExtractableResponse<Response> response, String... categories) {
-        assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("지원하는 학교 공지 카테고리 조회에 성공하였습니다"),
-                () -> assertThat(response.jsonPath().getList("data.name")).contains(categories)
-        );
-    }
-
-    public static ExtractableResponse<Response> 카테고리_조회_요청() {
-        return RestAssured
-                .given().log().all()
-                .when().get("/api/v1/notice/categories")
-                .then().log().all()
-                .extract();
-    }
-
-    public static ExtractableResponse<Response> 카테고리_조회_요청_v2() {
+    public static ExtractableResponse<Response> 지원하는_카테고리_조회_요청() {
         return RestAssured
                 .given().log().all()
                 .when().get("/api/v2/notices/categories")
@@ -47,35 +21,48 @@ public class CategoryStep {
                 .extract();
     }
 
-    public static void 카테고리_구독_요청_응답_확인(ExtractableResponse<Response> response) {
-        assertAll(
-                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isTrue(),
-                () -> assertThat(response.jsonPath().getString("resultMsg")).isEqualTo("성공"),
-                () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(201)
-        );
-    }
-
-    public static ExtractableResponse<Response> 카테고리_구독_요청(SubscribeCategoriesV1Request reqeust) {
+    public static ExtractableResponse<Response> 사용자가_구독한_카테고리_목록_조회_요청(String userFcmToken) {
         return RestAssured
                 .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", userFcmToken)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .body(reqeust)
-                .when().post("/api/v1/notice/subscribe")
+                .when().get("/api/v2/users/subscriptions/categories")
                 .then().log().all()
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 카테고리_수정_요청(SubscribeCategoriesV1Request request) {
-        return 카테고리_구독_요청(request);
+    public static void 카테고리_조회_요청_응답_확인(ExtractableResponse<Response> response, String... categories) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getList("data.name")).contains(categories)
+        );
     }
 
-    public static ExtractableResponse<Response> 사용자_카테고리_목록_조회_요청(String id) {
+    public static ExtractableResponse<Response> 카테고리_구독_요청(String userFcmToken, SubscribeCategoriesRequest reqeust) {
         return RestAssured
                 .given().log().all()
+                .header("User-Token", userFcmToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .pathParam("id", id)
-                .when().get("/api/v1/notice/subscribe?id={id}")
+                .body(reqeust)
+                .when().post("/api/v2/users/subscriptions/categories")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 카테고리_구독_요청_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("사용자의 학교 공지 카테고리 구독에 성공하였습니다")
+        );
+    }
+
+    public static ExtractableResponse<Response> 학과_조회_요청() {
+        return RestAssured
+                .given().log().all()
+                .when().get("/api/v2/notices/departments")
                 .then().log().all()
                 .extract();
     }
@@ -89,11 +76,7 @@ public class CategoryStep {
         );
     }
 
-    public static ExtractableResponse<Response> 학과_조회_요청() {
-        return RestAssured
-                .given().log().all()
-                .when().get("/api/v2/notices/departments")
-                .then().log().all()
-                .extract();
+    public static ExtractableResponse<Response> 카테고리_수정_요청(SubscribeCategoriesRequest request) {
+        return 카테고리_구독_요청(USER_FCM_TOKEN, request);
     }
 }

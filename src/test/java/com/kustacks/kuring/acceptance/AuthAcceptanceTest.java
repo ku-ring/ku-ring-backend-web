@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("인수 : 인증")
 class AuthAcceptanceTest extends AcceptanceTest {
 
-    @DisplayName("Bearer Auth login")
+    @DisplayName("[v2] Bearer Auth login")
     @Test
     void bearer_auth_login_success() {
         // given
@@ -22,7 +22,7 @@ class AuthAcceptanceTest extends AcceptanceTest {
     }
 
 
-    @DisplayName("존재하지 않는 id, password 로그인을 시도한다")
+    @DisplayName("[v2] 존재하지 않는 id, password 로그인을 시도한다")
     @Test
     void bearer_auth_login_fail() {
         // given

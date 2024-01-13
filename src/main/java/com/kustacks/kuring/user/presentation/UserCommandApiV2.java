@@ -1,8 +1,8 @@
 package com.kustacks.kuring.user.presentation;
 
 import com.kustacks.kuring.common.dto.BaseResponse;
-import com.kustacks.kuring.user.common.SubscribeCategoriesRequest;
-import com.kustacks.kuring.user.common.SubscribeDepartmentsRequest;
+import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
+import com.kustacks.kuring.user.common.dto.SubscribeDepartmentsRequest;
 import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;
 import com.kustacks.kuring.user.facade.UserCommandFacade;
 import lombok.RequiredArgsConstructor;

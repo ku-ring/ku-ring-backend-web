@@ -24,7 +24,7 @@ public class FeedbackAcceptanceTest extends AcceptanceTest {
      * When : 피드백 전송을 누르면
      * Then : 성공적으로 서버에 저장된다
      */
-    @DisplayName("사용자의 피드백을 저장한다")
+    @DisplayName("[v2] 사용자의 피드백을 저장한다")
     @Test
     public void request_feedback() throws FirebaseMessagingException {
         // given
@@ -37,7 +37,7 @@ public class FeedbackAcceptanceTest extends AcceptanceTest {
         피드백_요청_응답_확인(피드백_요청_응답);
     }
 
-    @DisplayName("잘못된 길이의 피드백을 요청시 예외가 발생한다")
+    @DisplayName("[v2] 잘못된 길이의 피드백을 요청시 예외가 발생한다")
     @Test
     public void request_invalid_length_feedback() throws FirebaseMessagingException {
         // given

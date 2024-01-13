@@ -4,17 +4,9 @@ import com.kustacks.kuring.notice.domain.DepartmentName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_조회_요청_v2;
-import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_조회_요청_응답_확인_v2;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지_조회_요청;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지_조회_응답_확인;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청_실패_응답_확인;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청_응답_확인;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청_응답_확인_v2;
-import static com.kustacks.kuring.acceptance.NoticeStep.페이지_번호와_함께_공지사항_조회_요청;
-import static com.kustacks.kuring.acceptance.NoticeStep.페이지_번호와_함께_학교_공지사항_조회_요청;
-import static com.kustacks.kuring.acceptance.NoticeStep.학교_공지_조회_응답_확인;
+import static com.kustacks.kuring.acceptance.CategoryStep.지원하는_카테고리_조회_요청;
+import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_조회_요청_응답_확인;
+import static com.kustacks.kuring.acceptance.NoticeStep.*;
 
 @DisplayName("인수 : 공지사항")
 class NoticeAcceptanceTest extends AcceptanceTest {
@@ -24,7 +16,7 @@ class NoticeAcceptanceTest extends AcceptanceTest {
      * When : 학생 공지페이지 요청시
      * Then : 학생 공지 목록이 성공적으로 조회된다
      */
-    @DisplayName("학생 공지사항을 성공적으로 조회한다")
+    @DisplayName("[v2] 학생 공지사항을 성공적으로 조회한다")
     @Test
     void look_up_university_notice() {
         // when
@@ -38,10 +30,10 @@ class NoticeAcceptanceTest extends AcceptanceTest {
     @Test
     void look_up_support_university_category() {
         // when
-        var 카테고리_조회_요청_응답 = 카테고리_조회_요청_v2();
+        var 카테고리_조회_요청_응답 = 지원하는_카테고리_조회_요청();
 
         // then
-        카테고리_조회_요청_응답_확인_v2(카테고리_조회_요청_응답, "student", "bachelor", "employment", "department", "library");
+        카테고리_조회_요청_응답_확인(카테고리_조회_요청_응답, "student", "bachelor", "employment", "department", "library");
     }
 
     /**
@@ -56,7 +48,7 @@ class NoticeAcceptanceTest extends AcceptanceTest {
         var 공지사항_조회_요청_응답 = 페이지_번호와_함께_학교_공지사항_조회_요청("stu", "", Boolean.FALSE, 0);
 
         // then
-        공지사항_조회_요청_응답_확인_v2(공지사항_조회_요청_응답, "student");
+        공지사항_조회_요청_응답_확인(공지사항_조회_요청_응답, "student");
     }
 
     /**
@@ -94,7 +86,7 @@ class NoticeAcceptanceTest extends AcceptanceTest {
      * When : 잘못된 카테고리를 요청시
      * Then : 실패 코드를 반환한다
      */
-    @DisplayName("잘못된 카테고리를 요청한다")
+    @DisplayName("[v2] 잘못된 카테고리를 요청한다")
     @Test
     void invalid_category_request() {
         // when
@@ -109,7 +101,7 @@ class NoticeAcceptanceTest extends AcceptanceTest {
      * When : 잘못된 페이지 넘버 요청시
      * Then : 실패 코드를 반환한다
      */
-    @DisplayName("잘못된 offset을 요청한다")
+    @DisplayName("[v2] 잘못된 offset을 요청한다")
     @Test
     void invalid_offset_request() {
         // when
@@ -124,6 +116,7 @@ class NoticeAcceptanceTest extends AcceptanceTest {
      * When : 키워드로 검색하면
      * Then : 해당하는 공지들이 조회된다
      */
+    @DisplayName("[v2] 키워드로 검색을 요청한다")
     @Test
     void search_notice_by_keyword() {
         // when
