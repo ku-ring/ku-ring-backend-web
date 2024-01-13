@@ -13,19 +13,6 @@ public class NoticeStep {
     public static void 공지사항_조회_요청_응답_확인(ExtractableResponse<Response> response, String category) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isTrue(),
-                () -> assertThat(response.jsonPath().getString("resultMsg")).isEqualTo("성공"),
-                () -> assertThat(response.jsonPath().getInt("resultCode")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getString("noticeList[0].articleId")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("noticeList[0].postedDate")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("noticeList[0].subject")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("noticeList[0].category")).isEqualTo(category)
-        );
-    }
-
-    public static void 공지사항_조회_요청_응답_확인_v2(ExtractableResponse<Response> response, String category) {
-        assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("공지 조회에 성공하였습니다"),
                 () -> assertThat(response.jsonPath().getString("data[0].articleId")).isNotBlank(),
@@ -40,13 +27,13 @@ public class NoticeStep {
         return 페이지_번호와_함께_공지사항_조회_요청(category, 0);
     }
 
-    public static ExtractableResponse<Response> 페이지_번호와_함께_공지사항_조회_요청(String category, int offset) {
+    public static ExtractableResponse<Response> 페이지_번호와_함께_공지사항_조회_요청(String category, int page) {
         return RestAssured
                 .given().log().all()
                 .pathParam("type", category)
-                .pathParam("offset", String.valueOf(offset))
-                .pathParam("max", "10")
-                .when().get("/api/v1/notice?type={type}&offset={offset}&max={max}")
+                .pathParam("page", String.valueOf(page))
+                .pathParam("size", "10")
+                .when().get("/api/v2/notices?type={type}&page={page}&size={size}")
                 .then().log().all()
                 .extract();
     }

@@ -1,8 +1,8 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.auth.dto.UserRegisterRequest;
-import com.kustacks.kuring.user.common.SubscribeCategoriesRequest;
-import com.kustacks.kuring.user.common.SubscribeDepartmentsRequest;
+import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
+import com.kustacks.kuring.user.common.dto.SubscribeDepartmentsRequest;
 import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
@@ -26,7 +26,7 @@ public class UserStep {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 카테고리_구독_요청_v2(String token, SubscribeCategoriesRequest reqeust) {
+    public static ExtractableResponse<Response> 카테고리_구독_요청(String token, SubscribeCategoriesRequest reqeust) {
         return RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -38,7 +38,7 @@ public class UserStep {
                 .extract();
     }
 
-    public static void 카테고리_구독_요청_응답_확인_v2(ExtractableResponse<Response> response) {
+    public static void 카테고리_구독_요청_응답_확인(ExtractableResponse<Response> response) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
@@ -46,7 +46,7 @@ public class UserStep {
         );
     }
 
-    public static ExtractableResponse<Response> 사용자_카테고리_구독_목록_조회_요청_v2(String id) {
+    public static ExtractableResponse<Response> 사용자_카테고리_구독_목록_조회_요청(String id) {
         return RestAssured
                 .given().log().all()
                 .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -56,7 +56,7 @@ public class UserStep {
                 .extract();
     }
 
-    public static void 카테고리_구독_목록_조회_요청_응답_확인_v2(ExtractableResponse<Response> response, List<String> departments) {
+    public static void 카테고리_구독_목록_조회_요청_응답_확인(ExtractableResponse<Response> response, List<String> departments) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
