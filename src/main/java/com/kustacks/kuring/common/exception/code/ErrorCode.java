@@ -62,7 +62,7 @@ public enum ErrorCode {
     LIB_BAD_RESPONSE("도서관 공지 요청에 대한 응답이 비정상적입니다."),
     LIB_CANNOT_PARSE_JSON("도서관 공지를 POJO로 변환할 수 없습니다."),
 
-    CAT_NOT_EXIST_CATEGORY("서버에서 지원하지 않는 카테고리입니다."),
+    CAT_NOT_EXIST_CATEGORY(HttpStatus.BAD_REQUEST, "서버에서 지원하지 않는 카테고리입니다."),
 
     // STAFF_SCRAPER_TAG_NOT_EXIST("Jsoup - 찾고자 하는 태그가 존재하지 않습니다."),
     STAFF_SCRAPER_EXCEED_RETRY_LIMIT("교직원 업데이트 재시도 횟수를 초과했습니다."),
