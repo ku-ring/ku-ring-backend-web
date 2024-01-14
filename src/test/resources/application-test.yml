@@ -6,6 +6,8 @@ spring:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     p6spy:
       enable-logging: true
+    hikari:
+      jdbc-url: jdbc:tc:mariadb:10.2://localhost:3306/kuring?profileSQL=true&logger=Slf4JLogger&maxQuerySizeToLog=999999
   flyway:
     enabled: false
   jpa:
@@ -14,6 +16,8 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        jdbc:
+          batch_size: 100
         format_sql: true
         dialect: com.kustacks.kuring.config.CustomMariaDbDialect
     defer-datasource-initialization: true

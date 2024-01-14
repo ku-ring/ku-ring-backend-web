@@ -1,10 +1,12 @@
 package com.kustacks.kuring.worker.update.notice;
 
-import com.kustacks.kuring.notice.domain.CategoryName;
+
 import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
+import com.kustacks.kuring.notice.domain.NoticeJdbcRepository;
 import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.dto.ComplexNoticeFormatDto;
@@ -34,6 +36,7 @@ public class DepartmentNoticeUpdater {
 
     private final List<DeptInfo> deptInfoList;
     private final DepartmentNoticeScraperTemplate scrapperTemplate;
+    private final NoticeJdbcRepository noticeJdbcRepository;
     private final DepartmentNoticeRepository departmentNoticeRepository;
     private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
     private final FirebaseService firebaseService;
@@ -107,7 +110,7 @@ public class DepartmentNoticeUpdater {
 
     private List<DepartmentNotice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
         List<DepartmentNotice> newNotices = filteringSoonSaveNotice(scrapResults, savedArticleIds, departmentNameEnum, important);
-        departmentNoticeRepository.saveAllAndFlush(newNotices);
+        noticeJdbcRepository.saveAllDepartmentNotices(newNotices);
         return newNotices;
     }
 
@@ -143,7 +146,7 @@ public class DepartmentNoticeUpdater {
 
         List<String> deletedNoticesArticleIds = filteringSoonDeleteIds(savedArticleIds, latestNoticeIds);
 
-        departmentNoticeRepository.saveAllAndFlush(newNotices);
+        noticeJdbcRepository.saveAllDepartmentNotices(newNotices);
 
         if (!deletedNoticesArticleIds.isEmpty()) {
             departmentNoticeRepository.deleteAllByIdsAndDepartment(departmentNameEnum, deletedNoticesArticleIds);

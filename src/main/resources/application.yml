@@ -11,6 +11,8 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
+        jdbc:
+          batch_size: 100
         format_sql: true
         dialect: com.kustacks.kuring.config.CustomMariaDbDialect
     defer-datasource-initialization: false
