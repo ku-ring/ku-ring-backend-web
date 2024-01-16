@@ -3,6 +3,7 @@ package com.kustacks.kuring.worker.update.notice;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.notice.domain.Notice;
+import com.kustacks.kuring.notice.domain.NoticeJdbcRepository;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.worker.scrap.KuisNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.client.notice.LibraryNoticeApiClient;
@@ -30,6 +31,7 @@ public class CategoryNoticeUpdater {
     private final List<KuisNoticeInfo> kuisNoticeInfoList;
     private final KuisNoticeScraperTemplate scrapperTemplate;
     private final NoticeRepository noticeRepository;
+    private final NoticeJdbcRepository noticeJdbcRepository;
     private final FirebaseService firebaseService;
     private final LibraryNoticeApiClient libraryNoticeApiClient;
     private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
@@ -61,15 +63,11 @@ public class CategoryNoticeUpdater {
     }
 
     private List<CommonNoticeFormatDto> updateLibraryNotice(CategoryName categoryName) {
-        List<CommonNoticeFormatDto> scrapResults = libraryNoticeApiClient.request(categoryName);
-        Collections.reverse(scrapResults);
-        return scrapResults;
+        return libraryNoticeApiClient.request(categoryName);
     }
 
     private List<CommonNoticeFormatDto> updateKuisNoticeAsync(KuisNoticeInfo deptInfo, Function<KuisNoticeInfo, List<CommonNoticeFormatDto>> decisionMaker) {
-        List<CommonNoticeFormatDto> scrapResults = scrapperTemplate.scrap(deptInfo, decisionMaker);
-        Collections.reverse(scrapResults);
-        return scrapResults;
+        return scrapperTemplate.scrap(deptInfo, decisionMaker);
     }
 
     private List<Notice> compareLatestAndUpdateDB(List<CommonNoticeFormatDto> scrapResults, CategoryName categoryName) {
@@ -92,7 +90,7 @@ public class CategoryNoticeUpdater {
 
         List<String> deletedNoticesArticleIds = filteringSoonDeleteIds(savedArticleIds, scrapNoticeIds);
 
-        noticeRepository.saveAllAndFlush(newNotices);
+        noticeJdbcRepository.saveAllCategoryNotices(newNotices);
 
         if (!deletedNoticesArticleIds.isEmpty()) {
             noticeRepository.deleteAllByIdsAndCategory(categoryName, deletedNoticesArticleIds);

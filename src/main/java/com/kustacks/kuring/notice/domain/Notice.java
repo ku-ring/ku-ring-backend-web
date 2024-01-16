@@ -25,6 +25,7 @@ public class Notice {
     @Column(name = "posted_dt", length = 32, nullable = false)
     private String postedDate;
 
+    @Getter(AccessLevel.PUBLIC)
     @Column(name = "updated_dt", length = 32)
     private String updatedDate;
 
@@ -55,6 +56,9 @@ public class Notice {
         this.url = new Url(fullUrl);
     }
 
+    public boolean isImportant() {
+        return this.important;
+    }
     public String getCategoryName() {
         return this.categoryName.getName();
     }
