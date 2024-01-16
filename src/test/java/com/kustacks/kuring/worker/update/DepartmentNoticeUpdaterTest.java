@@ -62,7 +62,7 @@ class DepartmentNoticeUpdaterTest {
 
 
         // then
-        assertThat(notices.size()).isEqualTo(3720);
+        assertThat(notices).hasSize(3720);
     }
 
     private static List<ComplexNoticeFormatDto> createDepartmentNoticesFixture() {

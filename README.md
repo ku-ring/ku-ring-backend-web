@@ -3,6 +3,13 @@
   <img width="200px;" src="https://user-images.githubusercontent.com/60593969/224698214-0b3215cc-d87a-453b-bcb6-08f64b8741a1.png"/>
 </p>
 <h1 align="middle">쿠링</h1>
+
+<div align="middle" >
+
+  [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FKU-Stacks%2Fku-ring-backend-web&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
+
+</div>
+
 <p align="middle">건국대학교의 공지는 우리가 책임진다!</p>
 
 <div align="center">
@@ -201,7 +208,46 @@ https://blogshine.tistory.com/345
 **상세 내용 링크 : ([글 링크](https://blogshine.tistory.com/664))**
 
 ---
-## 5. 인증, 인가를 비즈니스 로직으로부터 분리하기
+# 5. Bulk Query를 통한 성능 개선
+
+**문제 상황**
+
+- 공지를 주기적으로 저장하고 삭제하는 과정이 하루에도 수십번 반복하는 이 앱의 핵심 로직중 하나입니다.
+- 문제는 이 과정에서 발생하는 쿼리가 너무 많다는 것입니다.
+  쿼리로그를 찍어본 결과 save와 delete 모두 한방 쿼리가 아니라 여러번의 쿼리가 나가는 것을 확인했습니다.
+
+**문제 해결**
+<div align="center">
+ <img width="600" src="https://github.com/ku-ring/ku-ring-backend-web/assets/60593969/c6b5afc6-06f3-4410-88ee-de45cc3930b8" alt="refac-bulk-solution">
+</div>
+
+다음과 같이 수정하여 해결할 수 있었습니다.
++ Insert의 경우 : JdbcTemplate.batchUpdate() 사용
++ delete의 경우 : queryDsl의 in 쿼리 사용
+
+<br>
+
+### 5-1) Insert 해결책
+
+해결책은 2가지가 존재했습니다.
+1. Table Id strategy를 SEQUENCE로 변경하고 Batch 작업
+2. JdbcTemplate.batchUpdate() 사용
+
+MySQL과 MariaDB의 Table Id 전략은 대부분이 IDENTITY 전략을 사용하기도 하고, 저희는 이미 Id 전략을 IDENTITY 전략으로 사용하고 있었기에 Id전략 자체를 변경하기에는 무리가 있었습니다.
+또한, Jdbc를 사용하는 것이 성능상 더 뛰어나다는 결과를 확인했습니다. [출처](https://homoefficio.github.io/2020/01/25/Spring-Data에서-Batch-Insert-최적화/#)
+
+<div align="center">
+ <img width="700" src="https://github.com/ku-ring/ku-ring-backend-web/assets/60593969/5b47dde5-2b77-433d-8b23-5377f18c6532" alt="batch-bulk-solution">
+</div>
+
+<br>
+
+### 5-2) Delete 해결책
+이미 프로젝트에서 queryDsl를 사용하고 있어 이를 이용하는 것이 가장 간단했기 때문에 queryDsl의 delete in 쿼리를 사용하여 해결했습니다.
+
+---
+
+## 6. 인증, 인가를 비즈니스 로직으로부터 분리하기
 
 **문제 상황**
 
@@ -219,7 +265,7 @@ https://blogshine.tistory.com/345
 
 ---
 
-## 6. 흔하디 흔한 N+1 쿼리 개선기
+## 7. 흔하디 흔한 N+1 쿼리 개선기
 
 원래 로직에서는 사용자의 Category 이름 목록을 가져오기 위해서 다음과 같이 처리가 되고 잇었습니다!
 
@@ -277,7 +323,7 @@ public List<String> getCategoryNamesFromCategories(List<Category> categories) {
 
 쿼리가 총 1 + 2N 만큼 발생중이다.
 
-### 6 - 1) 변경 전 쿼리
+### 7 - 1) 변경 전 쿼리
 
 ```bash
 Hibernate: 
@@ -334,7 +380,7 @@ Connection: keep-alive
 
 N+1 문제로 User한번 조회하는데 위와 같이 쿼리가 3번 나가게 됨
 
-### 6 - 2) 변경 후
+### 7 - 2) 변경 후
 
 변경 후 한방 쿼리로 조회 끝    
 ```java
@@ -351,7 +397,7 @@ public List<String> getUserCategoryNamesByToken(String token) {
 
 ___
 
-## 7. Test Container를 통한 테스트의 멱등성 보장하기
+## 8. Test Container를 통한 테스트의 멱등성 보장하기
 테스트와, 실제 운영 DB를 둘다 MariaDB 환경으로 사용하여 문제가 발생할 일이 없다 생각했었습니다.
 하지만, utf8과 같은 인코딩 방식이 로컬과 프로덕션이 달라 문제가 발생하였으며, 이또한 테스트 환경에서 걸러내지 못한 것이 문제라 생각하였습니다.
 
@@ -360,7 +406,7 @@ ___
 
 ---
 
-## 8. CI / 정적분석기(SonarCloud, jacoco)를 사용한 코드 컨벤션에 대한 코드리뷰 자동화
+## 9. CI / 정적분석기(SonarCloud, jacoco)를 사용한 코드 컨벤션에 대한 코드리뷰 자동화
 
 **문제 상황**
 
@@ -377,7 +423,7 @@ ___
 
 ---
 
-## 9. 서버 모니터링
+## 10. 서버 모니터링
 
 **문제 상황**
 
@@ -485,6 +531,5 @@ dev, local 환경에서는 단순히 ddl을 create-drop 또는 update 옵션을 
 4) [Github Actions, CodeDeploy, Nginx 로 무중단 배포하기 - 4](https://blogshine.tistory.com/430)
 
 
-
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FKU-Stacks%2Fku-ring-backend-web&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 </details>
+
