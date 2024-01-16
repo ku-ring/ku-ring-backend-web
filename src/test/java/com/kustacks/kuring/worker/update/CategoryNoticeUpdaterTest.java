@@ -31,7 +31,7 @@ import static org.mockito.Mockito.doReturn;
         "classpath:/application.yml" +
         ",classpath:/application-test.yml" +
         ",classpath:/test-constants.properties")
-public class CategoryNoticeUpdaterTest {
+class CategoryNoticeUpdaterTest {
 
     @MockBean
     KuisNoticeScraperTemplate scrapperTemplate;
@@ -53,7 +53,7 @@ public class CategoryNoticeUpdaterTest {
 
     @DisplayName("공지 업데이트 테스트")
     @Test
-    public void notice_scrap_async_test() throws InterruptedException {
+    void notice_scrap_async_test() throws InterruptedException {
         // given
         doReturn(createNoticesFixture()).when(scrapperTemplate).scrap(any(), any());
         doReturn(createLibraryFixture()).when(libraryNoticeApiClient).request(any());

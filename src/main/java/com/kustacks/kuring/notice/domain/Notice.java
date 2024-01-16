@@ -56,7 +56,7 @@ public class Notice {
         this.url = new Url(fullUrl);
     }
 
-    public Boolean isImportant() {
+    public boolean isImportant() {
         return this.important;
     }
     public String getCategoryName() {

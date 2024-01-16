@@ -31,7 +31,7 @@ import static org.mockito.Mockito.doReturn;
         "classpath:/application.yml" +
         ",classpath:/application-test.yml" +
         ",classpath:/test-constants.properties")
-public class DepartmentNoticeUpdaterTest {
+class DepartmentNoticeUpdaterTest {
 
     @MockBean
     DepartmentNoticeScraperTemplate scrapperTemplate;
@@ -50,7 +50,7 @@ public class DepartmentNoticeUpdaterTest {
 
     @DisplayName("학과별 공지 업데이트 테스트")
     @Test
-    public void department_scrap_async_test() throws InterruptedException {
+    void department_scrap_async_test() throws InterruptedException {
         // given
         doReturn(createDepartmentNoticesFixture()).when(scrapperTemplate).scrap(any(), any());
         doNothing().when(firebaseService).sendNotificationList(anyList());
