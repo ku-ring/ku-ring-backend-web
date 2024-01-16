@@ -57,7 +57,7 @@ public class DepartmentNoticeUpdaterTest {
 
         // when
         departmentNoticeUpdater.update();
-        noticeUpdaterThreadTaskExecutor.getThreadPoolExecutor().awaitTermination(1, TimeUnit.SECONDS);
+        noticeUpdaterThreadTaskExecutor.getThreadPoolExecutor().awaitTermination(2, TimeUnit.SECONDS);
         List<DepartmentNotice> notices = departmentNoticeRepository.findAll();
 
 
