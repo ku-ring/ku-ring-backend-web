@@ -6,7 +6,6 @@ import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.domain.StaffRepository;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
-import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -55,7 +54,6 @@ public class StaffUpdater {
                 successDeptNames.add(deptInfo.getDeptName());
             } catch (InternalLogicException e) {
                 log.error("[StaffScraperException] {}학과 교직원 스크래핑 문제 발생.", deptInfo.getDeptName());
-                Sentry.captureException(e);
             }
         }
 
