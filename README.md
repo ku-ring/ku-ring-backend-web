@@ -245,6 +245,8 @@ MySQL과 MariaDB의 Table Id 전략은 대부분이 IDENTITY 전략을 사용하
 ### 5-2) Delete 해결책
 이미 프로젝트에서 queryDsl를 사용하고 있어 이를 이용하는 것이 가장 간단했기 때문에 queryDsl의 delete in 쿼리를 사용하여 해결했습니다.
 
+**상세 내용 링크 : ([글 링크](https://blogshine.tistory.com/686))**
+
 ---
 
 ## 6. 인증, 인가를 비즈니스 로직으로부터 분리하기
