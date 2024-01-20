@@ -41,7 +41,7 @@ public class NoticeJdbcRepository {
 
     @Transactional
     public void saveAllDepartmentNotices(List<DepartmentNotice> departmentNotices) {
-        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, posted_dt, subject, updated_dt, url, dtype) values (?, ?, ?, ?, ?, ?, ?, 'DepartmentNotice')",
+        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, posted_dt, subject, updated_dt, url, department_name, dtype) values (?, ?, ?, ?, ?, ?, ?, 'DepartmentNotice')",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -53,6 +53,7 @@ public class NoticeJdbcRepository {
                         ps.setString(5, departmentNotice.getSubject());
                         ps.setString(6, departmentNotice.getUpdatedDate());
                         ps.setString(7, departmentNotice.getUrl());
+                        ps.setString(8, departmentNotice.getDepartmentName());
                     }
 
                     @Override
