@@ -2,7 +2,6 @@ package com.kustacks.kuring.worker.update.notice;
 
 
 import com.kustacks.kuring.message.firebase.FirebaseService;
-import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
@@ -14,18 +13,14 @@ import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.kustacks.kuring.notice.domain.DepartmentName.REAL_ESTATE;
 
@@ -40,6 +35,7 @@ public class DepartmentNoticeUpdater {
     private final DepartmentNoticeRepository departmentNoticeRepository;
     private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
     private final FirebaseService firebaseService;
+    private final NoticeUpdateSupport noticeUpdateSupport;
 
     private static long startTime = 0L;
 
@@ -109,7 +105,7 @@ public class DepartmentNoticeUpdater {
     }
 
     private List<DepartmentNotice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
-        List<DepartmentNotice> newNotices = filteringSoonSaveNotice(scrapResults, savedArticleIds, departmentNameEnum, important);
+        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important);
         noticeJdbcRepository.saveAllDepartmentNotices(newNotices);
         return newNotices;
     }
@@ -140,61 +136,16 @@ public class DepartmentNoticeUpdater {
     }
 
     private void synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
-        List<DepartmentNotice> newNotices = filteringSoonSaveNotice(scrapResults, savedArticleIds, departmentNameEnum, important);
+        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important);
 
-        List<Integer> latestNoticeIds = extractIdList(scrapResults);
+        List<Integer> latestNoticeIds = noticeUpdateSupport.extractDepartmentNoticeIds(scrapResults);
 
-        List<String> deletedNoticesArticleIds = filteringSoonDeleteIds(savedArticleIds, latestNoticeIds);
+        List<String> deletedNoticesArticleIds = noticeUpdateSupport.filteringSoonDeleteDepartmentNoticeIds(savedArticleIds, latestNoticeIds);
 
         noticeJdbcRepository.saveAllDepartmentNotices(newNotices);
 
         if (!deletedNoticesArticleIds.isEmpty()) {
             departmentNoticeRepository.deleteAllByIdsAndDepartment(departmentNameEnum, deletedNoticesArticleIds);
         }
-    }
-
-    private List<DepartmentNotice> filteringSoonSaveNotice(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
-        List<DepartmentNotice> newNotices = new LinkedList<>(); // 뒤에 추가만 계속 하기 때문에 arrayList가 아닌 Linked List 사용 O(1)
-        for (CommonNoticeFormatDto notice : scrapResults) {
-            try {
-                if (Collections.binarySearch(savedArticleIds, Integer.valueOf(notice.getArticleId())) < 0) { // 정렬되어있다, 이진탐색으로 O(logN)안에 수행
-                    DepartmentNotice newDepartmentNotice = convert(notice, departmentNameEnum, CategoryName.DEPARTMENT, important);
-                    newNotices.add(newDepartmentNotice);
-                }
-            } catch (IncorrectResultSizeDataAccessException e) {
-                log.error("오류가 발생한 공지 정보");
-                log.error("articleId = {}", notice.getArticleId());
-                log.error("postedDate = {}", notice.getPostedDate());
-                log.error("subject = {}", notice.getSubject());
-            }
-        }
-        return newNotices;
-    }
-
-    private List<String> filteringSoonDeleteIds(List<Integer> savedArticleIds, List<Integer> latestNoticeIds) {
-        return savedArticleIds.stream()
-                .filter(savedArticleId -> Collections.binarySearch(latestNoticeIds, savedArticleId) < 0)
-                .map(Object::toString)
-                .collect(Collectors.toList());
-    }
-
-    private List<Integer> extractIdList(List<CommonNoticeFormatDto> scrapResults) {
-        return scrapResults.stream()
-                .map(scrap -> Integer.parseInt(scrap.getArticleId()))
-                .sorted()
-                .collect(Collectors.toList());
-    }
-
-    private DepartmentNotice convert(CommonNoticeFormatDto dto, DepartmentName departmentNameEnum, CategoryName categoryName, boolean important) {
-        return DepartmentNotice.builder()
-                .articleId(dto.getArticleId())
-                .postedDate(dto.getPostedDate())
-                .updatedDate(dto.getUpdatedDate())
-                .subject(dto.getSubject())
-                .fullUrl(dto.getFullUrl())
-                .important(important)
-                .categoryName(categoryName)
-                .departmentName(departmentNameEnum)
-                .build();
     }
 }
