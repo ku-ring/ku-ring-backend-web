@@ -37,7 +37,7 @@ public class LatestPageNoticeHtmlParserTwo implements NoticeHtmlParser {
     private List<String[]> extractNoticeListFromRows(Elements rows) {
         return rows.stream()
                 .map(LatestPageNoticeHtmlParserTwo::extractNoticeFromRow)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private static String[] extractNoticeFromRow(Element row) {

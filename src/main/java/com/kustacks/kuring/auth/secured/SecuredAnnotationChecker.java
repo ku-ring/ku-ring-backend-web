@@ -28,7 +28,7 @@ public class SecuredAnnotationChecker {
         Secured secured = method.getAnnotation(Secured.class);
         List<String> values = Arrays.stream(secured.value())
                 .map(String::valueOf)
-                .collect(Collectors.toList());
+                .toList();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(isRoleRoot(authentication)) {

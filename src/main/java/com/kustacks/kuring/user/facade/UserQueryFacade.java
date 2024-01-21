@@ -41,12 +41,12 @@ public class UserQueryFacade {
     private List<CategoryNameDto> convertCategoryNameDtoList(List<CategoryName> categoryNamesList) {
         return categoryNamesList.stream()
                 .map(CategoryNameDto::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<DepartmentNameDto> convertDepartmentDtoList(List<DepartmentName> departmentNames) {
         return departmentNames.stream()
                 .map(DepartmentNameDto::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

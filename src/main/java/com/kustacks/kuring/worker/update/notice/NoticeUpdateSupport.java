@@ -61,28 +61,28 @@ public class NoticeUpdateSupport {
         return scrapResults.stream()
                 .map(CommonNoticeFormatDto::getArticleId)
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<Integer> extractDepartmentNoticeIds(List<CommonNoticeFormatDto> scrapResults) {
         return scrapResults.stream()
                 .map(scrap -> Integer.parseInt(scrap.getArticleId()))
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<String> filteringSoonDeleteNoticeIds(List<String> savedArticleIds, List<String> latestNoticeIds) {
         return savedArticleIds.stream()
                 .filter(savedArticleId -> Collections.binarySearch(latestNoticeIds, savedArticleId) < 0)
                 .map(Object::toString)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<String> filteringSoonDeleteDepartmentNoticeIds(List<Integer> savedArticleIds, List<Integer> latestNoticeIds) {
         return savedArticleIds.stream()
                 .filter(savedArticleId -> Collections.binarySearch(latestNoticeIds, savedArticleId) < 0)
                 .map(Object::toString)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private Notice convert(CommonNoticeFormatDto dto, CategoryName CategoryName) {

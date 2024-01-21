@@ -169,20 +169,20 @@ public class DatabaseConfigurator implements InitializingBean {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
                 .map(i -> new DepartmentNotice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private static List<Notice> buildNotices(int cnt, CategoryName categoryName) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
                 .map(i -> new Notice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, categoryName, false, "https://www.example.com"))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private static List<Staff> buildStaffs(int cnt) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
                 .map(i -> new Staff("shine_" + i, "computer", "lab", "phone", "email@naver.com", "dept", "college"))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

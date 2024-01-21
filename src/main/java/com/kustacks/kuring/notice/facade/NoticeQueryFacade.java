@@ -31,7 +31,7 @@ public class NoticeQueryFacade {
     public List<CategoryNameDto> getSupportedCategories() {
         return Stream.of(CategoryName.values())
                 .map(CategoryNameDto::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<DepartmentNameDto> getSupportedDepartments() {
@@ -44,6 +44,6 @@ public class NoticeQueryFacade {
                 .filter(dn -> !dn.equals(DepartmentName.BIO_SCIENCE))
                 .filter(dn -> !dn.equals(DepartmentName.COMM_DESIGN))
                 .map(DepartmentNameDto::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
