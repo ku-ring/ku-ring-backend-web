@@ -62,9 +62,9 @@ class CategoryNoticeUpdaterTest {
         // when
         categoryNoticeUpdater.update();
         noticeUpdaterThreadTaskExecutor.getThreadPoolExecutor().awaitTermination(1, TimeUnit.SECONDS);
-        List<Notice> notices = noticeRepository.findAll();
 
         // then
+        List<Notice> notices = noticeRepository.findAll();
         assertAll(
                 () -> Assertions.assertThat(notices).filteredOn("categoryName", "library").size().isEqualTo(7),
                 () -> Assertions.assertThat(notices).filteredOn("categoryName", "bachelor").size().isEqualTo(9),

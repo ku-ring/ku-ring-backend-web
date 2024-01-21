@@ -58,10 +58,9 @@ class DepartmentNoticeUpdaterTest {
         // when
         departmentNoticeUpdater.update();
         noticeUpdaterThreadTaskExecutor.getThreadPoolExecutor().awaitTermination(2, TimeUnit.SECONDS);
-        List<DepartmentNotice> notices = departmentNoticeRepository.findAll();
-
 
         // then
+        List<DepartmentNotice> notices = departmentNoticeRepository.findAll();
         assertThat(notices).hasSize(3720);
     }
 
