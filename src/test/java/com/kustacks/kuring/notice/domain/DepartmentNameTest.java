@@ -15,7 +15,7 @@ class DepartmentNameTest {
     @DisplayName("name을 String으로 받아 해당 DepartmentName enum으로 변환한다")
     @CsvSource({"korean,KOREAN", "civil_environment,CIVIL_ENV", "business_administration,BUIS_ADMIN"})
     @ParameterizedTest
-    public void fromName(String name, DepartmentName departmentName) {
+    void fromName(String name, DepartmentName departmentName) {
         // when
         DepartmentName result = DepartmentName.fromName(name);
 
@@ -26,7 +26,7 @@ class DepartmentNameTest {
     @DisplayName("hostPrefix를 String으로 받아 해당 DepartmentName enum으로 변환한다")
     @CsvSource({"korea,KOREAN", "cee,CIVIL_ENV", "biz,BUIS_ADMIN"})
     @ParameterizedTest
-    public void fromHostPrefix(String name, DepartmentName departmentName) {
+    void fromHostPrefix(String name, DepartmentName departmentName) {
         // when
         DepartmentName result = DepartmentName.fromHostPrefix(name);
 
@@ -37,7 +37,7 @@ class DepartmentNameTest {
     @DisplayName("korName를 String으로 받아 해당 DepartmentName enum으로 변환한다")
     @CsvSource({"국어국문학과,KOREAN", "사회환경공학부,CIVIL_ENV", "경영학과,BUIS_ADMIN"})
     @ParameterizedTest
-    public void fromKor(String name, DepartmentName departmentName) {
+    void fromKor(String name, DepartmentName departmentName) {
         // when
         DepartmentName result = DepartmentName.fromKor(name);
 
@@ -47,7 +47,7 @@ class DepartmentNameTest {
 
     @DisplayName("존재하지 않는 String name으로 DepartmentName을 찾으려 하는 경우 예외가 발생한다")
     @Test
-    public void fromNameException() {
+    void fromNameException() {
         // given
         String name = "invalidName";
 
@@ -61,7 +61,7 @@ class DepartmentNameTest {
 
     @DisplayName("존재하지 않는 String fromHostPrefix로 DepartmentName을 찾으려 하는 경우 예외가 발생한다")
     @Test
-    public void fromHostPrefixException() {
+    void fromHostPrefixException() {
         // given
         String name = "invalidName";
 
@@ -75,7 +75,7 @@ class DepartmentNameTest {
 
     @DisplayName("존재하지 않는 String fromKor로 DepartmentName을 찾으려 하는 경우 예외가 발생한다")
     @Test
-    public void fromKorException() {
+    void fromKorException() {
         // given
         String name = "invalidName";
 

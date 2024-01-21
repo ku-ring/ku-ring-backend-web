@@ -25,7 +25,7 @@ class NoticeUpdateSupportTest {
 
     @DisplayName("이미 저장되있는 일반 공지의 경우 중복 저장하지 않도록 걸러낸다")
     @Test
-    public void filteringSoonSaveNotices() {
+    void filteringSoonSaveNotices() {
         // given
         List<CommonNoticeFormatDto> originNotices = new ArrayList<>();
 
@@ -53,7 +53,7 @@ class NoticeUpdateSupportTest {
 
     @DisplayName("이미 저장되있는 학과별 공지의 경우 중복 저장하지 않도록 걸러낸다")
     @Test
-    public void filteringSoonSaveDepartmentNotices() {
+    void filteringSoonSaveDepartmentNotices() {
         // given
         List<CommonNoticeFormatDto> originNotices = new ArrayList<>();
 
@@ -82,7 +82,7 @@ class NoticeUpdateSupportTest {
 
     @DisplayName("삭제되어야 할 공지의 article id를 걸러낸다")
     @Test
-    public void filteringSoonDeleteNoticeIds() {
+    void filteringSoonDeleteNoticeIds() {
         // given
         List<String> savedArticleIds = List.of("5b54bcd", "5b54bce", "5b54bcf", "5b54bcg");
         List<String> latestNoticeIds = List.of("5b54bcd", "5b54bce", "5b54bcg");
@@ -97,7 +97,7 @@ class NoticeUpdateSupportTest {
 
     @DisplayName("삭제되어야 할 학과별 공지의 article id를 걸러낸다")
     @Test
-    public void filteringSoonDeleteDepartmentNoticeIds() {
+    void filteringSoonDeleteDepartmentNoticeIds() {
         // given
         List<Integer> savedArticleIds = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         List<Integer> latestNoticeIds = List.of(1, 4, 5, 6, 8, 10);
@@ -112,7 +112,7 @@ class NoticeUpdateSupportTest {
 
     @DisplayName("새롭게 scrap된 공지들 결과물로부터 id를 추출한다")
     @Test
-    public void extractNoticeIds() {
+    void extractNoticeIds() {
         // given
         List<CommonNoticeFormatDto> originNotices = new ArrayList<>();
 
@@ -139,7 +139,7 @@ class NoticeUpdateSupportTest {
 
     @DisplayName("새롭게 scrap된 학과별 공지들 결과물로부터 id를 추출한다")
     @Test
-    public void extractDepartmentNoticeIds() {
+    void extractDepartmentNoticeIds() {
         // given
         List<CommonNoticeFormatDto> originNotices = new ArrayList<>();
 

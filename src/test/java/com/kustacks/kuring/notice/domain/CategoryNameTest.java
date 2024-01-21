@@ -15,7 +15,7 @@ class CategoryNameTest {
     @DisplayName("name을 String으로 받아 해당 CategoryName enum으로 변환한다")
     @CsvSource({"bachelor,BACHELOR", "industry_university,INDUSTRY_UNIVERSITY", "library,LIBRARY"})
     @ParameterizedTest
-    public void fromStringName(String name, CategoryName categoryName) {
+    void fromStringName(String name, CategoryName categoryName) {
         // when
         CategoryName result = CategoryName.fromStringName(name);
 
@@ -25,7 +25,7 @@ class CategoryNameTest {
 
     @DisplayName("존재하지 않는 String name으로 CategoryName을 찾으려 하는 경우 예외가 발생한다")
     @Test
-    public void fromStringNameException() {
+    void fromStringNameException() {
         // given
         String name = "invalidName";
 
@@ -40,7 +40,7 @@ class CategoryNameTest {
     @DisplayName("String name을 통해 동일한 CategoryName enum인지 확인한다")
     @CsvSource({"bachelor,true", "invalid,false"})
     @ParameterizedTest
-    public void isSameName(String name, boolean expected) {
+    void isSameName(String name, boolean expected) {
         // when
         boolean result = CategoryName.BACHELOR.isSameName(name);
 
@@ -51,7 +51,7 @@ class CategoryNameTest {
     @DisplayName("String shortName을 통해 동일한 CategoryName enum인지 확인한다")
     @CsvSource({"bch,true", "invalid,false"})
     @ParameterizedTest
-    public void isSameShortName(String name, boolean expected) {
+    void isSameShortName(String name, boolean expected) {
         // when
         boolean result = CategoryName.BACHELOR.isSameShortName(name);
 
@@ -62,7 +62,7 @@ class CategoryNameTest {
     @DisplayName("String korName을 통해 동일한 CategoryName enum인지 확인한다")
     @CsvSource({"학사,true", "invalid,false"})
     @ParameterizedTest
-    public void isSameKorName(String name, boolean expected) {
+    void isSameKorName(String name, boolean expected) {
         // when
         boolean result = CategoryName.BACHELOR.isSameKorName(name);
 
