@@ -34,7 +34,7 @@ class DepartmentNoticeTest {
 
     @DisplayName("동등성 검증 테스트")
     @Test
-    public void notice_equals_test() {
+    void notice_equals_test() {
         DepartmentNotice notice1 = createDepartmentNotice(1L, "https://www.one.com");
         DepartmentNotice notice2 = createDepartmentNotice(1L, "https://www.two.com");
         Assertions.assertThat(notice1.equals(notice2)).isTrue();

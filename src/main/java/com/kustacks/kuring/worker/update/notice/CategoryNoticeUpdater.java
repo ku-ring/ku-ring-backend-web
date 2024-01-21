@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.update.notice;
 
-import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.notice.domain.NoticeJdbcRepository;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
@@ -11,17 +11,13 @@ import com.kustacks.kuring.worker.update.notice.dto.request.KuisNoticeInfo;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,6 +31,7 @@ public class CategoryNoticeUpdater {
     private final FirebaseService firebaseService;
     private final LibraryNoticeApiClient libraryNoticeApiClient;
     private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
+    private final NoticeUpdateSupport noticeUpdateSupport;
 
     private static long startTime = 0L;
 
@@ -84,11 +81,11 @@ public class CategoryNoticeUpdater {
     }
 
     private List<Notice> synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, CategoryName categoryName) {
-        List<Notice> newNotices = filteringSoonSaveNotices(scrapResults, savedArticleIds, categoryName);
+        List<Notice> newNotices = noticeUpdateSupport.filteringSoonSaveNotices(scrapResults, savedArticleIds, categoryName);
 
-        List<String> scrapNoticeIds = extractIdList(scrapResults);
+        List<String> scrapNoticeIds = noticeUpdateSupport.extractNoticeIds(scrapResults);
 
-        List<String> deletedNoticesArticleIds = filteringSoonDeleteIds(savedArticleIds, scrapNoticeIds);
+        List<String> deletedNoticesArticleIds = noticeUpdateSupport.filteringSoonDeleteNoticeIds(savedArticleIds, scrapNoticeIds);
 
         noticeJdbcRepository.saveAllCategoryNotices(newNotices);
 
@@ -97,48 +94,5 @@ public class CategoryNoticeUpdater {
         }
 
         return newNotices;
-    }
-
-    private List<String> extractIdList(List<CommonNoticeFormatDto> scrapResults) {
-        return scrapResults.stream()
-                .map(CommonNoticeFormatDto::getArticleId)
-                .sorted()
-                .collect(Collectors.toList());
-    }
-
-    private List<String> filteringSoonDeleteIds(List<String> savedArticleIds, List<String> latestNoticeIds) {
-        return savedArticleIds.stream()
-                .filter(savedArticleId -> Collections.binarySearch(latestNoticeIds, savedArticleId) < 0)
-                .map(Object::toString)
-                .collect(Collectors.toList());
-    }
-
-    private List<Notice> filteringSoonSaveNotices(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, CategoryName categoryName) {
-        List<Notice> newNotices = new LinkedList<>(); // 뒤에 추가만 계속 하기 때문에 arrayList가 아닌 Linked List 사용 O(1)
-        for (CommonNoticeFormatDto notice : scrapResults) {
-            try {
-                if (Collections.binarySearch(savedArticleIds, notice.getArticleId()) < 0) { // 정렬되어있다, 이진탐색으로 O(logN)안에 수행
-                    Notice newNotice = convert(notice, categoryName);
-                    newNotices.add(newNotice);
-                }
-            } catch (IncorrectResultSizeDataAccessException e) {
-                log.error("오류가 발생한 공지 정보");
-                log.error("articleId = {}", notice.getArticleId());
-                log.error("postedDate = {}", notice.getPostedDate());
-                log.error("subject = {}", notice.getSubject());
-            }
-        }
-
-        return newNotices;
-    }
-
-    private Notice convert(CommonNoticeFormatDto dto, CategoryName CategoryName) {
-        return new Notice(dto.getArticleId(),
-                dto.getPostedDate(),
-                dto.getUpdatedDate(),
-                dto.getSubject(),
-                CategoryName,
-                false,
-                dto.getFullUrl());
     }
 }

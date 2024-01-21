@@ -25,7 +25,7 @@ public class RowsDto {
                         .fullUrl(viewUrl + row[0])
                         .important(true)
                         .build())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<CommonNoticeFormatDto> buildNormalRowList(String viewUrl) {
@@ -38,6 +38,6 @@ public class RowsDto {
                         .fullUrl(viewUrl + row[0])
                         .important(false)
                         .build())
-                .collect(Collectors.toList());
+                .toList();
     }
 }

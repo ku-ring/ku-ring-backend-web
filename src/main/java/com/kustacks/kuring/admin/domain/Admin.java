@@ -52,7 +52,7 @@ public class Admin implements UserDetails {
         return this.adminRoles.getRoles()
                 .stream()
                 .map(AdminRole::name)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

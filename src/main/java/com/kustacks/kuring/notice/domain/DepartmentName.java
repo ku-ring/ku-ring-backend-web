@@ -4,6 +4,10 @@ import com.kustacks.kuring.common.exception.NotFoundException;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.kustacks.kuring.common.exception.code.ErrorCode.DEPARTMENT_NOT_FOUND;
 
@@ -85,6 +89,21 @@ public enum DepartmentName {
     ELE_EDU_CENTER("elective_education_center", "sgedu", "교양교육센터"),
     VOLUNTEER("volunteer_center", "kuvolunteer", "사회봉사센터");
 
+    private static final Map<String, String> NAME_MAP;
+    private static final Map<String, String> HOST_PREFIX_MAP;
+    private static final Map<String, String> KOR_NAME_MAP;
+
+    static {
+        NAME_MAP = Collections.unmodifiableMap(Arrays.stream(DepartmentName.values())
+                        .collect(Collectors.toMap(DepartmentName::getName, DepartmentName::name)));
+
+        HOST_PREFIX_MAP = Collections.unmodifiableMap(Arrays.stream(DepartmentName.values())
+                .collect(Collectors.toMap(DepartmentName::getHostPrefix, DepartmentName::name)));
+
+        KOR_NAME_MAP = Collections.unmodifiableMap(Arrays.stream(DepartmentName.values())
+                .collect(Collectors.toMap(DepartmentName::getKorName, DepartmentName::name)));
+    }
+
     private final String name;
     private final String hostPrefix;
     private final String korName;
@@ -95,25 +114,21 @@ public enum DepartmentName {
         this.korName = korName;
     }
 
-    public boolean isSameHostPrefix(String name) {
-        return this.hostPrefix.equals(name);
-    }
-
-    public boolean isSameKorName(String name) {
-        return this.korName.equals(name);
+    public static DepartmentName fromName(String name) {
+        String findName = Optional.ofNullable(NAME_MAP.get(name))
+                .orElseThrow(() -> new NotFoundException(DEPARTMENT_NOT_FOUND));
+        return DepartmentName.valueOf(findName);
     }
 
     public static DepartmentName fromHostPrefix(String hostPrefix) {
-        return Arrays.stream(DepartmentName.values())
-                .filter(d -> d.isSameHostPrefix(hostPrefix))
-                .findFirst()
+        String findHostPrefix = Optional.ofNullable(HOST_PREFIX_MAP.get(hostPrefix))
                 .orElseThrow(() -> new NotFoundException(DEPARTMENT_NOT_FOUND));
+        return DepartmentName.valueOf(findHostPrefix);
     }
 
-    public static DepartmentName fromKor(String departmentName) {
-        return Arrays.stream(DepartmentName.values())
-                .filter(d -> d.isSameKorName(departmentName))
-                .findFirst()
+    public static DepartmentName fromKor(String korName) {
+        String findKorName = Optional.ofNullable(KOR_NAME_MAP.get(korName))
                 .orElseThrow(() -> new NotFoundException(DEPARTMENT_NOT_FOUND));
+        return DepartmentName.valueOf(findKorName);
     }
 }

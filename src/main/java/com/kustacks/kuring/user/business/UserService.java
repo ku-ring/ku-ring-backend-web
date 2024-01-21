@@ -103,12 +103,12 @@ public class UserService {
     private List<CategoryName> convertToEnumList(List<String> categories) {
         return categories.stream()
                 .map(CategoryName::fromStringName)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<DepartmentName> convertHostPrefixToEnum(List<String> departments) {
         return departments.stream()
                 .map(DepartmentName::fromHostPrefix)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

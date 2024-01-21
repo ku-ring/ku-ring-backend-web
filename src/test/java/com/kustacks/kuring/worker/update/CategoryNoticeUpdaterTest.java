@@ -62,9 +62,9 @@ class CategoryNoticeUpdaterTest {
         // when
         categoryNoticeUpdater.update();
         noticeUpdaterThreadTaskExecutor.getThreadPoolExecutor().awaitTermination(1, TimeUnit.SECONDS);
-        List<Notice> notices = noticeRepository.findAll();
 
         // then
+        List<Notice> notices = noticeRepository.findAll();
         assertAll(
                 () -> Assertions.assertThat(notices).filteredOn("categoryName", "library").size().isEqualTo(7),
                 () -> Assertions.assertThat(notices).filteredOn("categoryName", "bachelor").size().isEqualTo(9),
@@ -79,27 +79,43 @@ class CategoryNoticeUpdaterTest {
 
     private static List<CommonNoticeFormatDto> createLibraryFixture() {
         return List.of(
-                new CommonNoticeFormatDto("1", "2021-01-01", "library1", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71921", false),
-                new CommonNoticeFormatDto("2", "2021-01-01", "library2", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71922", false),
-                new CommonNoticeFormatDto("3", "2021-01-01", "library3", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71923", false),
-                new CommonNoticeFormatDto("4", "2021-01-01", "library4", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71924", false),
-                new CommonNoticeFormatDto("5", "2021-01-01", "library5", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71925", false),
-                new CommonNoticeFormatDto("6", "2021-01-01", "library6", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71926", false),
-                new CommonNoticeFormatDto("7", "2021-01-01", "library7", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71927", false)
+                CommonNoticeFormatDto.builder().articleId("1").updatedDate("2021-01-01").subject("library1")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71921").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("2").updatedDate("2021-01-01").subject("library2")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71922").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("3").updatedDate("2021-01-01").subject("library3")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71923").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("4").updatedDate("2021-01-01").subject("library4")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71924").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("5").updatedDate("2021-01-01").subject("library5")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71925").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("6").updatedDate("2021-01-01").subject("library6")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71926").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("7").updatedDate("2021-01-01").subject("library7")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71927").important(false).build()
         );
     }
 
     private static List<CommonNoticeFormatDto> createNoticesFixture() {
         return List.of(
-                new CommonNoticeFormatDto("1", "2021-01-01", "subject1", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71921", false),
-                new CommonNoticeFormatDto("2", "2021-01-01", "subject2", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71922", false),
-                new CommonNoticeFormatDto("3", "2021-01-01", "subject3", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71923", false),
-                new CommonNoticeFormatDto("4", "2021-01-01", "subject4", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71924", false),
-                new CommonNoticeFormatDto("5", "2021-01-01", "subject5", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71925", false),
-                new CommonNoticeFormatDto("6", "2021-01-01", "subject6", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71926", false),
-                new CommonNoticeFormatDto("7", "2021-01-01", "subject7", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71927", false),
-                new CommonNoticeFormatDto("8", "2021-01-01", "subject8", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71928", false),
-                new CommonNoticeFormatDto("9", "2021-01-01", "subject9", "2021-01-01", "https://library.konkuk.ac.kr/library-guide/bulletins/notice/71929", false)
+                CommonNoticeFormatDto.builder().articleId("1").updatedDate("2021-01-01").subject("library1")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71921").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("2").updatedDate("2021-01-01").subject("library2")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71922").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("3").updatedDate("2021-01-01").subject("library3")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71923").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("4").updatedDate("2021-01-01").subject("library4")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71924").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("5").updatedDate("2021-01-01").subject("library5")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71925").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("6").updatedDate("2021-01-01").subject("library6")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71926").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("7").updatedDate("2021-01-01").subject("library7")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71927").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("8").updatedDate("2021-01-01").subject("library8")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71928").important(false).build(),
+                CommonNoticeFormatDto.builder().articleId("9").updatedDate("2021-01-01").subject("library9")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71929").important(false).build()
         );
     }
 }

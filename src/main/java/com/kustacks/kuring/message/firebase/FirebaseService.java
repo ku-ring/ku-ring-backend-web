@@ -147,7 +147,7 @@ public class FirebaseService {
     private List<NoticeMessageDto> createNotification(List<? extends Notice> willBeNotiNotices) {
         return willBeNotiNotices.stream()
                 .map(NoticeMessageDto::from)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private void sendNoticeMessageList(List<NoticeMessageDto> messageDtoList) throws FirebaseMessageSendException {

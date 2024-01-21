@@ -6,18 +6,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -88,25 +82,25 @@ public class User implements Serializable {
     public List<CategoryName> filteringNewCategoryName(List<CategoryName> newCategoryNames) {
         return newCategoryNames.stream()
                 .filter(newCategoryName -> !this.categories.contains(newCategoryName))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<CategoryName> filteringOldCategoryName(List<CategoryName> newCategoryNames) {
         return this.categories.getCategoryNamesSet().stream().
                 filter(oldCategoryName -> !newCategoryNames.contains(oldCategoryName))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<DepartmentName> filteringNewDepartmentName(List<DepartmentName> newDepartmentNames) {
         return newDepartmentNames.stream()
                 .filter(newDepartmentName -> !this.departments.contains(newDepartmentName))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<DepartmentName> filteringOldDepartmentName(List<DepartmentName> newDepartmentNames) {
         return this.departments.getDepartmentNamesSet().stream()
                 .filter(oldDepartmentName -> !newDepartmentNames.contains(oldDepartmentName))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
