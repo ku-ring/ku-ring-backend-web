@@ -117,7 +117,7 @@ public class StaffUpdater {
         }
 
         staffRepository.deleteAll(dbStaffMap.values());
-        staffRepository.saveAll(kuStaffDTOMap.values().stream().map(StaffDto::toEntity).collect(Collectors.toList()));
+        staffRepository.saveAll(kuStaffDTOMap.values().stream().map(StaffDto::toEntity).toList());
         staffRepository.saveAll(toBeUpdateStaffs);
     }
 

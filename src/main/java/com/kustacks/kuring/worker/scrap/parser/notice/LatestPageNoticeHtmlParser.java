@@ -37,7 +37,7 @@ public class LatestPageNoticeHtmlParser implements NoticeHtmlParser {
     private List<String[]> extractNoticeListFromRows(Elements rows) {
         return rows.stream()
                 .map(LatestPageNoticeHtmlParser::extractNoticeFromRow)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private static String[] extractNoticeFromRow(Element row) {

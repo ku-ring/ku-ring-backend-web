@@ -4,6 +4,10 @@ import com.kustacks.kuring.common.exception.NotFoundException;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.kustacks.kuring.common.exception.code.ErrorCode.CAT_NOT_EXIST_CATEGORY;
 
@@ -19,6 +23,13 @@ public enum CategoryName {
     NORMAL("normal", "nor", "일반"),
     LIBRARY("library", "lib", "도서관"),
     DEPARTMENT("department", "dep", "학과");
+
+    private static final Map<String, String> NAME_MAP;
+
+    static {
+        NAME_MAP = Collections.unmodifiableMap(Arrays.stream(CategoryName.values())
+                .collect(Collectors.toMap(CategoryName::getName, CategoryName::name)));
+    }
 
     private String name;
     private String shortName;
@@ -38,23 +49,13 @@ public enum CategoryName {
         return this.shortName.equals(shortName);
     }
 
-    public boolean isSameKorName(String name) {
-        return this.korName.equals(name);
-    }
-
-    public static boolean containsEnumValue(String value) {
-        try {
-            Enum.valueOf(CategoryName.class, value);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
+    public boolean isSameKorName(String korName) {
+        return this.korName.equals(korName);
     }
 
     public static CategoryName fromStringName(String name) {
-        return Arrays.stream(CategoryName.values())
-                .filter(d -> d.isSameName(name))
-                .findFirst()
+        String findName = Optional.ofNullable(NAME_MAP.get(name))
                 .orElseThrow(() -> new NotFoundException(CAT_NOT_EXIST_CATEGORY));
+        return CategoryName.valueOf(findName);
     }
 }

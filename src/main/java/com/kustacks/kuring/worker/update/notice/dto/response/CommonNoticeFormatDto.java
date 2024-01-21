@@ -26,7 +26,7 @@ public class CommonNoticeFormatDto {
     private Boolean important;
 
     @Builder
-    public CommonNoticeFormatDto(String articleId, String updatedDate, String subject, String postedDate, String fullUrl, Boolean important) {
+    private CommonNoticeFormatDto(String articleId, String updatedDate, String subject, String postedDate, String fullUrl, Boolean important) {
         this.articleId = articleId;
         this.updatedDate = updatedDate;
         this.subject = subject;

@@ -78,7 +78,7 @@ public class LibraryNoticeApiClient implements NoticeApiClient<CommonNoticeForma
     private List<CommonNoticeFormatDto> convertToCommonFormatDto(List<LibraryNoticeDto> libraryNoticeDtoList) {
         return libraryNoticeDtoList.stream()
                 .map(dto -> (CommonNoticeFormatDto) dtoConverter.convert(dto))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private void validateResponse(int requestIndex, LibraryNoticeResponseDto libraryNoticeResponseDto) {

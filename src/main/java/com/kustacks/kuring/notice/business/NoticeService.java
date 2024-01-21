@@ -98,7 +98,7 @@ public class NoticeService {
     private List<String> noticeCategoryNameConvertEnglish(String[] splitedKeywords) {
         return Arrays.stream(splitedKeywords)
                 .map(this::convertEnglish)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private String convertEnglish(String keyword) {

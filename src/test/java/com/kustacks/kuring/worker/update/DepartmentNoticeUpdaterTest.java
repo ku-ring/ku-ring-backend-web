@@ -58,10 +58,9 @@ class DepartmentNoticeUpdaterTest {
         // when
         departmentNoticeUpdater.update();
         noticeUpdaterThreadTaskExecutor.getThreadPoolExecutor().awaitTermination(2, TimeUnit.SECONDS);
-        List<DepartmentNotice> notices = departmentNoticeRepository.findAll();
-
 
         // then
+        List<DepartmentNotice> notices = departmentNoticeRepository.findAll();
         assertThat(notices).hasSize(3720);
     }
 
@@ -71,15 +70,15 @@ class DepartmentNoticeUpdaterTest {
         List<CommonNoticeFormatDto> normalNoticeList = new ArrayList<>();
 
         for(int i = 0; i < 30; i++) {
-            importantNoticeList.add(new CommonNoticeFormatDto(String.valueOf(i), "2021-01-01",
-                    "important" + i, "2021-01-01",
-                    "https://library.konkuk.ac.kr/library-guide/bulletins/important/71921",
-                    true));
+            CommonNoticeFormatDto importantFormatDto = CommonNoticeFormatDto.builder().articleId(String.valueOf(i)).updatedDate("2021-01-01").subject("important" + i)
+                    .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/important/71921")
+                    .important(true).build();
+            importantNoticeList.add(importantFormatDto);
 
-            normalNoticeList.add(new CommonNoticeFormatDto(String.valueOf(i), "2021-01-01",
-                    "normal" + i, "2021-01-01",
-                    "https://library.konkuk.ac.kr/library-guide/bulletins/normal/71921",
-                    false));
+            CommonNoticeFormatDto normalFormatDto = CommonNoticeFormatDto.builder().articleId(String.valueOf(i)).updatedDate("2021-01-01").subject("normal" + i)
+                    .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71921")
+                    .important(false).build();
+            normalNoticeList.add(normalFormatDto);
         }
 
         result.add(new ComplexNoticeFormatDto(importantNoticeList, normalNoticeList));
