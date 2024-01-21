@@ -1,6 +1,7 @@
-delete
-from notice
-where notice.article_id in (select notice.article_id
-                            from notice
-                            group by notice.article_id
-                            having COUNT(*) > 2);
+DELETE
+FROM notice
+WHERE notice.article_id IN (SELECT *
+                            FROM (SELECT article_id
+                                  FROM notice
+                                  GROUP BY article_id
+                                  HAVING COUNT(*) > 2) temp)
