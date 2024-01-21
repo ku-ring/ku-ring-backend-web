@@ -21,7 +21,6 @@ public enum ErrorCode {
 
 
     API_NOTICE_NOT_EXIST_CATEGORY(HttpStatus.BAD_REQUEST, "해당 공지 카테고리를 지원하지 않습니다."),
-//    API_NOTICE_CANNOT_FIND_CATEGORY(HttpStatus.INTERNAL_SERVER_ERROR, "해당 공지 카테고리를 찾을 수 없습니다."),
     API_MISSING_PARAM(HttpStatus.BAD_REQUEST, "필수 파라미터가 없습니다."),
     API_INVALID_PARAM(HttpStatus.BAD_REQUEST, "파라미터 값 중 잘못된 값이 있습니다."),
     API_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
@@ -36,13 +35,6 @@ public enum ErrorCode {
     API_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다."),
 
     UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류"),
-
-    /**
-     * ErrorCodes about WebSocket
-     */
-    WS_MISSING_PARAM(HttpStatus.BAD_REQUEST, "웹소켓 메세지의 파라미터가 누락되어있습니다."),
-    WS_INVALID_PARAM(HttpStatus.BAD_REQUEST, "웹소켓 메세지 파라미터 중 유효하지 않은 값이 있습니다."),
-    WS_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."),
 
     /**
      * ErrorCodes about InternalLogicException
