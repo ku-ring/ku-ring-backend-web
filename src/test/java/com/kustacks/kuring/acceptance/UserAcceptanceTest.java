@@ -1,11 +1,9 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.auth.exception.RegisterException;
-import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
@@ -20,9 +18,6 @@ import static org.mockito.Mockito.doThrow;
 
 @DisplayName("인수 : 사용자")
 class UserAcceptanceTest extends AcceptanceTest {
-
-    @MockBean
-    FirebaseService firebaseService;
 
     /**
      * Given: 가입되지 않은 사용자가 있다

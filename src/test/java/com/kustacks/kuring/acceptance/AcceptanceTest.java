@@ -1,11 +1,13 @@
 package com.kustacks.kuring.acceptance;
 
 
+import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.tool.DatabaseConfigurator;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.TestPropertySource;
 
@@ -18,6 +20,9 @@ public class AcceptanceTest {
     protected static final String INVALID_USER_FCM_TOKEN = "invalid_fcm_token";
     protected static final String ADMIN_CLIENT_LOGIN_ID = "client@email.com";
     protected static final String ADMIN_CLIENT_PASSWORD = "client_password";
+
+    @MockBean
+    protected FirebaseService firebaseService;
 
     @LocalServerPort
     int port;

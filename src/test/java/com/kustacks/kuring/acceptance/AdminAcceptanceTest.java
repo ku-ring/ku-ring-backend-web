@@ -22,9 +22,6 @@ import static org.mockito.Mockito.doNothing;
 @DisplayName("인수 : 관리자")
 class AdminAcceptanceTest extends AcceptanceTest {
 
-    @MockBean
-    FirebaseService firebaseService;
-
     /**
      * given : 사전에 등록된 어드민가 피드백들이 이다
      * when : 어드민이 피드백 조회시
