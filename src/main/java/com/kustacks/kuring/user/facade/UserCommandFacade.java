@@ -1,6 +1,5 @@
 package com.kustacks.kuring.user.facade;
 
-import com.kustacks.kuring.user.business.FeedbackService;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.message.firebase.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.message.firebase.exception.FirebaseUnSubscribeException;
@@ -25,7 +24,6 @@ public class UserCommandFacade {
 
     private final UserService userService;
     private final FirebaseService firebaseService;
-    private final FeedbackService feedbackService;
 
     public void editSubscribeCategories(String userToken, List<String> newCategoryNames) {
         firebaseService.validationToken(userToken);
@@ -41,7 +39,7 @@ public class UserCommandFacade {
 
     public void saveFeedback(String userToken, String feedback) {
         firebaseService.validationToken(userToken);
-        feedbackService.saveFeedback(userToken, feedback);
+        userService.saveFeedback(userToken, feedback);
     }
 
     private void editUserCategoryList(
