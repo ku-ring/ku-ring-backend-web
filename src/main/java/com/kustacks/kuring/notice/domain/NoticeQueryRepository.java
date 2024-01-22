@@ -15,4 +15,14 @@ public interface NoticeQueryRepository {
     List<String> findNormalArticleIdsByCategory(CategoryName categoryName);
 
     void deleteAllByIdsAndCategory(CategoryName categoryName, List<String> articleIds);
+
+    List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName);
+
+    List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Pageable pageable);
+
+    List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentNameEnum);
+
+    List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentNameEnum);
+
+    void deleteAllByIdsAndDepartment(DepartmentName departmentName, List<String> articleIds);
 }
