@@ -3,9 +3,7 @@ package com.kustacks.kuring.notice.business;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.notice.common.OffsetBasedPageRequest;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
-import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
 import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
@@ -43,16 +41,7 @@ public class NoticeService {
         return List.of(supportedDepartmentNameList);
     }
 
-    public NoticeListResponse getNotices(String type, int offset, int max) {
-        String categoryName = convertShortNameIntoLongName(type);
-
-        List<NoticeDto> noticeDtoList = noticeRepository
-                .findNoticesByCategoryWithOffset(CategoryName.fromStringName(categoryName), new OffsetBasedPageRequest(offset, max));
-
-        return new NoticeListResponse(convertBaseUrl(categoryName), noticeDtoList);
-    }
-
-    public List<NoticeDto> getNoticesV2(String type, String department, Boolean important, int page, int size) {
+    public List<NoticeDto> getNotices(String type, String department, Boolean important, int page, int size) {
         if (isDepartmentSearchRequest(type, department)) {
             DepartmentName departmentName = DepartmentName.fromHostPrefix(department);
 

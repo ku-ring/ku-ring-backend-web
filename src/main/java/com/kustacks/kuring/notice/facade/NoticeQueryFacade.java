@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -20,7 +19,7 @@ public class NoticeQueryFacade {
     private final NoticeService noticeService;
 
     public List<NoticeDto> getNotices(String type, String department, Boolean important, int page, int size) {
-        return noticeService.getNoticesV2(type, department, important, page, size);
+        return noticeService.getNotices(type, department, important, page, size);
     }
 
     public NoticeLookupResponse searchNoticeByContent(String content) {
