@@ -42,6 +42,11 @@ public class UserCommandFacade {
         userService.saveFeedback(userToken, feedback);
     }
 
+    public void saveBookmark(String userToken, String articleId) {
+        firebaseService.validationToken(userToken);
+        userService.saveBookmark(userToken, articleId);
+    }
+
     private void editUserCategoryList(
             String userToken, List<CategoryName> savedCategoryNames, List<CategoryName> deletedCategoryNames)
             throws FirebaseSubscribeException, FirebaseUnSubscribeException

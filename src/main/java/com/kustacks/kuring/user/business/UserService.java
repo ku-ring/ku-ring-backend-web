@@ -32,12 +32,6 @@ public class UserService {
     private final ServerProperties serverProperties;
 
     @Transactional(readOnly = true)
-    public User getUserByToken(String token) {
-        return userRepository.findByToken(token)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    @Transactional(readOnly = true)
     public List<DepartmentName> lookupSubscribeDepartmentList(String id) {
         User findUser = findUserByToken(id);
         return findUser.getSubscribedDepartmentList();
@@ -100,6 +94,11 @@ public class UserService {
     public void unsubscribeDepartment(String userToken, DepartmentName removeDepartmentName) {
         User user = findUserByToken(userToken);
         user.unsubscribeDepartment(removeDepartmentName);
+    }
+
+    public void saveBookmark(String userToken, String articleId) {
+        User user = findUserByToken(userToken);
+        user.addBookmark(articleId);
     }
 
     private User findUserByToken(String token) {
