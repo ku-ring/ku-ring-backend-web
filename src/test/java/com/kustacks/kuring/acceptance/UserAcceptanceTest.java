@@ -1,10 +1,13 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.auth.exception.RegisterException;
+import com.kustacks.kuring.user.common.dto.SaveBookmarkRequest;
 import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
+import io.restassured.RestAssured;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,6 +15,7 @@ import java.util.List;
 import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -159,5 +163,29 @@ class UserAcceptanceTest extends AcceptanceTest {
 
         // then
         실패_응답_확인(피드백_요청_응답, HttpStatus.BAD_REQUEST);
+    }
+
+    @DisplayName("[v2] 사용자는 원하는 공지의 북마크를 추가할 수 있다")
+    @Test
+    void request_bookmark() {
+        // given
+        doNothing().when(firebaseService).validationToken(anyString());
+
+        // when
+        var response = RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", USER_FCM_TOKEN)
+                .body(new SaveBookmarkRequest("article_1"))
+                .when().post("/api/v2/users/bookmarks")
+                .then().log().all()
+                .extract();
+
+        // then성
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("북마크 저장에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getList("data")).isNull()
+        );
     }
 }
