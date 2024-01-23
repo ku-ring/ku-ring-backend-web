@@ -4,6 +4,8 @@ import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
 import com.kustacks.kuring.notice.common.dto.QNoticeDto;
 import com.kustacks.kuring.notice.common.dto.QNoticeSearchDto;
+import com.kustacks.kuring.user.common.dto.BookmarkDto;
+import com.kustacks.kuring.user.common.dto.QBookmarkDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
@@ -150,6 +152,23 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .where(departmentNotice.departmentName.eq(departmentName)
                         .and(departmentNotice.articleId.in(articleIds)))
                 .execute();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<BookmarkDto> findAllByBookmarkIds(List<String> ids) {
+        return queryFactory.select(
+                        new QBookmarkDto(
+                                notice.articleId,
+                                notice.postedDate,
+                                notice.subject,
+                                notice.categoryName.stringValue(),
+                                notice.url.value
+                        )
+                ).from(notice)
+                .where(notice.articleId.in(ids))
+                .orderBy(notice.postedDate.desc())
+                .fetch();
     }
 
     private static BooleanBuilder isContainSubject(List<String> keywords) {

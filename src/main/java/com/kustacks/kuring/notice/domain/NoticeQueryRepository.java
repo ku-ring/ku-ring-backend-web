@@ -2,6 +2,7 @@ package com.kustacks.kuring.notice.domain;
 
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
+import com.kustacks.kuring.user.common.dto.BookmarkDto;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -25,4 +26,6 @@ public interface NoticeQueryRepository {
     List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentNameEnum);
 
     void deleteAllByIdsAndDepartment(DepartmentName departmentName, List<String> articleIds);
+
+    List<BookmarkDto> findAllByBookmarkIds(List<String> ids);
 }
