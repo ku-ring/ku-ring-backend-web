@@ -208,7 +208,23 @@ https://blogshine.tistory.com/345
 **상세 내용 링크 : ([글 링크](https://blogshine.tistory.com/664))**
 
 ---
-# 5. Bulk Query를 통한 성능 개선
+## 5. HeapDump를 통해 메모리 누수 원인 찾기 **검색 성능개선**
+
+**문제 상황**
+
+- 애플리케이션에 물리적으로 할당된 메모리를 넘어, swap 메모리까지 사용하고 있는 문제가 발생
+
+**문제 해결**
+
+- 매번 URL 검증을 위한 객체를 생성후 검사 하는것이 아닌, 한번 Compiled된 Pattern 사용을 통한 **메모리 낭비 해결**
+  - 개선 **전** : 전체 512MB중 170MB가 eden space에 주기적으로 생성 → 32%
+  - 개선 **후** : 전체 512MB중 47MB만 생성되도록 개선 → 9%
+  - 미리 compiled된 Pattern 객체를 활용하여 메모리 누수를 해결하였습니다.
+
+**상세 내용 링크 : ([글 링크](https://blogshine.tistory.com/687))**
+
+---
+# 6. Bulk Query를 통한 성능 개선
 
 **문제 상황**
 
@@ -227,7 +243,7 @@ https://blogshine.tistory.com/345
 
 <br>
 
-### 5-1) Insert 해결책
+### 6-1) Insert 해결책
 
 해결책은 2가지가 존재했습니다.
 1. Table Id strategy를 SEQUENCE로 변경하고 Batch 작업
@@ -242,14 +258,14 @@ MySQL과 MariaDB의 Table Id 전략은 대부분이 IDENTITY 전략을 사용하
 
 <br>
 
-### 5-2) Delete 해결책
+### 6-2) Delete 해결책
 이미 프로젝트에서 queryDsl를 사용하고 있어 이를 이용하는 것이 가장 간단했기 때문에 queryDsl의 delete in 쿼리를 사용하여 해결했습니다.
 
 **상세 내용 링크 : ([글 링크](https://blogshine.tistory.com/686))**
 
 ---
 
-## 6. 인증, 인가를 비즈니스 로직으로부터 분리하기
+## 7. 인증, 인가를 비즈니스 로직으로부터 분리하기
 
 **문제 상황**
 
@@ -267,7 +283,7 @@ MySQL과 MariaDB의 Table Id 전략은 대부분이 IDENTITY 전략을 사용하
 
 ---
 
-## 7. 흔하디 흔한 N+1 쿼리 개선기
+## 8. 흔하디 흔한 N+1 쿼리 개선기
 
 원래 로직에서는 사용자의 Category 이름 목록을 가져오기 위해서 다음과 같이 처리가 되고 잇었습니다!
 
@@ -325,7 +341,7 @@ public List<String> getCategoryNamesFromCategories(List<Category> categories) {
 
 쿼리가 총 1 + 2N 만큼 발생중이다.
 
-### 7 - 1) 변경 전 쿼리
+### 8 - 1) 변경 전 쿼리
 
 ```bash
 Hibernate: 
@@ -382,7 +398,7 @@ Connection: keep-alive
 
 N+1 문제로 User한번 조회하는데 위와 같이 쿼리가 3번 나가게 됨
 
-### 7 - 2) 변경 후
+### 8 - 2) 변경 후
 
 변경 후 한방 쿼리로 조회 끝    
 ```java
@@ -399,7 +415,7 @@ public List<String> getUserCategoryNamesByToken(String token) {
 
 ___
 
-## 8. Test Container를 통한 테스트의 멱등성 보장하기
+## 9. Test Container를 통한 테스트의 멱등성 보장하기
 테스트와, 실제 운영 DB를 둘다 MariaDB 환경으로 사용하여 문제가 발생할 일이 없다 생각했었습니다.
 하지만, utf8과 같은 인코딩 방식이 로컬과 프로덕션이 달라 문제가 발생하였으며, 이또한 테스트 환경에서 걸러내지 못한 것이 문제라 생각하였습니다.
 
@@ -408,7 +424,7 @@ ___
 
 ---
 
-## 9. CI / 정적분석기(SonarCloud, jacoco)를 사용한 코드 컨벤션에 대한 코드리뷰 자동화
+## 10. CI / 정적분석기(SonarCloud, jacoco)를 사용한 코드 컨벤션에 대한 코드리뷰 자동화
 
 **문제 상황**
 
@@ -425,7 +441,7 @@ ___
 
 ---
 
-## 10. 서버 모니터링
+## 11. 서버 모니터링
 
 **문제 상황**
 
