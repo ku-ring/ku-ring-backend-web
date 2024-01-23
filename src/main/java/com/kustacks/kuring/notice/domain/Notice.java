@@ -18,7 +18,7 @@ public class Notice {
     private Long id;
 
     @Getter(AccessLevel.PUBLIC)
-    @Column(name = "article_id", length = 15, nullable = false)
+    @Column(name = "article_id", length = 32, nullable = false)
     private String articleId;
 
     @Getter(AccessLevel.PUBLIC)

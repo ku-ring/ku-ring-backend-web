@@ -1,9 +1,10 @@
 package com.kustacks.kuring.user.presentation;
 
 import com.kustacks.kuring.common.dto.BaseResponse;
+import com.kustacks.kuring.user.common.dto.SaveBookmarkRequest;
+import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;
 import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
 import com.kustacks.kuring.user.common.dto.SubscribeDepartmentsRequest;
-import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;
 import com.kustacks.kuring.user.facade.UserCommandFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,5 +53,14 @@ public class UserCommandApiV2 {
     ) {
         userCommandFacade.saveFeedback(id, request.getContent());
         return ResponseEntity.ok().body(new BaseResponse<>(FEEDBACK_SAVE_SUCCESS, null));
+    }
+
+    @PostMapping("/bookmarks")
+    public ResponseEntity<BaseResponse<Void>> saveBookmark(
+            @Valid @RequestBody SaveBookmarkRequest request,
+            @RequestHeader(USER_TOKEN_HEADER_KEY) String id
+    ) {
+        userCommandFacade.saveBookmark(id, request.getArticleId());
+        return ResponseEntity.ok().body(new BaseResponse<>(BOOKMAKR_SAVE_SUCCESS, null));
     }
 }

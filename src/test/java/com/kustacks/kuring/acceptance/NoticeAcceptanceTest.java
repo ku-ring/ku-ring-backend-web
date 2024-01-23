@@ -1,6 +1,7 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.notice.domain.DepartmentName;
+import com.kustacks.kuring.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +10,7 @@ import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_조회_�
 import static com.kustacks.kuring.acceptance.NoticeStep.*;
 
 @DisplayName("인수 : 공지사항")
-class NoticeAcceptanceTest extends AcceptanceTest {
+class NoticeAcceptanceTest extends IntegrationTestSupport {
 
     /**
      * Given : 쿠링앱이 실행중이다

@@ -1,11 +1,10 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.auth.exception.RegisterException;
-import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.support.IntegrationTestSupport;
 import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
@@ -19,10 +18,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
 @DisplayName("인수 : 사용자")
-class UserAcceptanceTest extends AcceptanceTest {
-
-    @MockBean
-    FirebaseService firebaseService;
+class UserAcceptanceTest extends IntegrationTestSupport {
 
     /**
      * Given: 가입되지 않은 사용자가 있다
@@ -164,5 +160,39 @@ class UserAcceptanceTest extends AcceptanceTest {
 
         // then
         실패_응답_확인(피드백_요청_응답, HttpStatus.BAD_REQUEST);
+    }
+
+    @DisplayName("[v2] 사용자는 원하는 공지의 북마크를 추가할 수 있다")
+    @Test
+    void request_bookmark() {
+        // given
+        doNothing().when(firebaseService).validationToken(anyString());
+
+        // when
+        var 북마크_응답 = 북마크_생성_요청(USER_FCM_TOKEN, "article_1");
+
+        // then
+        북마크_응답_확인(북마크_응답, HttpStatus.OK);
+    }
+
+    /**
+     * Given : 사용자가 사전에 저장해둔 북마크가 있다
+     * When : 북마크 목록을 요청한다
+     * Then : 성공적으로 북마크 목록을 반환한다
+     */
+    @DisplayName("[v2] 사용자는 자신이 북마크한 공지를 조회할 수 있다")
+    @Test
+    void lookup_bookmark() {
+        // given
+        doNothing().when(firebaseService).validationToken(anyString());
+        북마크_생성_요청(USER_FCM_TOKEN, "article_1");
+        북마크_생성_요청(USER_FCM_TOKEN, "article_2");
+        북마크_생성_요청(USER_FCM_TOKEN, "depart_normal_article_1");
+
+        // when
+        var 북마크_조회_응답 = 북마크한_공지_조회_요청(USER_FCM_TOKEN);
+
+        // then
+        북마크_조회_응답_확인(북마크_조회_응답);
     }
 }

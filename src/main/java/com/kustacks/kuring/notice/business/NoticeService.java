@@ -1,15 +1,12 @@
 package com.kustacks.kuring.notice.business;
 
-import com.kustacks.kuring.notice.domain.CategoryName;
+import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.common.exception.InternalLogicException;
-import com.kustacks.kuring.notice.common.OffsetBasedPageRequest;
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
-import com.kustacks.kuring.notice.common.dto.NoticeListResponse;
 import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.notice.domain.DepartmentNoticeRepository;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -18,14 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
-    private final DepartmentNoticeRepository departmentNoticeRepository;
     private final CategoryName[] supportedCategoryNameList;
     private final DepartmentName[] supportedDepartmentNameList;
     private final String SPACE_REGEX = "[\\s+]";
@@ -36,9 +31,8 @@ public class NoticeService {
     @Value("${notice.library-base-url}")
     private String libraryBaseUrl;
 
-    public NoticeService(NoticeRepository noticeRepository, DepartmentNoticeRepository departmentNoticeRepository) {
+    public NoticeService(NoticeRepository noticeRepository) {
         this.noticeRepository = noticeRepository;
-        this.departmentNoticeRepository = departmentNoticeRepository;
         this.supportedCategoryNameList = CategoryName.values();
         this.supportedDepartmentNameList = DepartmentName.values();
     }
@@ -47,23 +41,14 @@ public class NoticeService {
         return List.of(supportedDepartmentNameList);
     }
 
-    public NoticeListResponse getNotices(String type, int offset, int max) {
-        String categoryName = convertShortNameIntoLongName(type);
-
-        List<NoticeDto> noticeDtoList = noticeRepository
-                .findNoticesByCategoryWithOffset(CategoryName.fromStringName(categoryName), new OffsetBasedPageRequest(offset, max));
-
-        return new NoticeListResponse(convertBaseUrl(categoryName), noticeDtoList);
-    }
-
-    public List<NoticeDto> getNoticesV2(String type, String department, Boolean important, int page, int size) {
+    public List<NoticeDto> getNotices(String type, String department, Boolean important, int page, int size) {
         if (isDepartmentSearchRequest(type, department)) {
             DepartmentName departmentName = DepartmentName.fromHostPrefix(department);
 
             if (Boolean.TRUE.equals(important)) {
-                return departmentNoticeRepository.findImportantNoticesByDepartment(departmentName);
+                return noticeRepository.findImportantNoticesByDepartment(departmentName);
             } else {
-                return departmentNoticeRepository.findNormalNoticesByDepartmentWithOffset(departmentName, PageRequest.of(page, size));
+                return noticeRepository.findNormalNoticesByDepartmentWithOffset(departmentName, PageRequest.of(page, size));
             }
         }
 

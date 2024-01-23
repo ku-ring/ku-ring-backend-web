@@ -1,12 +1,11 @@
 package com.kustacks.kuring.acceptance;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.support.IntegrationTestSupport;
 import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
@@ -18,10 +17,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
 @DisplayName("인수 : 카테고리")
-public class CategoryAcceptanceTest extends AcceptanceTest {
-
-    @MockBean
-    FirebaseService firebaseService;
+class CategoryAcceptanceTest extends IntegrationTestSupport {
 
     /**
      * Given : 쿠링앱을 실행한다

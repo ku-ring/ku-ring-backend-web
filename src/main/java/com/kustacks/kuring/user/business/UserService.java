@@ -1,22 +1,25 @@
 package com.kustacks.kuring.user.business;
 
+import com.kustacks.kuring.admin.common.dto.FeedbackDto;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.message.firebase.ServerProperties;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
+import com.kustacks.kuring.notice.domain.NoticeRepository;
+import com.kustacks.kuring.user.common.dto.BookmarkDto;
 import com.kustacks.kuring.user.common.dto.SubscribeCompareResultDto;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
 
@@ -27,14 +30,9 @@ import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SU
 public class UserService {
 
     private final UserRepository userRepository;
+    private final NoticeRepository noticeRepository;
     private final FirebaseService firebaseService;
     private final ServerProperties serverProperties;
-
-    @Transactional(readOnly = true)
-    public User getUserByToken(String token) {
-        return userRepository.findByToken(token)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
-    }
 
     @Transactional(readOnly = true)
     public List<DepartmentName> lookupSubscribeDepartmentList(String id) {
@@ -46,6 +44,24 @@ public class UserService {
     public List<CategoryName> lookUpUserCategories(String token) {
         User findUser = findUserByToken(token);
         return findUser.getSubscribedCategoryList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<FeedbackDto> lookupFeedbacks(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return userRepository.findAllFeedbackByPageRequest(pageRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookmarkDto> lookupUserBookmarkedNotices(String userToken) {
+        User user = findUserByToken(userToken);
+        List<String> bookmarkIds = user.lookupAllBookmarkIds();
+        return noticeRepository.findAllByBookmarkIds(bookmarkIds);
+    }
+
+    public void saveFeedback(String token, String content) {
+        User findUser = findUserByToken(token);
+        findUser.addFeedback(content);
     }
 
     public SubscribeCompareResultDto<CategoryName> editSubscribeCategoryList(
@@ -88,6 +104,11 @@ public class UserService {
     public void unsubscribeDepartment(String userToken, DepartmentName removeDepartmentName) {
         User user = findUserByToken(userToken);
         user.unsubscribeDepartment(removeDepartmentName);
+    }
+
+    public void saveBookmark(String userToken, String articleId) {
+        User user = findUserByToken(userToken);
+        user.addBookmark(articleId);
     }
 
     private User findUserByToken(String token) {
