@@ -1,15 +1,11 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.auth.exception.RegisterException;
-import com.kustacks.kuring.user.common.dto.SaveBookmarkRequest;
 import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
 import io.restassured.RestAssured;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 import java.util.Collections;
 import java.util.List;
@@ -174,9 +170,45 @@ class UserAcceptanceTest extends AcceptanceTest {
         doNothing().when(firebaseService).validationToken(anyString());
 
         // when
-        var 북마크_응답 = 북마크_요청(USER_FCM_TOKEN);
+        var 북마크_응답 = 북마크_생성_요청(USER_FCM_TOKEN, "article_1");
 
         // then
         북마크_응답_확인(북마크_응답, HttpStatus.OK);
+    }
+
+    /**
+     * Given : 사용자가 사전에 저장해둔 북마크가 있다
+     * When : 북마크 목록을 요청한다
+     * Then : 성공적으로 북마크 목록을 반환한다
+     */
+    @DisplayName("[v2] 사용자는 자신이 북마크한 공지를 조회할 수 있다")
+    @Test
+    void lookup_bookmark() {
+        // given
+        doNothing().when(firebaseService).validationToken(anyString());
+        북마크_생성_요청(USER_FCM_TOKEN, "article_1");
+        북마크_생성_요청(USER_FCM_TOKEN, "article_2");
+        북마크_생성_요청(USER_FCM_TOKEN, "depart_normal_article_1");
+
+        // when
+        var 북마크_조회_응답 = RestAssured
+                .given().log().all()
+                .header("User-Token", USER_FCM_TOKEN)
+                .when().get("/api/v2/users/bookmarks")
+                .then().log().all()
+                .extract();
+
+        // then
+        assertAll(
+                () -> assertThat(북마크_조회_응답.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(북마크_조회_응답.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("message")).isEqualTo("북마크 조회에 성공하였습니다"),
+                () -> assertThat(북마크_조회_응답.jsonPath().getList("data")).hasSize(3),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].articleId")).isNotBlank(),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].postedDate")).isNotBlank(),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].subject")).isNotBlank(),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].url")).isNotBlank(),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].subject")).isNotBlank()
+        );
     }
 }

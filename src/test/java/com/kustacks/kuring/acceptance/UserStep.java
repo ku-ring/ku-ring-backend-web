@@ -133,12 +133,12 @@ public class UserStep {
         );
     }
 
-    public static ExtractableResponse<Response> 북마크_요청(String token) {
+    public static ExtractableResponse<Response> 북마크_생성_요청(String token, String articleId) {
         return RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("User-Token", token)
-                .body(new SaveBookmarkRequest("article_1"))
+                .body(new SaveBookmarkRequest(articleId))
                 .when().post("/api/v2/users/bookmarks")
                 .then().log().all()
                 .extract();

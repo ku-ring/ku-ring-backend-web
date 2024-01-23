@@ -7,6 +7,8 @@ import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.message.firebase.ServerProperties;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
+import com.kustacks.kuring.notice.domain.NoticeRepository;
+import com.kustacks.kuring.user.common.dto.BookmarkDto;
 import com.kustacks.kuring.user.common.dto.SubscribeCompareResultDto;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
@@ -28,6 +30,7 @@ import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SU
 public class UserService {
 
     private final UserRepository userRepository;
+    private final NoticeRepository noticeRepository;
     private final FirebaseService firebaseService;
     private final ServerProperties serverProperties;
 
@@ -47,6 +50,13 @@ public class UserService {
     public List<FeedbackDto> lookupFeedbacks(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return userRepository.findAllFeedbackByPageRequest(pageRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookmarkDto> lookupUserBookmarkedNotices(String userToken) {
+        User user = findUserByToken(userToken);
+        List<String> bookmarkIds = user.lookupAllBookmarkIds();
+        return noticeRepository.findAllByBookmarkIds(bookmarkIds);
     }
 
     public void saveFeedback(String token, String content) {
