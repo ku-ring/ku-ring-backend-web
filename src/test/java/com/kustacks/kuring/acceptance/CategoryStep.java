@@ -7,7 +7,7 @@ import io.restassured.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import static com.kustacks.kuring.acceptance.AcceptanceTest.USER_FCM_TOKEN;
+import static com.kustacks.kuring.support.IntegrationTestSupport.USER_FCM_TOKEN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 

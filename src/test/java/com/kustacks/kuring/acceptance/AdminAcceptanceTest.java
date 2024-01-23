@@ -1,13 +1,12 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.admin.common.dto.RealNotificationRequest;
-import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.support.IntegrationTestSupport;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -20,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
 @DisplayName("인수 : 관리자")
-class AdminAcceptanceTest extends AcceptanceTest {
+class AdminAcceptanceTest extends IntegrationTestSupport {
 
     /**
      * given : 사전에 등록된 어드민가 피드백들이 이다

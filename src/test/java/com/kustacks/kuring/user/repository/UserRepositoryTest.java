@@ -1,7 +1,9 @@
-package com.kustacks.kuring.user.domain;
+package com.kustacks.kuring.user.repository;
 
-import com.kustacks.kuring.acceptance.AcceptanceTest;
+import com.kustacks.kuring.support.IntegrationTestSupport;
 import com.kustacks.kuring.admin.common.dto.FeedbackDto;
+import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
 
-class UserRepositoryTest extends AcceptanceTest {
+class UserRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
     private UserRepository userRepository;

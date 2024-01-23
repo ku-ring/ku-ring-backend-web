@@ -1,5 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
+import com.kustacks.kuring.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -9,7 +10,7 @@ import static com.kustacks.kuring.acceptance.AuthStep.로그인_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("인수 : 인증")
-class AuthAcceptanceTest extends AcceptanceTest {
+class AuthAcceptanceTest extends IntegrationTestSupport {
 
     @DisplayName("[v2] Bearer Auth login")
     @Test

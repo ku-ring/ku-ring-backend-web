@@ -1,6 +1,7 @@
-package com.kustacks.kuring.notice.domain;
+package com.kustacks.kuring.notice.repository;
 
-import com.kustacks.kuring.acceptance.AcceptanceTest;
+import com.kustacks.kuring.notice.domain.*;
+import com.kustacks.kuring.support.IntegrationTestSupport;
 import com.kustacks.kuring.user.common.dto.BookmarkDto;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.user.domain.UserRepository;
@@ -13,7 +14,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
-public class NoticeRepositoryTest extends AcceptanceTest {
+public class NoticeRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
     private NoticeRepository noticeRepository;

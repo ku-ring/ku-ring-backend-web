@@ -1,4 +1,4 @@
-package com.kustacks.kuring.tool;
+package com.kustacks.kuring.support;
 
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.domain.AdminRepository;

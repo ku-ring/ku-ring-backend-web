@@ -1,6 +1,7 @@
 package com.kustacks.kuring.acceptance;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
+import com.kustacks.kuring.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 
 @DisplayName("인수: 피드백")
-public class FeedbackAcceptanceTest extends AcceptanceTest {
+public class FeedbackAcceptanceTest extends IntegrationTestSupport {
 
     /**
      * Given : 사용자가 피드백 사항을 적는다
