@@ -35,11 +35,24 @@ public class User implements Serializable {
     @Embedded
     private Categories categories = new Categories();
 
+    @Embedded
+    private Bookmarks bookmarks = new Bookmarks();
+
     public User(String token) {
         this.token = token;
     }
 
-    public Long getId() {return id;}
+    public Long getId() {
+        return id;
+    }
+
+    public void addBookmark(String noticeId) {
+        this.bookmarks.add(noticeId);
+    }
+
+    public List<String> lookupAllBookmarkIds() {
+        return this.bookmarks.lookupAllId();
+    }
 
     public void addFeedback(String content) {
         this.feedbacks.add(new Feedback(content, this));

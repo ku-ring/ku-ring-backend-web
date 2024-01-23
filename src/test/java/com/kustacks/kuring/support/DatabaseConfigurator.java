@@ -1,4 +1,4 @@
-package com.kustacks.kuring.tool;
+package com.kustacks.kuring.support;
 
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.domain.AdminRepository;
@@ -22,7 +22,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -39,7 +38,6 @@ public class DatabaseConfigurator implements InitializingBean {
     private final UserRepository userRepository;
     private final StaffRepository staffRepository;
     private final AdminRepository adminRepository;
-    private final DepartmentNoticeRepository departmentNoticeRepository;
     private final DataSource dataSource;
     private final JdbcTemplate jdbcTemplate;
     private final PasswordEncoder passwordEncoder;
@@ -48,13 +46,11 @@ public class DatabaseConfigurator implements InitializingBean {
 
     public DatabaseConfigurator(NoticeRepository noticeRepository, UserRepository userRepository,
                                 StaffRepository staffRepository, AdminRepository adminRepository,
-                                DepartmentNoticeRepository departmentNoticeRepository,
                                 DataSource dataSource, JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
         this.noticeRepository = noticeRepository;
         this.userRepository = userRepository;
         this.staffRepository = staffRepository;
         this.adminRepository = adminRepository;
-        this.departmentNoticeRepository = departmentNoticeRepository;
         this.dataSource = dataSource;
         this.jdbcTemplate = jdbcTemplate;
         this.passwordEncoder = passwordEncoder;
@@ -153,11 +149,11 @@ public class DatabaseConfigurator implements InitializingBean {
         List<Notice> noticeList = buildNotices(5, CategoryName.STUDENT);
         noticeRepository.saveAll(noticeList);
 
-        List<DepartmentNotice> importantDeptNotices = buildDepartmentNotice(7, DepartmentName.COMPUTER, CategoryName.DEPARTMENT, true);
-        departmentNoticeRepository.saveAll(importantDeptNotices);
+        List<DepartmentNotice> importantDeptNotices = buildImportantDepartmentNotice(7, DepartmentName.COMPUTER, CategoryName.DEPARTMENT, true);
+        noticeRepository.saveAll(importantDeptNotices);
 
-        List<DepartmentNotice> normalDeptNotices = buildDepartmentNotice(5, DepartmentName.COMPUTER, CategoryName.DEPARTMENT, false);
-        departmentNoticeRepository.saveAll(normalDeptNotices);
+        List<DepartmentNotice> normalDeptNotices = buildNormalDepartmentNotice(5, DepartmentName.COMPUTER, CategoryName.DEPARTMENT, false);
+        noticeRepository.saveAll(normalDeptNotices);
     }
 
     private void initStaff() {
@@ -165,10 +161,17 @@ public class DatabaseConfigurator implements InitializingBean {
         staffRepository.saveAll(staffList);
     }
 
-    private List<DepartmentNotice> buildDepartmentNotice(int cnt, DepartmentName departmentName, CategoryName categoryName, boolean important) {
+    private List<DepartmentNotice> buildImportantDepartmentNotice(int cnt, DepartmentName departmentName, CategoryName categoryName, boolean important) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new DepartmentNotice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName))
+                .map(i -> new DepartmentNotice("depart_import_article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName))
+                .toList();
+    }
+
+    private List<DepartmentNotice> buildNormalDepartmentNotice(int cnt, DepartmentName departmentName, CategoryName categoryName, boolean important) {
+        return Stream.iterate(0, i -> i + 1)
+                .limit(cnt)
+                .map(i -> new DepartmentNotice("depart_normal_article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName))
                 .toList();
     }
 

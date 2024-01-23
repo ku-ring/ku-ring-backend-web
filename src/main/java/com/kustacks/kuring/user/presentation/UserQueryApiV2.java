@@ -3,6 +3,7 @@ package com.kustacks.kuring.user.presentation;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.notice.common.dto.CategoryNameDto;
 import com.kustacks.kuring.notice.common.dto.DepartmentNameDto;
+import com.kustacks.kuring.user.common.dto.BookmarkDto;
 import com.kustacks.kuring.user.facade.UserQueryFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_USER_SUBSCRIBES_LOOKUP_SUCCESS;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_USER_SUBSCRIBES_LOOKUP_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
 
 @Slf4j
 @Validated
@@ -40,5 +40,11 @@ public class UserQueryApiV2 {
     public ResponseEntity<BaseResponse<List<DepartmentNameDto>>> lookupUserSubscribeDepartments(@RequestHeader(USER_TOKEN_HEADER_KEY) String id) {
         List<DepartmentNameDto> departmentNameDtos = userQueryFacade.lookupSubscribeDepartments(id);
         return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_USER_SUBSCRIBES_LOOKUP_SUCCESS, departmentNameDtos));
+    }
+
+    @GetMapping("/bookmarks")
+    public ResponseEntity<BaseResponse<List<BookmarkDto>>> lookupUserBookmarks(@RequestHeader(USER_TOKEN_HEADER_KEY) String id) {
+        List<BookmarkDto> bookmarkedDtos = userQueryFacade.lookupUserBookmarkedNotices(id);
+        return ResponseEntity.ok().body(new BaseResponse<>(BOOKMARK_LOOKUP_SUCCESS, bookmarkedDtos));
     }
 }

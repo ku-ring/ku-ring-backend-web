@@ -1,6 +1,7 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.auth.dto.UserRegisterRequest;
+import com.kustacks.kuring.user.common.dto.SaveBookmarkRequest;
 import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
 import com.kustacks.kuring.user.common.dto.SubscribeDepartmentsRequest;
 import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;
@@ -122,5 +123,48 @@ public class UserStep {
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("피드백 저장에 성공하였습니다")
         );
+    }
+
+    public static void 북마크_응답_확인(ExtractableResponse<Response> response, HttpStatus status) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(status.value()),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("북마크 저장에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getList("data")).isNull()
+        );
+    }
+
+    public static ExtractableResponse<Response> 북마크_생성_요청(String token, String articleId) {
+        return RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", token)
+                .body(new SaveBookmarkRequest(articleId))
+                .when().post("/api/v2/users/bookmarks")
+                .then().log().all()
+                .extract();
+    }
+
+
+    public static void 북마크_조회_응답_확인(ExtractableResponse<Response> 북마크_조회_응답) {
+        assertAll(
+                () -> assertThat(북마크_조회_응답.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(북마크_조회_응답.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("message")).isEqualTo("북마크 조회에 성공하였습니다"),
+                () -> assertThat(북마크_조회_응답.jsonPath().getList("data")).hasSize(3),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].articleId")).isNotBlank(),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].postedDate")).isNotBlank(),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].subject")).isNotBlank(),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].url")).isNotBlank(),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].subject")).isNotBlank()
+        );
+    }
+
+    public static ExtractableResponse<Response> 북마크한_공지_조회_요청(String userToken) {
+        return RestAssured
+                .given().log().all()
+                .header("User-Token", userToken)
+                .when().get("/api/v2/users/bookmarks")
+                .then().log().all()
+                .extract();
     }
 }
