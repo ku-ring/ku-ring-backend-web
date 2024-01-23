@@ -38,6 +38,7 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    environment: TestServer
 
     steps:
       # (1) 기본 체크아웃
