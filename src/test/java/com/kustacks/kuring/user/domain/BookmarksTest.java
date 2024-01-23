@@ -8,11 +8,11 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class BookmarksTest {
+class BookmarksTest {
 
     @DisplayName("사용자는 원하는 공지를 북마크 할 수 있다")
     @Test
-    public void add() {
+    void add() {
         // given
         User user = new User("token");
         String noticeId = "1234";
@@ -24,7 +24,7 @@ public class BookmarksTest {
 
     @DisplayName("사용자는 원하는 공지를 북마크 할 수 있다")
     @Test
-    public void lookup_all_bookmark_ids() {
+    void lookup_all_bookmark_ids() {
         // given
         User user = new User("token");
         user.addBookmark("1");
@@ -42,7 +42,7 @@ public class BookmarksTest {
 
     @DisplayName("사용자는 공지를 10개까지 북마크 할 수 있다")
     @Test
-    public void user_bookmark_limit() {
+    void user_bookmark_limit() {
         // given
         User user = new User("token");
         for(int i = 1; i <= 10; i++) user.addBookmark(String.valueOf(i));

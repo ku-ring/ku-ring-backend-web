@@ -17,7 +17,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
 @DisplayName("인수 : 카테고리")
-public class CategoryAcceptanceTest extends IntegrationTestSupport {
+class CategoryAcceptanceTest extends IntegrationTestSupport {
 
     /**
      * Given : 쿠링앱을 실행한다

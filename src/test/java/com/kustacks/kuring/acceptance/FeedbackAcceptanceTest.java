@@ -13,7 +13,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 
 @DisplayName("인수: 피드백")
-public class FeedbackAcceptanceTest extends IntegrationTestSupport {
+class FeedbackAcceptanceTest extends IntegrationTestSupport {
 
     /**
      * Given : 사용자가 피드백 사항을 적는다

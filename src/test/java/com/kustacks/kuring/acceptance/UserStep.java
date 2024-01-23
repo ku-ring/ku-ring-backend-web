@@ -143,4 +143,28 @@ public class UserStep {
                 .then().log().all()
                 .extract();
     }
+
+
+    public static void 북마크_조회_응답_확인(ExtractableResponse<Response> 북마크_조회_응답) {
+        assertAll(
+                () -> assertThat(북마크_조회_응답.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(북마크_조회_응답.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("message")).isEqualTo("북마크 조회에 성공하였습니다"),
+                () -> assertThat(북마크_조회_응답.jsonPath().getList("data")).hasSize(3),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].articleId")).isNotBlank(),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].postedDate")).isNotBlank(),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].subject")).isNotBlank(),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].url")).isNotBlank(),
+                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].subject")).isNotBlank()
+        );
+    }
+
+    public static ExtractableResponse<Response> 북마크한_공지_조회_요청(String userToken) {
+        return RestAssured
+                .given().log().all()
+                .header("User-Token", userToken)
+                .when().get("/api/v2/users/bookmarks")
+                .then().log().all()
+                .extract();
+    }
 }

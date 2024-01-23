@@ -3,7 +3,6 @@ package com.kustacks.kuring.acceptance;
 import com.kustacks.kuring.auth.exception.RegisterException;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
-import io.restassured.RestAssured;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -14,7 +13,6 @@ import java.util.List;
 import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -192,24 +190,9 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         북마크_생성_요청(USER_FCM_TOKEN, "depart_normal_article_1");
 
         // when
-        var 북마크_조회_응답 = RestAssured
-                .given().log().all()
-                .header("User-Token", USER_FCM_TOKEN)
-                .when().get("/api/v2/users/bookmarks")
-                .then().log().all()
-                .extract();
+        var 북마크_조회_응답 = 북마크한_공지_조회_요청(USER_FCM_TOKEN);
 
         // then
-        assertAll(
-                () -> assertThat(북마크_조회_응답.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(북마크_조회_응답.jsonPath().getInt("code")).isEqualTo(200),
-                () -> assertThat(북마크_조회_응답.jsonPath().getString("message")).isEqualTo("북마크 조회에 성공하였습니다"),
-                () -> assertThat(북마크_조회_응답.jsonPath().getList("data")).hasSize(3),
-                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].articleId")).isNotBlank(),
-                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].postedDate")).isNotBlank(),
-                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].subject")).isNotBlank(),
-                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].url")).isNotBlank(),
-                () -> assertThat(북마크_조회_응답.jsonPath().getString("data[].subject")).isNotBlank()
-        );
+        북마크_조회_응답_확인(북마크_조회_응답);
     }
 }

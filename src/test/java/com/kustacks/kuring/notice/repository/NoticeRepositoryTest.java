@@ -14,7 +14,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
-public class NoticeRepositoryTest extends IntegrationTestSupport {
+class NoticeRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
     private NoticeRepository noticeRepository;
@@ -27,7 +27,7 @@ public class NoticeRepositoryTest extends IntegrationTestSupport {
 
     @DisplayName("사용자가 북마크해둔 공지의 ID로 해당 공지들을 찾아올 수 있다")
     @Test
-    public void lookupAllNoticeByIds() {
+    void lookupAllNoticeByIds() {
         // given
         Notice notice1 = new Notice("1", "2024-01-19", "updatedDate",
                 "notice1", CategoryName.BACHELOR, false, "https://www.example.com");

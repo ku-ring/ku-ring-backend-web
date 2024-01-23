@@ -22,7 +22,7 @@ class UserRepositoryTest extends IntegrationTestSupport {
 
     @DisplayName("사용자가 작성한 피드백을 페이징 처리하여 가져올 수 있다")
     @Test
-    public void findAllFeedbackByPageRequest() {
+    void findAllFeedbackByPageRequest() {
         // given
         User user = new User("user_token");
         user.addFeedback("content1");
