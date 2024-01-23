@@ -4,6 +4,8 @@ import com.kustacks.kuring.auth.exception.RegisterException;
 import com.kustacks.kuring.user.common.dto.SaveBookmarkRequest;
 import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
 import io.restassured.RestAssured;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -172,20 +174,9 @@ class UserAcceptanceTest extends AcceptanceTest {
         doNothing().when(firebaseService).validationToken(anyString());
 
         // when
-        var response = RestAssured
-                .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("User-Token", USER_FCM_TOKEN)
-                .body(new SaveBookmarkRequest("article_1"))
-                .when().post("/api/v2/users/bookmarks")
-                .then().log().all()
-                .extract();
+        var 북마크_응답 = 북마크_요청(USER_FCM_TOKEN);
 
-        // then성
-        assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("북마크 저장에 성공하였습니다"),
-                () -> assertThat(response.jsonPath().getList("data")).isNull()
-        );
+        // then
+        북마크_응답_확인(북마크_응답, HttpStatus.OK);
     }
 }

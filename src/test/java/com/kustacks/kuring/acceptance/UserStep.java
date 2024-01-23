@@ -1,6 +1,7 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.auth.dto.UserRegisterRequest;
+import com.kustacks.kuring.user.common.dto.SaveBookmarkRequest;
 import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
 import com.kustacks.kuring.user.common.dto.SubscribeDepartmentsRequest;
 import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;
@@ -122,5 +123,24 @@ public class UserStep {
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("피드백 저장에 성공하였습니다")
         );
+    }
+
+    public static void 북마크_응답_확인(ExtractableResponse<Response> response, HttpStatus status) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(status.value()),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("북마크 저장에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getList("data")).isNull()
+        );
+    }
+
+    public static ExtractableResponse<Response> 북마크_요청(String token) {
+        return RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", token)
+                .body(new SaveBookmarkRequest("article_1"))
+                .when().post("/api/v2/users/bookmarks")
+                .then().log().all()
+                .extract();
     }
 }
