@@ -1,5 +1,6 @@
 package com.kustacks.kuring.user.application.service;
 
+import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.firebase.FirebaseService;
@@ -17,7 +18,6 @@ import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.Optional;
 import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
 
 @Slf4j
-@Service
+@UseCase
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 class UserQueryService implements UserQueryUseCase {

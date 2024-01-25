@@ -1,5 +1,6 @@
 package com.kustacks.kuring.user.application.service;
 
+import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.firebase.FirebaseService;
@@ -9,14 +10,13 @@ import com.kustacks.kuring.message.firebase.exception.FirebaseUnSubscribeExcepti
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
-import com.kustacks.kuring.user.application.port.in.*;
+import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
 import com.kustacks.kuring.user.application.port.in.dto.*;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.worker.event.Events;
 import com.kustacks.kuring.worker.event.SubscribedRollbackEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.Optional;
 import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
 
 @Slf4j
-@Service
+@UseCase
 @Transactional
 @RequiredArgsConstructor
 class UserCommandService implements UserCommandUseCase {
