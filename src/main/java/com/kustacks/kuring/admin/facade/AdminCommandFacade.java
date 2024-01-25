@@ -12,7 +12,7 @@ import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.message.firebase.ServerProperties;
 import com.kustacks.kuring.notice.domain.CategoryName;
-import com.kustacks.kuring.user.domain.UserRepository;
+import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,7 +34,7 @@ public class AdminCommandFacade {
     private final NoticeProperties noticeProperties;
     private final AdminDetailsService adminDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    private final UserPersistenceAdapter userPersistenceAdapter;
     private final ServerProperties serverProperties;
 
     public void createTestNotice(TestNotificationRequest request) {
@@ -73,7 +73,7 @@ public class AdminCommandFacade {
         String topic = serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC);
 
         FirebaseMessaging instance = FirebaseMessaging.getInstance();
-        List<String> allToken = userRepository.findAllToken();
+        List<String> allToken = userPersistenceAdapter.findAllToken();
 
         int size = allToken.size();
         for(int i = 0; i < size; i += 500) {

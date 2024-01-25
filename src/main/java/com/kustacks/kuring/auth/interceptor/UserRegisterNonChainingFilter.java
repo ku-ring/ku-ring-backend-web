@@ -7,8 +7,8 @@ import com.kustacks.kuring.auth.handler.AuthenticationFailureHandler;
 import com.kustacks.kuring.auth.handler.AuthenticationSuccessHandler;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.message.firebase.ServerProperties;
+import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -26,7 +26,7 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
 
     private final ServerProperties serverProperties;
     private final FirebaseService firebaseService;
-    private final UserRepository userRepository;
+    private final UserCommandPort userCommandPort;
     private final ObjectMapper objectMapper;
     private final AuthenticationSuccessHandler successHandler;
     private final AuthenticationFailureHandler failureHandler;
@@ -49,7 +49,7 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
     }
 
     private void register(String userFcmToken) {
-        userRepository.save(new User(userFcmToken));
+        userCommandPort.save(new User(userFcmToken));
         firebaseService.subscribe(userFcmToken, serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
     }
 

@@ -6,8 +6,8 @@ import com.kustacks.kuring.admin.domain.AdminRole;
 import com.kustacks.kuring.notice.domain.*;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.domain.StaffRepository;
+import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -35,7 +35,7 @@ public class DatabaseConfigurator implements InitializingBean {
     protected static final String ADMIN_CLIENT_PASSWORD = "client_password";
 
     private final NoticeRepository noticeRepository;
-    private final UserRepository userRepository;
+    private final UserPersistenceAdapter userPersistenceAdapter;
     private final StaffRepository staffRepository;
     private final AdminRepository adminRepository;
     private final DataSource dataSource;
@@ -44,11 +44,11 @@ public class DatabaseConfigurator implements InitializingBean {
 
     private List<String> tableNames;
 
-    public DatabaseConfigurator(NoticeRepository noticeRepository, UserRepository userRepository,
+    public DatabaseConfigurator(NoticeRepository noticeRepository, UserPersistenceAdapter userPersistenceAdapter,
                                 StaffRepository staffRepository, AdminRepository adminRepository,
                                 DataSource dataSource, JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
         this.noticeRepository = noticeRepository;
-        this.userRepository = userRepository;
+        this.userPersistenceAdapter = userPersistenceAdapter;
         this.staffRepository = staffRepository;
         this.adminRepository = adminRepository;
         this.dataSource = dataSource;
@@ -133,11 +133,11 @@ public class DatabaseConfigurator implements InitializingBean {
 
     private void initUser() {
         User newUser = new User(USER_FCM_TOKEN);
-        userRepository.save(newUser);
+        userPersistenceAdapter.save(newUser);
     }
 
     private void initFeedback() {
-        User findUser = userRepository.findByToken(USER_FCM_TOKEN).get();
+        User findUser = userPersistenceAdapter.findByToken(USER_FCM_TOKEN).get();
         findUser.addFeedback("test feedback 1");
         findUser.addFeedback("test feedback 2");
         findUser.addFeedback("test feedback 3");

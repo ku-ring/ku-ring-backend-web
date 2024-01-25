@@ -2,9 +2,9 @@ package com.kustacks.kuring.notice.repository;
 
 import com.kustacks.kuring.notice.domain.*;
 import com.kustacks.kuring.support.IntegrationTestSupport;
-import com.kustacks.kuring.user.common.dto.BookmarkDto;
+import com.kustacks.kuring.user.application.port.out.dto.BookmarkDto;
+import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
     private NoticeJdbcRepository noticeJdbcRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserPersistenceAdapter userPersistenceAdapter;
 
     @DisplayName("사용자가 북마크해둔 공지의 ID로 해당 공지들을 찾아올 수 있다")
     @Test
@@ -47,7 +47,7 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
         user.addBookmark(departmentNotice1.getArticleId());
         user.addBookmark(departmentNotice2.getArticleId());
 
-        User savedUser = userRepository.save(user);
+        User savedUser = userPersistenceAdapter.save(user);
         List<String> ids = savedUser.lookupAllBookmarkIds();
 
         // when

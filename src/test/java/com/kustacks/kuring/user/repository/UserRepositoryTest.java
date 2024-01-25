@@ -1,9 +1,9 @@
 package com.kustacks.kuring.user.repository;
 
-import com.kustacks.kuring.support.IntegrationTestSupport;
 import com.kustacks.kuring.admin.common.dto.FeedbackDto;
+import com.kustacks.kuring.support.IntegrationTestSupport;
+import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import static org.assertj.core.groups.Tuple.tuple;
 class UserRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserPersistenceAdapter userPersistenceAdapter;
 
     @DisplayName("사용자가 작성한 피드백을 페이징 처리하여 가져올 수 있다")
     @Test
@@ -29,11 +29,11 @@ class UserRepositoryTest extends IntegrationTestSupport {
         user.addFeedback("content2");
         user.addFeedback("content3");
 
-        User savedUser = userRepository.save(user);
+        User savedUser = userPersistenceAdapter.save(user);
         Long userId = savedUser.getId();
 
         // when
-        List<FeedbackDto> feedbackDtos = userRepository.findAllFeedbackByPageRequest(PageRequest.of(0, 3));
+        List<FeedbackDto> feedbackDtos = userPersistenceAdapter.findAllFeedbackByPageRequest(PageRequest.of(0, 3));
 
         // then
         assertThat(feedbackDtos).hasSize(3)

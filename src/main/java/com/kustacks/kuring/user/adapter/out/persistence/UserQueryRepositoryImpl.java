@@ -1,4 +1,4 @@
-package com.kustacks.kuring.user.domain;
+package com.kustacks.kuring.user.adapter.out.persistence;
 
 import com.kustacks.kuring.admin.common.dto.FeedbackDto;
 import com.kustacks.kuring.admin.common.dto.QFeedbackDto;
@@ -11,7 +11,7 @@ import java.util.List;
 import static com.kustacks.kuring.user.domain.QFeedback.feedback;
 
 @RequiredArgsConstructor
-public class UserQueryRepositoryImpl implements UserQueryRepository {
+class UserQueryRepositoryImpl implements UserQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 

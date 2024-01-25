@@ -1,11 +1,15 @@
-package com.kustacks.kuring.user.presentation;
+package com.kustacks.kuring.user.adapter.in.web;
 
 import com.kustacks.kuring.common.dto.BaseResponse;
-import com.kustacks.kuring.user.common.dto.SaveBookmarkRequest;
-import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;
-import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
-import com.kustacks.kuring.user.common.dto.SubscribeDepartmentsRequest;
-import com.kustacks.kuring.user.facade.UserCommandFacade;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserBookmarkRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserFeedbackRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserDepartmentsSubscribeRequest;
+import com.kustacks.kuring.user.application.port.in.*;
+import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserFeedbackCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserDepartmentsSubscribeCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -22,45 +26,45 @@ import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v2/users", produces = MediaType.APPLICATION_JSON_VALUE)
-public class UserCommandApiV2 {
+class UserCommandApiV2 {
 
     private static final String USER_TOKEN_HEADER_KEY = "User-Token";
 
-    private final UserCommandFacade userCommandFacade;
+    private final UserCommandUseCase userCommandService;
 
     @PostMapping(value = "/subscriptions/categories", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BaseResponse<Void>> editUserSubscribeCategories(
-            @Valid @RequestBody SubscribeCategoriesRequest request,
+            @Valid @RequestBody UserCategoriesSubscribeRequest request,
             @RequestHeader(USER_TOKEN_HEADER_KEY) String id
     ) {
-        userCommandFacade.editSubscribeCategories(id, request.getCategories());
+        userCommandService.editSubscribeCategories(new UserCategoriesSubscribeCommand(id, request.categories()));
         return ResponseEntity.ok().body(new BaseResponse<>(CATEGORY_SUBSCRIBE_SUCCESS, null));
     }
 
     @PostMapping(value = "/subscriptions/departments", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BaseResponse<Void>> editUserSubscribeDepartments(
-            @Valid @RequestBody SubscribeDepartmentsRequest request,
+            @Valid @RequestBody UserDepartmentsSubscribeRequest request,
             @RequestHeader(USER_TOKEN_HEADER_KEY) String id
     ) {
-        userCommandFacade.editSubscribeDepartments(id, request.getDepartments());
+        userCommandService.editSubscribeDepartments(new UserDepartmentsSubscribeCommand(id, request.departments()));
         return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_SUBSCRIBE_SUCCESS, null));
     }
 
     @PostMapping("/feedbacks")
     public ResponseEntity<BaseResponse<Void>> saveFeedback(
-            @Valid @RequestBody SaveFeedbackRequest request,
+            @Valid @RequestBody UserFeedbackRequest request,
             @RequestHeader(USER_TOKEN_HEADER_KEY) String id
     ) {
-        userCommandFacade.saveFeedback(id, request.getContent());
+        userCommandService.saveFeedback(new UserFeedbackCommand(id, request.content()));
         return ResponseEntity.ok().body(new BaseResponse<>(FEEDBACK_SAVE_SUCCESS, null));
     }
 
     @PostMapping("/bookmarks")
     public ResponseEntity<BaseResponse<Void>> saveBookmark(
-            @Valid @RequestBody SaveBookmarkRequest request,
+            @Valid @RequestBody UserBookmarkRequest request,
             @RequestHeader(USER_TOKEN_HEADER_KEY) String id
     ) {
-        userCommandFacade.saveBookmark(id, request.getArticleId());
+        userCommandService.saveBookmark(new UserBookmarkCommand(id, request.articleId()));
         return ResponseEntity.ok().body(new BaseResponse<>(BOOKMAKR_SAVE_SUCCESS, null));
     }
 }

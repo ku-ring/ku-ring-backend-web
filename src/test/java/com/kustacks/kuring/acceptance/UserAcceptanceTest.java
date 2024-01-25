@@ -2,7 +2,7 @@ package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.auth.exception.RegisterException;
 import com.kustacks.kuring.support.IntegrationTestSupport;
-import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -61,7 +61,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         doNothing().when(firebaseService).subscribe(anyString(), anyString());
 
         // when
-        var 카테고리_구독_요청_응답 = 카테고리_구독_요청(USER_FCM_TOKEN, new SubscribeCategoriesRequest(List.of("student", "employment")));
+        var 카테고리_구독_요청_응답 = 카테고리_구독_요청(USER_FCM_TOKEN, new UserCategoriesSubscribeRequest(List.of("student", "employment")));
 
         // then
         카테고리_구독_요청_응답_확인(카테고리_구독_요청_응답);
@@ -77,7 +77,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     void look_up_user_subscribe_category() {
         // given
         doNothing().when(firebaseService).validationToken(anyString());
-        카테고리_구독_요청(USER_FCM_TOKEN, new SubscribeCategoriesRequest(List.of("student", "employment")));
+        카테고리_구독_요청(USER_FCM_TOKEN, new UserCategoriesSubscribeRequest(List.of("student", "employment")));
 
         // when
         var 조회_응답 = 사용자_카테고리_구독_목록_조회_요청(USER_FCM_TOKEN);

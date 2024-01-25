@@ -11,7 +11,7 @@ import com.kustacks.kuring.auth.interceptor.UserRegisterNonChainingFilter;
 import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.message.firebase.ServerProperties;
-import com.kustacks.kuring.user.domain.UserRepository;
+import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +31,7 @@ public class AuthConfig implements WebMvcConfigurer {
     private final ObjectMapper objectMapper;
     private final ServerProperties serverProperties;
     private final FirebaseService firebaseService;
-    private final UserRepository userRepository;
+    private final UserPersistenceAdapter userPersistenceAdapter;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -43,7 +43,7 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/v2/admin/login");
 
         registry.addInterceptor(new UserRegisterNonChainingFilter(
-                        serverProperties, firebaseService, userRepository, objectMapper,
+                        serverProperties, firebaseService, userPersistenceAdapter, objectMapper,
                         userRegisterSuccessHandler(), userRegisterFailureHandler()))
                 .addPathPatterns("/api/v2/users");
 

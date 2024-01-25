@@ -2,7 +2,7 @@ package com.kustacks.kuring.notice.domain;
 
 import com.kustacks.kuring.notice.common.dto.NoticeDto;
 import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
-import com.kustacks.kuring.user.common.dto.BookmarkDto;
+import com.kustacks.kuring.user.application.port.out.dto.BookmarkDto;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

@@ -1,10 +1,10 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.auth.dto.UserRegisterRequest;
-import com.kustacks.kuring.user.common.dto.SaveBookmarkRequest;
-import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
-import com.kustacks.kuring.user.common.dto.SubscribeDepartmentsRequest;
-import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserBookmarkRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserDepartmentsSubscribeRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserFeedbackRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -27,7 +27,7 @@ public class UserStep {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 카테고리_구독_요청(String token, SubscribeCategoriesRequest reqeust) {
+    public static ExtractableResponse<Response> 카테고리_구독_요청(String token, UserCategoriesSubscribeRequest reqeust) {
         return RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -72,7 +72,7 @@ public class UserStep {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .header("User-Token", token)
-                .body(new SubscribeDepartmentsRequest(departments))
+                .body(new UserDepartmentsSubscribeRequest(departments))
                 .when().post("/api/v2/users/subscriptions/departments")
                 .then().log().all()
                 .extract();
@@ -111,7 +111,7 @@ public class UserStep {
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("User-Token", token)
-                .body(new SaveFeedbackRequest(feedback))
+                .body(new UserFeedbackRequest(feedback))
                 .when().post("/api/v2/users/feedbacks")
                 .then().log().all()
                 .extract();
@@ -138,7 +138,7 @@ public class UserStep {
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("User-Token", token)
-                .body(new SaveBookmarkRequest(articleId))
+                .body(new UserBookmarkRequest(articleId))
                 .when().post("/api/v2/users/bookmarks")
                 .then().log().all()
                 .extract();
