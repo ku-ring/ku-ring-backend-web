@@ -32,14 +32,14 @@ class UserCommandApiV2 {
 
     private static final String USER_TOKEN_HEADER_KEY = "User-Token";
 
-    private final UserCommandUseCase userCommandService;
+    private final UserCommandUseCase userCommandUseCase;
 
     @PostMapping(value = "/subscriptions/categories", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BaseResponse<Void>> editUserSubscribeCategories(
             @Valid @RequestBody UserCategoriesSubscribeRequest request,
             @RequestHeader(USER_TOKEN_HEADER_KEY) String id
     ) {
-        userCommandService.editSubscribeCategories(new UserCategoriesSubscribeCommand(id, request.categories()));
+        userCommandUseCase.editSubscribeCategories(new UserCategoriesSubscribeCommand(id, request.categories()));
         return ResponseEntity.ok().body(new BaseResponse<>(CATEGORY_SUBSCRIBE_SUCCESS, null));
     }
 
@@ -48,7 +48,7 @@ class UserCommandApiV2 {
             @Valid @RequestBody UserDepartmentsSubscribeRequest request,
             @RequestHeader(USER_TOKEN_HEADER_KEY) String id
     ) {
-        userCommandService.editSubscribeDepartments(new UserDepartmentsSubscribeCommand(id, request.departments()));
+        userCommandUseCase.editSubscribeDepartments(new UserDepartmentsSubscribeCommand(id, request.departments()));
         return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_SUBSCRIBE_SUCCESS, null));
     }
 
@@ -57,7 +57,7 @@ class UserCommandApiV2 {
             @Valid @RequestBody UserFeedbackRequest request,
             @RequestHeader(USER_TOKEN_HEADER_KEY) String id
     ) {
-        userCommandService.saveFeedback(new UserFeedbackCommand(id, request.content()));
+        userCommandUseCase.saveFeedback(new UserFeedbackCommand(id, request.content()));
         return ResponseEntity.ok().body(new BaseResponse<>(FEEDBACK_SAVE_SUCCESS, null));
     }
 
@@ -66,7 +66,7 @@ class UserCommandApiV2 {
             @Valid @RequestBody UserBookmarkRequest request,
             @RequestHeader(USER_TOKEN_HEADER_KEY) String id
     ) {
-        userCommandService.saveBookmark(new UserBookmarkCommand(id, request.articleId()));
+        userCommandUseCase.saveBookmark(new UserBookmarkCommand(id, request.articleId()));
         return ResponseEntity.ok().body(new BaseResponse<>(BOOKMAKR_SAVE_SUCCESS, null));
     }
 }

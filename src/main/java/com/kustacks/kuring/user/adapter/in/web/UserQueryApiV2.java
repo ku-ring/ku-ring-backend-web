@@ -25,13 +25,13 @@ class UserQueryApiV2 {
 
     private static final String USER_TOKEN_HEADER_KEY = "User-Token";
 
-    private final UserQueryUseCase userQueryService;
+    private final UserQueryUseCase userQueryUseCase;
 
     @GetMapping("/subscriptions/categories")
     public ResponseEntity<BaseResponse<List<UserCategoryNameResponse>>> lookupUserSubscribeCategories(
             @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken
     ) {
-        List<UserCategoryNameResponse> responses = userQueryService.lookupSubscribeCategories(userToken)
+        List<UserCategoryNameResponse> responses = userQueryUseCase.lookupSubscribeCategories(userToken)
                 .stream()
                 .map(UserCategoryNameResponse::from)
                 .toList();
@@ -43,7 +43,7 @@ class UserQueryApiV2 {
     public ResponseEntity<BaseResponse<List<UserDepartmentNameResponse>>> lookupUserSubscribeDepartments(
             @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken
     ) {
-        List<UserDepartmentNameResponse> responses = userQueryService.lookupSubscribeDepartments(userToken)
+        List<UserDepartmentNameResponse> responses = userQueryUseCase.lookupSubscribeDepartments(userToken)
                 .stream()
                 .map(UserDepartmentNameResponse::from)
                 .toList();
@@ -55,7 +55,7 @@ class UserQueryApiV2 {
     public ResponseEntity<BaseResponse<List<UserBookmarkResponse>>> lookupUserBookmarks(
             @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken
     ) {
-        List<UserBookmarkResponse> responses = userQueryService.lookupUserBookmarkedNotices(userToken)
+        List<UserBookmarkResponse> responses = userQueryUseCase.lookupUserBookmarkedNotices(userToken)
                 .stream()
                 .map(UserBookmarkResponse::from)
                 .toList();
