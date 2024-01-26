@@ -8,12 +8,13 @@ import com.kustacks.kuring.message.firebase.ServerProperties;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.NoticeRepository;
-import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import com.kustacks.kuring.user.application.port.in.UserQueryUseCase;
 import com.kustacks.kuring.user.application.port.in.dto.AdminFeedbacksResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoryNameResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserDepartmentNameResult;
+import com.kustacks.kuring.user.application.port.out.UserCommandPort;
+import com.kustacks.kuring.user.application.port.out.UserQueryPort;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,9 @@ import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SU
 @RequiredArgsConstructor
 class UserQueryService implements UserQueryUseCase {
 
-    private final UserPersistenceAdapter userPersistenceAdapter;
-    private final NoticeRepository noticeRepository;
+    private final UserCommandPort userCommandPort;
+    private final UserQueryPort userQueryPort;
+    private final NoticeRepository noticeRepository; // TODO : 향후 noticeCommandAdapter로 추출하기
     private final FirebaseService firebaseService;
     private final ServerProperties serverProperties;
 
@@ -53,7 +55,7 @@ class UserQueryService implements UserQueryUseCase {
     @Override
     public List<AdminFeedbacksResult> lookupFeedbacks(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        return userPersistenceAdapter.findAllFeedbackByPageRequest(pageRequest)
+        return userQueryPort.findAllFeedbackByPageRequest(pageRequest)
                 .stream()
                 .map(AdminFeedbacksResult::from)
                 .toList();
@@ -76,9 +78,9 @@ class UserQueryService implements UserQueryUseCase {
     }
 
     private User findUserByToken(String token) {
-        Optional<User> optionalUser = userPersistenceAdapter.findByToken(token);
+        Optional<User> optionalUser = userQueryPort.findByToken(token);
         if (optionalUser.isEmpty()) {
-            optionalUser = Optional.of(userPersistenceAdapter.save(new User(token)));
+            optionalUser = Optional.of(userCommandPort.save(new User(token)));
             firebaseService.subscribe(token, serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
         }
 

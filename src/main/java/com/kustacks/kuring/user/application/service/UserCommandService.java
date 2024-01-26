@@ -9,9 +9,10 @@ import com.kustacks.kuring.message.firebase.exception.FirebaseSubscribeException
 import com.kustacks.kuring.message.firebase.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
 import com.kustacks.kuring.user.application.port.in.dto.*;
+import com.kustacks.kuring.user.application.port.out.UserCommandPort;
+import com.kustacks.kuring.user.application.port.out.UserQueryPort;
 import com.kustacks.kuring.user.domain.User;
 import com.kustacks.kuring.worker.event.Events;
 import com.kustacks.kuring.worker.event.SubscribedRollbackEvent;
@@ -30,7 +31,8 @@ import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SU
 @RequiredArgsConstructor
 class UserCommandService implements UserCommandUseCase {
 
-    private final UserPersistenceAdapter userPersistenceAdapter;
+    private final UserCommandPort userCommandPort;
+    private final UserQueryPort userQueryPort;
     private final FirebaseService firebaseService;
     private final ServerProperties serverProperties;
 
@@ -200,9 +202,9 @@ class UserCommandService implements UserCommandUseCase {
     }
 
     private User findUserByToken(String token) {
-        Optional<User> optionalUser = userPersistenceAdapter.findByToken(token);
+        Optional<User> optionalUser = userQueryPort.findByToken(token);
         if (optionalUser.isEmpty()) {
-            optionalUser = Optional.of(userPersistenceAdapter.save(new User(token)));
+            optionalUser = Optional.of(userCommandPort.save(new User(token)));
             firebaseService.subscribe(token, serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
         }
 
