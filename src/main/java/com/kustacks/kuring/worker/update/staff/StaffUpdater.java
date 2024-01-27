@@ -1,9 +1,9 @@
 package com.kustacks.kuring.worker.update.staff;
 
-import com.kustacks.kuring.staff.common.dto.StaffDto;
+import com.kustacks.kuring.worker.update.staff.dto.StaffDto;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.staff.domain.Staff;
-import com.kustacks.kuring.staff.domain.StaffRepository;
+import com.kustacks.kuring.staff.adapter.out.persistence.StaffRepository;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import lombok.extern.slf4j.Slf4j;

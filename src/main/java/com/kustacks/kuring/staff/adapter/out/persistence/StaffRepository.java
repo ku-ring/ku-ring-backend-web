@@ -1,16 +1,13 @@
-package com.kustacks.kuring.staff.domain;
+package com.kustacks.kuring.staff.adapter.out.persistence;
 
+import com.kustacks.kuring.staff.domain.Staff;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public interface StaffRepository extends JpaRepository<Staff, Long>, StaffQueryRepository {
-    default Map<String, Staff> findAllMap() {
-        return findAll().stream().collect(Collectors.toMap(Staff::getEmail, v -> v));
-    }
 
     default Map<String, Staff> findByDeptContainingMap(List<String> deptNames) {
 
@@ -29,6 +26,4 @@ public interface StaffRepository extends JpaRepository<Staff, Long>, StaffQueryR
     }
 
     List<Staff> findByDeptContaining(String deptName);
-
-    List<Staff> findByNameContainingOrDeptContainingOrCollegeContaining(String name, String dept, String college);
 }

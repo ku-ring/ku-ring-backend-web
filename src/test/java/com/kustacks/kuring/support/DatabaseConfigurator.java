@@ -9,7 +9,7 @@ import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.staff.domain.Staff;
-import com.kustacks.kuring.staff.domain.StaffRepository;
+import com.kustacks.kuring.staff.adapter.out.persistence.StaffRepository;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import com.kustacks.kuring.user.domain.User;
 import org.slf4j.Logger;

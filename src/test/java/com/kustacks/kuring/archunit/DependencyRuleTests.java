@@ -78,7 +78,7 @@ class DependencyRuleTests {
 						.importPackages("com.kustacks.kuring.admin.."));
 	}
 
-	@DisplayName("staff 아키텍처 검증")
+	@DisplayName("Staff 아키텍처 검증")
 	@Test
 	void validateStaffArchitecture() {
 		HexagonalArchitecture.boundedContext("com.kustacks.kuring.staff")

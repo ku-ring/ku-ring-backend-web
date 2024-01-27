@@ -1,4 +1,4 @@
-package com.kustacks.kuring.staff.common.dto;
+package com.kustacks.kuring.worker.update.staff.dto;
 
 import com.kustacks.kuring.staff.domain.Staff;
 import lombok.AccessLevel;
