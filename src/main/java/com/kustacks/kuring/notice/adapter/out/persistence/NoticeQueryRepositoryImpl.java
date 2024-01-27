@@ -1,9 +1,11 @@
-package com.kustacks.kuring.notice.domain;
+package com.kustacks.kuring.notice.adapter.out.persistence;
 
-import com.kustacks.kuring.notice.common.dto.NoticeDto;
-import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
+import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;
+import com.kustacks.kuring.notice.application.port.out.dto.NoticeSearchDto;
 import com.kustacks.kuring.notice.common.dto.QNoticeDto;
 import com.kustacks.kuring.notice.common.dto.QNoticeSearchDto;
+import com.kustacks.kuring.notice.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.out.dto.BookmarkDto;
 import com.kustacks.kuring.user.application.port.out.dto.QBookmarkDto;
 import com.querydsl.core.BooleanBuilder;
@@ -20,7 +22,7 @@ import static com.kustacks.kuring.notice.domain.QDepartmentNotice.departmentNoti
 import static com.kustacks.kuring.notice.domain.QNotice.notice;
 
 @RequiredArgsConstructor
-public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
+class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 

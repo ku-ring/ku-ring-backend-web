@@ -5,9 +5,9 @@ import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.message.firebase.ServerProperties;
+import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.user.application.port.in.UserQueryUseCase;
 import com.kustacks.kuring.user.application.port.in.dto.AdminFeedbacksResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkResult;
@@ -34,7 +34,7 @@ class UserQueryService implements UserQueryUseCase {
 
     private final UserCommandPort userCommandPort;
     private final UserQueryPort userQueryPort;
-    private final NoticeRepository noticeRepository; // TODO : 향후 noticeCommandAdapter로 추출하기
+    private final NoticeQueryPort noticeQueryPort;
     private final FirebaseService firebaseService;
     private final ServerProperties serverProperties;
 
@@ -66,7 +66,7 @@ class UserQueryService implements UserQueryUseCase {
         User user = findUserByToken(userToken);
         List<String> bookmarkIds = user.lookupAllBookmarkIds();
 
-        return noticeRepository.findAllByBookmarkIds(bookmarkIds)
+        return noticeQueryPort.findAllByBookmarkIds(bookmarkIds)
                 .stream()
                 .map(dto -> new UserBookmarkResult(
                         dto.getArticleId(),

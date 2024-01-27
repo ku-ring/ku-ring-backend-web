@@ -1,9 +1,14 @@
 package com.kustacks.kuring.notice.repository;
 
-import com.kustacks.kuring.notice.domain.*;
+import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
+import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
+import com.kustacks.kuring.notice.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.DepartmentName;
+import com.kustacks.kuring.notice.domain.DepartmentNotice;
+import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.support.IntegrationTestSupport;
-import com.kustacks.kuring.user.application.port.out.dto.BookmarkDto;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
+import com.kustacks.kuring.user.application.port.out.dto.BookmarkDto;
 import com.kustacks.kuring.user.domain.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,10 +22,10 @@ import static org.assertj.core.groups.Tuple.tuple;
 class NoticeRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
-    private NoticeRepository noticeRepository;
+    private NoticeQueryPort noticeQueryPort;
 
     @Autowired
-    private NoticeJdbcRepository noticeJdbcRepository;
+    private NoticeCommandPort noticeCommandPort;
 
     @Autowired
     private UserPersistenceAdapter userPersistenceAdapter;
@@ -33,13 +38,13 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
                 "notice1", CategoryName.BACHELOR, false, "https://www.example.com");
         Notice notice2 = new Notice("2", "2024-01-20", "updatedDate",
                 "notice2", CategoryName.BACHELOR, false, "https://www.example.com");
-        noticeJdbcRepository.saveAllCategoryNotices(List.of(notice1, notice2));
+        noticeCommandPort.saveAllCategoryNotices(List.of(notice1, notice2));
 
         DepartmentNotice departmentNotice1 = new DepartmentNotice("3", "2024-01-22", "updatedDate",
                 "departmentNotice1", CategoryName.DEPARTMENT, false, "https://www.example.com", DepartmentName.ADMINISTRATION);
         DepartmentNotice departmentNotice2 = new DepartmentNotice("4", "2024-01-24", "updatedDate",
                 "departmentNotice2", CategoryName.DEPARTMENT, false, "https://www.example.com", DepartmentName.ADMINISTRATION);
-        noticeJdbcRepository.saveAllDepartmentNotices(List.of(departmentNotice1, departmentNotice2));
+        noticeCommandPort.saveAllDepartmentNotices(List.of(departmentNotice1, departmentNotice2));
 
         User user = new User("user_token");
         user.addBookmark(notice1.getArticleId());
@@ -51,7 +56,7 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
         List<String> ids = savedUser.lookupAllBookmarkIds();
 
         // when
-        List<BookmarkDto> bookmarks = noticeRepository.findAllByBookmarkIds(ids);
+        List<BookmarkDto> bookmarks = noticeQueryPort.findAllByBookmarkIds(ids);
 
         // then
         assertThat(bookmarks).hasSize(4)

@@ -1,13 +1,15 @@
-package com.kustacks.kuring.notice.domain;
+package com.kustacks.kuring.notice.adapter.out.persistence;
 
-import com.kustacks.kuring.notice.common.dto.NoticeDto;
-import com.kustacks.kuring.notice.common.dto.NoticeSearchDto;
+import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;
+import com.kustacks.kuring.notice.application.port.out.dto.NoticeSearchDto;
+import com.kustacks.kuring.notice.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.out.dto.BookmarkDto;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface NoticeQueryRepository {
+interface NoticeQueryRepository {
 
     List<NoticeDto> findNoticesByCategoryWithOffset(CategoryName categoryName, Pageable pageable);
 

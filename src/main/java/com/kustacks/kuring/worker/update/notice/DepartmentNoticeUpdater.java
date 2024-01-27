@@ -2,10 +2,10 @@ package com.kustacks.kuring.worker.update.notice;
 
 
 import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
+import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
-import com.kustacks.kuring.notice.domain.NoticeJdbcRepository;
-import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.dto.ComplexNoticeFormatDto;
@@ -31,8 +31,8 @@ public class DepartmentNoticeUpdater {
 
     private final List<DeptInfo> deptInfoList;
     private final DepartmentNoticeScraperTemplate scrapperTemplate;
-    private final NoticeRepository noticeRepository;
-    private final NoticeJdbcRepository noticeJdbcRepository;
+    private final NoticeQueryPort noticeQueryPort;
+    private final NoticeCommandPort noticeCommandPort;
     private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
     private final FirebaseService firebaseService;
     private final NoticeUpdateSupport noticeUpdateSupport;
@@ -84,14 +84,14 @@ public class DepartmentNoticeUpdater {
         List<DepartmentNotice> newNoticeList = new ArrayList<>();
         for (ComplexNoticeFormatDto scrapResult : scrapResults) {
             // DB에서 모든 중요 공지를 가져와서
-            List<Integer> savedImportantArticleIds = noticeRepository.findImportantArticleIdsByDepartment(departmentNameEnum);
+            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum);
 
             // db와 싱크를 맞춘다
             List<DepartmentNotice> newImportantNotices = saveNewNotices(scrapResult.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true);
             newNoticeList.addAll(newImportantNotices);
 
             // DB에서 모든 일반 공지 id를 가져와서
-            List<Integer> savedNormalArticleIds = noticeRepository.findNormalArticleIdsByDepartment(departmentNameEnum);
+            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum);
 
             // db와 싱크를 맞춘다
             List<DepartmentNotice> newNormalNotices = saveNewNotices(scrapResult.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false);
@@ -106,7 +106,7 @@ public class DepartmentNoticeUpdater {
 
     private List<DepartmentNotice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
         List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important);
-        noticeJdbcRepository.saveAllDepartmentNotices(newNotices);
+        noticeCommandPort.saveAllDepartmentNotices(newNotices);
         return newNotices;
     }
 
@@ -119,13 +119,13 @@ public class DepartmentNoticeUpdater {
 
         for (ComplexNoticeFormatDto scrapResult : scrapResults) {
             // DB에서 최신 중요 공지를 가져와서
-            List<Integer> savedImportantArticleIds = noticeRepository.findImportantArticleIdsByDepartment(departmentNameEnum);
+            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum);
 
             // db와 싱크를 맞춘다
             synchronizationWithDb(scrapResult.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true);
 
             // DB에서 모든 일반 공지의 id를 가져와서
-            List<Integer> savedNormalArticleIds = noticeRepository.findNormalArticleIdsByDepartment(departmentNameEnum);
+            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum);
 
             // db와 싱크를 맞춘다
             synchronizationWithDb(scrapResult.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false);
@@ -142,10 +142,10 @@ public class DepartmentNoticeUpdater {
 
         List<String> deletedNoticesArticleIds = noticeUpdateSupport.filteringSoonDeleteDepartmentNoticeIds(savedArticleIds, latestNoticeIds);
 
-        noticeJdbcRepository.saveAllDepartmentNotices(newNotices);
+        noticeCommandPort.saveAllDepartmentNotices(newNotices);
 
         if (!deletedNoticesArticleIds.isEmpty()) {
-            noticeRepository.deleteAllByIdsAndDepartment(departmentNameEnum, deletedNoticesArticleIds);
+            noticeCommandPort.deleteAllByIdsAndDepartment(departmentNameEnum, deletedNoticesArticleIds);
         }
     }
 }

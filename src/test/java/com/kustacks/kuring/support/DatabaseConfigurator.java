@@ -3,7 +3,11 @@ package com.kustacks.kuring.support;
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.domain.AdminRepository;
 import com.kustacks.kuring.admin.domain.AdminRole;
-import com.kustacks.kuring.notice.domain.*;
+import com.kustacks.kuring.notice.adapter.out.persistence.NoticePersistenceAdapter;
+import com.kustacks.kuring.notice.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.DepartmentName;
+import com.kustacks.kuring.notice.domain.DepartmentNotice;
+import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.domain.StaffRepository;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
@@ -34,7 +38,7 @@ public class DatabaseConfigurator implements InitializingBean {
     protected static final String ADMIN_CLIENT_LOGIN_ID = "client@email.com";
     protected static final String ADMIN_CLIENT_PASSWORD = "client_password";
 
-    private final NoticeRepository noticeRepository;
+    private final NoticePersistenceAdapter noticePersistenceAdapter;
     private final UserPersistenceAdapter userPersistenceAdapter;
     private final StaffRepository staffRepository;
     private final AdminRepository adminRepository;
@@ -44,10 +48,10 @@ public class DatabaseConfigurator implements InitializingBean {
 
     private List<String> tableNames;
 
-    public DatabaseConfigurator(NoticeRepository noticeRepository, UserPersistenceAdapter userPersistenceAdapter,
+    public DatabaseConfigurator(NoticePersistenceAdapter noticePersistenceAdapter, UserPersistenceAdapter userPersistenceAdapter,
                                 StaffRepository staffRepository, AdminRepository adminRepository,
                                 DataSource dataSource, JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
-        this.noticeRepository = noticeRepository;
+        this.noticePersistenceAdapter = noticePersistenceAdapter;
         this.userPersistenceAdapter = userPersistenceAdapter;
         this.staffRepository = staffRepository;
         this.adminRepository = adminRepository;
@@ -147,13 +151,13 @@ public class DatabaseConfigurator implements InitializingBean {
 
     private void initNotice() {
         List<Notice> noticeList = buildNotices(5, CategoryName.STUDENT);
-        noticeRepository.saveAll(noticeList);
+        noticePersistenceAdapter.saveAllCategoryNotices(noticeList);
 
         List<DepartmentNotice> importantDeptNotices = buildImportantDepartmentNotice(7, DepartmentName.COMPUTER, CategoryName.DEPARTMENT, true);
-        noticeRepository.saveAll(importantDeptNotices);
+        noticePersistenceAdapter.saveAllDepartmentNotices(importantDeptNotices);
 
         List<DepartmentNotice> normalDeptNotices = buildNormalDepartmentNotice(5, DepartmentName.COMPUTER, CategoryName.DEPARTMENT, false);
-        noticeRepository.saveAll(normalDeptNotices);
+        noticePersistenceAdapter.saveAllDepartmentNotices(normalDeptNotices);
     }
 
     private void initStaff() {

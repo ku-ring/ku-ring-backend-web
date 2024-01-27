@@ -1,5 +1,8 @@
-package com.kustacks.kuring.notice.domain;
+package com.kustacks.kuring.notice.adapter.out.persistence;
 
+import com.kustacks.kuring.notice.domain.DepartmentName;
+import com.kustacks.kuring.notice.domain.DepartmentNotice;
+import com.kustacks.kuring.notice.domain.Notice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,7 +15,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class NoticeJdbcRepository {
+class NoticeJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 

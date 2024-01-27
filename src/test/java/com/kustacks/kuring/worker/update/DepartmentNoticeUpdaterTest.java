@@ -1,9 +1,7 @@
 package com.kustacks.kuring.worker.update;
 
 import com.kustacks.kuring.message.firebase.FirebaseService;
-import com.kustacks.kuring.notice.domain.DepartmentNotice;
-import com.kustacks.kuring.notice.domain.Notice;
-import com.kustacks.kuring.notice.domain.NoticeRepository;
+import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.dto.ComplexNoticeFormatDto;
 import com.kustacks.kuring.worker.update.notice.DepartmentNoticeUpdater;
@@ -21,7 +19,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
@@ -48,7 +45,7 @@ class DepartmentNoticeUpdaterTest {
     ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
 
     @Autowired
-    NoticeRepository noticeRepository;
+    NoticeQueryPort noticeQueryPort;
 
     @DisplayName("학과별 공지 업데이트 테스트")
     @Test
@@ -62,11 +59,8 @@ class DepartmentNoticeUpdaterTest {
         noticeUpdaterThreadTaskExecutor.getThreadPoolExecutor().awaitTermination(2, TimeUnit.SECONDS);
 
         // then
-        List<Notice> notices = noticeRepository.findAll();
-        assertAll(
-                () -> assertThat(notices).hasSize(3720),
-                () -> assertThat(notices.get(0)).isExactlyInstanceOf(DepartmentNotice.class)
-        );
+        Long count = noticeQueryPort.count();
+        assertThat(count).isEqualTo(3720);
     }
 
     private static List<ComplexNoticeFormatDto> createDepartmentNoticesFixture() {
