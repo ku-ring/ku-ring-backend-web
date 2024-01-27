@@ -78,6 +78,29 @@ class DependencyRuleTests {
 						.importPackages("com.kustacks.kuring.admin.."));
 	}
 
+	@DisplayName("staff 아키텍처 검증")
+	@Test
+	void validateStaffArchitecture() {
+		HexagonalArchitecture.boundedContext("com.kustacks.kuring.staff")
+
+				.withDomainLayer("domain")
+
+				.withAdaptersLayer("adapter")
+				.incoming("in.web")
+				.outgoing("out.persistence")
+				.and()
+
+				.withApplicationLayer("application")
+				.services("service")
+				.incomingPorts("port.in")
+				.outgoingPorts("port.out")
+				.and()
+
+				.withConfiguration("configuration")
+				.check(new ClassFileImporter()
+						.importPackages("com.kustacks.kuring.staff.."));
+	}
+
 	@Test
 	void testPackageDependencies() {
 		noClasses()
@@ -89,5 +112,4 @@ class DependencyRuleTests {
 				.check(new ClassFileImporter()
 						.importPackages("com.kustacks.kuring.user.."));
 	}
-
 }
