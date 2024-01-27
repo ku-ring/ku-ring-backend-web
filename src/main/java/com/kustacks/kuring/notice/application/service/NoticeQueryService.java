@@ -20,14 +20,14 @@ import static com.kustacks.kuring.notice.domain.CategoryName.DEPARTMENT;
 
 @UseCase
 @Transactional(readOnly = true)
-public class NoticeService implements NoticeQueryUseCase {
+public class NoticeQueryService implements NoticeQueryUseCase {
 
     private static final String SPACE_REGEX = "[\\s+]";
     private final NoticeQueryPort noticeQueryPort;
     private final List<CategoryName> supportedCategoryNameList;
     private final List<DepartmentName> supportedDepartmentNameList;
 
-    public NoticeService(NoticeQueryPort noticeQueryPort) {
+    public NoticeQueryService(NoticeQueryPort noticeQueryPort) {
         this.noticeQueryPort = noticeQueryPort;
         this.supportedCategoryNameList = Arrays.asList(CategoryName.values());
         this.supportedDepartmentNameList = Arrays.asList(DepartmentName.values());
@@ -83,7 +83,7 @@ public class NoticeService implements NoticeQueryUseCase {
                         CategoryName.fromStringName(categoryName),
                         PageRequest.of(command.page(), command.size())
                 ).stream()
-                .map(NoticeService::convertPortResult)
+                .map(NoticeQueryService::convertPortResult)
                 .toList();
     }
 
@@ -94,7 +94,7 @@ public class NoticeService implements NoticeQueryUseCase {
             return noticeQueryPort
                     .findImportantNoticesByDepartment(departmentName)
                     .stream()
-                    .map(NoticeService::convertPortResult)
+                    .map(NoticeQueryService::convertPortResult)
                     .toList();
         }
 
@@ -103,7 +103,7 @@ public class NoticeService implements NoticeQueryUseCase {
                         departmentName,
                         PageRequest.of(command.page(), command.size())
                 ).stream()
-                .map(NoticeService::convertPortResult)
+                .map(NoticeQueryService::convertPortResult)
                 .toList();
     }
 

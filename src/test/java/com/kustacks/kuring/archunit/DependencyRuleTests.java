@@ -6,9 +6,10 @@ import org.junit.jupiter.api.Test;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
+@DisplayName("헥사고갈 아키텍처 검증")
 class DependencyRuleTests {
 
-	@DisplayName("User 헥사고갈 아키텍처 검증")
+	@DisplayName("User 아키텍처 검증")
 	@Test
 	void validateUserArchitecture() {
 		HexagonalArchitecture.boundedContext("com.kustacks.kuring.user")
@@ -31,7 +32,7 @@ class DependencyRuleTests {
 						.importPackages("com.kustacks.kuring.user.."));
 	}
 
-	@DisplayName("Notice 헥사고갈 아키텍처 검증")
+	@DisplayName("Notice 아키텍처 검증")
 	@Test
 	void validateNoticeArchitecture() {
 		HexagonalArchitecture.boundedContext("com.kustacks.kuring.notice")
@@ -54,7 +55,7 @@ class DependencyRuleTests {
 						.importPackages("com.kustacks.kuring.notice.."));
 	}
 
-	@DisplayName("Admin 헥사고갈 아키텍처 검증")
+	@DisplayName("Admin 아키텍처 검증")
 	@Test
 	void validateAdminArchitecture() {
 		HexagonalArchitecture.boundedContext("com.kustacks.kuring.admin")

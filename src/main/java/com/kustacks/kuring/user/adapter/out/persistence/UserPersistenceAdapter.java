@@ -1,6 +1,7 @@
 package com.kustacks.kuring.user.adapter.out.persistence;
 
-import com.kustacks.kuring.admin.common.dto.FeedbackDto;
+import com.kustacks.kuring.user.application.port.out.dto.FeedbackDto;
+import com.kustacks.kuring.admin.application.port.out.AdminUserFeedbackPort;
 import com.kustacks.kuring.common.annotation.PersistenceAdapter;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort {
+public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, AdminUserFeedbackPort {
 
     private final UserRepository userRepository;
 

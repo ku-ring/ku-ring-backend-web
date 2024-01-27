@@ -1,7 +1,7 @@
 package com.kustacks.kuring.support;
 
 import com.kustacks.kuring.admin.domain.Admin;
-import com.kustacks.kuring.admin.domain.AdminRepository;
+import com.kustacks.kuring.admin.adapter.out.persistence.AdminRepository;
 import com.kustacks.kuring.admin.domain.AdminRole;
 import com.kustacks.kuring.notice.adapter.out.persistence.NoticePersistenceAdapter;
 import com.kustacks.kuring.notice.domain.CategoryName;

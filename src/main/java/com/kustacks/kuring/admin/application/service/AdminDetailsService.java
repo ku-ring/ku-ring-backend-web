@@ -1,8 +1,8 @@
-package com.kustacks.kuring.admin.business;
+package com.kustacks.kuring.admin.application.service;
 
-import com.kustacks.kuring.admin.domain.AdminRepository;
+import com.kustacks.kuring.admin.application.port.out.AdminQueryPort;
 import com.kustacks.kuring.auth.userdetails.UserDetails;
-import com.kustacks.kuring.auth.userdetails.UserDetailsService;
+import com.kustacks.kuring.auth.userdetails.UserDetailsServicePort;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AdminDetailsService implements UserDetailsService {
+public class AdminDetailsService implements UserDetailsServicePort {
 
-    private final AdminRepository adminRepository;
+    private final AdminQueryPort adminQueryPort;
 
     @Override
     public UserDetails loadUserByUsername(String loginId) {
-        return adminRepository.findByLoginId(loginId)
+        return adminQueryPort.findByLoginId(loginId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 }

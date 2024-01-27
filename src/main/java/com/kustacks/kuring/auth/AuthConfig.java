@@ -1,7 +1,7 @@
 package com.kustacks.kuring.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.admin.business.AdminDetailsService;
+import com.kustacks.kuring.admin.application.service.AdminDetailsService;
 import com.kustacks.kuring.auth.authorization.AuthenticationPrincipalArgumentResolver;
 import com.kustacks.kuring.auth.context.SecurityContextPersistenceFilter;
 import com.kustacks.kuring.auth.handler.*;

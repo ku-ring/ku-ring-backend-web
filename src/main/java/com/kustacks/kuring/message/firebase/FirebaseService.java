@@ -2,7 +2,7 @@ package com.kustacks.kuring.message.firebase;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.*;
-import com.kustacks.kuring.admin.common.dto.AdminNotificationDto;
+import com.kustacks.kuring.admin.application.port.out.dto.AdminNotificationDto;
 import com.kustacks.kuring.common.dto.NoticeMessageDto;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
@@ -93,8 +93,8 @@ public class FirebaseService {
             Message newMessage = Message.builder()
                     .setNotification(Notification
                             .builder()
-                            .setTitle(messageDto.getTitle())
-                            .setBody(messageDto.getBody())
+                            .setTitle(messageDto.title())
+                            .setBody(messageDto.body())
                             .build())
                     .putAllData(objectMapper.convertValue(messageDto, Map.class))
                     .setTopic(serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC))

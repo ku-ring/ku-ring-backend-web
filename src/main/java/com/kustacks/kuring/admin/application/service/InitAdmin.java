@@ -1,7 +1,8 @@
-package com.kustacks.kuring.admin.common;
+package com.kustacks.kuring.admin.application.service;
 
+import com.kustacks.kuring.admin.application.port.out.AdminCommandPort;
+import com.kustacks.kuring.admin.application.port.out.AdminQueryPort;
 import com.kustacks.kuring.admin.domain.Admin;
-import com.kustacks.kuring.admin.domain.AdminRepository;
 import com.kustacks.kuring.admin.domain.AdminRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
@@ -14,19 +15,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class InitAdmin implements InitializingBean {
 
-    private final AdminRepository adminRepository;
+    private final AdminQueryPort adminQueryPort;
+    private final AdminCommandPort adminCommandPort;
     private final PasswordEncoder passwordEncoder;
     private final AdminProperties adminProperties;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        Optional<Admin> optionalAdmin = adminRepository.findByLoginId(adminProperties.getId());
+    public void afterPropertiesSet() {
+        Optional<Admin> optionalAdmin = adminQueryPort.findByLoginId(adminProperties.getId());
 
         if(optionalAdmin.isEmpty()) {
             String encodedPassword = passwordEncoder.encode(adminProperties.getPassword());
             Admin admin = new Admin(adminProperties.getId(), encodedPassword);
             admin.addRole(AdminRole.ROLE_ROOT);
-            adminRepository.save(admin);
+            adminCommandPort.save(admin);
         }
     }
 }

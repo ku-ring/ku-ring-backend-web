@@ -1,6 +1,6 @@
 package com.kustacks.kuring.user.adapter.out.persistence;
 
-import com.kustacks.kuring.admin.common.dto.FeedbackDto;
+import com.kustacks.kuring.user.application.port.out.dto.FeedbackDto;
 import com.kustacks.kuring.admin.common.dto.QFeedbackDto;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

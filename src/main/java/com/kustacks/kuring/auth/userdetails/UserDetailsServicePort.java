@@ -1,6 +1,6 @@
 package com.kustacks.kuring.auth.userdetails;
 
 @FunctionalInterface
-public interface UserDetailsService {
+public interface UserDetailsServicePort {
     UserDetails loadUserByUsername(String email);
 }

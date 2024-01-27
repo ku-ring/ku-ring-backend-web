@@ -9,7 +9,6 @@ import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.in.UserQueryUseCase;
-import com.kustacks.kuring.user.application.port.in.dto.AdminFeedbacksResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoryNameResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserDepartmentNameResult;
@@ -18,7 +17,6 @@ import com.kustacks.kuring.user.application.port.out.UserQueryPort;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -50,15 +48,6 @@ class UserQueryService implements UserQueryUseCase {
         firebaseService.validationToken(userToken);
         User findUser = findUserByToken(userToken);
         return convertDepartmentDtoList(findUser.getSubscribedDepartmentList());
-    }
-
-    @Override
-    public List<AdminFeedbacksResult> lookupFeedbacks(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        return userQueryPort.findAllFeedbackByPageRequest(pageRequest)
-                .stream()
-                .map(AdminFeedbacksResult::from)
-                .toList();
     }
 
     @Override

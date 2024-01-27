@@ -1,4 +1,4 @@
-package com.kustacks.kuring.admin.presentation;
+package com.kustacks.kuring.admin.application.service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,9 +8,9 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @Getter
 @ConstructorBinding
 @RequiredArgsConstructor
-@ConfigurationProperties(prefix = "notice")
-public class NoticeProperties {
+@ConfigurationProperties(prefix = "admin")
+public class AdminProperties {
 
-    private final String normalBaseUrl;
-    private final String libraryBaseUrl;
+    private final String id;
+    private final String password;
 }

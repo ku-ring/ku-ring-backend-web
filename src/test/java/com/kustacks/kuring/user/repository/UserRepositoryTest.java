@@ -1,6 +1,6 @@
 package com.kustacks.kuring.user.repository;
 
-import com.kustacks.kuring.admin.common.dto.FeedbackDto;
+import com.kustacks.kuring.user.application.port.out.dto.FeedbackDto;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import com.kustacks.kuring.user.domain.User;

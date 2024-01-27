@@ -1,12 +1,11 @@
-package com.kustacks.kuring.admin.presentation;
+package com.kustacks.kuring.admin.adapter.in.web;
 
-import com.kustacks.kuring.admin.common.dto.FeedbackDto;
+import com.kustacks.kuring.admin.application.port.in.AdminQueryUseCase;
 import com.kustacks.kuring.admin.domain.AdminRole;
 import com.kustacks.kuring.auth.authorization.AuthenticationPrincipal;
 import com.kustacks.kuring.auth.context.Authentication;
 import com.kustacks.kuring.auth.secured.Secured;
 import com.kustacks.kuring.common.dto.BaseResponse;
-import com.kustacks.kuring.user.application.port.in.UserQueryUseCase;
 import com.kustacks.kuring.user.application.port.in.dto.AdminFeedbacksResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -30,7 +29,7 @@ import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.FEEDBACK_SE
 @RequestMapping(value = "/api/v2/admin", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminQueryApiV2 {
 
-    private final UserQueryUseCase userQueryService;
+    private final AdminQueryUseCase adminQueryUseCase;
 
     @Secured(AdminRole.ROLE_ROOT)
     @GetMapping("/feedbacks")
@@ -38,7 +37,7 @@ public class AdminQueryApiV2 {
             @RequestParam(name = "page") @Min(0) int page,
             @RequestParam(name = "size") @Min(1) @Max(30) int size)
     {
-        List<AdminFeedbacksResult> feedbacks = userQueryService.lookupFeedbacks(page, size);
+        List<AdminFeedbacksResult> feedbacks = adminQueryUseCase.lookupFeedbacks(page, size);
         return ResponseEntity.ok().body(new BaseResponse<>(FEEDBACK_SEARCH_SUCCESS, feedbacks));
     }
 
