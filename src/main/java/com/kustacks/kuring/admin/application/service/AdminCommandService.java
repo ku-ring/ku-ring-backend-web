@@ -9,7 +9,7 @@ import com.kustacks.kuring.admin.application.port.out.dto.AdminNotificationDto;
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.auth.userdetails.UserDetailsServicePort;
 import com.kustacks.kuring.common.annotation.UseCase;
-import com.kustacks.kuring.common.dto.NoticeMessageDto;
+import com.kustacks.kuring.message.firebase.dto.NoticeMessageDto;
 import com.kustacks.kuring.message.firebase.FirebaseService;
 import com.kustacks.kuring.message.firebase.ServerProperties;
 import com.kustacks.kuring.notice.domain.CategoryName;

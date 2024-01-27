@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.update.staff;
 
-import com.kustacks.kuring.common.dto.StaffDto;
+import com.kustacks.kuring.staff.common.dto.StaffDto;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.domain.StaffRepository;
@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component

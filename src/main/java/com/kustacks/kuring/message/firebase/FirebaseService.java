@@ -3,7 +3,7 @@ package com.kustacks.kuring.message.firebase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.*;
 import com.kustacks.kuring.admin.application.port.out.dto.AdminNotificationDto;
-import com.kustacks.kuring.common.dto.NoticeMessageDto;
+import com.kustacks.kuring.message.firebase.dto.NoticeMessageDto;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;

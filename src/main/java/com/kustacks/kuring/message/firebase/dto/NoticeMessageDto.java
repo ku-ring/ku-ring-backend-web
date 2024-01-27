@@ -1,4 +1,4 @@
-package com.kustacks.kuring.common.dto;
+package com.kustacks.kuring.message.firebase.dto;
 
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.Notice;

@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.client.staff;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.common.dto.StaffDto;
+import com.kustacks.kuring.staff.common.dto.StaffDto;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
