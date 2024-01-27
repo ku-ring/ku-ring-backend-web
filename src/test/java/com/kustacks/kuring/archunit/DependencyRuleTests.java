@@ -54,6 +54,29 @@ class DependencyRuleTests {
 						.importPackages("com.kustacks.kuring.notice.."));
 	}
 
+	@DisplayName("Admin 헥사고갈 아키텍처 검증")
+	@Test
+	void validateAdminArchitecture() {
+		HexagonalArchitecture.boundedContext("com.kustacks.kuring.admin")
+
+				.withDomainLayer("domain")
+
+				.withAdaptersLayer("adapter")
+				.incoming("in.web")
+				.outgoing("out.persistence")
+				.and()
+
+				.withApplicationLayer("application")
+				.services("service")
+				.incomingPorts("port.in")
+				.outgoingPorts("port.out")
+				.and()
+
+				.withConfiguration("configuration")
+				.check(new ClassFileImporter()
+						.importPackages("com.kustacks.kuring.admin.."));
+	}
+
 	@Test
 	void testPackageDependencies() {
 		noClasses()
