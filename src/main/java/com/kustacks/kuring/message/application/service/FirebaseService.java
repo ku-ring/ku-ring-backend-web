@@ -1,15 +1,21 @@
 package com.kustacks.kuring.message.application.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.messaging.*;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.TopicManagementResponse;
 import com.kustacks.kuring.admin.application.port.out.dto.AdminNotificationDto;
+import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.message.application.port.in.dto.UserSubscribeCommand;
 import com.kustacks.kuring.message.application.port.in.dto.UserUnsubscribeCommand;
+import com.kustacks.kuring.message.application.port.out.FirebaseAuthPort;
+import com.kustacks.kuring.message.application.port.out.FirebaseMessagingPort;
+import com.kustacks.kuring.message.application.port.out.FirebaseSubscribePort;
 import com.kustacks.kuring.message.application.port.out.dto.NoticeMessageDto;
 import com.kustacks.kuring.message.application.service.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.message.application.service.exception.FirebaseMessageSendException;
@@ -18,29 +24,29 @@ import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubsc
 import com.kustacks.kuring.notice.domain.Notice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 @Slf4j
-@Service
+@UseCase
 @RequiredArgsConstructor
 public class FirebaseService implements FirebaseWithUserUseCase {
 
     private static final String NOTIFICATION_TITLE = "새로운 공지가 왔어요!";
     public static final String ALL_DEVICE_SUBSCRIBED_TOPIC = "allDevice";
 
-    private final FirebaseMessaging firebaseMessaging;
-    private final ObjectMapper objectMapper;
+    private final FirebaseSubscribePort firebaseSubscribePort;
+    private final FirebaseMessagingPort firebaseMessagingPort;
+    private final FirebaseAuthPort firebaseAuthPort;
     private final ServerProperties serverProperties;
-    private final FirebaseAuth firebaseAuth;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void validationToken(String token) throws FirebaseInvalidTokenException {
         try {
-            firebaseAuth.verifyIdToken(token);
+            firebaseAuthPort.verifyIdToken(token);
         } catch (FirebaseAuthException e) {
             throw new FirebaseInvalidTokenException();
         }
@@ -49,8 +55,11 @@ public class FirebaseService implements FirebaseWithUserUseCase {
     @Override
     public void subscribe(UserSubscribeCommand command) throws FirebaseSubscribeException {
         try {
-            TopicManagementResponse response = firebaseMessaging
-                    .subscribeToTopic(List.of(command.token()), serverProperties.ifDevThenAddSuffix(command.topic()));
+            TopicManagementResponse response = firebaseSubscribePort
+                    .subscribeToTopic(
+                            List.of(command.token()),
+                            serverProperties.ifDevThenAddSuffix(command.topic())
+                    );
 
             if (response.getFailureCount() > 0) {
                 throw new FirebaseSubscribeException();
@@ -63,7 +72,7 @@ public class FirebaseService implements FirebaseWithUserUseCase {
     @Override
     public void unsubscribe(UserUnsubscribeCommand command) throws FirebaseUnSubscribeException {
         try {
-            TopicManagementResponse response = firebaseMessaging
+            TopicManagementResponse response = firebaseSubscribePort
                     .unsubscribeFromTopic(List.of(command.token()), serverProperties.ifDevThenAddSuffix(command.topic()));
 
             if (response.getFailureCount() > 0) {
@@ -107,7 +116,7 @@ public class FirebaseService implements FirebaseWithUserUseCase {
                     .setTopic(serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC))
                     .build();
 
-            firebaseMessaging.send(newMessage);
+            firebaseMessagingPort.send(newMessage);
         } catch (FirebaseMessagingException exception) {
             throw new FirebaseMessageSendException();
         }
@@ -144,7 +153,7 @@ public class FirebaseService implements FirebaseWithUserUseCase {
                     .setTopic(suffixUtil.apply(messageDto.getCategory()))
                     .build();
 
-            firebaseMessaging.send(newMessage);
+            firebaseMessagingPort.send(newMessage);
         } catch (FirebaseMessagingException exception) {
             throw new FirebaseMessageSendException();
         }
