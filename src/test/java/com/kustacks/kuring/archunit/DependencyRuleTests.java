@@ -19,6 +19,7 @@ class DependencyRuleTests {
 				.withAdaptersLayer("adapter")
 				.incoming("in.web")
 				.outgoing("out.persistence")
+				.outgoing("out.event")
 				.and()
 
 				.withApplicationLayer("application")
@@ -65,6 +66,7 @@ class DependencyRuleTests {
 				.withAdaptersLayer("adapter")
 				.incoming("in.web")
 				.outgoing("out.persistence")
+				.outgoing("out.event")
 				.and()
 
 				.withApplicationLayer("application")
