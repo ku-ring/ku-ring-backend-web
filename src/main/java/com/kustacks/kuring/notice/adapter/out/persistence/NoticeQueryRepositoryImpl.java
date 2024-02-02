@@ -2,8 +2,8 @@ package com.kustacks.kuring.notice.adapter.out.persistence;
 
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeSearchDto;
-import com.kustacks.kuring.notice.common.dto.QNoticeDto;
-import com.kustacks.kuring.notice.common.dto.QNoticeSearchDto;
+import com.kustacks.kuring.notice.application.port.out.dto.QNoticeDto;
+import com.kustacks.kuring.notice.application.port.out.dto.QNoticeSearchDto;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.out.dto.BookmarkDto;
