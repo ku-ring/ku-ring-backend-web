@@ -33,7 +33,7 @@ class MessageAdminEventListenerTest extends IntegrationTestSupport {
     @Test
     public void sendNotificationEvent() {
         // given
-        doNothing().when(firebaseService).sendNotificationByAdmin(any(AdminNotificationCommand.class));
+        doNothing().when(firebaseNotificationService).sendNotificationByAdmin(any(AdminNotificationCommand.class));
 
         RealNotificationCommand command = new RealNotificationCommand(
                 "test title",
@@ -54,7 +54,7 @@ class MessageAdminEventListenerTest extends IntegrationTestSupport {
     @Test
     public void sendTestNotificationEvent() {
         // given
-        doNothing().when(firebaseService).sendTestNotificationByAdmin(any(AdminTestNotificationCommand.class));
+        doNothing().when(firebaseNotificationService).sendTestNotificationByAdmin(any(AdminTestNotificationCommand.class));
 
         TestNotificationCommand command = new TestNotificationCommand(
                 CategoryName.STUDENT.getName(),

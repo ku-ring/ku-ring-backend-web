@@ -1,7 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.message.application.port.in.dto.UserSubscribeCommand;
-import com.kustacks.kuring.message.application.port.in.dto.UserTokenValidationCommand;
 import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeRequest;
@@ -32,7 +31,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void user_register_success() {
         // given
-        doNothing().when(firebaseService).subscribe(any(UserSubscribeCommand.class));
+        doNothing().when(firebaseSubscribeService).subscribe(any(UserSubscribeCommand.class));
 
         var 회원_가입_응답 = 회원_가입_요청("test_register_token");
 
@@ -45,7 +44,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     void user_register_fail() {
         // given
         doThrow(new FirebaseSubscribeException())
-                .when(firebaseService)
+                .when(firebaseSubscribeService)
                 .subscribe(any(UserSubscribeCommand.class));
 
         var 회원_가입_응답 = 회원_가입_요청("test_register_token");
@@ -63,7 +62,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void user_subscribe_category() {
         // given
-        doNothing().when(firebaseService).subscribe(any(UserSubscribeCommand.class));
+        doNothing().when(firebaseSubscribeService).subscribe(any(UserSubscribeCommand.class));
 
         // when
         var 카테고리_구독_요청_응답 = 카테고리_구독_요청(USER_FCM_TOKEN, new UserCategoriesSubscribeRequest(List.of("student", "employment")));
@@ -81,7 +80,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void look_up_user_subscribe_category() {
         // given
-        doNothing().when(firebaseService).validationToken(anyString());
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
         카테고리_구독_요청(USER_FCM_TOKEN, new UserCategoriesSubscribeRequest(List.of("student", "employment")));
 
         // when
@@ -100,7 +99,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void user_subscribe_department() {
         // given
-        doNothing().when(firebaseService).subscribe(any(UserSubscribeCommand.class));
+        doNothing().when(firebaseSubscribeService).subscribe(any(UserSubscribeCommand.class));
 
         // when
         var 학과_구독_응답 = 학과_구독_요청(USER_FCM_TOKEN, List.of("cse", "korea"));
@@ -120,7 +119,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void look_up_user_subscribe_department() {
         // given
-        doNothing().when(firebaseService).validationToken(anyString());
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
         학과_구독_요청(USER_FCM_TOKEN, List.of("cse", "korea"));
 
         // when
@@ -145,7 +144,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void request_feedback() {
         // given
-        doNothing().when(firebaseService).validationToken(anyString());
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
         // when
         var 피드백_요청_응답 = 피드백_요청_v2(USER_FCM_TOKEN, "feedback request");
@@ -158,7 +157,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void request_invalid_length_feedback() {
         // given
-        doNothing().when(firebaseService).validationToken(anyString());
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
         // when
         var 피드백_요청_응답 = 피드백_요청_v2(USER_FCM_TOKEN, "5자미만");
@@ -171,7 +170,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void request_bookmark() {
         // given
-        doNothing().when(firebaseService).validationToken(anyString());
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
         // when
         var 북마크_응답 = 북마크_생성_요청(USER_FCM_TOKEN, "article_1");
@@ -189,7 +188,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void lookup_bookmark() {
         // given
-        doNothing().when(firebaseService).validationToken(anyString());
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
         북마크_생성_요청(USER_FCM_TOKEN, "article_1");
         북마크_생성_요청(USER_FCM_TOKEN, "article_2");
         북마크_생성_요청(USER_FCM_TOKEN, "depart_normal_article_1");

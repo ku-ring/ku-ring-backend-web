@@ -28,7 +28,7 @@ class MessageUserEventListenerTest extends IntegrationTestSupport {
     @Test
     public void subscribeEvent() {
         // given
-        doNothing().when(firebaseService).subscribe(any());
+        doNothing().when(firebaseSubscribeService).subscribe(any());
         UserCategoriesSubscribeCommand command =
                 new UserCategoriesSubscribeCommand(USER_FCM_TOKEN, List.of(CategoryName.NORMAL.getName()));
 
@@ -43,7 +43,7 @@ class MessageUserEventListenerTest extends IntegrationTestSupport {
     @Test
     public void unsubscribeEvent() {
         // given
-        doNothing().when(firebaseService).unsubscribe(any());
+        doNothing().when(firebaseSubscribeService).unsubscribe(any());
         UserCategoriesSubscribeCommand command =
                 new UserCategoriesSubscribeCommand(USER_FCM_TOKEN, List.of(CategoryName.BACHELOR.getName()));
 

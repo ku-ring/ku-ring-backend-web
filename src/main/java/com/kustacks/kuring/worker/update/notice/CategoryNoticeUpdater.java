@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.update.notice;
 
-import com.kustacks.kuring.message.application.service.FirebaseService;
+import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
 import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.domain.CategoryName;
@@ -28,7 +28,7 @@ public class CategoryNoticeUpdater {
     private final KuisNoticeScraperTemplate scrapperTemplate;
     private final NoticeQueryPort noticeQueryPort;
     private final NoticeCommandPort noticeCommandPort;
-    private final FirebaseService firebaseService;
+    private final FirebaseNotificationService notificationService;
     private final LibraryNoticeApiClient libraryNoticeApiClient;
     private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
     private final NoticeUpdateSupport noticeUpdateSupport;
@@ -49,14 +49,14 @@ public class CategoryNoticeUpdater {
             CompletableFuture
                     .supplyAsync(() -> updateKuisNoticeAsync(kuisNoticeInfo, KuisNoticeInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName()))
-                    .thenAccept(firebaseService::sendNotificationList);
+                    .thenAccept(notificationService::sendNotificationList);
         }
     }
 
     private void updateLibrary() {
         List<CommonNoticeFormatDto> scrapResults = updateLibraryNotice(CategoryName.LIBRARY);
         List<Notice> notices = compareLatestAndUpdateDB(scrapResults, CategoryName.LIBRARY);
-        firebaseService.sendNotificationList(notices);
+        notificationService.sendNotificationList(notices);
     }
 
     private List<CommonNoticeFormatDto> updateLibraryNotice(CategoryName categoryName) {

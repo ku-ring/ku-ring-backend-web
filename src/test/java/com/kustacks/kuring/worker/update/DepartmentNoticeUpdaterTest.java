@@ -1,6 +1,6 @@
 package com.kustacks.kuring.worker.update;
 
-import com.kustacks.kuring.message.application.service.FirebaseService;
+import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.dto.ComplexNoticeFormatDto;
@@ -36,7 +36,7 @@ class DepartmentNoticeUpdaterTest {
     DepartmentNoticeScraperTemplate scrapperTemplate;
 
     @MockBean
-    FirebaseService firebaseService;
+    FirebaseNotificationService firebaseService;
 
     @Autowired
     DepartmentNoticeUpdater departmentNoticeUpdater;

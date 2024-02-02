@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-import static com.kustacks.kuring.message.application.service.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
+import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ALL_DEVICE_SUBSCRIBED_TOPIC;
 
 @RequiredArgsConstructor
 public class UserRegisterNonChainingFilter implements HandlerInterceptor {

@@ -44,7 +44,7 @@ class AuthAcceptanceTest extends IntegrationTestSupport {
     void invalid_fcm_token_login_fail() {
         // given
         doThrow(new FirebaseInvalidTokenException())
-                .when(firebaseService)
+                .when(firebaseSubscribeService)
                 .validationToken(anyString());
 
         // when

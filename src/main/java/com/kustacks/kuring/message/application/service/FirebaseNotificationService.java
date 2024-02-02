@@ -1,28 +1,18 @@
 package com.kustacks.kuring.message.application.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import com.google.firebase.messaging.TopicManagementResponse;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithAdminUseCase;
-import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.message.application.port.in.dto.AdminNotificationCommand;
 import com.kustacks.kuring.message.application.port.in.dto.AdminTestNotificationCommand;
-import com.kustacks.kuring.message.application.port.in.dto.UserSubscribeCommand;
-import com.kustacks.kuring.message.application.port.in.dto.UserUnsubscribeCommand;
-import com.kustacks.kuring.message.application.port.out.FirebaseAuthPort;
 import com.kustacks.kuring.message.application.port.out.FirebaseMessagingPort;
-import com.kustacks.kuring.message.application.port.out.FirebaseSubscribePort;
 import com.kustacks.kuring.message.application.port.out.dto.NoticeMessageDto;
-import com.kustacks.kuring.message.application.service.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.message.application.service.exception.FirebaseMessageSendException;
-import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
-import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.notice.domain.Notice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,59 +21,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ALL_DEVICE_SUBSCRIBED_TOPIC;
+
 @Slf4j
 @UseCase
 @RequiredArgsConstructor
-public class FirebaseService implements FirebaseWithUserUseCase, FirebaseWithAdminUseCase {
+public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
 
     private static final String NOTIFICATION_TITLE = "새로운 공지가 왔어요!";
-    public static final String ALL_DEVICE_SUBSCRIBED_TOPIC = "allDevice";
 
-    private final FirebaseSubscribePort firebaseSubscribePort;
     private final FirebaseMessagingPort firebaseMessagingPort;
-    private final FirebaseAuthPort firebaseAuthPort;
     private final ServerProperties serverProperties;
     private final ObjectMapper objectMapper;
-
-    @Override
-    public void validationToken(String token) throws FirebaseInvalidTokenException {
-        try {
-            firebaseAuthPort.verifyIdToken(token);
-        } catch (FirebaseAuthException e) {
-            throw new FirebaseInvalidTokenException();
-        }
-    }
-
-    @Override
-    public void subscribe(UserSubscribeCommand command) throws FirebaseSubscribeException {
-        try {
-            TopicManagementResponse response = firebaseSubscribePort
-                    .subscribeToTopic(
-                            List.of(command.token()),
-                            serverProperties.ifDevThenAddSuffix(command.topic())
-                    );
-
-            if (response.getFailureCount() > 0) {
-                throw new FirebaseSubscribeException();
-            }
-        } catch (FirebaseMessagingException | FirebaseSubscribeException exception) {
-            throw new FirebaseSubscribeException();
-        }
-    }
-
-    @Override
-    public void unsubscribe(UserUnsubscribeCommand command) throws FirebaseUnSubscribeException {
-        try {
-            TopicManagementResponse response = firebaseSubscribePort
-                    .unsubscribeFromTopic(List.of(command.token()), serverProperties.ifDevThenAddSuffix(command.topic()));
-
-            if (response.getFailureCount() > 0) {
-                throw new FirebaseUnSubscribeException();
-            }
-        } catch (FirebaseMessagingException | FirebaseUnSubscribeException exception) {
-            throw new FirebaseUnSubscribeException();
-        }
-    }
 
     @Override
     public void sendTestNotificationByAdmin(AdminTestNotificationCommand command) {

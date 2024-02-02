@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.kustacks.kuring.message.application.service.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
+import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ALL_DEVICE_SUBSCRIBED_TOPIC;
 
 @Slf4j
 @UseCase

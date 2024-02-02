@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.update.notice;
 
 
-import com.kustacks.kuring.message.application.service.FirebaseService;
+import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
 import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.domain.DepartmentName;
@@ -34,7 +34,7 @@ public class DepartmentNoticeUpdater {
     private final NoticeQueryPort noticeQueryPort;
     private final NoticeCommandPort noticeCommandPort;
     private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
-    private final FirebaseService firebaseService;
+    private final FirebaseNotificationService notificationService;
     private final NoticeUpdateSupport noticeUpdateSupport;
 
     private static long startTime = 0L;
@@ -48,7 +48,7 @@ public class DepartmentNoticeUpdater {
             CompletableFuture
                     .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName()))
-                    .thenAccept(firebaseService::sendNotificationList);
+                    .thenAccept(notificationService::sendNotificationList);
         }
     }
 
