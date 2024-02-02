@@ -5,7 +5,7 @@ import com.kustacks.kuring.auth.authentication.AuthenticationException;
 import com.kustacks.kuring.auth.exception.UnauthorizedException;
 import com.kustacks.kuring.common.dto.ErrorResponse;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.message.application.service.FirebaseService;
+import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.message.application.service.exception.FirebaseInvalidTokenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -19,13 +19,14 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class FirebaseTokenAuthenticationFilter implements HandlerInterceptor {
 
-    private final FirebaseService firebaseService;
+    private static final String FIREBASE_HEADER = "User-Token";
+    private final FirebaseWithUserUseCase firebaseService;
     private final ObjectMapper objectMapper;
     
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         try {
-            String authorization = request.getHeader("User-Token");
+            String authorization = request.getHeader(FIREBASE_HEADER);
 
             if (authorization == null) {
                 throw new AuthenticationException();

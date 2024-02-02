@@ -1,9 +1,8 @@
 package com.kustacks.kuring.worker.update.user;
 
-import com.kustacks.kuring.message.application.service.FirebaseService;
+import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.message.application.service.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
-import com.kustacks.kuring.user.application.port.out.UserEventPort;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +18,8 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class UserUpdater {
 
-    private final FirebaseService firebaseService;
+    private final FirebaseWithUserUseCase firebaseService;
     private final UserPersistenceAdapter userPersistenceAdapter;
-    private final UserEventPort userEventPort;
 
     @Transactional
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
@@ -34,7 +32,7 @@ public class UserUpdater {
         for (User user : users) {
             String token = user.getToken();
             try {
-                userEventPort.validationTokenEvent(token);
+                firebaseService.validationToken(token);
             } catch (FirebaseInvalidTokenException e) {
                 userPersistenceAdapter.delete(user);
                 log.info("삭제한 토큰 = {}", user.getToken());

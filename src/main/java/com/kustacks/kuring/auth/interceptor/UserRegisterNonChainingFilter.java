@@ -5,8 +5,8 @@ import com.kustacks.kuring.auth.dto.UserRegisterRequest;
 import com.kustacks.kuring.auth.exception.RegisterException;
 import com.kustacks.kuring.auth.handler.AuthenticationFailureHandler;
 import com.kustacks.kuring.auth.handler.AuthenticationSuccessHandler;
+import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.message.application.port.in.dto.UserSubscribeCommand;
-import com.kustacks.kuring.message.application.service.FirebaseService;
 import com.kustacks.kuring.message.application.service.ServerProperties;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.domain.User;
@@ -26,7 +26,7 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
     private static final String REGISTER_HTTP_METHOD = "POST";
 
     private final ServerProperties serverProperties;
-    private final FirebaseService firebaseService;
+    private final FirebaseWithUserUseCase firebaseService;
     private final UserCommandPort userCommandPort;
     private final ObjectMapper objectMapper;
     private final AuthenticationSuccessHandler successHandler;

@@ -1,11 +1,9 @@
 package com.kustacks.kuring.message.adapter.in.event;
 
-import com.kustacks.kuring.message.adapter.in.event.dto.UserTokenValidationEvent;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
-import com.kustacks.kuring.common.domain.Events;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,19 +23,6 @@ class MessageUserEventListenerTest extends IntegrationTestSupport {
 
     @MockBean
     private MessageUserEventListener messageUserEventListener;
-
-    @DisplayName("사용자가 구독을 하는경우 토큰 검증을 먼저 진행한다")
-    @Test
-    public void validateToken() {
-        // given
-        UserTokenValidationEvent event = new UserTokenValidationEvent("token");
-
-        // when
-        Events.raise(event);
-        
-        // then
-        Mockito.verify(messageUserEventListener).validateToken(event);
-    }
 
     @DisplayName("사용자는 알림을 받고싶은 공지의 카테고리를 구독할 수 있다")
     @Test

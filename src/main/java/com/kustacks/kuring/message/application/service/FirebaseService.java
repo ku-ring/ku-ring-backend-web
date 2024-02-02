@@ -74,41 +74,6 @@ public class FirebaseService implements FirebaseWithUserUseCase {
         }
     }
 
-//    public void validationToken(String token) throws FirebaseInvalidTokenException {
-//        try {
-//            firebaseAuth.verifyIdToken(token);
-//        } catch (FirebaseAuthException e) {
-//            throw new FirebaseInvalidTokenException();
-//        }
-//    }
-//
-//    public void subscribe(String token, String topic) throws FirebaseSubscribeException {
-//        try {
-//            TopicManagementResponse response = firebaseMessaging
-//                    .subscribeToTopic(List.of(token), serverProperties.ifDevThenAddSuffix(topic));
-//
-//            if (response.getFailureCount() > 0) {
-//                throw new FirebaseSubscribeException();
-//            }
-//        } catch (FirebaseMessagingException | FirebaseSubscribeException exception) {
-//            throw new FirebaseSubscribeException();
-//        }
-//    }
-//
-//    public void unsubscribe(String token, String topic) throws FirebaseUnSubscribeException {
-//        try {
-//            TopicManagementResponse response = firebaseMessaging
-//                    .unsubscribeFromTopic(List.of(token), serverProperties.ifDevThenAddSuffix(topic));
-//
-//            if (response.getFailureCount() > 0) {
-//                throw new FirebaseUnSubscribeException();
-//            }
-//        } catch (FirebaseMessagingException | FirebaseUnSubscribeException exception) {
-//            throw new FirebaseUnSubscribeException();
-//        }
-
-//    }
-
     /**
      * Firebase message에는 두 가지 paylaad가 존재한다.
      * 1. notification

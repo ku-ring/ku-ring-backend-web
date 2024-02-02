@@ -10,7 +10,7 @@ import com.kustacks.kuring.auth.interceptor.BearerTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.FirebaseTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.UserRegisterNonChainingFilter;
 import com.kustacks.kuring.auth.token.JwtTokenProvider;
-import com.kustacks.kuring.message.application.service.FirebaseService;
+import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.message.application.service.ServerProperties;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class AuthConfig implements WebMvcConfigurer {
     private final JwtTokenProvider jwtTokenProvider;
     private final ObjectMapper objectMapper;
     private final ServerProperties serverProperties;
-    private final FirebaseService firebaseService;
+    private final FirebaseWithUserUseCase firebaseService;
     private final UserPersistenceAdapter userPersistenceAdapter;
 
     @Override
