@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ALL_DEVICE_SUBSCRIBED_TOPIC;
 
@@ -103,7 +103,7 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
         sendBaseNotification(messageDto, serverProperties::ifDevThenAddSuffix);
     }
 
-    private void sendBaseNotification(NoticeMessageDto messageDto, Function<String, String> suffixUtil) throws FirebaseMessageSendException {
+    private void sendBaseNotification(NoticeMessageDto messageDto, UnaryOperator<String> suffixUtil) throws FirebaseMessageSendException {
         try {
             Message newMessage = Message.builder()
                     .setNotification(Notification

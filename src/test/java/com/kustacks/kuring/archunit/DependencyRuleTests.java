@@ -103,6 +103,7 @@ class DependencyRuleTests {
 						.importPackages("com.kustacks.kuring.staff.."));
 	}
 
+	@DisplayName("테스트 페키지 의존성 검증")
 	@Test
 	void testPackageDependencies() {
 		noClasses()

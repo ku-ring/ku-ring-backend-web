@@ -26,7 +26,7 @@ class MessageUserEventListenerTest extends IntegrationTestSupport {
 
     @DisplayName("사용자는 알림을 받고싶은 공지의 카테고리를 구독할 수 있다")
     @Test
-    public void subscribeEvent() {
+    void subscribeEvent() {
         // given
         doNothing().when(firebaseSubscribeService).subscribe(any());
         UserCategoriesSubscribeCommand command =
@@ -41,7 +41,7 @@ class MessageUserEventListenerTest extends IntegrationTestSupport {
 
     @DisplayName("사용자는 알림을 받고싶은 공지의 카테고리를 구독 취소 수 있다")
     @Test
-    public void unsubscribeEvent() {
+    void unsubscribeEvent() {
         // given
         doNothing().when(firebaseSubscribeService).unsubscribe(any());
         UserCategoriesSubscribeCommand command =

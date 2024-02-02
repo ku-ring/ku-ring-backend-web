@@ -31,7 +31,7 @@ class MessageAdminEventListenerTest extends IntegrationTestSupport {
 
     @DisplayName("어드민이 커스텀으로 생성한 알림을 전송할 수 있다")
     @Test
-    public void sendNotificationEvent() {
+    void sendNotificationEvent() {
         // given
         doNothing().when(firebaseNotificationService).sendNotificationByAdmin(any(AdminNotificationCommand.class));
 
@@ -52,7 +52,7 @@ class MessageAdminEventListenerTest extends IntegrationTestSupport {
 
     @DisplayName("어드민이 커스텀으로 생성한 테스트 알림을 전송할 수 있다")
     @Test
-    public void sendTestNotificationEvent() {
+    void sendTestNotificationEvent() {
         // given
         doNothing().when(firebaseNotificationService).sendTestNotificationByAdmin(any(AdminTestNotificationCommand.class));
 
