@@ -36,8 +36,6 @@ class UserCommandService implements UserCommandUseCase {
 
     @Override
     public void editSubscribeCategories(UserCategoriesSubscribeCommand command) {
-        userEventPort.validationTokenEvent(command.userToken());
-
         UserSubscribeCompareResult<CategoryName> compareResults =
                 this.editSubscribeCategoryList(command.userToken(), command.categories());
 
@@ -50,8 +48,6 @@ class UserCommandService implements UserCommandUseCase {
 
     @Override
     public void editSubscribeDepartments(UserDepartmentsSubscribeCommand command) {
-        userEventPort.validationTokenEvent(command.userToken());
-
         UserSubscribeCompareResult<DepartmentName> compareResults
                 = this.editSubscribeDepartmentList(command.userToken(), command.departments());
 
@@ -64,14 +60,12 @@ class UserCommandService implements UserCommandUseCase {
 
     @Override
     public void saveFeedback(UserFeedbackCommand command) {
-        userEventPort.validationTokenEvent(command.userToken());
         User findUser = findUserByToken(command.userToken());
         findUser.addFeedback(command.content());
     }
 
     @Override
     public void saveBookmark(UserBookmarkCommand command) {
-        userEventPort.validationTokenEvent(command.userToken());
         User user = findUserByToken(command.userToken());
         user.addBookmark(command.articleId());
     }

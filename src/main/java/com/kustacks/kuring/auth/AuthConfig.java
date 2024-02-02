@@ -7,6 +7,7 @@ import com.kustacks.kuring.auth.context.SecurityContextPersistenceFilter;
 import com.kustacks.kuring.auth.handler.*;
 import com.kustacks.kuring.auth.interceptor.AdminTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.BearerTokenAuthenticationFilter;
+import com.kustacks.kuring.auth.interceptor.FirebaseTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.UserRegisterNonChainingFilter;
 import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.message.application.service.FirebaseService;
@@ -49,6 +50,9 @@ public class AuthConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(new BearerTokenAuthenticationFilter(jwtTokenProvider))
                 .addPathPatterns("/api/v2/admin/**");
+
+        registry.addInterceptor(new FirebaseTokenAuthenticationFilter(firebaseService, objectMapper))
+                .addPathPatterns("/api/v2/users/**");
     }
 
     @Override

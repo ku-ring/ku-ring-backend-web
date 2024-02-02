@@ -26,7 +26,7 @@ class FeedbackAcceptanceTest extends IntegrationTestSupport {
     @Test
     public void request_feedback() throws FirebaseMessagingException {
         // given
-        doNothing().when(firebaseService).validationToken(any(UserTokenValidationCommand.class));
+        doNothing().when(firebaseService).validationToken(anyString());
 
         // when
         var 피드백_요청_응답 = 피드백_요청(USER_FCM_TOKEN, "feedback request");
@@ -39,7 +39,7 @@ class FeedbackAcceptanceTest extends IntegrationTestSupport {
     @Test
     public void request_invalid_length_feedback() throws FirebaseMessagingException {
         // given
-        doNothing().when(firebaseService).validationToken(any(UserTokenValidationCommand.class));
+        doNothing().when(firebaseService).validationToken(anyString());
 
         // when
         var 피드백_요청_응답 = 피드백_요청(USER_FCM_TOKEN, "");

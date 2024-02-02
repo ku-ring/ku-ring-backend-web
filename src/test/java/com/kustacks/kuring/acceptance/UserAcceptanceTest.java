@@ -16,6 +16,7 @@ import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 
@@ -80,7 +81,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void look_up_user_subscribe_category() {
         // given
-        doNothing().when(firebaseService).validationToken(any(UserTokenValidationCommand.class));
+        doNothing().when(firebaseService).validationToken(anyString());
         카테고리_구독_요청(USER_FCM_TOKEN, new UserCategoriesSubscribeRequest(List.of("student", "employment")));
 
         // when
@@ -119,7 +120,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void look_up_user_subscribe_department() {
         // given
-        doNothing().when(firebaseService).validationToken(any(UserTokenValidationCommand.class));
+        doNothing().when(firebaseService).validationToken(anyString());
         학과_구독_요청(USER_FCM_TOKEN, List.of("cse", "korea"));
 
         // when
@@ -144,7 +145,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void request_feedback() {
         // given
-        doNothing().when(firebaseService).validationToken(any(UserTokenValidationCommand.class));
+        doNothing().when(firebaseService).validationToken(anyString());
 
         // when
         var 피드백_요청_응답 = 피드백_요청_v2(USER_FCM_TOKEN, "feedback request");
@@ -157,7 +158,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void request_invalid_length_feedback() {
         // given
-        doNothing().when(firebaseService).validationToken(any(UserTokenValidationCommand.class));
+        doNothing().when(firebaseService).validationToken(anyString());
 
         // when
         var 피드백_요청_응답 = 피드백_요청_v2(USER_FCM_TOKEN, "5자미만");
@@ -170,7 +171,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void request_bookmark() {
         // given
-        doNothing().when(firebaseService).validationToken(any(UserTokenValidationCommand.class));
+        doNothing().when(firebaseService).validationToken(anyString());
 
         // when
         var 북마크_응답 = 북마크_생성_요청(USER_FCM_TOKEN, "article_1");
@@ -188,7 +189,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     @Test
     void lookup_bookmark() {
         // given
-        doNothing().when(firebaseService).validationToken(any(UserTokenValidationCommand.class));
+        doNothing().when(firebaseService).validationToken(anyString());
         북마크_생성_요청(USER_FCM_TOKEN, "article_1");
         북마크_생성_요청(USER_FCM_TOKEN, "article_2");
         북마크_생성_요청(USER_FCM_TOKEN, "depart_normal_article_1");

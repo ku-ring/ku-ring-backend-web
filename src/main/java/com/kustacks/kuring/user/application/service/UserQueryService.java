@@ -38,14 +38,12 @@ class UserQueryService implements UserQueryUseCase {
 
     @Override
     public List<UserCategoryNameResult> lookupSubscribeCategories(String userToken) {
-        userEventPort.validationTokenEvent(userToken);
         User findUser = findUserByToken(userToken);
         return convertCategoryNameDtoList(findUser.getSubscribedCategoryList());
     }
 
     @Override
     public List<UserDepartmentNameResult> lookupSubscribeDepartments(String userToken) {
-        userEventPort.validationTokenEvent(userToken);
         User findUser = findUserByToken(userToken);
         return convertDepartmentDtoList(findUser.getSubscribedDepartmentList());
     }

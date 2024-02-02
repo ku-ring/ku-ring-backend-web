@@ -9,7 +9,6 @@ import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.message.application.port.in.dto.UserSubscribeCommand;
-import com.kustacks.kuring.message.application.port.in.dto.UserTokenValidationCommand;
 import com.kustacks.kuring.message.application.port.in.dto.UserUnsubscribeCommand;
 import com.kustacks.kuring.message.application.port.out.dto.NoticeMessageDto;
 import com.kustacks.kuring.message.application.service.exception.FirebaseInvalidTokenException;
@@ -39,9 +38,9 @@ public class FirebaseService implements FirebaseWithUserUseCase {
     private final FirebaseAuth firebaseAuth;
 
     @Override
-    public void validationToken(UserTokenValidationCommand command) throws FirebaseInvalidTokenException {
+    public void validationToken(String token) throws FirebaseInvalidTokenException {
         try {
-            firebaseAuth.verifyIdToken(command.token());
+            firebaseAuth.verifyIdToken(token);
         } catch (FirebaseAuthException e) {
             throw new FirebaseInvalidTokenException();
         }

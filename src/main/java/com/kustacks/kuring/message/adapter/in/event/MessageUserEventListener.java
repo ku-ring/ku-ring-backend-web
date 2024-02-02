@@ -21,7 +21,7 @@ public class MessageUserEventListener {
     public void validateToken(
             UserTokenValidationEvent event
     ) {
-        firebaseWithUserUseCase.validationToken(event.toCommand());
+        firebaseWithUserUseCase.validationToken(event.token());
     }
 
     @Async
