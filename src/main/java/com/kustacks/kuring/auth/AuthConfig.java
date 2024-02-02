@@ -9,8 +9,8 @@ import com.kustacks.kuring.auth.interceptor.AdminTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.BearerTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.UserRegisterNonChainingFilter;
 import com.kustacks.kuring.auth.token.JwtTokenProvider;
-import com.kustacks.kuring.message.firebase.FirebaseService;
-import com.kustacks.kuring.message.firebase.ServerProperties;
+import com.kustacks.kuring.message.application.service.FirebaseService;
+import com.kustacks.kuring.message.application.service.ServerProperties;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -47,7 +47,8 @@ public class AuthConfig implements WebMvcConfigurer {
                         userRegisterSuccessHandler(), userRegisterFailureHandler()))
                 .addPathPatterns("/api/v2/users");
 
-        registry.addInterceptor(new BearerTokenAuthenticationFilter(jwtTokenProvider)).addPathPatterns("/api/v2/admin/**");
+        registry.addInterceptor(new BearerTokenAuthenticationFilter(jwtTokenProvider))
+                .addPathPatterns("/api/v2/admin/**");
     }
 
     @Override

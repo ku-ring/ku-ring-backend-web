@@ -1,15 +1,21 @@
-package com.kustacks.kuring.message.firebase;
+package com.kustacks.kuring.message.application.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.messaging.*;
 import com.kustacks.kuring.admin.application.port.out.dto.AdminNotificationDto;
-import com.kustacks.kuring.message.firebase.dto.NoticeMessageDto;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
-import com.kustacks.kuring.message.firebase.exception.FirebaseMessageSendException;
-import com.kustacks.kuring.message.firebase.exception.FirebaseSubscribeException;
-import com.kustacks.kuring.message.firebase.exception.FirebaseUnSubscribeException;
+import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
+import com.kustacks.kuring.message.application.port.in.dto.UserSubscribeCommand;
+import com.kustacks.kuring.message.application.port.in.dto.UserTokenValidationCommand;
+import com.kustacks.kuring.message.application.port.in.dto.UserUnsubscribeCommand;
+import com.kustacks.kuring.message.application.port.out.dto.NoticeMessageDto;
+import com.kustacks.kuring.message.application.service.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.message.application.service.exception.FirebaseMessageSendException;
+import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
+import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.notice.domain.Notice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +28,7 @@ import java.util.function.Function;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FirebaseService {
+public class FirebaseService implements FirebaseWithUserUseCase {
 
     private static final String NOTIFICATION_TITLE = "새로운 공지가 왔어요!";
     public static final String ALL_DEVICE_SUBSCRIBED_TOPIC = "allDevice";
@@ -30,21 +36,22 @@ public class FirebaseService {
     private final FirebaseMessaging firebaseMessaging;
     private final ObjectMapper objectMapper;
     private final ServerProperties serverProperties;
+    private final FirebaseAuth firebaseAuth;
 
-    public void validationToken(String token) throws FirebaseInvalidTokenException {
+    @Override
+    public void validationToken(UserTokenValidationCommand command) throws FirebaseInvalidTokenException {
         try {
-            Message message = Message.builder().setToken(token).build();
-
-            firebaseMessaging.send(message);
-        } catch (FirebaseMessagingException exception) {
+            firebaseAuth.verifyIdToken(command.token());
+        } catch (FirebaseAuthException e) {
             throw new FirebaseInvalidTokenException();
         }
     }
 
-    public void subscribe(String token, String topic) throws FirebaseSubscribeException {
+    @Override
+    public void subscribe(UserSubscribeCommand command) throws FirebaseSubscribeException {
         try {
             TopicManagementResponse response = firebaseMessaging
-                    .subscribeToTopic(List.of(token), serverProperties.ifDevThenAddSuffix(topic));
+                    .subscribeToTopic(List.of(command.token()), serverProperties.ifDevThenAddSuffix(command.topic()));
 
             if (response.getFailureCount() > 0) {
                 throw new FirebaseSubscribeException();
@@ -54,10 +61,11 @@ public class FirebaseService {
         }
     }
 
-    public void unsubscribe(String token, String topic) throws FirebaseUnSubscribeException {
+    @Override
+    public void unsubscribe(UserUnsubscribeCommand command) throws FirebaseUnSubscribeException {
         try {
             TopicManagementResponse response = firebaseMessaging
-                    .unsubscribeFromTopic(List.of(token), serverProperties.ifDevThenAddSuffix(topic));
+                    .unsubscribeFromTopic(List.of(command.token()), serverProperties.ifDevThenAddSuffix(command.topic()));
 
             if (response.getFailureCount() > 0) {
                 throw new FirebaseUnSubscribeException();
@@ -66,6 +74,41 @@ public class FirebaseService {
             throw new FirebaseUnSubscribeException();
         }
     }
+
+//    public void validationToken(String token) throws FirebaseInvalidTokenException {
+//        try {
+//            firebaseAuth.verifyIdToken(token);
+//        } catch (FirebaseAuthException e) {
+//            throw new FirebaseInvalidTokenException();
+//        }
+//    }
+//
+//    public void subscribe(String token, String topic) throws FirebaseSubscribeException {
+//        try {
+//            TopicManagementResponse response = firebaseMessaging
+//                    .subscribeToTopic(List.of(token), serverProperties.ifDevThenAddSuffix(topic));
+//
+//            if (response.getFailureCount() > 0) {
+//                throw new FirebaseSubscribeException();
+//            }
+//        } catch (FirebaseMessagingException | FirebaseSubscribeException exception) {
+//            throw new FirebaseSubscribeException();
+//        }
+//    }
+//
+//    public void unsubscribe(String token, String topic) throws FirebaseUnSubscribeException {
+//        try {
+//            TopicManagementResponse response = firebaseMessaging
+//                    .unsubscribeFromTopic(List.of(token), serverProperties.ifDevThenAddSuffix(topic));
+//
+//            if (response.getFailureCount() > 0) {
+//                throw new FirebaseUnSubscribeException();
+//            }
+//        } catch (FirebaseMessagingException | FirebaseUnSubscribeException exception) {
+//            throw new FirebaseUnSubscribeException();
+//        }
+
+//    }
 
     /**
      * Firebase message에는 두 가지 paylaad가 존재한다.

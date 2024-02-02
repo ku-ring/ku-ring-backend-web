@@ -9,9 +9,9 @@ import com.kustacks.kuring.admin.application.port.out.dto.AdminNotificationDto;
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.auth.userdetails.UserDetailsServicePort;
 import com.kustacks.kuring.common.annotation.UseCase;
-import com.kustacks.kuring.message.firebase.dto.NoticeMessageDto;
-import com.kustacks.kuring.message.firebase.FirebaseService;
-import com.kustacks.kuring.message.firebase.ServerProperties;
+import com.kustacks.kuring.message.application.port.out.dto.NoticeMessageDto;
+import com.kustacks.kuring.message.application.service.FirebaseService;
+import com.kustacks.kuring.message.application.service.ServerProperties;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
+import static com.kustacks.kuring.message.application.service.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
 
 @Slf4j
 @UseCase

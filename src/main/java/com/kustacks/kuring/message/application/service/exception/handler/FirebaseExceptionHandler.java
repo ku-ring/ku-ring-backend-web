@@ -1,7 +1,7 @@
-package com.kustacks.kuring.message.firebase.exception.handler;
+package com.kustacks.kuring.message.application.service.exception.handler;
 
 import com.kustacks.kuring.common.dto.ErrorResponse;
-import com.kustacks.kuring.message.firebase.exception.FirebaseBusinessException;
+import com.kustacks.kuring.message.application.service.exception.FirebaseBusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -90,6 +90,7 @@ public class DatabaseConfigurator implements InitializingBean {
 
         initAdmin();
         initUser();
+        initUserCategory();
         initFeedback();
         initStaff();
         initNotice();
@@ -138,6 +139,12 @@ public class DatabaseConfigurator implements InitializingBean {
     private void initUser() {
         User newUser = new User(USER_FCM_TOKEN);
         userPersistenceAdapter.save(newUser);
+    }
+
+    private void initUserCategory() {
+        User findUser = userPersistenceAdapter.findByToken(USER_FCM_TOKEN).get();
+        findUser.subscribeCategory(CategoryName.STUDENT);
+        findUser.subscribeCategory(CategoryName.BACHELOR);
     }
 
     private void initFeedback() {

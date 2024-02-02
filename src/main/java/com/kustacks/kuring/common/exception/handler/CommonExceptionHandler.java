@@ -1,8 +1,11 @@
 package com.kustacks.kuring.common.exception.handler;
 
 import com.kustacks.kuring.common.dto.ErrorResponse;
-import com.kustacks.kuring.common.exception.*;
+import com.kustacks.kuring.common.exception.AdminException;
+import com.kustacks.kuring.common.exception.InternalLogicException;
+import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -57,6 +60,13 @@ public class CommonExceptionHandler {
         log.error("[HttpMediaTypeNotAcceptableException] {}", exception.getMessage());
         return ResponseEntity.status(ErrorCode.API_NOT_ACCEPTABLE.getHttpStatus())
                 .body(new ErrorResponse(ErrorCode.API_NOT_ACCEPTABLE));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> FirebaseSubscribeExceptionHandler(FirebaseSubscribeException exception) {
+        log.error("[FirebaseSubscribeException] {}", exception.getMessage());
+        return ResponseEntity.status(ErrorCode.API_FB_SERVER_ERROR.getHttpStatus())
+                .body(new ErrorResponse(ErrorCode.API_FB_SERVER_ERROR));
     }
 
     @ExceptionHandler

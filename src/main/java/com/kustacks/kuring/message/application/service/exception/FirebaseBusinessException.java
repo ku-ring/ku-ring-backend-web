@@ -1,4 +1,4 @@
-package com.kustacks.kuring.message.firebase.exception;
+package com.kustacks.kuring.message.application.service.exception;
 
 import com.kustacks.kuring.common.exception.BusinessException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;

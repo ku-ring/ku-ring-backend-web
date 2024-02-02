@@ -1,7 +1,7 @@
 package com.kustacks.kuring.support;
 
 
-import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.message.application.service.FirebaseService;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;

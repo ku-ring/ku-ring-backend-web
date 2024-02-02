@@ -5,8 +5,9 @@ import com.kustacks.kuring.auth.dto.UserRegisterRequest;
 import com.kustacks.kuring.auth.exception.RegisterException;
 import com.kustacks.kuring.auth.handler.AuthenticationFailureHandler;
 import com.kustacks.kuring.auth.handler.AuthenticationSuccessHandler;
-import com.kustacks.kuring.message.firebase.FirebaseService;
-import com.kustacks.kuring.message.firebase.ServerProperties;
+import com.kustacks.kuring.message.application.port.in.dto.UserSubscribeCommand;
+import com.kustacks.kuring.message.application.service.FirebaseService;
+import com.kustacks.kuring.message.application.service.ServerProperties;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
+import static com.kustacks.kuring.message.application.service.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
 
 @RequiredArgsConstructor
 public class UserRegisterNonChainingFilter implements HandlerInterceptor {
@@ -50,7 +51,12 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
 
     private void register(String userFcmToken) {
         userCommandPort.save(new User(userFcmToken));
-        firebaseService.subscribe(userFcmToken, serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
+        UserSubscribeCommand command =
+                new UserSubscribeCommand(
+                        userFcmToken,
+                        serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC)
+                );
+        firebaseService.subscribe(command);
     }
 
     public String convert(HttpServletRequest request) throws IOException {

@@ -1,4 +1,4 @@
-package com.kustacks.kuring.message.firebase;
+package com.kustacks.kuring.message.application.service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

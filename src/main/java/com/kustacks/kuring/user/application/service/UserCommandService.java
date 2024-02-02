@@ -3,19 +3,17 @@ package com.kustacks.kuring.user.application.service;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.message.firebase.FirebaseService;
-import com.kustacks.kuring.message.firebase.ServerProperties;
-import com.kustacks.kuring.message.firebase.exception.FirebaseSubscribeException;
-import com.kustacks.kuring.message.firebase.exception.FirebaseUnSubscribeException;
+import com.kustacks.kuring.message.application.service.ServerProperties;
+import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
+import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
 import com.kustacks.kuring.user.application.port.in.dto.*;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
+import com.kustacks.kuring.user.application.port.out.UserEventPort;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
 import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.worker.event.Events;
-import com.kustacks.kuring.worker.event.SubscribedRollbackEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
+import static com.kustacks.kuring.message.application.service.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
 
 @Slf4j
 @UseCase
@@ -33,12 +31,12 @@ class UserCommandService implements UserCommandUseCase {
 
     private final UserCommandPort userCommandPort;
     private final UserQueryPort userQueryPort;
-    private final FirebaseService firebaseService;
+    private final UserEventPort userEventPort;
     private final ServerProperties serverProperties;
 
     @Override
     public void editSubscribeCategories(UserCategoriesSubscribeCommand command) {
-        firebaseService.validationToken(command.userToken());
+        userEventPort.validationTokenEvent(command.userToken());
 
         UserSubscribeCompareResult<CategoryName> compareResults =
                 this.editSubscribeCategoryList(command.userToken(), command.categories());
@@ -52,7 +50,7 @@ class UserCommandService implements UserCommandUseCase {
 
     @Override
     public void editSubscribeDepartments(UserDepartmentsSubscribeCommand command) {
-        firebaseService.validationToken(command.userToken());
+        userEventPort.validationTokenEvent(command.userToken());
 
         UserSubscribeCompareResult<DepartmentName> compareResults
                 = this.editSubscribeDepartmentList(command.userToken(), command.departments());
@@ -66,14 +64,14 @@ class UserCommandService implements UserCommandUseCase {
 
     @Override
     public void saveFeedback(UserFeedbackCommand command) {
-        firebaseService.validationToken(command.userToken());
+        userEventPort.validationTokenEvent(command.userToken());
         User findUser = findUserByToken(command.userToken());
         findUser.addFeedback(command.content());
     }
 
     @Override
     public void saveBookmark(UserBookmarkCommand command) {
-        firebaseService.validationToken(command.userToken());
+        userEventPort.validationTokenEvent(command.userToken());
         User user = findUserByToken(command.userToken());
         user.addBookmark(command.articleId());
     }
@@ -97,11 +95,8 @@ class UserCommandService implements UserCommandUseCase {
             List<CategoryName> savedCategoryNames,
             List<CategoryName> deletedCategoryNames
     ) throws FirebaseSubscribeException, FirebaseUnSubscribeException {
-        SubscribedRollbackEvent subscribedRollbackEvent = new SubscribedRollbackEvent(userToken);
-        Events.raise(subscribedRollbackEvent);
-
-        subscribeUserCategory(userToken, savedCategoryNames, subscribedRollbackEvent);
-        unsubscribeUserCategory(userToken, deletedCategoryNames, subscribedRollbackEvent);
+        subscribeUserCategory(userToken, savedCategoryNames);
+        unsubscribeUserCategory(userToken, deletedCategoryNames);
     }
 
     private UserSubscribeCompareResult<DepartmentName> editSubscribeDepartmentList(
@@ -119,27 +114,23 @@ class UserCommandService implements UserCommandUseCase {
 
     private void subscribeUserCategory(
             String token,
-            List<CategoryName> newCategoryNames,
-            SubscribedRollbackEvent subscribedRollbackEvent
+            List<CategoryName> newCategoryNames
     ) throws FirebaseSubscribeException {
         for (CategoryName newCategoryName : newCategoryNames) {
-            firebaseService.subscribe(token, newCategoryName.getName());
+            userEventPort.subscribeEvent(token, newCategoryName.getName());
             this.subscribeCategory(token, newCategoryName);
-            subscribedRollbackEvent.addNewCategoryName(newCategoryName.getName());
-            log.info("구독 성공 = {}", newCategoryName.getName());
+            log.debug("구독 성공 = {}", newCategoryName.getName());
         }
     }
 
     private void unsubscribeUserCategory(
             String token,
-            List<CategoryName> removeCategoryNames,
-            SubscribedRollbackEvent subscribedRollbackEvent
+            List<CategoryName> removeCategoryNames
     ) throws FirebaseUnSubscribeException {
         for (CategoryName removeCategoryName : removeCategoryNames) {
-            firebaseService.unsubscribe(token, removeCategoryName.getName());
+            userEventPort.unsubscribeEvent(token, removeCategoryName.getName());
             this.unsubscribeCategory(token, removeCategoryName);
-            subscribedRollbackEvent.deleteNewCategoryName(removeCategoryName.getName());
-            log.info("구독 취소 = {}", removeCategoryName.getName());
+            log.debug("구독 취소 = {}", removeCategoryName.getName());
         }
     }
 
@@ -148,11 +139,8 @@ class UserCommandService implements UserCommandUseCase {
             List<DepartmentName> savedDepartmentNames,
             List<DepartmentName> deletedDepartmentNames
     ) throws FirebaseSubscribeException, FirebaseUnSubscribeException {
-        SubscribedRollbackEvent subscribedRollbackEvent = new SubscribedRollbackEvent(userToken);
-        Events.raise(subscribedRollbackEvent);
-
-        subscribeDepartment(userToken, savedDepartmentNames, subscribedRollbackEvent);
-        unsubscribeDepartment(userToken, deletedDepartmentNames, subscribedRollbackEvent);
+        subscribeDepartment(userToken, savedDepartmentNames);
+        unsubscribeDepartment(userToken, deletedDepartmentNames);
     }
 
     private void subscribeCategory(String userToken, CategoryName categoryName) {
@@ -167,27 +155,23 @@ class UserCommandService implements UserCommandUseCase {
 
     private void subscribeDepartment(
             String userToken,
-            List<DepartmentName> newDepartmentNames,
-            SubscribedRollbackEvent subscribedRollbackEvent
+            List<DepartmentName> newDepartmentNames
     ) {
         for (DepartmentName newDepartmentName : newDepartmentNames) {
-            firebaseService.subscribe(userToken, newDepartmentName.getName());
+            userEventPort.subscribeEvent(userToken, newDepartmentName.getName());
             this.subscribeDepartment(userToken, newDepartmentName);
-            subscribedRollbackEvent.addNewCategoryName(newDepartmentName.getName());
-            log.info("구독 성공 = {}", newDepartmentName.getName());
+            log.debug("구독 성공 = {}", newDepartmentName.getName());
         }
     }
 
     private void unsubscribeDepartment(
             String userToken,
-            List<DepartmentName> removeDepartmentNames,
-            SubscribedRollbackEvent subscribedRollbackEvent
+            List<DepartmentName> removeDepartmentNames
     ) {
         for (DepartmentName removeDepartmentName : removeDepartmentNames) {
-            firebaseService.unsubscribe(userToken, removeDepartmentName.getName());
+            userEventPort.unsubscribeEvent(userToken, removeDepartmentName.getName());
             this.unsubscribeDepartment(userToken, removeDepartmentName);
-            subscribedRollbackEvent.deleteNewCategoryName(removeDepartmentName.getName());
-            log.info("구독 취소 = {}", removeDepartmentName.getName());
+            log.debug("구독 취소 = {}", removeDepartmentName.getName());
         }
     }
 
@@ -205,7 +189,7 @@ class UserCommandService implements UserCommandUseCase {
         Optional<User> optionalUser = userQueryPort.findByToken(token);
         if (optionalUser.isEmpty()) {
             optionalUser = Optional.of(userCommandPort.save(new User(token)));
-            firebaseService.subscribe(token, serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
+            userEventPort.subscribeEvent(token, serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
         }
 
         return optionalUser.orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));

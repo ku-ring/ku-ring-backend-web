@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.event;
+package com.kustacks.kuring.common.domain;
 
 import lombok.NoArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
