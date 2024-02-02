@@ -35,7 +35,6 @@ class MessageUserEventListenerTest extends IntegrationTestSupport {
         // when
         userCommandService.editSubscribeCategories(command);
 
-
         // then
         Mockito.verify(messageUserEventListener).subscribeEvent(any());
     }

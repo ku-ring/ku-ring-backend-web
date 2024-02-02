@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class FirebaseMessageAdapter implements UserEventPort {
+public class UserFirebaseMessageAdapter implements UserEventPort {
 
     @Override
     public void subscribeEvent(String token, String topic) throws FirebaseSubscribeException {

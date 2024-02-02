@@ -4,13 +4,11 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.kustacks.kuring.admin.application.port.in.AdminCommandUseCase;
 import com.kustacks.kuring.admin.application.port.in.dto.RealNotificationCommand;
 import com.kustacks.kuring.admin.application.port.in.dto.TestNotificationCommand;
+import com.kustacks.kuring.admin.application.port.out.AdminEventPort;
 import com.kustacks.kuring.admin.application.port.out.AdminUserFeedbackPort;
-import com.kustacks.kuring.admin.application.port.out.dto.AdminNotificationDto;
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.auth.userdetails.UserDetailsServicePort;
 import com.kustacks.kuring.common.annotation.UseCase;
-import com.kustacks.kuring.message.application.port.out.dto.NoticeMessageDto;
-import com.kustacks.kuring.message.application.service.FirebaseService;
 import com.kustacks.kuring.message.application.service.ServerProperties;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +27,12 @@ import static com.kustacks.kuring.message.application.service.FirebaseService.AL
 @RequiredArgsConstructor
 public class AdminCommandService implements AdminCommandUseCase {
 
-    private final AdminUserFeedbackPort adminUserFeedbackPort;
     private final UserDetailsServicePort userDetailsServicePort;
-    private final FirebaseService firebaseService;
-    private final PasswordEncoder passwordEncoder;
+    private final AdminUserFeedbackPort adminUserFeedbackPort;
+    private final AdminEventPort adminEventPort;
     private final NoticeProperties noticeProperties;
     private final ServerProperties serverProperties;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void createTestNotice(TestNotificationCommand command) {
@@ -43,17 +41,16 @@ public class AdminCommandService implements AdminCommandUseCase {
 
         CategoryName testCategoryName = CategoryName.fromStringName(command.category());
 
-        firebaseService.sendTestNotification(NoticeMessageDto.builder()
-                .articleId(command.articleId())
-                .postedDate(testNoticePostedDate)
-                .category(testCategoryName.getName())
-                .subject(command.subject())
-                .categoryKorName(testCategoryName.getKorName())
-                .baseUrl(
-                        CategoryName.LIBRARY.equals(testCategoryName)
+        adminEventPort.sendTestNotificationByAdmin(
+                command.articleId(),
+                testNoticePostedDate,
+                testCategoryName.getName(),
+                command.subject(),
+                testCategoryName.getKorName(),
+                CategoryName.LIBRARY.equals(testCategoryName)
                         ? noticeProperties.getLibraryBaseUrl()
                         : noticeProperties.getNormalBaseUrl()
-                ).build());
+        );
     }
 
     @Transactional
@@ -62,12 +59,11 @@ public class AdminCommandService implements AdminCommandUseCase {
         Admin admin = (Admin) userDetailsServicePort
                 .loadUserByUsername(command.getStringPrincipal());
 
-        if(!passwordEncoder.matches(command.adminPassword(), admin.getPassword())) {
+        if (!passwordEncoder.matches(command.adminPassword(), admin.getPassword())) {
             throw new IllegalArgumentException("관리자 비밀번호가 일치하지 않습니다.");
         }
 
-        AdminNotificationDto adminNotificationDto = new AdminNotificationDto(command.title(), command.body(), command.url());
-        firebaseService.sendNotificationByAdmin(adminNotificationDto);
+        adminEventPort.sendNotificationByAdmin(command.title(), command.body(), command.url());
     }
 
     /**
@@ -82,7 +78,7 @@ public class AdminCommandService implements AdminCommandUseCase {
         List<String> allToken = adminUserFeedbackPort.findAllToken();
 
         int size = allToken.size();
-        for(int i = 0; i < size; i += 500) {
+        for (int i = 0; i < size; i += 500) {
             List<String> subList = allToken.subList(i, Math.min(i + 500, size));
             instance.subscribeToTopicAsync(subList, topic);
         }
