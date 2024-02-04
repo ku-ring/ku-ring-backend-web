@@ -7,7 +7,7 @@ import com.kustacks.kuring.auth.handler.AuthenticationFailureHandler;
 import com.kustacks.kuring.auth.handler.AuthenticationSuccessHandler;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.message.application.port.in.dto.UserSubscribeCommand;
-import com.kustacks.kuring.message.application.service.ServerProperties;
+import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;

@@ -11,7 +11,7 @@ import com.kustacks.kuring.auth.interceptor.FirebaseTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.UserRegisterNonChainingFilter;
 import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
-import com.kustacks.kuring.message.application.service.ServerProperties;
+import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

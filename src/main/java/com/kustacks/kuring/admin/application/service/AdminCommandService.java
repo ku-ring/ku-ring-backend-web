@@ -9,7 +9,7 @@ import com.kustacks.kuring.admin.application.port.out.AdminUserFeedbackPort;
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.auth.userdetails.UserDetailsServicePort;
 import com.kustacks.kuring.common.annotation.UseCase;
-import com.kustacks.kuring.message.application.service.ServerProperties;
+import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

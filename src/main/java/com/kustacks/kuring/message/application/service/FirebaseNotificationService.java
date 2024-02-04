@@ -7,6 +7,7 @@ import com.google.firebase.messaging.Notification;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithAdminUseCase;
 import com.kustacks.kuring.message.application.port.in.dto.AdminNotificationCommand;
 import com.kustacks.kuring.message.application.port.in.dto.AdminTestNotificationCommand;

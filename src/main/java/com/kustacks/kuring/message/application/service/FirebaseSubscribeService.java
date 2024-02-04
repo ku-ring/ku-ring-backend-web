@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.TopicManagementResponse;
 import com.kustacks.kuring.common.annotation.UseCase;
+import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.message.application.port.in.dto.UserSubscribeCommand;
 import com.kustacks.kuring.message.application.port.in.dto.UserUnsubscribeCommand;

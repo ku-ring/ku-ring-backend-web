@@ -3,7 +3,7 @@ package com.kustacks.kuring.user.application.service;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.message.application.service.ServerProperties;
+import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.notice.domain.CategoryName;

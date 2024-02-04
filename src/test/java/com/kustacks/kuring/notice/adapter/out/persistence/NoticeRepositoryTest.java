@@ -1,4 +1,4 @@
-package com.kustacks.kuring.notice.repository;
+package com.kustacks.kuring.notice.adapter.out.persistence;
 
 import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;

@@ -1,4 +1,4 @@
-package com.kustacks.kuring.message.application.service;
+package com.kustacks.kuring.common.properties;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
