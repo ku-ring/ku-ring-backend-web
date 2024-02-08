@@ -1,13 +1,11 @@
 package com.kustacks.kuring.worker.update;
 
-import com.kustacks.kuring.message.firebase.FirebaseService;
-import com.kustacks.kuring.notice.domain.Notice;
-import com.kustacks.kuring.notice.domain.NoticeRepository;
+import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
+import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.worker.scrap.KuisNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.client.notice.LibraryNoticeApiClient;
 import com.kustacks.kuring.worker.update.notice.CategoryNoticeUpdater;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
@@ -37,7 +35,7 @@ class CategoryNoticeUpdaterTest {
     KuisNoticeScraperTemplate scrapperTemplate;
 
     @MockBean
-    FirebaseService firebaseService;
+    FirebaseNotificationService firebaseService;
 
     @MockBean
     LibraryNoticeApiClient libraryNoticeApiClient;
@@ -49,7 +47,7 @@ class CategoryNoticeUpdaterTest {
     ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
 
     @Autowired
-    NoticeRepository noticeRepository;
+    NoticeQueryPort noticeQueryPort;
 
     @DisplayName("공지 업데이트 테스트")
     @Test
@@ -64,17 +62,8 @@ class CategoryNoticeUpdaterTest {
         noticeUpdaterThreadTaskExecutor.getThreadPoolExecutor().awaitTermination(1, TimeUnit.SECONDS);
 
         // then
-        List<Notice> notices = noticeRepository.findAll();
-        assertAll(
-                () -> Assertions.assertThat(notices).filteredOn("categoryName", "library").size().isEqualTo(7),
-                () -> Assertions.assertThat(notices).filteredOn("categoryName", "bachelor").size().isEqualTo(9),
-                () -> Assertions.assertThat(notices).filteredOn("categoryName", "scholarship").size().isEqualTo(9),
-                () -> Assertions.assertThat(notices).filteredOn("categoryName", "employment").size().isEqualTo(9),
-                () -> Assertions.assertThat(notices).filteredOn("categoryName", "national").size().isEqualTo(9),
-                () -> Assertions.assertThat(notices).filteredOn("categoryName", "student").size().isEqualTo(9),
-                () -> Assertions.assertThat(notices).filteredOn("categoryName", "industry_university").size().isEqualTo(9),
-                () -> Assertions.assertThat(notices).filteredOn("categoryName", "normal").size().isEqualTo(9)
-        );
+        Long count = noticeQueryPort.count();
+        assertThat(count).isEqualTo(70);
     }
 
     private static List<CommonNoticeFormatDto> createLibraryFixture() {

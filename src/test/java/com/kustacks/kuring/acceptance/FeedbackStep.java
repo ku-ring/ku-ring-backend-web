@@ -1,6 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.user.common.dto.SaveFeedbackRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserFeedbackRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -25,7 +25,7 @@ public class FeedbackStep {
                 .given().log().all()
                 .header("User-Token", fcmToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new SaveFeedbackRequest(feedback))
+                .body(new UserFeedbackRequest(feedback))
                 .when().post("/api/v2/users/feedbacks")
                 .then().log().all()
                 .extract();
