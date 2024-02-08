@@ -1,9 +1,9 @@
 package com.kustacks.kuring.worker.update.user;
 
-import com.kustacks.kuring.message.firebase.FirebaseService;
-import com.kustacks.kuring.message.firebase.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
+import com.kustacks.kuring.message.application.service.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class UserUpdater {
 
-    private final FirebaseService firebaseService;
-    private final UserRepository userRepository;
+    private final FirebaseWithUserUseCase firebaseService;
+    private final UserPersistenceAdapter userPersistenceAdapter;
 
     @Transactional
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
@@ -27,14 +27,14 @@ public class UserUpdater {
 
         log.info("========== 토큰 유효성 필터링 시작 ==========");
 
-        List<User> users = userRepository.findAll();
+        List<User> users = userPersistenceAdapter.findAll();
 
         for (User user : users) {
             String token = user.getToken();
             try {
                 firebaseService.validationToken(token);
             } catch (FirebaseInvalidTokenException e) {
-                userRepository.delete(user);
+                userPersistenceAdapter.delete(user);
                 log.info("삭제한 토큰 = {}", user.getToken());
             }
         }

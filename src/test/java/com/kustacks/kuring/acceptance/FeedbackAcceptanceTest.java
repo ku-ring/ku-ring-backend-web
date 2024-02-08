@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
 import static com.kustacks.kuring.acceptance.FeedbackStep.피드백_요청;
 import static com.kustacks.kuring.acceptance.FeedbackStep.피드백_요청_응답_확인;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 
@@ -24,7 +25,7 @@ class FeedbackAcceptanceTest extends IntegrationTestSupport {
     @Test
     public void request_feedback() throws FirebaseMessagingException {
         // given
-        doNothing().when(firebaseService).validationToken(anyString());
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
         // when
         var 피드백_요청_응답 = 피드백_요청(USER_FCM_TOKEN, "feedback request");
@@ -37,7 +38,7 @@ class FeedbackAcceptanceTest extends IntegrationTestSupport {
     @Test
     public void request_invalid_length_feedback() throws FirebaseMessagingException {
         // given
-        doNothing().when(firebaseService).validationToken(anyString());
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
         // when
         var 피드백_요청_응답 = 피드백_요청(USER_FCM_TOKEN, "");

@@ -1,6 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.user.common.dto.SubscribeCategoriesRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -39,7 +39,7 @@ public class CategoryStep {
         );
     }
 
-    public static ExtractableResponse<Response> 카테고리_구독_요청(String userFcmToken, SubscribeCategoriesRequest reqeust) {
+    public static ExtractableResponse<Response> 카테고리_구독_요청(String userFcmToken, UserCategoriesSubscribeRequest reqeust) {
         return RestAssured
                 .given().log().all()
                 .header("User-Token", userFcmToken)
@@ -76,7 +76,7 @@ public class CategoryStep {
         );
     }
 
-    public static ExtractableResponse<Response> 카테고리_수정_요청(SubscribeCategoriesRequest request) {
+    public static ExtractableResponse<Response> 카테고리_수정_요청(UserCategoriesSubscribeRequest request) {
         return 카테고리_구독_요청(USER_FCM_TOKEN, request);
     }
 }

@@ -1,10 +1,10 @@
 package com.kustacks.kuring.worker.update.notice;
 
-import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
+import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
+import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.Notice;
-import com.kustacks.kuring.notice.domain.NoticeJdbcRepository;
-import com.kustacks.kuring.notice.domain.NoticeRepository;
 import com.kustacks.kuring.worker.scrap.KuisNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.client.notice.LibraryNoticeApiClient;
 import com.kustacks.kuring.worker.update.notice.dto.request.KuisNoticeInfo;
@@ -26,9 +26,9 @@ public class CategoryNoticeUpdater {
 
     private final List<KuisNoticeInfo> kuisNoticeInfoList;
     private final KuisNoticeScraperTemplate scrapperTemplate;
-    private final NoticeRepository noticeRepository;
-    private final NoticeJdbcRepository noticeJdbcRepository;
-    private final FirebaseService firebaseService;
+    private final NoticeQueryPort noticeQueryPort;
+    private final NoticeCommandPort noticeCommandPort;
+    private final FirebaseNotificationService notificationService;
     private final LibraryNoticeApiClient libraryNoticeApiClient;
     private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
     private final NoticeUpdateSupport noticeUpdateSupport;
@@ -49,14 +49,14 @@ public class CategoryNoticeUpdater {
             CompletableFuture
                     .supplyAsync(() -> updateKuisNoticeAsync(kuisNoticeInfo, KuisNoticeInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName()))
-                    .thenAccept(firebaseService::sendNotificationList);
+                    .thenAccept(notificationService::sendNotificationList);
         }
     }
 
     private void updateLibrary() {
         List<CommonNoticeFormatDto> scrapResults = updateLibraryNotice(CategoryName.LIBRARY);
         List<Notice> notices = compareLatestAndUpdateDB(scrapResults, CategoryName.LIBRARY);
-        firebaseService.sendNotificationList(notices);
+        notificationService.sendNotificationList(notices);
     }
 
     private List<CommonNoticeFormatDto> updateLibraryNotice(CategoryName categoryName) {
@@ -69,7 +69,7 @@ public class CategoryNoticeUpdater {
 
     private List<Notice> compareLatestAndUpdateDB(List<CommonNoticeFormatDto> scrapResults, CategoryName categoryName) {
         // DB에서 모든 일반 공지 id를 가져와서
-        List<String> savedArticleIds = noticeRepository.findNormalArticleIdsByCategory(categoryName);
+        List<String> savedArticleIds = noticeQueryPort.findNormalArticleIdsByCategory(categoryName);
 
         // db와 싱크를 맞춘다
         List<Notice> newNotices = synchronizationWithDb(scrapResults, savedArticleIds, categoryName);
@@ -87,10 +87,10 @@ public class CategoryNoticeUpdater {
 
         List<String> deletedNoticesArticleIds = noticeUpdateSupport.filteringSoonDeleteNoticeIds(savedArticleIds, scrapNoticeIds);
 
-        noticeJdbcRepository.saveAllCategoryNotices(newNotices);
+        noticeCommandPort.saveAllCategoryNotices(newNotices);
 
         if (!deletedNoticesArticleIds.isEmpty()) {
-            noticeRepository.deleteAllByIdsAndCategory(categoryName, deletedNoticesArticleIds);
+            noticeCommandPort.deleteAllByIdsAndCategory(categoryName, deletedNoticesArticleIds);
         }
 
         return newNotices;

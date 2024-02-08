@@ -12,13 +12,16 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class NoticeUpdateSupport {
 
-    public List<Notice> filteringSoonSaveNotices(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, CategoryName categoryName) {
+    public List<Notice> filteringSoonSaveNotices(
+            List<CommonNoticeFormatDto> scrapResults,
+            List<String> savedArticleIds,
+            CategoryName categoryName
+    ) {
         List<Notice> newNotices = new LinkedList<>(); // 뒤에 추가만 계속 하기 때문에 arrayList가 아닌 Linked List 사용 O(1)
         for (CommonNoticeFormatDto notice : scrapResults) {
             try {
@@ -37,12 +40,17 @@ public class NoticeUpdateSupport {
         return newNotices;
     }
 
-    public List<DepartmentNotice> filteringSoonSaveDepartmentNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
+    public List<DepartmentNotice> filteringSoonSaveDepartmentNotices(
+            List<CommonNoticeFormatDto> scrapResults,
+            List<Integer> savedArticleIds,
+            DepartmentName departmentNameEnum,
+            boolean important
+    ) {
         List<DepartmentNotice> newNotices = new LinkedList<>(); // 뒤에 추가만 계속 하기 때문에 arrayList가 아닌 Linked List 사용 O(1)
         for (CommonNoticeFormatDto notice : scrapResults) {
             try {
                 if (Collections.binarySearch(savedArticleIds, Integer.valueOf(notice.getArticleId())) < 0) { // 정렬되어있다, 이진탐색으로 O(logN)안에 수행
-                    DepartmentNotice newDepartmentNotice = convert(notice, departmentNameEnum, CategoryName.DEPARTMENT, important);
+                    DepartmentNotice newDepartmentNotice = convert(notice, departmentNameEnum, important);
                     newNotices.add(newDepartmentNotice);
                 }
             } catch (IncorrectResultSizeDataAccessException e) {
@@ -71,14 +79,20 @@ public class NoticeUpdateSupport {
                 .toList();
     }
 
-    public List<String> filteringSoonDeleteNoticeIds(List<String> savedArticleIds, List<String> latestNoticeIds) {
+    public List<String> filteringSoonDeleteNoticeIds(
+            List<String> savedArticleIds,
+            List<String> latestNoticeIds
+    ) {
         return savedArticleIds.stream()
                 .filter(savedArticleId -> Collections.binarySearch(latestNoticeIds, savedArticleId) < 0)
                 .map(Object::toString)
                 .toList();
     }
 
-    public List<String> filteringSoonDeleteDepartmentNoticeIds(List<Integer> savedArticleIds, List<Integer> latestNoticeIds) {
+    public List<String> filteringSoonDeleteDepartmentNoticeIds(
+            List<Integer> savedArticleIds,
+            List<Integer> latestNoticeIds
+    ) {
         return savedArticleIds.stream()
                 .filter(savedArticleId -> Collections.binarySearch(latestNoticeIds, savedArticleId) < 0)
                 .map(Object::toString)
@@ -95,7 +109,7 @@ public class NoticeUpdateSupport {
                 dto.getFullUrl());
     }
 
-    private DepartmentNotice convert(CommonNoticeFormatDto dto, DepartmentName departmentNameEnum, CategoryName categoryName, boolean important) {
+    private DepartmentNotice convert(CommonNoticeFormatDto dto, DepartmentName departmentNameEnum, boolean important) {
         return DepartmentNotice.builder()
                 .articleId(dto.getArticleId())
                 .postedDate(dto.getPostedDate())
@@ -103,7 +117,7 @@ public class NoticeUpdateSupport {
                 .subject(dto.getSubject())
                 .fullUrl(dto.getFullUrl())
                 .important(important)
-                .categoryName(categoryName)
+                .categoryName(CategoryName.DEPARTMENT)
                 .departmentName(departmentNameEnum)
                 .build();
     }

@@ -1,6 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.admin.common.dto.RealNotificationRequest;
+import com.kustacks.kuring.admin.adapter.in.web.dto.RealNotificationRequest;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
@@ -48,7 +48,7 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
     @Test
     void role_root_admin_create_test_notification() {
         // given
-        doNothing().when(firebaseService).sendNotificationByAdmin(any());
+        doNothing().when(firebaseNotificationService).sendNotificationByAdmin(any());
         String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
 
         // when

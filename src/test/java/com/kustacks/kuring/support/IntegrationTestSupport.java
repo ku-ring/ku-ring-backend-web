@@ -1,7 +1,8 @@
 package com.kustacks.kuring.support;
 
 
-import com.kustacks.kuring.message.firebase.FirebaseService;
+import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
+import com.kustacks.kuring.message.application.service.FirebaseSubscribeService;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,10 @@ public class IntegrationTestSupport {
     public static final String ADMIN_CLIENT_PASSWORD = "client_password";
 
     @MockBean
-    protected FirebaseService firebaseService;
+    protected FirebaseSubscribeService firebaseSubscribeService;
+
+    @MockBean
+    protected FirebaseNotificationService firebaseNotificationService;
 
     @LocalServerPort
     int port;

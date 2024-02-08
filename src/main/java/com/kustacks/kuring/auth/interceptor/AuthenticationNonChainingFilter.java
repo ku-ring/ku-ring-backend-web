@@ -7,7 +7,7 @@ import com.kustacks.kuring.auth.context.Authentication;
 import com.kustacks.kuring.auth.handler.AuthenticationFailureHandler;
 import com.kustacks.kuring.auth.handler.AuthenticationSuccessHandler;
 import com.kustacks.kuring.auth.userdetails.UserDetails;
-import com.kustacks.kuring.auth.userdetails.UserDetailsService;
+import com.kustacks.kuring.auth.userdetails.UserDetailsServicePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -19,7 +19,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public abstract class AuthenticationNonChainingFilter implements HandlerInterceptor {
 
-    protected final UserDetailsService userDetailsService;
+    protected final UserDetailsServicePort userDetailsServicePort;
     protected final PasswordEncoder passwordEncoder;
     protected final ObjectMapper objectMapper;
     protected final AuthenticationSuccessHandler successHandler;
@@ -42,7 +42,7 @@ public abstract class AuthenticationNonChainingFilter implements HandlerIntercep
         String principal = tokenRequest.getPrincipal();
         String credentials = tokenRequest.getCredentials();
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(principal);
+        UserDetails userDetails = userDetailsServicePort.loadUserByUsername(principal);
         if (userDetails == null) {
             throw new AuthenticationException();
         }

@@ -5,10 +5,11 @@ import com.kustacks.kuring.auth.dto.UserRegisterRequest;
 import com.kustacks.kuring.auth.exception.RegisterException;
 import com.kustacks.kuring.auth.handler.AuthenticationFailureHandler;
 import com.kustacks.kuring.auth.handler.AuthenticationSuccessHandler;
-import com.kustacks.kuring.message.firebase.FirebaseService;
-import com.kustacks.kuring.message.firebase.ServerProperties;
+import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
+import com.kustacks.kuring.message.application.port.in.dto.UserSubscribeCommand;
+import com.kustacks.kuring.common.properties.ServerProperties;
+import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -17,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-import static com.kustacks.kuring.message.firebase.FirebaseService.ALL_DEVICE_SUBSCRIBED_TOPIC;
+import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ALL_DEVICE_SUBSCRIBED_TOPIC;
 
 @RequiredArgsConstructor
 public class UserRegisterNonChainingFilter implements HandlerInterceptor {
@@ -25,8 +26,8 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
     private static final String REGISTER_HTTP_METHOD = "POST";
 
     private final ServerProperties serverProperties;
-    private final FirebaseService firebaseService;
-    private final UserRepository userRepository;
+    private final FirebaseWithUserUseCase firebaseService;
+    private final UserCommandPort userCommandPort;
     private final ObjectMapper objectMapper;
     private final AuthenticationSuccessHandler successHandler;
     private final AuthenticationFailureHandler failureHandler;
@@ -49,8 +50,13 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
     }
 
     private void register(String userFcmToken) {
-        userRepository.save(new User(userFcmToken));
-        firebaseService.subscribe(userFcmToken, serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
+        userCommandPort.save(new User(userFcmToken));
+        UserSubscribeCommand command =
+                new UserSubscribeCommand(
+                        userFcmToken,
+                        serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC)
+                );
+        firebaseService.subscribe(command);
     }
 
     public String convert(HttpServletRequest request) throws IOException {

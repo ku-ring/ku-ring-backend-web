@@ -1,17 +1,18 @@
 package com.kustacks.kuring.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.admin.business.AdminDetailsService;
+import com.kustacks.kuring.admin.application.service.AdminDetailsService;
 import com.kustacks.kuring.auth.authorization.AuthenticationPrincipalArgumentResolver;
 import com.kustacks.kuring.auth.context.SecurityContextPersistenceFilter;
 import com.kustacks.kuring.auth.handler.*;
 import com.kustacks.kuring.auth.interceptor.AdminTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.BearerTokenAuthenticationFilter;
+import com.kustacks.kuring.auth.interceptor.FirebaseTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.UserRegisterNonChainingFilter;
 import com.kustacks.kuring.auth.token.JwtTokenProvider;
-import com.kustacks.kuring.message.firebase.FirebaseService;
-import com.kustacks.kuring.message.firebase.ServerProperties;
-import com.kustacks.kuring.user.domain.UserRepository;
+import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
+import com.kustacks.kuring.common.properties.ServerProperties;
+import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,8 +31,8 @@ public class AuthConfig implements WebMvcConfigurer {
     private final JwtTokenProvider jwtTokenProvider;
     private final ObjectMapper objectMapper;
     private final ServerProperties serverProperties;
-    private final FirebaseService firebaseService;
-    private final UserRepository userRepository;
+    private final FirebaseWithUserUseCase firebaseService;
+    private final UserPersistenceAdapter userPersistenceAdapter;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -43,11 +44,15 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/v2/admin/login");
 
         registry.addInterceptor(new UserRegisterNonChainingFilter(
-                        serverProperties, firebaseService, userRepository, objectMapper,
+                        serverProperties, firebaseService, userPersistenceAdapter, objectMapper,
                         userRegisterSuccessHandler(), userRegisterFailureHandler()))
                 .addPathPatterns("/api/v2/users");
 
-        registry.addInterceptor(new BearerTokenAuthenticationFilter(jwtTokenProvider)).addPathPatterns("/api/v2/admin/**");
+        registry.addInterceptor(new BearerTokenAuthenticationFilter(jwtTokenProvider))
+                .addPathPatterns("/api/v2/admin/**");
+
+        registry.addInterceptor(new FirebaseTokenAuthenticationFilter(firebaseService, objectMapper))
+                .addPathPatterns("/api/v2/users/**");
     }
 
     @Override

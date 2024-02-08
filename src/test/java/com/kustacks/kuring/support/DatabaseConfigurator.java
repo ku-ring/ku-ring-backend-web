@@ -1,13 +1,17 @@
 package com.kustacks.kuring.support;
 
 import com.kustacks.kuring.admin.domain.Admin;
-import com.kustacks.kuring.admin.domain.AdminRepository;
+import com.kustacks.kuring.admin.adapter.out.persistence.AdminRepository;
 import com.kustacks.kuring.admin.domain.AdminRole;
-import com.kustacks.kuring.notice.domain.*;
+import com.kustacks.kuring.notice.adapter.out.persistence.NoticePersistenceAdapter;
+import com.kustacks.kuring.notice.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.DepartmentName;
+import com.kustacks.kuring.notice.domain.DepartmentNotice;
+import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.staff.domain.Staff;
-import com.kustacks.kuring.staff.domain.StaffRepository;
+import com.kustacks.kuring.staff.adapter.out.persistence.StaffRepository;
+import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import com.kustacks.kuring.user.domain.User;
-import com.kustacks.kuring.user.domain.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -34,8 +38,8 @@ public class DatabaseConfigurator implements InitializingBean {
     protected static final String ADMIN_CLIENT_LOGIN_ID = "client@email.com";
     protected static final String ADMIN_CLIENT_PASSWORD = "client_password";
 
-    private final NoticeRepository noticeRepository;
-    private final UserRepository userRepository;
+    private final NoticePersistenceAdapter noticePersistenceAdapter;
+    private final UserPersistenceAdapter userPersistenceAdapter;
     private final StaffRepository staffRepository;
     private final AdminRepository adminRepository;
     private final DataSource dataSource;
@@ -44,11 +48,11 @@ public class DatabaseConfigurator implements InitializingBean {
 
     private List<String> tableNames;
 
-    public DatabaseConfigurator(NoticeRepository noticeRepository, UserRepository userRepository,
+    public DatabaseConfigurator(NoticePersistenceAdapter noticePersistenceAdapter, UserPersistenceAdapter userPersistenceAdapter,
                                 StaffRepository staffRepository, AdminRepository adminRepository,
                                 DataSource dataSource, JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
-        this.noticeRepository = noticeRepository;
-        this.userRepository = userRepository;
+        this.noticePersistenceAdapter = noticePersistenceAdapter;
+        this.userPersistenceAdapter = userPersistenceAdapter;
         this.staffRepository = staffRepository;
         this.adminRepository = adminRepository;
         this.dataSource = dataSource;
@@ -86,6 +90,7 @@ public class DatabaseConfigurator implements InitializingBean {
 
         initAdmin();
         initUser();
+        initUserCategory();
         initFeedback();
         initStaff();
         initNotice();
@@ -133,11 +138,17 @@ public class DatabaseConfigurator implements InitializingBean {
 
     private void initUser() {
         User newUser = new User(USER_FCM_TOKEN);
-        userRepository.save(newUser);
+        userPersistenceAdapter.save(newUser);
+    }
+
+    private void initUserCategory() {
+        User findUser = userPersistenceAdapter.findByToken(USER_FCM_TOKEN).get();
+        findUser.subscribeCategory(CategoryName.STUDENT);
+        findUser.subscribeCategory(CategoryName.BACHELOR);
     }
 
     private void initFeedback() {
-        User findUser = userRepository.findByToken(USER_FCM_TOKEN).get();
+        User findUser = userPersistenceAdapter.findByToken(USER_FCM_TOKEN).get();
         findUser.addFeedback("test feedback 1");
         findUser.addFeedback("test feedback 2");
         findUser.addFeedback("test feedback 3");
@@ -147,13 +158,13 @@ public class DatabaseConfigurator implements InitializingBean {
 
     private void initNotice() {
         List<Notice> noticeList = buildNotices(5, CategoryName.STUDENT);
-        noticeRepository.saveAll(noticeList);
+        noticePersistenceAdapter.saveAllCategoryNotices(noticeList);
 
         List<DepartmentNotice> importantDeptNotices = buildImportantDepartmentNotice(7, DepartmentName.COMPUTER, CategoryName.DEPARTMENT, true);
-        noticeRepository.saveAll(importantDeptNotices);
+        noticePersistenceAdapter.saveAllDepartmentNotices(importantDeptNotices);
 
         List<DepartmentNotice> normalDeptNotices = buildNormalDepartmentNotice(5, DepartmentName.COMPUTER, CategoryName.DEPARTMENT, false);
-        noticeRepository.saveAll(normalDeptNotices);
+        noticePersistenceAdapter.saveAllDepartmentNotices(normalDeptNotices);
     }
 
     private void initStaff() {
