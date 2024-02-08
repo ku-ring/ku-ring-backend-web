@@ -1,4 +1,4 @@
-package com.kustacks.kuring.message.application.service.exception.handler;
+package com.kustacks.kuring.message.adapter.out.exception;
 
 import com.kustacks.kuring.common.dto.ErrorResponse;
 import com.kustacks.kuring.message.application.service.exception.FirebaseBusinessException;
