@@ -1,5 +1,9 @@
 package com.kustacks.kuring.notice.adapter.in.web;
 
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_SEARCH_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_SEARCH_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_SEARCH_SUCCESS;
+
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeCategoryNameResponse;
@@ -9,18 +13,15 @@ import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeRangeLookupResponse;
 import com.kustacks.kuring.notice.application.port.in.NoticeQueryUseCase;
 import com.kustacks.kuring.notice.application.port.in.dto.NoticeContentSearchResult;
 import com.kustacks.kuring.notice.application.port.in.dto.NoticeRangeLookupCommand;
+import java.util.List;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import java.util.List;
-
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
 
 @Validated
 @RequiredArgsConstructor
@@ -31,11 +32,11 @@ public class NoticeQueryApiV2 {
 
     @GetMapping
     public ResponseEntity<BaseResponse<List<NoticeRangeLookupResponse>>> getNotices(
-            @RequestParam(name = "type") String type,
-            @RequestParam(name = "department", required = false) String department,
-            @RequestParam(name = "important", required = false) Boolean important,
-            @RequestParam(name = "page") @Min(0) int page,
-            @RequestParam(name = "size") @Min(1) @Max(30) int size
+        @RequestParam(name = "type") String type,
+        @RequestParam(name = "department", required = false) String department,
+        @RequestParam(name = "important", defaultValue = "false") Boolean important,
+        @RequestParam(name = "page") @Min(0) int page,
+        @RequestParam(name = "size") @Min(1) @Max(30) int size
     ) {
         NoticeRangeLookupCommand command = new NoticeRangeLookupCommand(type, department, important, page, size);
         List<NoticeRangeLookupResponse> searchResults = noticeQueryUseCase.getNotices(command)
@@ -58,9 +59,9 @@ public class NoticeQueryApiV2 {
     @GetMapping("/categories")
     public ResponseEntity<BaseResponse<List<NoticeCategoryNameResponse>>> getSupportedCategories() {
         List<NoticeCategoryNameResponse> categoryNames = noticeQueryUseCase.lookupSupportedCategories()
-                .stream()
-                .map(NoticeCategoryNameResponse::from)
-                .toList();
+            .stream()
+            .map(NoticeCategoryNameResponse::from)
+            .toList();
 
         return ResponseEntity.ok().body(new BaseResponse<>(CATEGORY_SEARCH_SUCCESS, categoryNames));
     }
@@ -68,9 +69,9 @@ public class NoticeQueryApiV2 {
     @GetMapping("/departments")
     public ResponseEntity<BaseResponse<List<NoticeDepartmentNameResponse>>> getSupportedDepartments() {
         List<NoticeDepartmentNameResponse> departmentNames = noticeQueryUseCase.lookupSupportedDepartments()
-                .stream()
-                .map(NoticeDepartmentNameResponse::from)
-                .toList();
+            .stream()
+            .map(NoticeDepartmentNameResponse::from)
+            .toList();
 
         return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_SEARCH_SUCCESS, departmentNames));
     }
