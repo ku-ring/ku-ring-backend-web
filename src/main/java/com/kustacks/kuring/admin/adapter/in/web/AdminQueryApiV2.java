@@ -10,6 +10,7 @@ import com.kustacks.kuring.auth.context.Authentication;
 import com.kustacks.kuring.auth.secured.Secured;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.user.application.port.in.dto.AdminFeedbacksResult;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -51,6 +52,7 @@ public class AdminQueryApiV2 {
      *
      * @return OK
      */
+    @Hidden
     @Secured(AdminRole.ROLE_ROOT)
     @GetMapping("/root")
     public ResponseEntity<BaseResponse<List<String>>> roleAdminRoot(
@@ -65,6 +67,7 @@ public class AdminQueryApiV2 {
      *
      * @return OK
      */
+    @Hidden
     @Secured(AdminRole.ROLE_CLIENT)
     @GetMapping("/client")
     public ResponseEntity<BaseResponse<List<String>>> roleAdminClient(

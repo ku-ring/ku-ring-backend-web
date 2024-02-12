@@ -12,6 +12,7 @@ import com.kustacks.kuring.auth.authorization.AuthenticationPrincipal;
 import com.kustacks.kuring.auth.context.Authentication;
 import com.kustacks.kuring.auth.secured.Secured;
 import com.kustacks.kuring.common.dto.BaseResponse;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,6 +59,7 @@ public class AdminCommandApiV2 {
         return ResponseEntity.ok().body(new BaseResponse<>(ADMIN_REAL_NOTICE_CREATE_SUCCESS, null));
     }
 
+    @Hidden
     @Secured(AdminRole.ROLE_ROOT)
     @GetMapping("/subscribe/all")
     public ResponseEntity<Void> subscribe() {
