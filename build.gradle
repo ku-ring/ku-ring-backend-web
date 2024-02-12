@@ -102,15 +102,9 @@ dependencies {
 	testImplementation 'org.testcontainers:mariadb:1.19.3'
 }
 
-ext {
-	snippetsDir = file 'build/generated-snippets'
-}
-
 test.onlyIf { System.getenv('DEPLOY_ENV') == 'dev' }
 
 test {
-	outputs.dir snippetsDir
-
 	jacoco {
 		destinationFile = file("$buildDir/jacoco/jacoco.exec")
 	}
@@ -126,50 +120,6 @@ test {
 	}
 
 	finalizedBy 'jacocoTestReport'
-}
-
-//Querydsl 추가, 자동 생성된 Q클래스 gradle clean으로 제거
-clean {
-	delete file('src/main/generated')
-}
-
-asciidoctor.onlyIf { System.getenv('DEPLOY_ENV') == 'dev' }
-
-asciidoctor {
-	inputs.dir snippetsDir
-	dependsOn test
-	attributes "snippets": snippetsDir,
-				"version": version,
-				"stylesheet": "asciitheme/clean.css"
-
-	doFirst {
-		println "=====Start asciidoctor"
-		//asciidoctor 실행전 기존에 생성된 API 문서 삭제
-		delete file('src/main/resources/static/docs/api-docs.html')
-	}
-
-	doLast {
-		println "=====Finish asciidoctor"
-	}
-}
-
-task copyDocument(type: Copy) {
-	dependsOn asciidoctor
-	from file("build/asciidoc/html5")
-	// resources/static/docs 로 복사하여 서버가 돌아가고 있을때 /docs/index.html 로 접속하면 볼수 있음
-	into file("src/main/resources/static/docs")
-}
-
-build {
-	dependsOn copyDocument
-}
-
-bootJar {
-	enabled = true
-	dependsOn asciidoctor
-	from("${asciidoctor.outputDir}/html5") {
-		into "static/docs"
-	}
 }
 
 jar {
@@ -197,6 +147,11 @@ compileQuerydsl {
 compileQuerydsl.doFirst {
 	if(file(querydslDir).exists())
 		delete(file(querydslDir))
+}
+
+//Querydsl 추가, 자동 생성된 Q클래스 gradle clean으로 제거
+clean {
+	delete file('src/main/generated')
 }
 // -- Jacoco 설정 -------------------------------------------------------
 jacoco {
