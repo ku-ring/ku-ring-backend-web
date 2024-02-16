@@ -56,7 +56,7 @@ public class StaffDto {
                 .phone(staff.getPhone())
                 .email(staff.getEmail())
                 .deptName(staff.getDept())
-                .collegeName(staff.getCollege()).build();
+                .collegeName(staff.getCollege().name()).build();
     }
 
     public void setDeptName(String deptName) {

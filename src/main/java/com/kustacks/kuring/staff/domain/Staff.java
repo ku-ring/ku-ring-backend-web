@@ -5,11 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -34,41 +30,48 @@ public class Staff {
     @Column(name = "lab", length = 64)
     private String lab;
 
-    @Getter(AccessLevel.PUBLIC)
-    @Column(name = "phone", length = 64)
-    private String phone;
+    @Embedded
+    private Phone phone;
 
-    @Getter(AccessLevel.PUBLIC)
-    @Column(name = "email", length = 40, nullable = false)
-    private String email;
+    @Embedded
+    private Email email;
 
     @Getter(AccessLevel.PUBLIC)
     @Column(name = "dept", length = 128, nullable = false)
     private String dept;
 
     @Getter(AccessLevel.PUBLIC)
+    @Enumerated(EnumType.STRING)
     @Column(name = "college", length = 64, nullable = false)
-    private String college;
+    private College college;
 
     @Builder
-    public Staff(String name, String major, String lab, String phone, String email, String dept, String college) {
+    private Staff(String name, String major, String lab, String phone, String email, String dept, String college) {
         this.name = name;
         this.major = major;
         this.lab = lab;
-        this.phone = phone;
-        this.email = email;
+        this.phone = new Phone(phone);
+        this.email = new Email(email);
         this.dept = dept;
-        this.college = college;
+        this.college = College.valueOf(college);
     }
 
-    public void changeInformation(String name, String major, String lab, String phone, String email, String deptName, String collegeName) {
+    public void changeInformation(String name, String major, String lab, String phone, String email, String deptName, String college) {
         this.name = name;
         this.major = major;
         this.lab = lab;
-        this.phone = phone;
-        this.email = email;
+        this.phone = new Phone(phone);
+        this.email = new Email(email);
         this.dept = deptName;
-        this.college = collegeName;
+        this.college = College.valueOf(college);
+    }
+
+    public String getEmail() {
+        return this.email.getValue();
+    }
+
+    public String getPhone() {
+        return this.phone.getValue();
     }
 
     @Override
