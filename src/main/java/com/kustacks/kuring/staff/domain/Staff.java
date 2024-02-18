@@ -18,9 +18,8 @@ public class Staff {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Getter(AccessLevel.PUBLIC)
-    @Column(name = "name", length = 64, nullable = false)
-    private String name;
+    @Embedded
+    private Name name;
 
     @Getter(AccessLevel.PUBLIC)
     @Column(name = "major", length = 128, nullable = false)
@@ -47,7 +46,7 @@ public class Staff {
 
     @Builder
     private Staff(String name, String major, String lab, String phone, String email, String dept, String college) {
-        this.name = name;
+        this.name = new Name(name);
         this.major = major;
         this.lab = lab;
         this.phone = new Phone(phone);
@@ -57,7 +56,7 @@ public class Staff {
     }
 
     public void changeInformation(String name, String major, String lab, String phone, String email, String deptName, String college) {
-        this.name = name;
+        this.name = new Name(name);
         this.major = major;
         this.lab = lab;
         this.phone = new Phone(phone);
@@ -72,6 +71,10 @@ public class Staff {
 
     public String getPhone() {
         return this.phone.getValue();
+    }
+
+    public String getName() {
+        return this.name.getValue();
     }
 
     @Override

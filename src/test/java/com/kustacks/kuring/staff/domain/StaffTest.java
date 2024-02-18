@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.stream.Stream;
@@ -89,6 +90,37 @@ class StaffTest {
                 .hasMessage("올바른 이메일 형식이 아닙니다.");
     }
 
+    @ParameterizedTest
+    @NullAndEmptySource
+    void invalid_name(String name) {
+        // when
+        ThrowingCallable actual = () -> Staff.builder()
+                .name(name)
+                .major("major")
+                .lab("lab")
+                .phone("02-123-4567")
+                .email("email@gmail.com")
+                .dept("dept")
+                .college("이과대학")
+                .build();
+
+        // then
+        assertThatThrownBy(actual)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이름은 필수 입력값입니다.");
+    }
+
+    @DisplayName("여러 형태의 이름을 저장할 수 있다")
+    @ParameterizedTest
+    @MethodSource("nameInputProvider")
+    void name_convert(String input, String expected) {
+        // when
+        Name name = new Name(input);
+
+        // then
+        assertThat(name.getValue()).isEqualTo(expected);
+    }
+
     @DisplayName("여러 형태의 전화번호를 통일된 형태로 변환할 수 있다.")
     @ParameterizedTest
     @MethodSource("phoneNumberInputProvider")
@@ -98,6 +130,24 @@ class StaffTest {
 
         // then
         assertThat(phoneNumber.getValue()).isEqualTo(expected);
+    }
+
+    private static Stream<Arguments> nameInputProvider() {
+        return Stream.of(
+                Arguments.of("오인하", "오인하"),
+                Arguments.of("정환", "정환"),
+                Arguments.of("박세실리아", "박세실리아"),
+                Arguments.of("임 걸", "임 걸"),
+                Arguments.of("임 준 ( Jun Lim,林 俊 )", "임 준 ( Jun Lim,林 俊 )"),
+                Arguments.of("장준 ( ZHANG JUN,張俊 )", "장준 ( ZHANG JUN,張俊 )"),
+                Arguments.of("비제이싱", "비제이싱"),
+                Arguments.of("나가시마 노리코 ( 長島 倫子 )", "나가시마 노리코 ( 長島 倫子 )"),
+                Arguments.of("권성중 ( Kwon Seong Jung,權晟重 )", "권성중 ( Kwon Seong Jung,權晟重 )"),
+                Arguments.of("추 프랑솨(진교) ( Choo Francois(Jinkyo),秋鎭敎 )", "추 프랑솨(진교) ( Choo Francois(Jinkyo),秋鎭敎 )"),
+                Arguments.of("Kingman Cheng ( Kingman Cheng )", "Kingman Cheng ( Kingman Cheng )"),
+                Arguments.of("피터 라이언 ( Peter Andrew Ryan )", "피터 라이언 ( Peter Andrew Ryan )"),
+                Arguments.of("Eleanor E. B. Campbe ( Eleanor E. B. Campbell )", "Eleanor E. B. Campbe ( Eleanor E. B. Campbell )")
+        );
     }
 
     private static Stream<Arguments> phoneNumberInputProvider() {
