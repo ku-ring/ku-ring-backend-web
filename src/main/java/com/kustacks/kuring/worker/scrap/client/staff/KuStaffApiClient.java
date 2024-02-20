@@ -21,7 +21,6 @@ import java.util.Map;
 public class KuStaffApiClient implements StaffApiClient {
 
     private static final int STAFF_SCRAP_TIMEOUT = 30000;
-
     private final Map<String, String> urlMap;
     private final JsoupClient jsoupClient;
 
@@ -43,7 +42,7 @@ public class KuStaffApiClient implements StaffApiClient {
 
     @Override
     public List<Document> getHTML(DeptInfo deptInfo) throws InternalLogicException {
-        String url = buildProfessorInfoUrl(deptInfo);
+        String url = buildProfessorInfoUrl(deptInfo.getDeptName());
         Document document = getDocumentByUrl(url);
         return List.of(document);
     }
@@ -56,7 +55,7 @@ public class KuStaffApiClient implements StaffApiClient {
         }
     }
 
-    private String buildProfessorInfoUrl(DeptInfo deptInfo) {
-        return UriComponentsBuilder.fromUriString(urlMap.get(deptInfo.getDeptName())).toUriString();
+    private String buildProfessorInfoUrl(String deptName) {
+        return UriComponentsBuilder.fromUriString(urlMap.get(deptName)).toUriString();
     }
 }
