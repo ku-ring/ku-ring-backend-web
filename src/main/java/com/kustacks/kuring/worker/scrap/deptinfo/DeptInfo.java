@@ -44,6 +44,10 @@ public class DeptInfo {
         return this.departmentName.equals(departmentName);
     }
 
+    public List<String> getProfessorForumIds() {
+        return this.staffScrapInfo.getProfessorForumId();
+    }
+
     public String createRequestUrl(int index, int curPage, int pageNum) {
         return UriComponentsBuilder.fromUriString(latestPageNoticeProperties.getListUrl())
                 .queryParam("siteId", noticeScrapInfo.getSiteId())
