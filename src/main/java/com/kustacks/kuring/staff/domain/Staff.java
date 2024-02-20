@@ -55,7 +55,7 @@ public class Staff {
         this.college = College.valueOf(college);
     }
 
-    public void changeInformation(String name, String major, String lab, String phone, String email, String deptName, String college) {
+    public void updateInformation(String name, String major, String lab, String phone, String email, String deptName, String college) {
         this.name = new Name(name);
         this.major = major;
         this.lab = lab;
@@ -75,6 +75,34 @@ public class Staff {
 
     public String getName() {
         return this.name.getValue();
+    }
+
+    public boolean isSameName(String name) {
+        return this.name.isSameValue(name);
+    }
+
+    public boolean isSameMajor(String major) {
+        return this.major.equals(major);
+    }
+
+    public boolean isSameLab(String lab) {
+        return this.lab.equals(lab);
+    }
+
+    public boolean isSamePhone(String phone) {
+        return this.phone.isSameValue(phone);
+    }
+
+    public boolean isSameEmail(String email) {
+        return this.email.isSameValue(email);
+    }
+
+    public boolean isSameDept(String deptName) {
+        return this.dept.equals(deptName);
+    }
+
+    public boolean isSameCollege(String collegeName) {
+        return this.college == College.valueOf(collegeName);
     }
 
     @Override

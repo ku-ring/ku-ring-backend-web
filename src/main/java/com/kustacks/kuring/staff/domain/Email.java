@@ -38,4 +38,8 @@ public class Email {
                 .matcher(email)
                 .matches();
     }
+
+    public boolean isSameValue(String email) {
+        return this.value.equals(email);
+    }
 }

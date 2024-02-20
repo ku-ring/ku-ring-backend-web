@@ -73,4 +73,8 @@ public class Phone {
     private static boolean isEmptyNumbers(String phone) {
         return phone == null || phone.isBlank() || phone.equals(DELIMITER);
     }
+
+    public boolean isSameValue(String phone) {
+        return this.value.equals(phone);
+    }
 }

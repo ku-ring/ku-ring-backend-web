@@ -31,4 +31,8 @@ public class Name {
     private static boolean isNotValidName(String name) {
         return Objects.isNull(name) || name.isBlank();
     }
+
+    public boolean isSameValue(String name) {
+        return this.value.equals(name);
+    }
 }
