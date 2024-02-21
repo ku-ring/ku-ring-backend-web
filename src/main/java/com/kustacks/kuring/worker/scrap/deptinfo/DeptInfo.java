@@ -3,7 +3,7 @@ package com.kustacks.kuring.worker.scrap.deptinfo;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
-import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
+import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
 import com.kustacks.kuring.worker.scrap.parser.notice.RowsDto;
 import lombok.Getter;
