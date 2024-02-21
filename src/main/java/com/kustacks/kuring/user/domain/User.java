@@ -5,6 +5,8 @@ import com.kustacks.kuring.notice.domain.DepartmentName;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -15,6 +17,8 @@ import java.util.Set;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "update user set deleted = true where id = ?")
+@Where(clause = "deleted = false")
 public class User implements Serializable {
 
     @Id
@@ -37,6 +41,8 @@ public class User implements Serializable {
 
     @Embedded
     private Bookmarks bookmarks = new Bookmarks();
+
+    private boolean deleted = false;
 
     public User(String token) {
         this.token = token;
