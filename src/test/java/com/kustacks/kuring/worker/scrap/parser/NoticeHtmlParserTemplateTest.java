@@ -75,7 +75,7 @@ class NoticeHtmlParserTemplateTest {
         );
     }
 
-    public static String loadHtmlFile(String filePath) throws IOException {
+    private static String loadHtmlFile(String filePath) throws IOException {
         Path path = Path.of(filePath);
         byte[] fileBytes = Files.readAllBytes(path);
         return new String(fileBytes, StandardCharsets.UTF_8);

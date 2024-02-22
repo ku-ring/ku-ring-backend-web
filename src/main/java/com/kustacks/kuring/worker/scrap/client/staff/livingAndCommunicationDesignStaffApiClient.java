@@ -18,13 +18,13 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class KuStaffApiClient implements StaffApiClient {
+public class livingAndCommunicationDesignStaffApiClient implements StaffApiClient {
 
     private static final int STAFF_SCRAP_TIMEOUT = 30000;
     private final Map<String, String> urlMap;
     private final JsoupClient jsoupClient;
 
-    public KuStaffApiClient(
+    public livingAndCommunicationDesignStaffApiClient(
             @Value("${staff.living-design-url}") String livingDesignUrl,
             @Value("${staff.communication-design-url}") String communicationDesignUrl,
             JsoupClient normalJsoupClient)
