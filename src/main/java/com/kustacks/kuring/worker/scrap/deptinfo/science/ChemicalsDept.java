@@ -8,14 +8,14 @@ import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
 import com.kustacks.kuring.worker.dto.ScrapingResultDto;
-import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
+import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParserTemplate;
 
 import java.util.List;
 
 @RegisterDepartmentMap(key = DepartmentName.CHEMICALS)
 public class ChemicalsDept extends ScienceCollege {
     public ChemicalsDept(NoticeApiClient<ScrapingResultDto, DeptInfo> latestPageNoticeApiClient,
-                         NoticeHtmlParser latestPageNoticeHtmlParserTwo, LatestPageNoticeProperties latestPageNoticeProperties) {
+                         NoticeHtmlParserTemplate latestPageNoticeHtmlParserTwo, LatestPageNoticeProperties latestPageNoticeProperties) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
         this.htmlParser = latestPageNoticeHtmlParserTwo;

@@ -1,7 +1,8 @@
-package com.kustacks.kuring.worker.scrap;
+package com.kustacks.kuring.worker.scrap.parser;
 
 import com.kustacks.kuring.worker.scrap.parser.notice.LatestPageNoticeHtmlParser;
 import com.kustacks.kuring.worker.scrap.parser.notice.LatestPageNoticeHtmlParserTwo;
+import com.kustacks.kuring.worker.scrap.parser.notice.RealEstateNoticeHtmlParser;
 import com.kustacks.kuring.worker.scrap.parser.notice.RowsDto;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import org.jsoup.Jsoup;
@@ -18,11 +19,11 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class NoticeHtmlParserTest {
+class NoticeHtmlParserTemplateTest {
 
-    @DisplayName("LatestPageNoticeHtmlParser 테스트")
+    @DisplayName("오래된 학과의 홈페이지 공지를 분석한다")
     @Test
-    void computer_science_document_parsing_success() throws IOException {
+    void LatestPageNoticeHtmlParser() throws IOException {
         // given
         Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/notice/cse.html"));
 
@@ -38,9 +39,9 @@ class NoticeHtmlParserTest {
         );
     }
 
-    @DisplayName("LatestPageNoticeHtmlParserTwo 테스트")
+    @DisplayName("신규 개편된 학과의 홈페이지 공지를 분석한다")
     @Test
-    void k_beauty_document_parsing_success() throws IOException {
+    void LatestPageNoticeHtmlParserTwo() throws IOException {
         // given
         Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/notice/kbeauty.html"));
 
@@ -53,6 +54,24 @@ class NoticeHtmlParserTest {
         assertAll(
                 () -> assertThat(important).hasSize(28),
                 () -> assertThat(normal).hasSize(12)
+        );
+    }
+
+    @DisplayName("부동산 학과의 경우 별도의 HTML 파서를 사용하여 공지를 분석한다")
+    @Test
+    void RealEstateNoticeHtmlParser() throws IOException {
+        // given
+        Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/notice/realestate.html"));
+
+        // when
+        RowsDto rowsDto = new RealEstateNoticeHtmlParser().parse(doc);
+        List<CommonNoticeFormatDto> important = rowsDto.buildImportantRowList("important");
+        List<CommonNoticeFormatDto> normal = rowsDto.buildNormalRowList("normal");
+
+        // then
+        assertAll(
+                () -> assertThat(important).hasSize(0),
+                () -> assertThat(normal).hasSize(15)
         );
     }
 
