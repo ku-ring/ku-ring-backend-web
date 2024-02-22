@@ -19,7 +19,7 @@ import com.kustacks.kuring.worker.scrap.deptinfo.liberal_art.KoreanDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
 import com.kustacks.kuring.worker.scrap.parser.notice.LatestPageNoticeHtmlParser;
 import com.kustacks.kuring.worker.scrap.parser.staff.RealEstateStaffHtmlParser;
-import com.kustacks.kuring.worker.scrap.parser.staff.StaffEachDeptHtmlParser;
+import com.kustacks.kuring.worker.scrap.parser.staff.EachDeptStaffHtmlParser;
 import com.kustacks.kuring.worker.scrap.parser.staff.LivingAndCommunicationDesignStaffHtmlParser;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -57,7 +57,7 @@ import static org.mockserver.model.HttpResponse.response;
         StaffScraper.class,
         LatestPageNoticeApiClient.class, LatestPageNoticeHtmlParser.class,
         EachDeptStaffApiClient.class, livingAndCommunicationDesignStaffApiClient.class, RealEstateStaffApiClient.class,
-        StaffEachDeptHtmlParser.class, LivingAndCommunicationDesignStaffHtmlParser.class, RealEstateStaffHtmlParser.class,
+        EachDeptStaffHtmlParser.class, LivingAndCommunicationDesignStaffHtmlParser.class, RealEstateStaffHtmlParser.class,
         NormalJsoupClient.class,
         KoreanDept.class, LivingDesignDept.class, CommunicationDesignDept.class, RealEstateDept.class,
         ObjectMapper.class})

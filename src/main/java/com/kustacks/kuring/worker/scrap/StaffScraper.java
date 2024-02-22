@@ -5,7 +5,7 @@ import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.worker.scrap.client.staff.StaffApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
-import com.kustacks.kuring.worker.scrap.parser.staff.StaffHtmlParser;
+import com.kustacks.kuring.worker.scrap.parser.staff.StaffHtmlParserTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.springframework.retry.annotation.Backoff;
@@ -21,10 +21,10 @@ public class StaffScraper {
 
     private static final int RETRY_PERIOD = 1000 * 60; // 1분후에 실패한 크론잡 재시도
 
-    private final List<StaffHtmlParser> htmlParsers;
+    private final List<StaffHtmlParserTemplate> htmlParsers;
     private final List<StaffApiClient> staffApiClients;
 
-    public StaffScraper(List<StaffHtmlParser> htmlParsers, List<StaffApiClient> staffApiClients) {
+    public StaffScraper(List<StaffHtmlParserTemplate> htmlParsers, List<StaffApiClient> staffApiClients) {
         this.htmlParsers = htmlParsers;
         this.staffApiClients = staffApiClients;
     }
@@ -45,7 +45,7 @@ public class StaffScraper {
 
         // 수신한 documents HTML 파싱
         List<String[]> parseResult = new LinkedList<>();
-        for (StaffHtmlParser htmlParser : htmlParsers) {
+        for (StaffHtmlParserTemplate htmlParser : htmlParsers) {
             if (htmlParser.support(deptInfo)) {
                 log.info("{} HTML 파싱 시작", deptInfo.getDeptName());
                 for (Document document : documents) {
