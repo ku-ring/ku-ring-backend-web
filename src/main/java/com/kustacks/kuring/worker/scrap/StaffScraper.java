@@ -1,18 +1,17 @@
 package com.kustacks.kuring.worker.scrap;
 
-import com.kustacks.kuring.worker.update.staff.dto.StaffDto;
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.worker.scrap.client.staff.StaffApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.parser.staff.StaffHtmlParserTemplate;
+import com.kustacks.kuring.worker.update.staff.dto.StaffDto;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
-import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
@@ -31,46 +30,58 @@ public class StaffScraper {
 
     @Retryable(value = {InternalLogicException.class}, backoff = @Backoff(delay = RETRY_PERIOD))
     public List<StaffDto> scrap(DeptInfo deptInfo) throws InternalLogicException {
+        log.debug("{} HTML 요청", deptInfo.getDeptName());
+        List<Document> documents = requestHtmlByStaffApiClient(deptInfo);
+        log.debug("{} HTML 응답 도착", deptInfo.getDeptName());
 
-        List<Document> documents = null;
-        List<StaffDto> staffDtoList = new LinkedList<>();
+        StaffHtmlParserTemplate htmlParser = findHtmlParser(deptInfo);
 
-        for (StaffApiClient staffApiClient : staffApiClients) {
-            if (staffApiClient.support(deptInfo)) {
-                log.info("{} HTML 요청", deptInfo.getDeptName());
-                documents = staffApiClient.getHTML(deptInfo);
-                log.info("{} HTML 수신", deptInfo.getDeptName());
-            }
-        }
+        log.debug("{} HTML 파싱 시작", deptInfo.getDeptName());
+        List<String[]> parseResult = parseHtmlDocuments(documents, htmlParser);
+        log.debug("{} HTML 파싱 완료", deptInfo.getDeptName());
 
-        // 수신한 documents HTML 파싱
-        List<String[]> parseResult = new LinkedList<>();
-        for (StaffHtmlParserTemplate htmlParser : htmlParsers) {
-            if (htmlParser.support(deptInfo)) {
-                log.info("{} HTML 파싱 시작", deptInfo.getDeptName());
-                for (Document document : documents) {
-                    parseResult.addAll(htmlParser.parse(document));
-                }
-                log.info("{} HTML 파싱 완료", deptInfo.getDeptName());
-            }
-        }
-
-        // 파싱 결과를 staffDto로 변환
-        for (String[] oneStaffInfo : parseResult) {
-            staffDtoList.add(StaffDto.builder()
-                    .name(oneStaffInfo[0])
-                    .major(oneStaffInfo[1])
-                    .lab(oneStaffInfo[2])
-                    .phone(oneStaffInfo[3])
-                    .email(oneStaffInfo[4])
-                    .deptName(deptInfo.getDeptName())
-                    .collegeName(deptInfo.getCollegeName()).build());
-        }
+        List<StaffDto> staffDtoList = convertStaffDtos(deptInfo, parseResult);
 
         if (staffDtoList.isEmpty()) {
             throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP);
         }
 
         return staffDtoList;
+    }
+
+    private static List<String[]> parseHtmlDocuments(List<Document> documents, StaffHtmlParserTemplate htmlParser) {
+        return documents.stream()
+                .map(htmlParser::parse)
+                .flatMap(List::stream)
+                .toList();
+    }
+
+    private static List<StaffDto> convertStaffDtos(DeptInfo deptInfo, List<String[]> parseResult) {
+        return parseResult.stream()
+                .map(oneStaffInfo -> StaffDto.builder()
+                        .name(oneStaffInfo[0])
+                        .major(oneStaffInfo[1])
+                        .lab(oneStaffInfo[2])
+                        .phone(oneStaffInfo[3])
+                        .email(oneStaffInfo[4])
+                        .deptName(deptInfo.getDeptName())
+                        .collegeName(deptInfo.getCollegeName()
+                        ).build()
+                ).toList();
+    }
+
+    private StaffHtmlParserTemplate findHtmlParser(DeptInfo deptInfo) {
+        return htmlParsers.stream()
+                .filter(htmlParser -> htmlParser.support(deptInfo))
+                .findFirst()
+                .orElseThrow(() -> new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP));
+    }
+
+    private List<Document> requestHtmlByStaffApiClient(DeptInfo deptInfo) {
+        return staffApiClients.stream()
+                .filter(staffApiClient -> staffApiClient.support(deptInfo))
+                .findFirst()
+                .map(staffApiClient -> staffApiClient.getHTML(deptInfo))
+                .orElseThrow(() -> new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP));
     }
 }
