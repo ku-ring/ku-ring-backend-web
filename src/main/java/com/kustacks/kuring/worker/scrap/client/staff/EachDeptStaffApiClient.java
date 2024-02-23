@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.scrap.client.staff;
 
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.worker.scrap.client.JsoupClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;
@@ -23,11 +23,10 @@ import java.util.Map;
 public class EachDeptStaffApiClient implements StaffApiClient {
 
     private static final int STAFF_SCRAP_TIMEOUT = 30000;
+    private final JsoupClient jsoupClient;
 
     @Value("${staff.each-dept-url}")
     private String baseUrl;
-
-    private final JsoupClient jsoupClient;
 
     public EachDeptStaffApiClient(JsoupClient normalJsoupClient) {
         this.jsoupClient = normalJsoupClient;
@@ -35,7 +34,6 @@ public class EachDeptStaffApiClient implements StaffApiClient {
 
     @Override
     public boolean support(DeptInfo deptInfo) {
-
         return !(deptInfo instanceof RealEstateDept) &&
                 !(deptInfo instanceof LivingDesignDept) &&
                 !(deptInfo instanceof CommunicationDesignDept);
@@ -43,43 +41,50 @@ public class EachDeptStaffApiClient implements StaffApiClient {
 
     @Override
     public List<Document> getHTML(DeptInfo deptInfo) throws InternalLogicException {
+        return deptInfo.getProfessorForumIds().stream()
+                .flatMap(professorForumId -> getProfessorHtmlById(professorForumId).stream())
+                .toList();
+    }
 
-        UriComponentsBuilder urlBuilder;
-        String url;
-        List<Document> documents = new LinkedList<>();
+    private List<Document> getProfessorHtmlById(String professorForumId) {
+        LinkedList<Document> documents = new LinkedList<>();
 
-        for (String pfForumId : deptInfo.getStaffScrapInfo().getProfessorForumId()) {
-            urlBuilder = UriComponentsBuilder.fromUriString(baseUrl).queryParam("pfForumId", pfForumId);
-            url = urlBuilder.toUriString();
+        String url = buildProfessorInfoUrl(professorForumId);
+        Document document = getDocument(url);
+        documents.add(document);
 
-            Document document;
-            try {
-                document = jsoupClient.get(url, STAFF_SCRAP_TIMEOUT);
-            } catch(IOException e) {
-                throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);
-            }
-
-            Element pageNumHiddenInput = document.getElementById("totalPageCount");
-            int totalPageNum = Integer.parseInt(pageNumHiddenInput.val());
-            int pageNum = 1; // 이미 1페이지를 받아왔으므로 2페이지부터 호출하면됨
-
-            Map<String, String> requestBody = new HashMap<>();
-            while(true) {
-                documents.add(document);
-
-                if(++pageNum > totalPageNum) {
-                    break;
-                }
-
-                try {
-                    requestBody.put("pageNum", String.valueOf(pageNum));
-                    document = jsoupClient.post(url, STAFF_SCRAP_TIMEOUT, requestBody);
-                } catch(IOException e) {
-                    throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);
-                }
-            }
+        int totalPageNum = getTotalPageNumber(document);
+        for (int pageNumber = 2; pageNumber <= totalPageNum; pageNumber++) {
+            documents.add(parseDocumentByPageNumber(url, pageNumber));
         }
 
         return documents;
+    }
+
+    private Document parseDocumentByPageNumber(String url, int pageNumber) {
+        try {
+            Map<String, String> requestBody = new HashMap<>();
+            requestBody.put("pageNum", String.valueOf(pageNumber));
+            return jsoupClient.post(url, STAFF_SCRAP_TIMEOUT, requestBody);
+        } catch (IOException e) {
+            throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);
+        }
+    }
+
+    private static int getTotalPageNumber(Document document) {
+        Element pageNumHiddenInput = document.getElementById("totalPageCount");
+        return Integer.parseInt(pageNumHiddenInput.val());
+    }
+
+    private Document getDocument(String url) {
+        try {
+            return jsoupClient.get(url, STAFF_SCRAP_TIMEOUT);
+        } catch (IOException e) {
+            throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);
+        }
+    }
+
+    private String buildProfessorInfoUrl(String pfForumId) {
+        return UriComponentsBuilder.fromUriString(baseUrl).queryParam("pfForumId", pfForumId).toUriString();
     }
 }

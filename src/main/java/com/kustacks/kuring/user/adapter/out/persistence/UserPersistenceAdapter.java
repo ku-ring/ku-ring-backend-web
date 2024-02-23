@@ -39,12 +39,22 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     }
 
     @Override
+    public List<User> findByPageRequest(Pageable pageable) {
+        return userRepository.findByPageRequest(pageable);
+    }
+
+    @Override
+    public Long countUser() {
+        return this.userRepository.count();
+    }
+
+    @Override
     public User save(User user) {
         return userRepository.save(user);
     }
 
     @Override
-    public void delete(User user) {
-        userRepository.delete(user);
+    public void deleteAll(List<User> allInvalidUsers) {
+        userRepository.deleteAll(allInvalidUsers);
     }
 }

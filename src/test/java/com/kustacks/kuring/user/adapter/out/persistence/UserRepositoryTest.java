@@ -1,8 +1,7 @@
 package com.kustacks.kuring.user.adapter.out.persistence;
 
-import com.kustacks.kuring.user.application.port.out.dto.FeedbackDto;
 import com.kustacks.kuring.support.IntegrationTestSupport;
-import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
+import com.kustacks.kuring.user.application.port.out.dto.FeedbackDto;
 import com.kustacks.kuring.user.domain.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,5 +42,19 @@ class UserRepositoryTest extends IntegrationTestSupport {
                         tuple("content2", userId),
                         tuple("content3", userId)
                 );
+    }
+
+    @DisplayName("사용자를 삭제하여도 피드벡은 남아있어야 한다")
+    @Test
+    void deleteALl() {
+        // given
+        User savedUser = userPersistenceAdapter.findByToken(USER_FCM_TOKEN).get();
+
+        // when
+        userPersistenceAdapter.deleteAll(List.of(savedUser));
+
+        // then
+        List<FeedbackDto> feedbackDtos = userPersistenceAdapter.findAllFeedbackByPageRequest(PageRequest.of(0, 10));
+        assertThat(feedbackDtos).hasSize(5);
     }
 }

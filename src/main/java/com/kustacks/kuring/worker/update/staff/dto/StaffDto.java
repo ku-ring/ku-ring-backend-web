@@ -37,6 +37,16 @@ public class StaffDto {
         this.collegeName = collegeName;
     }
 
+    public boolean isNotSameInformation(Staff staff) {
+        return !staff.isSameName(name)
+                || !staff.isSameMajor(major)
+                || !staff.isSameLab(lab)
+                || !staff.isSamePhone(phone)
+                || !staff.isSameEmail(email)
+                || !staff.isSameDept(deptName)
+                || !staff.isSameCollege(collegeName);
+    }
+
     public Staff toEntity() {
         return Staff.builder()
                 .name(name)
@@ -48,33 +58,26 @@ public class StaffDto {
                 .college(collegeName).build();
     }
 
-    public static StaffDto entityToDto(Staff staff) {
-        return StaffDto.builder()
-                .name(staff.getName())
-                .major(staff.getMajor())
-                .lab(staff.getLab())
-                .phone(staff.getPhone())
-                .email(staff.getEmail())
-                .deptName(staff.getDept())
-                .collegeName(staff.getCollege()).build();
-    }
-
     public void setDeptName(String deptName) {
         this.deptName = deptName;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         StaffDto staffDto = (StaffDto) o;
-        return Objects.equals(staffDto.getName(), name) && Objects.equals(staffDto.getMajor(), major) && Objects.equals(staffDto.getLab(), lab)
-                && Objects.equals(staffDto.getPhone(), phone) && Objects.equals(staffDto.getEmail(), email) && Objects.equals(staffDto.getDeptName(), deptName)
-                && Objects.equals(staffDto.getCollegeName(), collegeName);
+        return Objects.equals(getName(), staffDto.getName())
+                && Objects.equals(getMajor(), staffDto.getMajor())
+                && Objects.equals(getLab(), staffDto.getLab())
+                && Objects.equals(getPhone(), staffDto.getPhone())
+                && Objects.equals(getEmail(), staffDto.getEmail())
+                && Objects.equals(getDeptName(), staffDto.getDeptName())
+                && Objects.equals(getCollegeName(), staffDto.getCollegeName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getMajor(), getLab(), getPhone(), getEmail(), getDeptName(), getCollegeName());
     }
 }
