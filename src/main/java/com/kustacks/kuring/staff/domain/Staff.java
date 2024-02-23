@@ -5,11 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -22,9 +18,8 @@ public class Staff {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Getter(AccessLevel.PUBLIC)
-    @Column(name = "name", length = 64, nullable = false)
-    private String name;
+    @Embedded
+    private Name name;
 
     @Getter(AccessLevel.PUBLIC)
     @Column(name = "major", length = 128, nullable = false)
@@ -34,41 +29,80 @@ public class Staff {
     @Column(name = "lab", length = 64)
     private String lab;
 
-    @Getter(AccessLevel.PUBLIC)
-    @Column(name = "phone", length = 64)
-    private String phone;
+    @Embedded
+    private Phone phone;
 
-    @Getter(AccessLevel.PUBLIC)
-    @Column(name = "email", length = 40, nullable = false)
-    private String email;
+    @Embedded
+    private Email email;
 
     @Getter(AccessLevel.PUBLIC)
     @Column(name = "dept", length = 128, nullable = false)
     private String dept;
 
     @Getter(AccessLevel.PUBLIC)
+    @Enumerated(EnumType.STRING)
     @Column(name = "college", length = 64, nullable = false)
-    private String college;
+    private College college;
 
     @Builder
-    public Staff(String name, String major, String lab, String phone, String email, String dept, String college) {
-        this.name = name;
+    private Staff(String name, String major, String lab, String phone, String email, String dept, String college) {
+        this.name = new Name(name);
         this.major = major;
         this.lab = lab;
-        this.phone = phone;
-        this.email = email;
+        this.phone = new Phone(phone);
+        this.email = new Email(email);
         this.dept = dept;
-        this.college = college;
+        this.college = College.valueOf(college);
     }
 
-    public void changeInformation(String name, String major, String lab, String phone, String email, String deptName, String collegeName) {
-        this.name = name;
+    public void updateInformation(String name, String major, String lab, String phone, String email, String deptName, String college) {
+        this.name = new Name(name);
         this.major = major;
         this.lab = lab;
-        this.phone = phone;
-        this.email = email;
+        this.phone = new Phone(phone);
+        this.email = new Email(email);
         this.dept = deptName;
-        this.college = collegeName;
+        this.college = College.valueOf(college);
+    }
+
+    public String getEmail() {
+        return this.email.getValue();
+    }
+
+    public String getPhone() {
+        return this.phone.getValue();
+    }
+
+    public String getName() {
+        return this.name.getValue();
+    }
+
+    public boolean isSameName(String name) {
+        return this.name.isSameValue(name);
+    }
+
+    public boolean isSameMajor(String major) {
+        return this.major.equals(major);
+    }
+
+    public boolean isSameLab(String lab) {
+        return this.lab.equals(lab);
+    }
+
+    public boolean isSamePhone(String phone) {
+        return this.phone.isSameValue(phone);
+    }
+
+    public boolean isSameEmail(String email) {
+        return this.email.isSameValue(email);
+    }
+
+    public boolean isSameDept(String deptName) {
+        return this.dept.equals(deptName);
+    }
+
+    public boolean isSameCollege(String collegeName) {
+        return this.college == College.valueOf(collegeName);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.scrap.dto;
+package com.kustacks.kuring.worker.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

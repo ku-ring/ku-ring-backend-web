@@ -7,8 +7,8 @@ import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
-import com.kustacks.kuring.worker.scrap.dto.ScrapingResultDto;
-import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParser;
+import com.kustacks.kuring.worker.dto.ScrapingResultDto;
+import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParserTemplate;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +18,7 @@ public class RealEstateDept extends RealEstateCollege {
 
     // 부동산학과는 교수진 정보를 렌더링하는 방법이 다름. 따라서 pfForumId 인자를 전달하지 않았다.
     public RealEstateDept(NoticeApiClient<ScrapingResultDto, DeptInfo> realEstateNoticeApiClient,
-                          NoticeHtmlParser realEstateNoticeHtmlParser, LatestPageNoticeProperties latestPageNoticeProperties) {
+                          NoticeHtmlParserTemplate realEstateNoticeHtmlParser, LatestPageNoticeProperties latestPageNoticeProperties) {
         super();
         this.noticeApiClient = realEstateNoticeApiClient;
         this.htmlParser = realEstateNoticeHtmlParser;

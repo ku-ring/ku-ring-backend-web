@@ -2,14 +2,17 @@ package com.kustacks.kuring.worker.update.user;
 
 import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.message.application.service.exception.FirebaseInvalidTokenException;
-import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
+import com.kustacks.kuring.user.application.port.out.UserCommandPort;
+import com.kustacks.kuring.user.application.port.out.UserQueryPort;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -19,26 +22,47 @@ import java.util.concurrent.TimeUnit;
 public class UserUpdater {
 
     private final FirebaseWithUserUseCase firebaseService;
-    private final UserPersistenceAdapter userPersistenceAdapter;
+    private final UserCommandPort userCommandPort;
+    private final UserQueryPort userQueryPort;
 
     @Transactional
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
     public void update() {
-
         log.info("========== 토큰 유효성 필터링 시작 ==========");
 
-        List<User> users = userPersistenceAdapter.findAll();
+        Long totalUserCount = userQueryPort.countUser();
+        log.debug("총 유저 수 = {}", totalUserCount);
 
-        for (User user : users) {
-            String token = user.getToken();
-            try {
-                firebaseService.validationToken(token);
-            } catch (FirebaseInvalidTokenException e) {
-                userPersistenceAdapter.delete(user);
-                log.info("삭제한 토큰 = {}", user.getToken());
-            }
+        List<User> allInvalidUsers = new LinkedList<>();
+
+        int totalPage = calculateTotalPage(totalUserCount);
+        for(int page = 0; page < totalPage; page++) {
+            List<User> invalidUsers = checkValidUserByPage(page);
+            allInvalidUsers.addAll(invalidUsers);
         }
 
+        userCommandPort.deleteAll(allInvalidUsers);
+
         log.info("========== 토큰 유효성 필터링 종료 ==========");
+    }
+
+    private List<User> checkValidUserByPage(int page) {
+        return userQueryPort.findByPageRequest(PageRequest.of(page, 500))
+                .stream()
+                .filter(user -> !isValidUser(user))
+                .toList();
+    }
+
+    private boolean isValidUser(User user) {
+        try {
+            firebaseService.validationToken(user.getToken());
+            return true;
+        } catch (FirebaseInvalidTokenException e) {
+            return false;
+        }
+    }
+
+    private static int calculateTotalPage(Long totalUserCount) {
+        return (int) Math.ceil(totalUserCount / 500.0);
     }
 }
