@@ -42,7 +42,8 @@ public class User implements Serializable {
     @Embedded
     private Bookmarks bookmarks = new Bookmarks();
 
-    private boolean deleted = false;
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = Boolean.FALSE;
 
     public User(String token) {
         this.token = token;
