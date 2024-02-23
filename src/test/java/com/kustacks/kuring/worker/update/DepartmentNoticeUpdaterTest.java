@@ -3,7 +3,7 @@ package com.kustacks.kuring.worker.update;
 import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
-import com.kustacks.kuring.worker.scrap.dto.ComplexNoticeFormatDto;
+import com.kustacks.kuring.worker.dto.ComplexNoticeFormatDto;
 import com.kustacks.kuring.worker.update.notice.DepartmentNoticeUpdater;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import org.junit.jupiter.api.DisplayName;

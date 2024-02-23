@@ -19,13 +19,13 @@ public class StaffQueryRepositoryImpl implements StaffQueryRepository {
     public List<StaffSearchDto> findAllByKeywords(List<String> keywords) {
         return queryFactory
                 .select(new QStaffSearchDto(
-                        staff.name,
+                        staff.name.value,
                         staff.major,
                         staff.lab,
-                        staff.phone,
-                        staff.email,
+                        staff.phone.value,
+                        staff.email.value,
                         staff.dept,
-                        staff.college
+                        staff.college.stringValue()
                 ))
                 .from(staff)
                 .where(isContainName(keywords).or(isContainDept(keywords)).or(isContainCollege(keywords)))
@@ -35,7 +35,7 @@ public class StaffQueryRepositoryImpl implements StaffQueryRepository {
     private static BooleanBuilder isContainName(List<String> keywords) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         for (String keyword : keywords) {
-            booleanBuilder.or(staff.name.contains(keyword));
+            booleanBuilder.or(staff.name.value.contains(keyword));
         }
 
         return booleanBuilder;
@@ -53,7 +53,7 @@ public class StaffQueryRepositoryImpl implements StaffQueryRepository {
     private static BooleanBuilder isContainCollege(List<String> keywords) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         for (String keyword : keywords) {
-            booleanBuilder.or(staff.college.contains(keyword));
+            booleanBuilder.or(staff.college.stringValue().contains(keyword));
         }
 
         return booleanBuilder;

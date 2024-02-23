@@ -65,6 +65,7 @@ public class DatabaseConfigurator implements InitializingBean {
         tableNames = new ArrayList<>();
         extractTableNames();
         createFullTextIndex();
+        setCharsetAllTable();
         log.info("[DatabaseConfigurator] afterPropertiesSet complete");
     }
 
@@ -96,6 +97,12 @@ public class DatabaseConfigurator implements InitializingBean {
         initNotice();
 
         log.info("[DatabaseConfigurator] init complete");
+    }
+
+    private void setCharsetAllTable() {
+        for (String tableName : tableNames) {
+            jdbcTemplate.execute("ALTER TABLE " + tableName +" CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+        }
     }
 
     private void truncateAllTable() {
@@ -196,7 +203,15 @@ public class DatabaseConfigurator implements InitializingBean {
     private static List<Staff> buildStaffs(int cnt) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new Staff("shine_" + i, "computer", "lab", "phone", "email@naver.com", "dept", "college"))
-                .toList();
+                .map(i -> Staff.builder()
+                        .name("shine_" + i)
+                        .major("computer")
+                        .lab("lab")
+                        .phone("02-123-4568")
+                        .email("email@naver.com")
+                        .dept("dept")
+                        .college("이과대학")
+                        .build()
+                ).toList();
     }
 }
