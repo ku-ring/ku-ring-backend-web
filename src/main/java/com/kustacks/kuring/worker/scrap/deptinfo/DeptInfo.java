@@ -15,14 +15,14 @@ import java.util.List;
 @Getter
 public class DeptInfo {
 
+    protected NoticeApiClient<ScrapingResultDto, DeptInfo> noticeApiClient;
     protected LatestPageNoticeProperties latestPageNoticeProperties;
-    protected String code;
+    protected NoticeHtmlParserTemplate htmlParser;
+    protected NoticeScrapInfo noticeScrapInfo;
+    protected StaffScrapInfo staffScrapInfo;
     protected DepartmentName departmentName;
     protected String collegeName;
-    protected StaffScrapInfo staffScrapInfo;
-    protected NoticeScrapInfo noticeScrapInfo;
-    protected NoticeApiClient<ScrapingResultDto, DeptInfo> noticeApiClient;
-    protected NoticeHtmlParserTemplate htmlParser;
+    protected String code;
 
     public List<ScrapingResultDto> scrapLatestPageHtml() {
         return noticeApiClient.request(this);

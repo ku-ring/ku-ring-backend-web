@@ -54,7 +54,7 @@ public class EachDeptStaffApiClient implements StaffApiClient {
         documents.add(document);
 
         int totalPageNum = getTotalPageNumber(document);
-        for (int pageNumber = 2; pageNumber <= totalPageNum; totalPageNum++) {
+        for (int pageNumber = 2; pageNumber <= totalPageNum; pageNumber++) {
             documents.add(parseDocumentByPageNumber(url, pageNumber));
         }
 
@@ -63,9 +63,8 @@ public class EachDeptStaffApiClient implements StaffApiClient {
 
     private Document parseDocumentByPageNumber(String url, int pageNumber) {
         try {
-            Map<String, String> requestBody = new HashMap<>() {{
-                put("pageNum", String.valueOf(pageNumber));
-            }};
+            Map<String, String> requestBody = new HashMap<>();
+            requestBody.put("pageNum", String.valueOf(pageNumber));
             return jsoupClient.post(url, STAFF_SCRAP_TIMEOUT, requestBody);
         } catch (IOException e) {
             throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);

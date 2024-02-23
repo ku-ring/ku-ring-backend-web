@@ -9,7 +9,7 @@ import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeP
 import com.kustacks.kuring.worker.client.staff.dto.TestStaffDTO;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.client.staff.EachDeptStaffApiClient;
-import com.kustacks.kuring.worker.scrap.client.staff.livingAndCommunicationDesignStaffApiClient;
+import com.kustacks.kuring.worker.scrap.client.staff.LivingAndCommunicationDesignStaffApiClient;
 import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
 import com.kustacks.kuring.worker.scrap.client.staff.RealEstateStaffApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
@@ -56,7 +56,7 @@ import static org.mockserver.model.HttpResponse.response;
 @SpringJUnitConfig({
         StaffScraper.class,
         LatestPageNoticeApiClient.class, LatestPageNoticeHtmlParser.class,
-        EachDeptStaffApiClient.class, livingAndCommunicationDesignStaffApiClient.class, RealEstateStaffApiClient.class,
+        EachDeptStaffApiClient.class, LivingAndCommunicationDesignStaffApiClient.class, RealEstateStaffApiClient.class,
         EachDeptStaffHtmlParser.class, LivingAndCommunicationDesignStaffHtmlParser.class, RealEstateStaffHtmlParser.class,
         NormalJsoupClient.class,
         KoreanDept.class, LivingDesignDept.class, CommunicationDesignDept.class, RealEstateDept.class,
