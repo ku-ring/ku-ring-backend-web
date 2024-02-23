@@ -34,7 +34,7 @@ class StaffUpdaterTest extends IntegrationTestSupport {
 
     @DisplayName("이미 저장되어 있던 교직원 정보와 신규 정보를 비교하고 업데이트 한다")
     @Test
-    public void compareAndUpdateDb() {
+    void compareAndUpdateDb() {
         // given
         Staff staff1 = Staff.builder()
                 .name("홍길동")

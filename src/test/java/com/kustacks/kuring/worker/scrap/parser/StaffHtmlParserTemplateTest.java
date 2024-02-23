@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class StaffHtmlParserTemplateTest {
+class StaffHtmlParserTemplateTest {
 
     @DisplayName("리빙 디자인 학과의 교수진 정보를 파싱한다.")
     @Test

@@ -25,7 +25,7 @@ class StaffUpdateSupportTest {
 
     @DisplayName("이미 저장되어 있던 교직원 정보와 신규 정보를 비교하고 업데이트 한다")
     @Test
-    public void compareAllDepartments() {
+    void compareAllDepartments() {
         // given
         Map<String, Staff> originStaffMap = new HashMap<>();
         Staff deleteStaff = Staff.builder()

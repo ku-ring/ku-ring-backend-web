@@ -46,7 +46,7 @@ class UserRepositoryTest extends IntegrationTestSupport {
 
     @DisplayName("사용자를 삭제하여도 피드벡은 남아있어야 한다")
     @Test
-    public void delete() {
+    void deleteALl() {
         // given
         User savedUser = userPersistenceAdapter.findByToken(USER_FCM_TOKEN).get();
 

@@ -70,7 +70,7 @@ class NoticeHtmlParserTemplateTest {
 
         // then
         assertAll(
-                () -> assertThat(important).hasSize(0),
+                () -> assertThat(important).isEmpty(),
                 () -> assertThat(normal).hasSize(15)
         );
     }
