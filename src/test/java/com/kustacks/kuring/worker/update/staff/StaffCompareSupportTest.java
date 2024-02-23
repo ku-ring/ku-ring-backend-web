@@ -14,13 +14,13 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class StaffUpdateSupportTest {
+class StaffCompareSupportTest {
 
-    private StaffUpdateSupport updateSupport;
+    private StaffCompareSupport updateSupport;
 
     @BeforeEach
     void setUp() {
-        updateSupport = new StaffUpdateSupport();
+        updateSupport = new StaffCompareSupport();
     }
 
     @DisplayName("이미 저장되어 있던 교직원 정보와 신규 정보를 비교하고 업데이트 한다")
@@ -84,7 +84,7 @@ class StaffUpdateSupportTest {
         List<StaffDto> staffDtos = List.of(updateStaffDto, newStaffDto1, newStaffDto2);
 
         // when
-        StaffCompareResults results = updateSupport.compareAllDepartments(staffDtos, originStaffMap);
+        StaffCompareResults results = updateSupport.compareAllDepartmentsAndUpdateExistStaff(staffDtos, originStaffMap);
 
         // then
         assertAll(

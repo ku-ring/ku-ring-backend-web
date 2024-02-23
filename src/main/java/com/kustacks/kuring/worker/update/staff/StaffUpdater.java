@@ -1,25 +1,20 @@
 package com.kustacks.kuring.worker.update.staff;
 
 import com.kustacks.kuring.common.exception.InternalLogicException;
-import com.kustacks.kuring.staff.adapter.out.persistence.StaffRepository;
-import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
-import com.kustacks.kuring.worker.update.staff.dto.StaffCompareResults;
 import com.kustacks.kuring.worker.update.staff.dto.StaffDto;
 import com.kustacks.kuring.worker.update.staff.dto.StaffScrapResults;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,8 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StaffUpdater {
 
-    private final StaffUpdateSupport staffUpdateSupport;
-    private final StaffRepository staffRepository;
+    private final StaffDataSynchronizer staffDataSynchronizer;
     private final StaffScraper staffScraper;
     private final List<DeptInfo> deptInfos;
 
@@ -42,25 +36,9 @@ public class StaffUpdater {
         log.info("========== 교직원 업데이트 시작 ==========");
 
         StaffScrapResults scrapResults = scrapAllDepartmentsStaffs();
-        compareAndUpdateDb(scrapResults);
+        staffDataSynchronizer.compareAndUpdateDb(scrapResults);
 
         log.info("========== 교직원 업데이트 종료 ==========");
-    }
-
-    @Transactional
-    public void compareAndUpdateDb(StaffScrapResults scrapResults) {
-        StaffCompareResults compareResults = compare(scrapResults);
-        synchronizationWithDb(compareResults);
-    }
-
-    private StaffCompareResults compare(StaffScrapResults scrapResults) {
-        Map<String, Staff> originStaffStorage = findByDeptContainingMap(scrapResults.successDepartmentNames()); // db에 저장된 교직원 정보, 비교 후 에는 삭제 대상만 남음
-        return staffUpdateSupport.compareAllDepartments(scrapResults.getStaffDtos(), originStaffStorage);
-    }
-
-    private void synchronizationWithDb(StaffCompareResults compareResults) {
-        staffRepository.deleteAll(compareResults.deleteStaffs());
-        staffRepository.saveAll(compareResults.newStaffs());
     }
 
     private StaffScrapResults scrapAllDepartmentsStaffs() {
@@ -103,18 +81,5 @@ public class StaffUpdater {
                     return v1;
                 }
         ));
-    }
-
-    private Map<String, Staff> findByDeptContainingMap(List<String> scrapSuccessDepartmentNames) {
-        return scrapSuccessDepartmentNames.stream()
-                .flatMap(
-                        deptName -> staffRepository.findByDeptContaining(deptName).stream()
-                ).collect(
-                        Collectors.toMap(
-                                Staff::getEmail,
-                                Function.identity(),
-                                (existing, newValue) -> existing
-                        )
-                );
     }
 }

@@ -23,7 +23,7 @@ class StaffUpdaterTest extends IntegrationTestSupport {
     private StaffRepository staffRepository;
 
     @Autowired
-    private StaffUpdater staffUpdater;
+    private StaffDataSynchronizer staffDataSynchronizer;
 
     @Override
     @BeforeEach
@@ -86,7 +86,7 @@ class StaffUpdaterTest extends IntegrationTestSupport {
         StaffScrapResults staffScrapResults = new StaffScrapResults(kuStaffDtoMap, successDepartmentNames);
 
         // when
-        staffUpdater.compareAndUpdateDb(staffScrapResults);
+        staffDataSynchronizer.compareAndUpdateDb(staffScrapResults);
 
         // then
         List<Staff> staffList = staffRepository.findAll();
