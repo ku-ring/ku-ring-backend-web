@@ -49,18 +49,25 @@ public class DeptInfo {
 
     // TODO : page=1&row=200 처럼 사용해야 함
     public String createRequestUrl(int page, int row) {
-        return UriComponentsBuilder.fromUriString(latestPageNoticeProperties.getListUrl())
+        return UriComponentsBuilder
+                .fromUriString(latestPageNoticeProperties.getListUrl())
                 .queryParam("page", page)
                 .queryParam("row", row)
-                .buildAndExpand(departmentName.getHostPrefix(), departmentName.getHostPrefix(), noticeScrapInfo.getSiteId())
-                .toUriString();
+                .buildAndExpand(
+                        departmentName.getHostPrefix(),
+                        departmentName.getHostPrefix(),
+                        noticeScrapInfo.getSiteId()
+                ).toUriString();
     }
 
     public String createViewUrl() {
         return UriComponentsBuilder
                 .fromUriString(latestPageNoticeProperties.getViewUrl())
-                .buildAndExpand(noticeScrapInfo.getSiteName(), noticeScrapInfo.getSiteName(), noticeScrapInfo.getDepartmentNoticeId())
-                .toUriString();
+                .buildAndExpand(
+                        noticeScrapInfo.getSiteName(),
+                        noticeScrapInfo.getSiteName(),
+                        noticeScrapInfo.getSiteId()
+                ).toUriString();
     }
 
     @Override
