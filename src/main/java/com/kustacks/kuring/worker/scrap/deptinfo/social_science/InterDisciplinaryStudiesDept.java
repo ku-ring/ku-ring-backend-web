@@ -1,19 +1,19 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.social_science;
 
-import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
+import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
+import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
-import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParserTemplate;
 
-import java.util.Collections;
 import java.util.List;
 
-@RegisterDepartmentMap(key = DepartmentName.DISCI_STUDIES)
+import static com.kustacks.kuring.notice.domain.DepartmentName.DISCI_STUDIES;
+
+@RegisterDepartmentMap(key = DISCI_STUDIES)
 public class InterDisciplinaryStudiesDept extends SocialSciencesCollege {
 
     public InterDisciplinaryStudiesDept(NoticeApiClient<ScrapingResultDto, DeptInfo> latestPageNoticeApiClient,
@@ -23,14 +23,9 @@ public class InterDisciplinaryStudiesDept extends SocialSciencesCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("3716919");
-        List<String> forumIds = Collections.emptyList();
-        List<String> boardSeqs = List.of("175");
-        List<String> menuSeqs = List.of("1294");
-
+        List<String> professorForumIds = List.of("0");
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "DOLA", boardSeqs, menuSeqs);
-        this.code = "127125";
-        this.departmentName = DepartmentName.DISCI_STUDIES;
+        this.noticeScrapInfo = new NoticeScrapInfo(DISCI_STUDIES.getHostPrefix(), 0);
+        this.departmentName = DISCI_STUDIES;
     }
 }

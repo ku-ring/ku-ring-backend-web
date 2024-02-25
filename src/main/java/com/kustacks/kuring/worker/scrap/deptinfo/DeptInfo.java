@@ -22,7 +22,6 @@ public class DeptInfo {
     protected StaffScrapInfo staffScrapInfo;
     protected DepartmentName departmentName;
     protected String collegeName;
-    protected String code;
 
     public List<ScrapingResultDto> scrapLatestPageHtml() {
         return noticeApiClient.request(this);
@@ -49,25 +48,18 @@ public class DeptInfo {
     }
 
     // TODO : page=1&row=200 처럼 사용해야 함
-    public String createRequestUrl(int index, int curPage, int pageNum) {
+    public String createRequestUrl(int page, int row) {
         return UriComponentsBuilder.fromUriString(latestPageNoticeProperties.getListUrl())
-                .queryParam("siteId", noticeScrapInfo.getSiteId())
-                .queryParam("boardSeq", noticeScrapInfo.getBoardSeqs().get(index))
-                .queryParam("menuSeq", noticeScrapInfo.getMenuSeqs().get(index))
-                .queryParam("curPage", curPage)
-                .queryParam("pageNum", pageNum)
-                .buildAndExpand(departmentName.getHostPrefix())
+                .queryParam("page", page)
+                .queryParam("row", row)
+                .buildAndExpand(departmentName.getHostPrefix(), departmentName.getHostPrefix(), noticeScrapInfo.getSiteId())
                 .toUriString();
     }
 
-    public String createViewUrl(int index) {
+    public String createViewUrl() {
         return UriComponentsBuilder
                 .fromUriString(latestPageNoticeProperties.getViewUrl())
-                .queryParam("siteId", noticeScrapInfo.getSiteId())
-                .queryParam("boardSeq", noticeScrapInfo.getBoardSeqs().get(index))
-                .queryParam("menuSeq", noticeScrapInfo.getMenuSeqs().get(index))
-                .queryParam("seq", "")
-                .buildAndExpand(departmentName.getHostPrefix())
+                .buildAndExpand(noticeScrapInfo.getSiteName(), noticeScrapInfo.getSiteName(), noticeScrapInfo.getDepartmentNoticeId())
                 .toUriString();
     }
 

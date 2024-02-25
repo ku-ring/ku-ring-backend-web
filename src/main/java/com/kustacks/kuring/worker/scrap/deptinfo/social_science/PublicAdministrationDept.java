@@ -1,19 +1,19 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.social_science;
 
-import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
+import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
+import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
-import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParserTemplate;
 
-import java.util.Collections;
 import java.util.List;
 
-@RegisterDepartmentMap(key = DepartmentName.ADMINISTRATION)
+import static com.kustacks.kuring.notice.domain.DepartmentName.ADMINISTRATION;
+
+@RegisterDepartmentMap(key = ADMINISTRATION)
 public class PublicAdministrationDept extends SocialSciencesCollege {
 
     public PublicAdministrationDept(NoticeApiClient<ScrapingResultDto, DeptInfo> latestPageNoticeApiClient,
@@ -23,14 +23,9 @@ public class PublicAdministrationDept extends SocialSciencesCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("7245");
-        List<String> forumIds = Collections.emptyList();
-        List<String> boardSeqs = List.of("1145");
-        List<String> menuSeqs = List.of("7970");
-
+        List<String> professorForumIds = List.of("2507");
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "KKUPA", boardSeqs, menuSeqs);
-        this.code = "127122";
-        this.departmentName = DepartmentName.ADMINISTRATION;
+        this.noticeScrapInfo = new NoticeScrapInfo(ADMINISTRATION.getHostPrefix(), 0);
+        this.departmentName = ADMINISTRATION;
     }
 }
