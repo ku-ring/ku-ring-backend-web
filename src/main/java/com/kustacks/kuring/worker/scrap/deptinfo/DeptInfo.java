@@ -48,6 +48,7 @@ public class DeptInfo {
         return this.staffScrapInfo.getProfessorForumId();
     }
 
+    // TODO : page=1&row=200 처럼 사용해야 함
     public String createRequestUrl(int index, int curPage, int pageNum) {
         return UriComponentsBuilder.fromUriString(latestPageNoticeProperties.getListUrl())
                 .queryParam("siteId", noticeScrapInfo.getSiteId())

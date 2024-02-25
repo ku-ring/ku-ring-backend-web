@@ -55,7 +55,8 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         List<ScrapingResultDto> reqResults = new LinkedList<>();
         for (int i = 0; i < size; i++) {
             try {
-                int totalNoticeSize = getTotalNoticeSize(i, deptInfo);
+                String url = deptInfo.createRequestUrl(i, 1, 1);
+                int totalNoticeSize = getTotalNoticeSize(url);
 
                 ScrapingResultDto resultDto = getScrapingResultDto(i, deptInfo, totalNoticeSize, LATEST_SCRAP_ALL_TIMEOUT);
                 reqResults.add(resultDto);
@@ -69,6 +70,18 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         return reqResults;
     }
 
+    public int getTotalNoticeSize(String url) throws IOException, IndexOutOfBoundsException, NullPointerException {
+        Document document = jsoupClient.get(url, LATEST_SCRAP_TIMEOUT);
+
+        Element totalNoticeSizeElement = document.selectFirst(".util-search strong");
+        if (totalNoticeSizeElement == null) {
+            totalNoticeSizeElement = document.selectFirst(".total_count");
+        }
+
+        assert totalNoticeSizeElement != null;
+        return Integer.parseInt(totalNoticeSizeElement.ownText());
+    }
+
     private int getDeptInfoSize(DeptInfo deptInfo) {
         return deptInfo.getNoticeScrapInfo().getBoardSeqs().size();
     }
@@ -80,19 +93,5 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         Document document = jsoupClient.get(requestUrl, timeout);
 
         return new ScrapingResultDto(document, viewUrl);
-    }
-
-    private int getTotalNoticeSize(int index, DeptInfo deptInfo) throws IOException, IndexOutOfBoundsException, NullPointerException {
-        String url = deptInfo.createRequestUrl(index, 1, 1);
-
-        Document document = jsoupClient.get(url, LATEST_SCRAP_TIMEOUT);
-
-        Element totalNoticeSizeElement = document.selectFirst(".pl15 > strong");
-        if (totalNoticeSizeElement == null) {
-            totalNoticeSizeElement = document.selectFirst(".total_count");
-        }
-
-        assert totalNoticeSizeElement != null;
-        return Integer.parseInt(totalNoticeSizeElement.ownText());
     }
 }
