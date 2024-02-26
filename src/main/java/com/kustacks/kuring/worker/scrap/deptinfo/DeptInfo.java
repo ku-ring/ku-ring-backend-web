@@ -47,27 +47,22 @@ public class DeptInfo {
         return this.staffScrapInfo.getProfessorForumId();
     }
 
-    // TODO : page=1&row=200 처럼 사용해야 함
     public String createRequestUrl(int page, int row) {
         return UriComponentsBuilder
                 .fromUriString(latestPageNoticeProperties.getListUrl())
                 .queryParam("page", page)
                 .queryParam("row", row)
                 .buildAndExpand(
-                        departmentName.getHostPrefix(),
-                        departmentName.getHostPrefix(),
+                        noticeScrapInfo.getSiteName(),
+                        noticeScrapInfo.getSiteName(),
                         noticeScrapInfo.getSiteId()
                 ).toUriString();
     }
 
     public String createViewUrl() {
-        return UriComponentsBuilder
-                .fromUriString(latestPageNoticeProperties.getViewUrl())
-                .buildAndExpand(
-                        noticeScrapInfo.getSiteName(),
-                        noticeScrapInfo.getSiteName(),
-                        noticeScrapInfo.getSiteId()
-                ).toUriString();
+        return latestPageNoticeProperties.getViewUrl()
+                .replaceAll("\\{department\\}", noticeScrapInfo.getSiteName())
+                .replace("{siteId}", String.valueOf(noticeScrapInfo.getSiteId()));
     }
 
     @Override

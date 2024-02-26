@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -21,6 +22,25 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class NoticeHtmlParserTemplateTest {
+
+    @DisplayName("View Url이 정상적으로 생석되는지 확인한다")
+    @Test
+    public void viewUrlCreate() {
+        // given
+        String urlTemplate = "https://{department}.konkuk.ac.kr/bbs/{department}/{siteId}/{noticeId}/artclView.do";
+
+        // when
+        String viewUrl = urlTemplate
+                .replaceAll("\\{department\\}", "cse")
+                .replace("{siteId}", "775");
+
+        String result = UriComponentsBuilder.fromUriString(viewUrl)
+                .buildAndExpand(5737)
+                .toUriString();
+
+        // then
+        assertThat(result).isEqualTo("https://cse.konkuk.ac.kr/bbs/cse/775/5737/artclView.do");
+    }
 
     @DisplayName("오래된 학과의 홈페이지 공지를 분석한다")
     @Test

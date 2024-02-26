@@ -69,13 +69,7 @@ public class DepartmentNoticeUpdater {
     }
 
     private List<ComplexNoticeFormatDto> updateDepartmentAsync(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) {
-        List<ComplexNoticeFormatDto> scrapResults = scrapperTemplate.scrap(deptInfo, decisionMaker);
-
-        for (ComplexNoticeFormatDto scrapResult : scrapResults) {
-            scrapResult.reverseEachNoticeList();
-        }
-
-        return scrapResults;
+        return scrapperTemplate.scrap(deptInfo, decisionMaker);
     }
 
     private List<DepartmentNotice> compareLatestAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, String departmentName) {
@@ -99,7 +93,7 @@ public class DepartmentNoticeUpdater {
         }
 
         long endTime = System.currentTimeMillis();
-        log.info("[학과] 업데이트 시작으로부터 {}millis 만큼 지남", endTime - startTime);
+        log.info("{}학과 업데이트 시작으로부터 {}millis 만큼 지남", departmentName, endTime - startTime);
 
         return newNoticeList;
     }

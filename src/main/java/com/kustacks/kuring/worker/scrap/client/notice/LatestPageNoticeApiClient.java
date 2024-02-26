@@ -75,11 +75,14 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
     }
 
     private ScrapingResultDto getScrapingResultDto(DeptInfo deptInfo, int rowSize, int timeout) throws IOException {
-        String requestUrl = deptInfo.createRequestUrl(rowSize, START_PAGE_NUM);
+        String requestUrl = deptInfo.createRequestUrl(START_PAGE_NUM, rowSize);
 
         String viewUrl = deptInfo.createViewUrl();
 
+        long startTime = 0L;
         Document document = jsoupClient.get(requestUrl, timeout);
+        long endTime = System.currentTimeMillis();
+        log.info("[학과] 업데이트 시작으로부터 {}millis 만큼 지남", endTime - startTime);
 
         return new ScrapingResultDto(document, viewUrl);
     }

@@ -3,6 +3,7 @@ package com.kustacks.kuring.worker.scrap.parser.notice;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Collections;
 import java.util.List;
 
 public class RowsDto {
@@ -16,6 +17,7 @@ public class RowsDto {
     }
 
     public List<CommonNoticeFormatDto> buildImportantRowList(String viewUrl) {
+        Collections.reverse(importantRowList);
         return importantRowList.stream()
                 .map(row -> CommonNoticeFormatDto
                         .builder()
@@ -33,6 +35,7 @@ public class RowsDto {
     }
 
     public List<CommonNoticeFormatDto> buildNormalRowList(String viewUrl) {
+        Collections.reverse(normalRowList);
         return normalRowList.stream()
                 .map(row -> CommonNoticeFormatDto
                         .builder()
