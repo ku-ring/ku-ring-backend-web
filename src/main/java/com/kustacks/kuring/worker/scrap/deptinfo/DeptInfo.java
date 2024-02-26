@@ -22,7 +22,6 @@ public class DeptInfo {
     protected StaffScrapInfo staffScrapInfo;
     protected DepartmentName departmentName;
     protected String collegeName;
-    protected String code;
 
     public List<ScrapingResultDto> scrapLatestPageHtml() {
         return noticeApiClient.request(this);
@@ -48,26 +47,22 @@ public class DeptInfo {
         return this.staffScrapInfo.getProfessorForumId();
     }
 
-    public String createRequestUrl(int index, int curPage, int pageNum) {
-        return UriComponentsBuilder.fromUriString(latestPageNoticeProperties.getListUrl())
-                .queryParam("siteId", noticeScrapInfo.getSiteId())
-                .queryParam("boardSeq", noticeScrapInfo.getBoardSeqs().get(index))
-                .queryParam("menuSeq", noticeScrapInfo.getMenuSeqs().get(index))
-                .queryParam("curPage", curPage)
-                .queryParam("pageNum", pageNum)
-                .buildAndExpand(departmentName.getHostPrefix())
-                .toUriString();
+    public String createRequestUrl(int page, int row) {
+        return UriComponentsBuilder
+                .fromUriString(latestPageNoticeProperties.getListUrl())
+                .queryParam("page", page)
+                .queryParam("row", row)
+                .buildAndExpand(
+                        noticeScrapInfo.getSiteName(),
+                        noticeScrapInfo.getSiteName(),
+                        noticeScrapInfo.getSiteId()
+                ).toUriString();
     }
 
-    public String createViewUrl(int index) {
-        return UriComponentsBuilder
-                .fromUriString(latestPageNoticeProperties.getViewUrl())
-                .queryParam("siteId", noticeScrapInfo.getSiteId())
-                .queryParam("boardSeq", noticeScrapInfo.getBoardSeqs().get(index))
-                .queryParam("menuSeq", noticeScrapInfo.getMenuSeqs().get(index))
-                .queryParam("seq", "")
-                .buildAndExpand(departmentName.getHostPrefix())
-                .toUriString();
+    public String createViewUrl() {
+        return latestPageNoticeProperties.getViewUrl()
+                .replaceAll("\\{department\\}", noticeScrapInfo.getSiteName())
+                .replace("{siteId}", String.valueOf(noticeScrapInfo.getSiteId()));
     }
 
     @Override

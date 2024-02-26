@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -18,10 +17,5 @@ public class ComplexNoticeFormatDto {
 
     public int getNormalNoticeSize() {
         return normalNoticeList.size();
-    }
-
-    public void reverseEachNoticeList() {
-        Collections.reverse(importantNoticeList);
-        Collections.reverse(normalNoticeList);
     }
 }

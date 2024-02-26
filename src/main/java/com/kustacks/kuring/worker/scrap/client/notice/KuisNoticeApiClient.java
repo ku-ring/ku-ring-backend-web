@@ -101,6 +101,6 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
     private List<CommonNoticeFormatDto> convertToCommonFormatDto(List<KuisNoticeDto> kuisNoticeDtoList) {
         return kuisNoticeDtoList.stream()
                 .map(dto -> (CommonNoticeFormatDto) dtoConverter.convert(dto))
-                .toList();
+                .collect(Collectors.toList());
     }
 }

@@ -17,25 +17,23 @@ public class LatestPageNoticeHtmlParser extends NoticeHtmlParserTemplate {
 
     @Override
     protected Elements selectImportantRows(Document document) {
-        return document.select("#noticeList > tr");
+        return document.select(".board-table > tbody > tr").select(".notice");
     }
 
     @Override
     protected Elements selectNormalRows(Document document) {
-        return document.select("#dispList > tr");
+        return document.select(".board-table > tbody > tr").not(".notice");
     }
 
     @Override
     protected String[] extractNoticeFromRow(Element row) {
-        String[] oneNoticeInfo = new String[3];
         Elements tds = row.getElementsByTag("td");
 
-        Element subjectAndIdElement = tds.get(1).getElementsByTag("a").get(0);
-        Element postedDateElement = tds.get(3);
+        // articleId, postedDate, subject
+        String number = tds.get(1).select("a").attr("onclick").replaceAll("[^0-9]", "").substring(3);
+        String date = tds.get(3).text();
+        String title = tds.get(1).select("strong").text();
 
-        oneNoticeInfo[0] = subjectAndIdElement.attr("data-itsp-view-link"); // articleId
-        oneNoticeInfo[1] = postedDateElement.ownText(); // postedDate
-        oneNoticeInfo[2] = subjectAndIdElement.ownText(); // subject
-        return oneNoticeInfo;
+        return new String[]{number, date, title};
     }
 }

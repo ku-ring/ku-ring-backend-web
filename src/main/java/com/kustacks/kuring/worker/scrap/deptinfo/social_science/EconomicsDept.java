@@ -1,36 +1,31 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.social_science;
 
-import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
+import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
+import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
-import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParserTemplate;
 
-import java.util.Collections;
 import java.util.List;
 
-@RegisterDepartmentMap(key = DepartmentName.ECONOMICS)
+import static com.kustacks.kuring.notice.domain.DepartmentName.ECONOMICS;
+
+@RegisterDepartmentMap(key = ECONOMICS)
 public class EconomicsDept extends SocialSciencesCollege {
 
     public EconomicsDept(NoticeApiClient<ScrapingResultDto, DeptInfo> latestPageNoticeApiClient,
-                         NoticeHtmlParserTemplate latestPageNoticeHtmlParserTwo, LatestPageNoticeProperties latestPageNoticeProperties) {
+                         NoticeHtmlParserTemplate latestPageNoticeHtmlParser, LatestPageNoticeProperties latestPageNoticeProperties) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
-        this.htmlParser = latestPageNoticeHtmlParserTwo;
+        this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("9842");
-        List<String> forumIds = Collections.emptyList();
-        List<String> boardSeqs = List.of("866");
-        List<String> menuSeqs = List.of("5981");
-
+        List<String> professorForumIds = List.of("10216");
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "ECONOMIC", boardSeqs, menuSeqs);
-        this.code = "127121";
-        this.departmentName = DepartmentName.ECONOMICS;
+        this.noticeScrapInfo = new NoticeScrapInfo(ECONOMICS.getHostPrefix(), 423);
+        this.departmentName = ECONOMICS;
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -24,24 +25,21 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class CategoryNoticeUpdater {
 
-    private final List<KuisNoticeInfo> kuisNoticeInfoList;
-    private final KuisNoticeScraperTemplate scrapperTemplate;
-    private final NoticeQueryPort noticeQueryPort;
-    private final NoticeCommandPort noticeCommandPort;
+    private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
     private final FirebaseNotificationService notificationService;
     private final LibraryNoticeApiClient libraryNoticeApiClient;
-    private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
+    private final KuisNoticeScraperTemplate scrapperTemplate;
     private final NoticeUpdateSupport noticeUpdateSupport;
-
-    private static long startTime = 0L;
+    private final List<KuisNoticeInfo> kuisNoticeInfoList;
+    private final NoticeCommandPort noticeCommandPort;
+    private final NoticeQueryPort noticeQueryPort;
 
     /*
     학사, 장학, 취창업, 국제, 학생, 산학, 일반, 도서관 공지 갱신
     */
-    @Scheduled(cron = "0 0/10 6-23 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 6:00 ~ 오후 11:55분 사이에 20분마다 업데이트 된다.
+    @Scheduled(cron = "0 0/10 6-23 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 6:00 ~ 오후 11:55분 사이에 10분마다 업데이트 된다.
     public void update() {
         log.info("========== 공지 업데이트 시작 ==========");
-        startTime = System.currentTimeMillis();
 
         updateLibrary(); // library는 Kuis공지가 아니라 별도로 먼저 수행한다
 
@@ -64,7 +62,9 @@ public class CategoryNoticeUpdater {
     }
 
     private List<CommonNoticeFormatDto> updateKuisNoticeAsync(KuisNoticeInfo deptInfo, Function<KuisNoticeInfo, List<CommonNoticeFormatDto>> decisionMaker) {
-        return scrapperTemplate.scrap(deptInfo, decisionMaker);
+        List<CommonNoticeFormatDto> noticeDtos = scrapperTemplate.scrap(deptInfo, decisionMaker);
+        Collections.reverse(noticeDtos);
+        return noticeDtos;
     }
 
     private List<Notice> compareLatestAndUpdateDB(List<CommonNoticeFormatDto> scrapResults, CategoryName categoryName) {
@@ -72,12 +72,7 @@ public class CategoryNoticeUpdater {
         List<String> savedArticleIds = noticeQueryPort.findNormalArticleIdsByCategory(categoryName);
 
         // db와 싱크를 맞춘다
-        List<Notice> newNotices = synchronizationWithDb(scrapResults, savedArticleIds, categoryName);
-
-        long endTime = System.currentTimeMillis();
-        log.info("[{}] 업데이트 시작으로부터 {}millis 만큼 지남", categoryName.getKorName(), endTime - startTime);
-
-        return newNotices;
+        return synchronizationWithDb(scrapResults, savedArticleIds, categoryName);
     }
 
     private List<Notice> synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, CategoryName categoryName) {
