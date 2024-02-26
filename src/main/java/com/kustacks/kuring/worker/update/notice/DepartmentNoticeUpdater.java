@@ -37,12 +37,9 @@ public class DepartmentNoticeUpdater {
     private final FirebaseNotificationService notificationService;
     private final NoticeUpdateSupport noticeUpdateSupport;
 
-    private static long startTime = 0L;
-
     @Scheduled(cron = "0 5/10 8-19 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 8:10 ~ 오후 7:55분 사이에 10분마다 업데이트 된다.
     public void update() {
         log.info("******** 학과별 최신 공지 업데이트 시작 ********");
-        startTime = System.currentTimeMillis();
 
         for (DeptInfo deptInfo : deptInfoList) {
             CompletableFuture
@@ -55,7 +52,6 @@ public class DepartmentNoticeUpdater {
     @Scheduled(cron = "0 0 2 * * *", zone = "Asia/Seoul") // 전체 업데이트는 매일 오전 2시에 한다.
     public void updateAll() {
         log.info("******** 학과별 전체 공지 업데이트 시작 ********");
-        startTime = System.currentTimeMillis();
 
         for (DeptInfo deptInfo : deptInfoList) {
             if (deptInfo.isSameDepartment(REAL_ESTATE)) {
@@ -92,9 +88,6 @@ public class DepartmentNoticeUpdater {
             newNoticeList.addAll(newNormalNotices);
         }
 
-        long endTime = System.currentTimeMillis();
-        log.info("{}학과 업데이트 시작으로부터 {}millis 만큼 지남", departmentName, endTime - startTime);
-
         return newNoticeList;
     }
 
@@ -124,9 +117,6 @@ public class DepartmentNoticeUpdater {
             // db와 싱크를 맞춘다
             synchronizationWithDb(scrapResult.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false);
         }
-
-        long endTime = System.currentTimeMillis();
-        log.info("[학과] 업데이트 시작으로부터 {}millis 만큼 지남", endTime - startTime);
     }
 
     private void synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {

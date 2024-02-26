@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -20,8 +21,8 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private static final int START_PAGE_NUM = 1; // page는 인자가 1부터 시작
     private static final int ROW_NUMBERS_PER_PAGE = 20;
-    private static final int LATEST_SCRAP_TIMEOUT = 30000; // 30초
-    private static final int LATEST_SCRAP_ALL_TIMEOUT = 120000; // 2분
+    private static final int LATEST_SCRAP_TIMEOUT = 2000; // 2초
+    private static final int LATEST_SCRAP_ALL_TIMEOUT = 60000; // 1분
 
     private final JsoupClient jsoupClient;
 
@@ -76,13 +77,15 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private ScrapingResultDto getScrapingResultDto(DeptInfo deptInfo, int rowSize, int timeout) throws IOException {
         String requestUrl = deptInfo.createRequestUrl(START_PAGE_NUM, rowSize);
-
         String viewUrl = deptInfo.createViewUrl();
 
-        long startTime = 0L;
+        StopWatch stopWatch = new StopWatch(deptInfo.getDeptName() + "Request");
+        stopWatch.start();
+
         Document document = jsoupClient.get(requestUrl, timeout);
-        long endTime = System.currentTimeMillis();
-        log.info("[학과] 업데이트 시작으로부터 {}millis 만큼 지남", endTime - startTime);
+
+        stopWatch.stop();
+        log.info("[{}] takes {}millis to respond", deptInfo.getDeptName(), stopWatch.getTotalTimeMillis());
 
         return new ScrapingResultDto(document, viewUrl);
     }
