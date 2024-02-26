@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -67,7 +68,7 @@ class CategoryNoticeUpdaterTest {
     }
 
     private static List<CommonNoticeFormatDto> createLibraryFixture() {
-        return List.of(
+        return Arrays.asList(
                 CommonNoticeFormatDto.builder().articleId("1").updatedDate("2021-01-01").subject("library1")
                         .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71921").important(false).build(),
                 CommonNoticeFormatDto.builder().articleId("2").updatedDate("2021-01-01").subject("library2")
@@ -86,7 +87,7 @@ class CategoryNoticeUpdaterTest {
     }
 
     private static List<CommonNoticeFormatDto> createNoticesFixture() {
-        return List.of(
+        return Arrays.asList(
                 CommonNoticeFormatDto.builder().articleId("1").updatedDate("2021-01-01").subject("library1")
                         .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71921").important(false).build(),
                 CommonNoticeFormatDto.builder().articleId("2").updatedDate("2021-01-01").subject("library2")
