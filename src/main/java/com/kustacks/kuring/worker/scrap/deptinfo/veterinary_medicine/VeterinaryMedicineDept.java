@@ -1,19 +1,19 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.veterinary_medicine;
 
-import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
+import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
+import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
-import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParserTemplate;
 
-import java.util.Collections;
 import java.util.List;
 
-@RegisterDepartmentMap(key = DepartmentName.VET_MEDICINE)
+import static com.kustacks.kuring.notice.domain.DepartmentName.VET_MEDICINE;
+
+@RegisterDepartmentMap(key = VET_MEDICINE)
 public class VeterinaryMedicineDept extends VeterinaryMedicineCollege {
 
     public VeterinaryMedicineDept(NoticeApiClient<ScrapingResultDto, DeptInfo> latestPageNoticeApiClient,
@@ -23,14 +23,9 @@ public class VeterinaryMedicineDept extends VeterinaryMedicineCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("86647");
-        List<String> forumIds = Collections.emptyList();
-        List<String> boardSeqs = List.of("475");
-        List<String> menuSeqs = List.of("3427");
-
+        List<String> professorForumIds = List.of("11135", "11136");
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "VETERINARY", boardSeqs, menuSeqs);
-        this.code = "105101";
-        this.departmentName = DepartmentName.VET_MEDICINE;
+        this.noticeScrapInfo = new NoticeScrapInfo(VET_MEDICINE.getHostPrefix(), 948);
+        this.departmentName = VET_MEDICINE;
     }
 }

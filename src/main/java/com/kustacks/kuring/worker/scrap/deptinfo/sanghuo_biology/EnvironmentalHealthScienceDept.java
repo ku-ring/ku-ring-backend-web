@@ -1,19 +1,19 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.sanghuo_biology;
 
-import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
+import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
+import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
-import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParserTemplate;
 
-import java.util.Collections;
 import java.util.List;
 
-@RegisterDepartmentMap(key = DepartmentName.ENV_HEALTH_SCIENCE)
+import static com.kustacks.kuring.notice.domain.DepartmentName.ENV_HEALTH_SCIENCE;
+
+@RegisterDepartmentMap(key = ENV_HEALTH_SCIENCE)
 public class EnvironmentalHealthScienceDept extends SanghuoBiologyCollege {
 
     public EnvironmentalHealthScienceDept(NoticeApiClient<ScrapingResultDto, DeptInfo> latestPageNoticeApiClient,
@@ -23,14 +23,9 @@ public class EnvironmentalHealthScienceDept extends SanghuoBiologyCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("13900359");
-        List<String> forumIds = Collections.emptyList();
-        List<String> boardSeqs = List.of("267");
-        List<String> menuSeqs = List.of("2059");
-
+        List<String> professorForumIds = List.of("11062");
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "HEALTHENV", boardSeqs, menuSeqs);
-        this.code = "126911";
-        this.departmentName = DepartmentName.ENV_HEALTH_SCIENCE;
+        this.noticeScrapInfo = new NoticeScrapInfo(ENV_HEALTH_SCIENCE.getHostPrefix(), 477);
+        this.departmentName = ENV_HEALTH_SCIENCE;
     }
 }

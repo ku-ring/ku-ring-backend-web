@@ -32,7 +32,6 @@ public class DepartmentNoticeScraperTemplate {
             }
         }
 
-
         return noticeDtoList;
     }
 
@@ -53,7 +52,7 @@ public class DepartmentNoticeScraperTemplate {
         List<ComplexNoticeFormatDto> noticeDtoList = new LinkedList<>();
         for (ScrapingResultDto reqResult : requestResults) {
             Document document = reqResult.getDocument();
-            String viewUrl = reqResult.getUrl();
+            String viewUrl = reqResult.getViewUrl();
 
             RowsDto rowsDto = deptInfo.parse(document);
             List<CommonNoticeFormatDto> importantNoticeFormatDtos = rowsDto.buildImportantRowList(viewUrl);

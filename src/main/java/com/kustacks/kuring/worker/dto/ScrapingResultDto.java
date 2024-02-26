@@ -10,5 +10,5 @@ public class ScrapingResultDto {
 
     private Document document;
 
-    private String url;
+    private String viewUrl;
 }

@@ -2,20 +2,14 @@ package com.kustacks.kuring.worker.scrap.deptinfo;
 
 import lombok.Getter;
 
-import java.util.List;
-
 @Getter
 public class NoticeScrapInfo {
 
-    private final List<String> forumIds;
-    private final String siteId;
-    private final List<String> boardSeqs;
-    private final List<String> menuSeqs;
+    private final String siteName;
+    private final int siteId;
 
-    public NoticeScrapInfo(List<String> forumIds, String siteId, List<String> boardSeqs, List<String> menuSeqs) {
-        this.forumIds = forumIds;
+    public NoticeScrapInfo(String siteName, int siteId) {
+        this.siteName = siteName;
         this.siteId = siteId;
-        this.boardSeqs = boardSeqs;
-        this.menuSeqs = menuSeqs;
     }
 }

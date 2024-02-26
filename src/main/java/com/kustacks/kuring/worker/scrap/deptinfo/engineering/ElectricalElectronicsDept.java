@@ -1,19 +1,19 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.engineering;
 
-import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
+import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
+import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
-import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParserTemplate;
 
-import java.util.Collections;
 import java.util.List;
 
-@RegisterDepartmentMap(key = DepartmentName.ELEC_ELEC)
+import static com.kustacks.kuring.notice.domain.DepartmentName.ELEC_ELEC;
+
+@RegisterDepartmentMap(key = ELEC_ELEC)
 public class ElectricalElectronicsDept extends EngineeringCollege {
 
     public ElectricalElectronicsDept(NoticeApiClient<ScrapingResultDto, DeptInfo> latestPageNoticeApiClient,
@@ -23,14 +23,9 @@ public class ElectricalElectronicsDept extends EngineeringCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("18634838");
-        List<String> forumIds = Collections.emptyList();
-        List<String> boardSeqs = List.of("424");
-        List<String> menuSeqs = List.of("2837");
-
+        List<String> professorForumIds = List.of("10962");
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(forumIds, "EE", boardSeqs, menuSeqs);
-        this.code = "127110";
-        this.departmentName = DepartmentName.ELEC_ELEC;
+        this.noticeScrapInfo = new NoticeScrapInfo(ELEC_ELEC.getHostPrefix(), 407);
+        this.departmentName = ELEC_ELEC;
     }
 }
