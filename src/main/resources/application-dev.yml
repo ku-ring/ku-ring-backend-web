@@ -1,49 +1,72 @@
+server:
+  deploy:
+    environment: ${DEPLOY_ENV}
+  port: ${PORT:8080}
+  tomcat:
+    mbeanregistry:
+      enabled: true
+
 spring:
-  datasource:
-    url: jdbc:tc:mariadb:10.2:///kuring?TC_REUSABLE=true
-    username: test # 테스트컨테이너 용이라 노출되도 상관없다
-    password: test1234
-    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    p6spy:
-      enable-logging: true
-    hikari:
-      jdbc-url: jdbc:tc:mariadb:10.2://localhost:3306/kuring?profileSQL=true&logger=Slf4JLogger&maxQuerySizeToLog=999999
-  flyway:
-    enabled: false
   jpa:
+    generate-ddl: false
     hibernate:
-      ddl-auto: create
-    show-sql: true
+      ddl-auto: none
     properties:
       hibernate:
         jdbc:
           batch_size: 100
         format_sql: true
         dialect: com.kustacks.kuring.config.CustomMariaDbDialect
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
+    show-sql: false
     open-in-view: false
+  datasource:
+    hikari:
+      connectionTimeout: '30000'
+      maximum-pool-size: '8'
+      max-lifetime: '1800000'
+    password: ${DB_PASSWORD}
+    username: ${DB_USER}
+    url: jdbc:${DB_URL}
+    driver-class-name: org.mariadb.jdbc.Driver
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    url: jdbc:${DB_URL}
+    user: ${DB_USER}
+    password: ${DB_PASSWORD}
   thymeleaf:
     cache: true
-    enabled: true
     prefix: classpath:/templates/
     suffix: .html
+    enabled: true
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
 
-testcontainers:
-  reuse:
-    enable: true
-
 logging:
   level:
-    p6spy: debug
+    org:
+      apache:
+        coyote:
+          http11: info
+  file:
+    name: classpath:/kuring.log
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 security:
   jwt:
     token:
-      secret-key: test-secret-key-test-secret-key-test-secret-key-test-secret-key
-      expire-length: 3600000
+      secret-key: ${JWT_SECRET_KEY}
+      expire-length: ${JWT_EXPIRE_LENGTH}
 
 
 notice:
@@ -62,31 +85,26 @@ notice:
   library-base-url: https://library.konkuk.ac.kr/library-guide/bulletins/notice
 
 auth:
-  session: JSESSIONID=TEST_SESSION
   api-skeleton-producer-url: https://kuis.konkuk.ac.kr/ui/cpr-lib/user-modules.js?p=0.9460032500983822
-  password: ku_test_password
-  api-skeleton-file-path: notice/api-skeleton.js
-  referer: https://kuis.konkuk.ac.kr/index.do
+  password: ${KU_PASSWORD}
   user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36 Edg/94.0.992.38
-  id: ku_test_id
+  id: ${KU_ID}
+  session: JSESSIONID=00015GJS2T_gl7M-TqGjYvyHAuJ:-103KQM
+  referer: https://kuis.konkuk.ac.kr/index.do
   login-url: https://kuis.konkuk.ac.kr/Login/login.do
-
-server:
-  deploy:
-    environment: test
 
 firebase:
   file-path: third/ku-stack-firebase-adminsdk-87nwq-5ba04dfc12.json
 
 admin:
-  id: admin@email.com
-  password: admin_password
+  password: ${ADMIN_PASSWORD}
+  id: ${ADMIN_ID}
 
 ip:
   proxy-list: 14.63.228.239:80, 101.79.15.198:80, 222.104.128.205:8678, 106.244.154.91:8080, 103.51.205.42:8181
 
 staff:
-  real-estate-url: "http://www.realestate.ac.kr/gb/bbs/board.php?bo_table=faculty"
-  communication-design-url: "http://www.konkuk.ac.kr/jsp/Coll/coll_01_13_01_01_tab01.jsp"
-  living-design-url: "http://www.konkuk.ac.kr/jsp/Coll/coll_01_13_01_05_tab01.jsp"
-  each-dept-url: "http://home.konkuk.ac.kr/cms/Common/Professor/ProfessorList.do"
+  real-estate-url: http://www.realestate.ac.kr/gb/bbs/board.php?bo_table=faculty
+  communication-design-url: http://www.konkuk.ac.kr/jsp/Coll/coll_01_13_01_01_tab01.jsp
+  living-design-url: http://www.konkuk.ac.kr/jsp/Coll/coll_01_13_01_05_tab01.jsp
+  each-dept-url: http://home.konkuk.ac.kr/cms/Common/Professor/ProfessorList.do
