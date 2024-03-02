@@ -8,6 +8,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
+@DisplayName("도메인 : Bookmarks")
 class BookmarksTest {
 
     @DisplayName("사용자는 원하는 공지를 북마크 할 수 있다")

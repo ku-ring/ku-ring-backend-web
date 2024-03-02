@@ -28,8 +28,7 @@ import static org.mockito.Mockito.doReturn;
 @SpringBootTest
 @TestPropertySource(properties = "spring.config.location=" +
         "classpath:/application.yml" +
-        ",classpath:/application-test.yml" +
-        ",classpath:/test-constants.properties")
+        ",classpath:/application-test.yml")
 class CategoryNoticeUpdaterTest {
 
     @MockBean

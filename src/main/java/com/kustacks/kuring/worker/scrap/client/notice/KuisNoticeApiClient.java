@@ -38,7 +38,6 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
     @Override
     @Retryable(value = {InternalLogicException.class})
     public List<CommonNoticeFormatDto> request(KuisNoticeInfo kuisNoticeRequestBody) throws InternalLogicException {
-
         // sessionId 획득
         String sessionId = parsingKuisAuthManager.getSessionId();
 
@@ -64,9 +63,14 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
         return new HttpEntity<>(encodedNoticeRequestBody, noticeRequestHeader);
     }
 
-    private ResponseEntity<KuisNoticeResponseDto> sendKuisNoticesRequestAndResponse(HttpEntity<String> noticeRequestEntity) {
+    private ResponseEntity<KuisNoticeResponseDto> sendKuisNoticesRequestAndResponse(
+            HttpEntity<String> noticeRequestEntity
+    ) throws InternalLogicException {
         try {
-            return restTemplate.postForEntity(kuisNoticeProperties.getRequestUrl(), noticeRequestEntity, KuisNoticeResponseDto.class);
+            return restTemplate.postForEntity(
+                    kuisNoticeProperties.getRequestUrl(),
+                    noticeRequestEntity,
+                    KuisNoticeResponseDto.class);
         } catch (RestClientException e) {
             log.warn("세션 갱신이 필요합니다.");
             parsingKuisAuthManager.forceRenewing();

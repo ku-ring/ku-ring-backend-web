@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@DisplayName("도메인 : CategoryName")
 class CategoryNameTest {
 
     @DisplayName("name을 String으로 받아 해당 CategoryName enum으로 변환한다")
