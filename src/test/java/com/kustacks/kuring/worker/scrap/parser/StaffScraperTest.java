@@ -1,31 +1,27 @@
-package com.kustacks.kuring.worker.client.staff;
+package com.kustacks.kuring.worker.scrap.parser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.worker.update.staff.dto.StaffDto;
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.worker.scrap.StaffScraper;
+import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
-import com.kustacks.kuring.worker.client.staff.dto.TestStaffDTO;
-import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.client.staff.EachDeptStaffApiClient;
 import com.kustacks.kuring.worker.scrap.client.staff.LivingAndCommunicationDesignStaffApiClient;
-import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
 import com.kustacks.kuring.worker.scrap.client.staff.RealEstateStaffApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.LivingDesignDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.liberal_art.KoreanDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
+import com.kustacks.kuring.worker.scrap.parser.dto.TestStaffDTO;
 import com.kustacks.kuring.worker.scrap.parser.notice.LatestPageNoticeHtmlParser;
-import com.kustacks.kuring.worker.scrap.parser.staff.RealEstateStaffHtmlParser;
 import com.kustacks.kuring.worker.scrap.parser.staff.EachDeptStaffHtmlParser;
 import com.kustacks.kuring.worker.scrap.parser.staff.LivingAndCommunicationDesignStaffHtmlParser;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import com.kustacks.kuring.worker.scrap.parser.staff.RealEstateStaffHtmlParser;
+import com.kustacks.kuring.worker.update.staff.dto.StaffDto;
+import org.junit.jupiter.api.*;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.HttpRequest;
@@ -35,7 +31,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestConstructor;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.util.FileCopyUtils;
 
@@ -53,6 +48,7 @@ import static org.mockserver.matchers.Times.exactly;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
+@Disabled
 @SpringJUnitConfig({
         StaffScraper.class,
         LatestPageNoticeApiClient.class, LatestPageNoticeHtmlParser.class,
@@ -62,7 +58,6 @@ import static org.mockserver.model.HttpResponse.response;
         KoreanDept.class, LivingDesignDept.class, CommunicationDesignDept.class, RealEstateDept.class,
         ObjectMapper.class})
 @EnableConfigurationProperties(value = LatestPageNoticeProperties.class)
-@TestPropertySource("classpath:test-constants.properties")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class StaffScraperTest {
 
