@@ -29,20 +29,11 @@ public class KuisHomepageNoticeHtmlParser extends NoticeHtmlParserTemplate {
         Elements tds = row.getElementsByTag("td");
 
         // articleId, postedDate, subject
-        String number = tds.get(1).select("a").attr("onclick").replaceAll("[^0-9]", "").substring(3);
+        String number = tds.get(1).select("a").attr("onclick")
+                .replaceAll("[^0-9]", "").substring(3);
         String date = tds.get(3).text();
         String title = tds.get(1).select("strong").text();
-        return new String[]{number, date, title};
 
-//        try {
-//            String number = tds.get(1).select("a").attr("onclick").replaceAll("[^0-9]", "").substring(3);
-//            String date = tds.get(3).text();
-//            String title = tds.get(1).select("strong").text();
-//            return new String[]{number, date, title};
-//        } catch (IndexOutOfBoundsException e) {
-//            String number = tds.get(1).select("a").attr("onclick").replaceAll("[^0-9]", "").substring(3);
-//            String title = tds.get(1).select("strong").text();
-//            return new String[]{number, "", title};
-//        }
+        return new String[]{number, date, title};
     }
 }
