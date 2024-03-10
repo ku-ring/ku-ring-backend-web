@@ -1,10 +1,10 @@
-package com.kustacks.kuring.worker.update;
+package com.kustacks.kuring.worker.update.notice;
 
 import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
-import com.kustacks.kuring.worker.scrap.KuisNoticeScraperTemplate;
+import com.kustacks.kuring.worker.dto.ComplexNoticeFormatDto;
+import com.kustacks.kuring.worker.scrap.KuisHomepageNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.client.notice.LibraryNoticeApiClient;
-import com.kustacks.kuring.worker.update.notice.CategoryNoticeUpdater;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,15 +23,11 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
-
 @SpringBootTest
-@TestPropertySource(properties = "spring.config.location=" +
-        "classpath:/application.yml" +
-        ",classpath:/application-test.yml")
-class CategoryNoticeUpdaterTest {
+class KuisHomepageNoticeUpdaterTest {
 
     @MockBean
-    KuisNoticeScraperTemplate scrapperTemplate;
+    KuisHomepageNoticeScraperTemplate scrapperTemplate;
 
     @MockBean
     FirebaseNotificationService firebaseService;
@@ -41,7 +36,7 @@ class CategoryNoticeUpdaterTest {
     LibraryNoticeApiClient libraryNoticeApiClient;
 
     @Autowired
-    CategoryNoticeUpdater categoryNoticeUpdater;
+    KuisHomepageNoticeUpdater kuisHomepageNoticeUpdater;
 
     @Autowired
     ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
@@ -49,7 +44,7 @@ class CategoryNoticeUpdaterTest {
     @Autowired
     NoticeQueryPort noticeQueryPort;
 
-    @DisplayName("공지 업데이트 테스트")
+    @DisplayName("Kuis 공지를 학교 홈페이지로부터 업데이트 하는 테스트")
     @Test
     void notice_scrap_async_test() throws InterruptedException {
         // given
@@ -58,12 +53,12 @@ class CategoryNoticeUpdaterTest {
         doNothing().when(firebaseService).sendNotificationList(anyList());
 
         // when
-        categoryNoticeUpdater.update();
+        kuisHomepageNoticeUpdater.update();
         noticeUpdaterThreadTaskExecutor.getThreadPoolExecutor().awaitTermination(1, TimeUnit.SECONDS);
 
         // then
         Long count = noticeQueryPort.count();
-        assertThat(count).isEqualTo(70);
+        assertThat(count).isEqualTo(133);
     }
 
     private static List<CommonNoticeFormatDto> createLibraryFixture() {
@@ -85,7 +80,13 @@ class CategoryNoticeUpdaterTest {
         );
     }
 
-    private static List<CommonNoticeFormatDto> createNoticesFixture() {
+    private static List<ComplexNoticeFormatDto> createNoticesFixture() {
+        return Arrays.asList(
+                new ComplexNoticeFormatDto(createNormalNoticesFixture(), createImportantNoticesFixture())
+        );
+    }
+
+    private static List<CommonNoticeFormatDto> createNormalNoticesFixture() {
         return Arrays.asList(
                 CommonNoticeFormatDto.builder().articleId("1").updatedDate("2021-01-01").subject("library1")
                         .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71921").important(false).build(),
@@ -105,6 +106,29 @@ class CategoryNoticeUpdaterTest {
                         .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71928").important(false).build(),
                 CommonNoticeFormatDto.builder().articleId("9").updatedDate("2021-01-01").subject("library9")
                         .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71929").important(false).build()
+        );
+    }
+
+    private static List<CommonNoticeFormatDto> createImportantNoticesFixture() {
+        return Arrays.asList(
+                CommonNoticeFormatDto.builder().articleId("1").updatedDate("2021-01-01").subject("library1")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71921").important(true).build(),
+                CommonNoticeFormatDto.builder().articleId("2").updatedDate("2021-01-01").subject("library2")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71922").important(true).build(),
+                CommonNoticeFormatDto.builder().articleId("3").updatedDate("2021-01-01").subject("library3")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71923").important(true).build(),
+                CommonNoticeFormatDto.builder().articleId("4").updatedDate("2021-01-01").subject("library4")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71924").important(true).build(),
+                CommonNoticeFormatDto.builder().articleId("5").updatedDate("2021-01-01").subject("library5")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71925").important(true).build(),
+                CommonNoticeFormatDto.builder().articleId("6").updatedDate("2021-01-01").subject("library6")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71926").important(true).build(),
+                CommonNoticeFormatDto.builder().articleId("7").updatedDate("2021-01-01").subject("library7")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71927").important(true).build(),
+                CommonNoticeFormatDto.builder().articleId("8").updatedDate("2021-01-01").subject("library8")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71928").important(true).build(),
+                CommonNoticeFormatDto.builder().articleId("9").updatedDate("2021-01-01").subject("library9")
+                        .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71929").important(true).build()
         );
     }
 }

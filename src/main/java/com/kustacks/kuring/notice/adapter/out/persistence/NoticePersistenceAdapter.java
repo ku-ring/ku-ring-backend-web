@@ -68,6 +68,16 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
     }
 
     @Override
+    public List<String> findImportantArticleIdsByCategoryName(CategoryName categoryName) {
+        return this.noticeRepository.findImportantArticleIdsByCategoryName(categoryName);
+    }
+
+    @Override
+    public List<String> findNormalArticleIdsByCategoryName(CategoryName categoryName) {
+        return this.noticeRepository.findNormalArticleIdsByCategoryName(categoryName);
+    }
+
+    @Override
     public List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentNameEnum) {
         return this.noticeRepository.findImportantArticleIdsByDepartment(departmentNameEnum);
     }

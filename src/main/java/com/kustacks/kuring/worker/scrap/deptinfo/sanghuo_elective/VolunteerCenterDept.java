@@ -7,7 +7,7 @@ import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
-import com.kustacks.kuring.worker.scrap.parser.notice.NoticeHtmlParserTemplate;
+import com.kustacks.kuring.worker.parser.notice.NoticeHtmlParserTemplate;
 
 import java.util.Collections;
 import java.util.List;

@@ -1,9 +1,7 @@
-package com.kustacks.kuring.worker.scrap.parser;
+package com.kustacks.kuring.worker.parser;
 
-import com.kustacks.kuring.worker.scrap.parser.notice.LatestPageNoticeHtmlParser;
-import com.kustacks.kuring.worker.scrap.parser.notice.LatestPageNoticeHtmlParserTwo;
-import com.kustacks.kuring.worker.scrap.parser.notice.RealEstateNoticeHtmlParser;
-import com.kustacks.kuring.worker.scrap.parser.notice.RowsDto;
+import com.kustacks.kuring.support.TestFileLoader;
+import com.kustacks.kuring.worker.parser.notice.*;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,9 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,30 +18,44 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class NoticeHtmlParserTemplateTest {
 
-    @DisplayName("View Url이 정상적으로 생석되는지 확인한다")
+    @DisplayName("신규 2024 홈페이지의 학생 공지를 분석한다")
     @Test
-    public void viewUrlCreate() {
+    void KuisHomepageNoticeHtmlParser() throws IOException {
         // given
-        String urlTemplate = "https://{department}.konkuk.ac.kr/bbs/{department}/{siteId}/{noticeId}/artclView.do";
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/student-notice-2024.html"));
+        String viewUrl = "https://www.konkuk.ac.kr/bbs/konkuk/238/{noticeId}/artclView.do";
 
         // when
-        String viewUrl = urlTemplate
-                .replaceAll("\\{department\\}", "cse")
-                .replace("{siteId}", "775");
-
-        String result = UriComponentsBuilder.fromUriString(viewUrl)
-                .buildAndExpand(5737)
-                .toUriString();
+        RowsDto rowsDto = new KuisHomepageNoticeHtmlParser().parse(doc);
+        List<CommonNoticeFormatDto> important = rowsDto.buildImportantRowList(viewUrl);
+        List<CommonNoticeFormatDto> normal = rowsDto.buildNormalRowList(viewUrl);
 
         // then
-        assertThat(result).isEqualTo("https://cse.konkuk.ac.kr/bbs/cse/775/5737/artclView.do");
+        assertAll(
+                () -> assertThat(important).hasSize(22),
+                () -> assertThat(normal).hasSize(10),
+                () -> assertThat(normal)
+                        .extracting("articleId", "subject", "postedDate", "fullUrl", "important")
+                        .containsExactlyInAnyOrder(
+                                tuple("1115719", "2024년 학군사관 후보생(65기, 66기) 모집 안내", "2024.03.08", "https://www.konkuk.ac.kr/bbs/konkuk/238/1115719/artclView.do", false),
+                                tuple("1116631", "2024 건대신문 제68기 수습기자 정기 공개채용", "2024.03.07", "https://www.konkuk.ac.kr/bbs/konkuk/238/1116631/artclView.do", false),
+                                tuple("1116544", "일우헌 공인회계사 준비반 신입실원 모집", "2024.03.06", "https://www.konkuk.ac.kr/bbs/konkuk/238/1116544/artclView.do", false),
+                                tuple("1116114", "1학기1차 외국어특별장학생 신청 안내", "2024.03.04", "https://www.konkuk.ac.kr/bbs/konkuk/238/1116114/artclView.do", false),
+                                tuple("1115984", "로스쿨 준비반 모집 공고", "2024.02.29", "https://www.konkuk.ac.kr/bbs/konkuk/238/1115984/artclView.do", false),
+                                tuple("1115956", "건국대 학생리포터 투데이건국 12기 모집", "2024.02.29", "https://www.konkuk.ac.kr/bbs/konkuk/238/1115956/artclView.do", false),
+                                tuple("1115854", "[혁신사업] 대학혁신지원사업 서포터즈(4기) 모집", "2024.02.28", "https://www.konkuk.ac.kr/bbs/konkuk/238/1115854/artclView.do", false),
+                                tuple("1115717", "일우헌 5급공채반 24년도 1학기 신입생 모집안내", "2024.02.27", "https://www.konkuk.ac.kr/bbs/konkuk/238/1115717/artclView.do", false),
+                                tuple("5408", "건국대학교 홍보실 소속 공식 학생 크리에이터 '쿠(KU)리에이터' 10기 모집", "2024.02.20", "https://www.konkuk.ac.kr/bbs/konkuk/238/5408/artclView.do", false),
+                                tuple("5407", "[정보운영팀] 2024학년도 1학기 교내근로장학생 모집 공고 (※근무가능 시간표 첨부파일 수정※)", "2024.02.20", "https://www.konkuk.ac.kr/bbs/konkuk/238/5407/artclView.do", false)
+                        )
+        );
     }
 
     @DisplayName("오래된 학과의 홈페이지 공지를 분석한다")
     @Test
     void LatestPageNoticeHtmlParser() throws IOException {
         // given
-        Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/notice/cse-notice-2024.html"));
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/cse-notice-2024.html"));
         String viewUrl = "https://cse.konkuk.ac.kr/bbs/cse/775/{uniqueNoticeId}/artclView.do";
 
         // when
@@ -98,7 +107,7 @@ class NoticeHtmlParserTemplateTest {
     @Test
     void LatestPageNoticeHtmlParserTwo() throws IOException {
         // given
-        Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/notice/kbeauty.html"));
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/kbeauty.html"));
 
         // when
         RowsDto rowsDto = new LatestPageNoticeHtmlParserTwo().parse(doc);
@@ -116,7 +125,7 @@ class NoticeHtmlParserTemplateTest {
     @Test
     void RealEstateNoticeHtmlParser() throws IOException {
         // given
-        Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/notice/realestate.html"));
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/realestate.html"));
 
         // when
         RowsDto rowsDto = new RealEstateNoticeHtmlParser().parse(doc);
@@ -130,9 +139,22 @@ class NoticeHtmlParserTemplateTest {
         );
     }
 
-    private static String loadHtmlFile(String filePath) throws IOException {
-        Path path = Path.of(filePath);
-        byte[] fileBytes = Files.readAllBytes(path);
-        return new String(fileBytes, StandardCharsets.UTF_8);
+    @DisplayName("View Url이 정상적으로 생석되는지 확인한다")
+    @Test
+    void viewUrlCreate() {
+        // given
+        String urlTemplate = "https://{department}.konkuk.ac.kr/bbs/{department}/{siteId}/{noticeId}/artclView.do";
+
+        // when
+        String viewUrl = urlTemplate
+                .replaceAll("\\{department\\}", "cse")
+                .replace("{siteId}", "775");
+
+        String result = UriComponentsBuilder.fromUriString(viewUrl)
+                .buildAndExpand(5737)
+                .toUriString();
+
+        // then
+        assertThat(result).isEqualTo("https://cse.konkuk.ac.kr/bbs/cse/775/5737/artclView.do");
     }
 }

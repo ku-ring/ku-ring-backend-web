@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.update;
+package com.kustacks.kuring.worker.update.notice;
 
 import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;

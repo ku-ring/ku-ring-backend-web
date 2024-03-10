@@ -82,6 +82,30 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
     @Transactional(readOnly = true)
     @Override
+    public List<String> findImportantArticleIdsByCategoryName(CategoryName categoryName) {
+        return queryFactory
+                .select(notice.articleId)
+                .from(notice)
+                .where(notice.categoryName.eq(categoryName)
+                        .and(notice.important.eq(true)))
+                .orderBy(notice.articleId.asc())
+                .fetch();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<String> findNormalArticleIdsByCategoryName(CategoryName categoryName) {
+        return queryFactory
+                .select(notice.articleId)
+                .from(notice)
+                .where(notice.categoryName.eq(categoryName)
+                        .and(notice.important.eq(false)))
+                .orderBy(notice.articleId.asc())
+                .fetch();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentName) {
         return queryFactory
                 .select(departmentNotice.articleId.castToNum(Integer.class))

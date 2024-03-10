@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.scrap.parser.staff;
+package com.kustacks.kuring.worker.parser.staff;
 
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;

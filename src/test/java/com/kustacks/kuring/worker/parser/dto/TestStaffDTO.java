@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.scrap.parser.dto;
+package com.kustacks.kuring.worker.parser.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
