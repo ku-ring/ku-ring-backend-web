@@ -27,7 +27,7 @@ class LatestPageNoticeApiClientTest {
 
     @DisplayName("공지의 총 개수를 가져온다.")
     @Test
-    public void getTotalNoticeSize() throws IOException {
+    void getTotalNoticeSize() throws IOException {
         // given
         Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/notice/cse-notice-2024.html"));
         when(jsoupClient.get(anyString(), anyInt())).thenReturn(doc);

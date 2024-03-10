@@ -49,7 +49,7 @@ public class KuisHomepageNoticeInfo {
 
     public String createViewUrl() {
         return kuisHomepageNoticeProperties.getViewUrl()
-                .replaceAll("\\{category\\}", category)
+                .replace("\\{category\\}", category)
                 .replace("{siteId}", String.valueOf(siteId));
     }
 

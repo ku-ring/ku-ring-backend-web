@@ -143,7 +143,7 @@ class NoticeHtmlParserTemplateTest {
 
     @DisplayName("View Url이 정상적으로 생석되는지 확인한다")
     @Test
-    public void viewUrlCreate() {
+    void viewUrlCreate() {
         // given
         String urlTemplate = "https://{department}.konkuk.ac.kr/bbs/{department}/{siteId}/{noticeId}/artclView.do";
 
