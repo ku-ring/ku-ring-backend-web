@@ -30,7 +30,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@DisplayName("클라이언트 : KUIS 공지")
+@DisplayName("클라이언트 : KUIS 종합정보시스템 공지")
 class KuisNoticeApiClientTest extends IntegrationTestSupport {
 
     @Autowired

@@ -1,5 +1,6 @@
 package com.kustacks.kuring.worker.parser;
 
+import com.kustacks.kuring.support.TestFileLoader;
 import com.kustacks.kuring.worker.parser.staff.EachDeptStaffHtmlParser;
 import com.kustacks.kuring.worker.parser.staff.LivingAndCommunicationDesignStaffHtmlParser;
 import com.kustacks.kuring.worker.parser.staff.RealEstateStaffHtmlParser;
@@ -9,9 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +22,7 @@ class StaffHtmlParserTemplateTest {
     @Test
     void LivingDesignHtmlParserTwo() throws IOException {
         // given
-        Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/staff/livingdesign.html"));
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/staff/livingdesign.html"));
 
         // when
         List<String[]> parseResults = new LivingAndCommunicationDesignStaffHtmlParser().parse(doc);
@@ -48,7 +46,7 @@ class StaffHtmlParserTemplateTest {
     @Test
     void CommunicationDesignHtmlParserTwo() throws IOException {
         // given
-        Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/staff/communicationdesign.html"));
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/staff/communicationdesign.html"));
 
         // when
         List<String[]> parseResults = new LivingAndCommunicationDesignStaffHtmlParser().parse(doc);
@@ -74,7 +72,7 @@ class StaffHtmlParserTemplateTest {
     @Test
     void RealEstateStaffHtmlParser() throws IOException {
         // given
-        Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/staff/realestate.html"));
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/staff/realestate.html"));
 
         // when
         List<String[]> parseResults = new RealEstateStaffHtmlParser().parse(doc);
@@ -87,7 +85,7 @@ class StaffHtmlParserTemplateTest {
     @Test
     void StaffEachDeptHtmlParser() throws IOException {
         // given
-        Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/staff/computer.html"));
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/staff/computer.html"));
 
         // when
         List<String[]> parseResults = new EachDeptStaffHtmlParser().parse(doc);
@@ -105,11 +103,5 @@ class StaffHtmlParserTemplateTest {
                                 tuple("김은이 ( Eun Yi Kim )", "인공지능, 컴퓨터비전", "공학관 483-1호", "02-450-4135", "eykim@konkuk.ac.kr")
                         )
         );
-    }
-
-    private static String loadHtmlFile(String filePath) throws IOException {
-        Path path = Path.of(filePath);
-        byte[] fileBytes = Files.readAllBytes(path);
-        return new String(fileBytes, StandardCharsets.UTF_8);
     }
 }

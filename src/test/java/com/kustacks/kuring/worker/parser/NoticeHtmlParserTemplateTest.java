@@ -1,5 +1,6 @@
 package com.kustacks.kuring.worker.parser;
 
+import com.kustacks.kuring.support.TestFileLoader;
 import com.kustacks.kuring.worker.parser.notice.*;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import org.jsoup.Jsoup;
@@ -9,9 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +22,7 @@ class NoticeHtmlParserTemplateTest {
     @Test
     void KuisHomepageNoticeHtmlParser() throws IOException {
         // given
-        Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/notice/student-notice-2024.html"));
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/student-notice-2024.html"));
         String viewUrl = "https://www.konkuk.ac.kr/bbs/konkuk/238/{noticeId}/artclView.do";
 
         // when
@@ -57,7 +55,7 @@ class NoticeHtmlParserTemplateTest {
     @Test
     void LatestPageNoticeHtmlParser() throws IOException {
         // given
-        Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/notice/cse-notice-2024.html"));
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/cse-notice-2024.html"));
         String viewUrl = "https://cse.konkuk.ac.kr/bbs/cse/775/{uniqueNoticeId}/artclView.do";
 
         // when
@@ -109,7 +107,7 @@ class NoticeHtmlParserTemplateTest {
     @Test
     void LatestPageNoticeHtmlParserTwo() throws IOException {
         // given
-        Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/notice/kbeauty.html"));
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/kbeauty.html"));
 
         // when
         RowsDto rowsDto = new LatestPageNoticeHtmlParserTwo().parse(doc);
@@ -127,7 +125,7 @@ class NoticeHtmlParserTemplateTest {
     @Test
     void RealEstateNoticeHtmlParser() throws IOException {
         // given
-        Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/notice/realestate.html"));
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/realestate.html"));
 
         // when
         RowsDto rowsDto = new RealEstateNoticeHtmlParser().parse(doc);
@@ -158,11 +156,5 @@ class NoticeHtmlParserTemplateTest {
 
         // then
         assertThat(result).isEqualTo("https://cse.konkuk.ac.kr/bbs/cse/775/5737/artclView.do");
-    }
-
-    private static String loadHtmlFile(String filePath) throws IOException {
-        Path path = Path.of(filePath);
-        byte[] fileBytes = Files.readAllBytes(path);
-        return new String(fileBytes, StandardCharsets.UTF_8);
     }
 }
