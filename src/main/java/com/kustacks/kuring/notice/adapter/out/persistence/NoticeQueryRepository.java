@@ -23,6 +23,10 @@ interface NoticeQueryRepository {
 
     List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Pageable pageable);
 
+    List<String> findImportantArticleIdsByCategoryName(CategoryName categoryName);
+
+    List<String> findNormalArticleIdsByCategoryName(CategoryName categoryName);
+
     List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentNameEnum);
 
     List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentNameEnum);

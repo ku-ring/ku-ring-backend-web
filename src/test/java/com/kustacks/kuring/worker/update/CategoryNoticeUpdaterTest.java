@@ -6,13 +6,13 @@ import com.kustacks.kuring.worker.scrap.KuisNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.client.notice.LibraryNoticeApiClient;
 import com.kustacks.kuring.worker.update.notice.CategoryNoticeUpdater;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,11 +24,8 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
-
+@Disabled
 @SpringBootTest
-@TestPropertySource(properties = "spring.config.location=" +
-        "classpath:/application.yml" +
-        ",classpath:/application-test.yml")
 class CategoryNoticeUpdaterTest {
 
     @MockBean

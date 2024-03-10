@@ -20,13 +20,14 @@ public class NoticeUpdateSupport {
     public List<Notice> filteringSoonSaveNotices(
             List<CommonNoticeFormatDto> scrapResults,
             List<String> savedArticleIds,
-            CategoryName categoryName
+            CategoryName categoryName,
+            boolean important
     ) {
         List<Notice> newNotices = new LinkedList<>(); // 뒤에 추가만 계속 하기 때문에 arrayList가 아닌 Linked List 사용 O(1)
         for (CommonNoticeFormatDto notice : scrapResults) {
             try {
                 if (Collections.binarySearch(savedArticleIds, notice.getArticleId()) < 0) { // 정렬되어있다, 이진탐색으로 O(logN)안에 수행
-                    Notice newNotice = convert(notice, categoryName);
+                    Notice newNotice = convert(notice, categoryName, important);
                     newNotices.add(newNotice);
                 }
             } catch (IncorrectResultSizeDataAccessException e) {
@@ -38,6 +39,14 @@ public class NoticeUpdateSupport {
         }
 
         return newNotices;
+    }
+
+    public List<Notice> filteringSoonSaveNotices(
+            List<CommonNoticeFormatDto> scrapResults,
+            List<String> savedArticleIds,
+            CategoryName categoryName
+    ) {
+        return this.filteringSoonSaveNotices(scrapResults, savedArticleIds, categoryName, false);
     }
 
     public List<DepartmentNotice> filteringSoonSaveDepartmentNotices(
@@ -99,13 +108,13 @@ public class NoticeUpdateSupport {
                 .toList();
     }
 
-    private Notice convert(CommonNoticeFormatDto dto, CategoryName CategoryName) {
+    private Notice convert(CommonNoticeFormatDto dto, CategoryName CategoryName, boolean important) {
         return new Notice(dto.getArticleId(),
                 dto.getPostedDate(),
                 dto.getUpdatedDate(),
                 dto.getSubject(),
                 CategoryName,
-                false,
+                important,
                 dto.getFullUrl());
     }
 
