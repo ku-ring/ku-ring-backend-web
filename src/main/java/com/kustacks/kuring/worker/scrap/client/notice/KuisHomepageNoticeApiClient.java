@@ -60,10 +60,6 @@ public class KuisHomepageNoticeApiClient implements NoticeApiClient<ScrapingResu
         return Collections.emptyList();
     }
 
-    private String buildUrlForTotalNoticeCount(KuisHomepageNoticeInfo kuisHomepageNoticeInfo) {
-        return kuisHomepageNoticeInfo.createRequestUrl(1, 1);
-    }
-
     public int getTotalNoticeSize(String url) throws IOException, IndexOutOfBoundsException, NullPointerException {
         Document document = jsoupClient.get(url, LATEST_SCRAP_TIMEOUT);
 
@@ -77,6 +73,10 @@ public class KuisHomepageNoticeApiClient implements NoticeApiClient<ScrapingResu
         }
 
         return Math.min(Integer.parseInt(totalNoticeSizeElement.ownText()), TOTAL_KUIS_NOTICES_COUNT);
+    }
+
+    private String buildUrlForTotalNoticeCount(KuisHomepageNoticeInfo kuisHomepageNoticeInfo) {
+        return kuisHomepageNoticeInfo.createRequestUrl(1, 1);
     }
 
     private ScrapingResultDto getScrapingResultDto(KuisHomepageNoticeInfo kuisHomepageNoticeInfo, int rowSize, int timeout) throws IOException {
