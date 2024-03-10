@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.scrap.parser.notice;
+package com.kustacks.kuring.worker.parser.notice;
 
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import org.springframework.web.util.UriComponentsBuilder;

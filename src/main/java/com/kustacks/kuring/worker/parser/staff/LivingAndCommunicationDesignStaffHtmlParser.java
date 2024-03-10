@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.scrap.parser.staff;
+package com.kustacks.kuring.worker.parser.staff;
 
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;

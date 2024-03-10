@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.scrap.parser;
+package com.kustacks.kuring.worker.parser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kustacks.kuring.common.exception.InternalLogicException;
@@ -15,11 +15,11 @@ import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignD
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.LivingDesignDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.liberal_art.KoreanDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
-import com.kustacks.kuring.worker.scrap.parser.dto.TestStaffDTO;
-import com.kustacks.kuring.worker.scrap.parser.notice.LatestPageNoticeHtmlParser;
-import com.kustacks.kuring.worker.scrap.parser.staff.EachDeptStaffHtmlParser;
-import com.kustacks.kuring.worker.scrap.parser.staff.LivingAndCommunicationDesignStaffHtmlParser;
-import com.kustacks.kuring.worker.scrap.parser.staff.RealEstateStaffHtmlParser;
+import com.kustacks.kuring.worker.parser.dto.TestStaffDTO;
+import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
+import com.kustacks.kuring.worker.parser.staff.EachDeptStaffHtmlParser;
+import com.kustacks.kuring.worker.parser.staff.LivingAndCommunicationDesignStaffHtmlParser;
+import com.kustacks.kuring.worker.parser.staff.RealEstateStaffHtmlParser;
 import com.kustacks.kuring.worker.update.staff.dto.StaffDto;
 import org.junit.jupiter.api.*;
 import org.mockserver.client.MockServerClient;

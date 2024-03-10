@@ -1,13 +1,16 @@
 package com.kustacks.kuring.worker.scrap.client.auth;
 
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
-import com.kustacks.kuring.worker.scrap.client.auth.property.ParsingKuisAuthProperties;
-import com.kustacks.kuring.worker.update.notice.dto.request.KuisLoginInfo;
-import com.kustacks.kuring.worker.update.notice.dto.request.KuisInfo;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.utils.encoder.Encoder;
+import com.kustacks.kuring.worker.scrap.client.auth.property.ParsingKuisAuthProperties;
+import com.kustacks.kuring.worker.update.notice.dto.request.KuisInfo;
+import com.kustacks.kuring.worker.update.notice.dto.request.KuisLoginInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;

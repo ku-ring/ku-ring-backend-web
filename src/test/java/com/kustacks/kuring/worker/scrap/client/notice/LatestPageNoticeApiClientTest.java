@@ -1,5 +1,6 @@
 package com.kustacks.kuring.worker.scrap.client.notice;
 
+import com.kustacks.kuring.support.TestFileLoader;
 import com.kustacks.kuring.worker.scrap.client.JsoupClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,9 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -27,9 +25,9 @@ class LatestPageNoticeApiClientTest {
 
     @DisplayName("공지의 총 개수를 가져온다.")
     @Test
-    public void getTotalNoticeSize() throws IOException {
+    void getTotalNoticeSize() throws IOException {
         // given
-        Document doc = Jsoup.parse(loadHtmlFile("src/test/resources/notice/cse-notice-2024.html"));
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/cse-notice-2024.html"));
         when(jsoupClient.get(anyString(), anyInt())).thenReturn(doc);
         String url = "https://cse.konkuk.ac.kr/cse/9962/subview.do";
 
@@ -38,11 +36,5 @@ class LatestPageNoticeApiClientTest {
 
         // then
         assertThat(totalNoticeSize).isEqualTo(625);
-    }
-
-    private static String loadHtmlFile(String filePath) throws IOException {
-        Path path = Path.of(filePath);
-        byte[] fileBytes = Files.readAllBytes(path);
-        return new String(fileBytes, StandardCharsets.UTF_8);
     }
 }
