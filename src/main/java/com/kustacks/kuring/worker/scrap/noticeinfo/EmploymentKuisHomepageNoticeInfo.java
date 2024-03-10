@@ -2,7 +2,7 @@ package com.kustacks.kuring.worker.scrap.noticeinfo;
 
 import com.kustacks.kuring.worker.scrap.client.notice.KuisHomepageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.KuisHomepageNoticeProperties;
-import com.kustacks.kuring.worker.scrap.parser.notice.KuisHomepageNoticeHtmlParser;
+import com.kustacks.kuring.worker.parser.notice.KuisHomepageNoticeHtmlParser;
 import org.springframework.stereotype.Component;
 
 import static com.kustacks.kuring.notice.domain.CategoryName.EMPLOYMENT;

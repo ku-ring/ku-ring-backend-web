@@ -5,7 +5,7 @@ import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.worker.dto.ComplexNoticeFormatDto;
 import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.noticeinfo.KuisHomepageNoticeInfo;
-import com.kustacks.kuring.worker.scrap.parser.notice.RowsDto;
+import com.kustacks.kuring.worker.parser.notice.RowsDto;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;

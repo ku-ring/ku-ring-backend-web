@@ -1,8 +1,8 @@
-package com.kustacks.kuring.worker.scrap.parser;
+package com.kustacks.kuring.worker.parser;
 
-import com.kustacks.kuring.worker.scrap.parser.staff.EachDeptStaffHtmlParser;
-import com.kustacks.kuring.worker.scrap.parser.staff.LivingAndCommunicationDesignStaffHtmlParser;
-import com.kustacks.kuring.worker.scrap.parser.staff.RealEstateStaffHtmlParser;
+import com.kustacks.kuring.worker.parser.staff.EachDeptStaffHtmlParser;
+import com.kustacks.kuring.worker.parser.staff.LivingAndCommunicationDesignStaffHtmlParser;
+import com.kustacks.kuring.worker.parser.staff.RealEstateStaffHtmlParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.DisplayName;

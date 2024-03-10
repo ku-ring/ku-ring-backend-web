@@ -4,7 +4,7 @@ import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.worker.scrap.client.staff.StaffApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
-import com.kustacks.kuring.worker.scrap.parser.staff.StaffHtmlParserTemplate;
+import com.kustacks.kuring.worker.parser.staff.StaffHtmlParserTemplate;
 import com.kustacks.kuring.worker.update.staff.dto.StaffDto;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;

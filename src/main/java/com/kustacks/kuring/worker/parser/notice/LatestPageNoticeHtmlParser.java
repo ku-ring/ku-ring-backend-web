@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.scrap.parser.notice;
+package com.kustacks.kuring.worker.parser.notice;
 
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;

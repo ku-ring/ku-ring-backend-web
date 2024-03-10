@@ -1,6 +1,6 @@
-package com.kustacks.kuring.worker.scrap.parser;
+package com.kustacks.kuring.worker.parser;
 
-import com.kustacks.kuring.worker.scrap.parser.notice.*;
+import com.kustacks.kuring.worker.parser.notice.*;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
