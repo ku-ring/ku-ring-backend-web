@@ -64,13 +64,4 @@ public class KuisHomepageNoticeScraperTemplate {
 
         return noticeDtoList;
     }
-
-    //    private List<CommonNoticeFormatDto> requestWithKuisInfo(KuisNoticeInfo kuisNoticeRequestBody, Function<KuisNoticeInfo, List<CommonNoticeFormatDto>> decisionMaker) {
-//        long startTime = System.currentTimeMillis();
-//        List<CommonNoticeFormatDto> requestResults = decisionMaker.apply(kuisNoticeRequestBody);
-//        long endTime = System.currentTimeMillis();
-//
-//        log.info("[{}] 파싱에 소요된 초 = {}", kuisNoticeRequestBody.getCategoryName().getName(), (endTime - startTime) / 1000.0);
-//        return requestResults;
-//    }
 }
