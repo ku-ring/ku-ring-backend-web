@@ -28,7 +28,7 @@ class KuisHomepageNoticeApiClientTest extends IntegrationTestSupport {
     private JsoupClient jsoupClient;
 
     @Autowired
-    private StudentKuisHomepageNoticeInfo StudentKuisHomepageNoticeInfo;
+    private StudentKuisHomepageNoticeInfo studentKuisHomepageNoticeInfo;
 
     @DisplayName("공지의 최신 페이지를 가져온다")
     @Test
@@ -41,7 +41,7 @@ class KuisHomepageNoticeApiClientTest extends IntegrationTestSupport {
 
         // when
         List<ScrapingResultDto> results = new KuisHomepageNoticeApiClient(jsoupClient)
-                .request(StudentKuisHomepageNoticeInfo);
+                .request(studentKuisHomepageNoticeInfo);
 
         // then
         assertAll(
