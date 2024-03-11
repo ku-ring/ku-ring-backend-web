@@ -105,4 +105,21 @@ class KuisHomepageNoticeApiClientTest extends IntegrationTestSupport {
         // then
         assertThat(totalNoticeSize).isEqualTo(396);
     }
+
+    @DisplayName("공지의 총 개수가 없는 경우 한 페이지의 최대값인 650으로 가정한다.")
+    @Test
+    void getTotalNoticeSize_side() throws IOException {
+        // given
+        Document doc = Jsoup.parse(
+                TestFileLoader.loadHtmlFile("src/test/resources/notice/student-notice-no-total-count-2024.html")
+        );
+        when(jsoupClient.get(anyString(), anyInt())).thenReturn(doc);
+        String url = "https://www.konkuk.ac.kr/konkuk/238/subview.do";
+
+        // when
+        int totalNoticeSize = new KuisHomepageNoticeApiClient(jsoupClient).getTotalNoticeSize(url);
+
+        // then
+        assertThat(totalNoticeSize).isEqualTo(650);
+    }
 }
