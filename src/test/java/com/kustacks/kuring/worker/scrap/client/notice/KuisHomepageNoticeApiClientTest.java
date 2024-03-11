@@ -48,7 +48,7 @@ class KuisHomepageNoticeApiClientTest extends IntegrationTestSupport {
                 () -> assertThat(results).hasSize(1),
                 () -> assertThat(results.get(0).getDocument()).isNotNull(),
                 () -> assertThat(results.get(0).getViewUrl())
-                        .isEqualTo("https://www.konkuk.ac.kr/bbs/{category}/238/{noticeId}/artclView.do")
+                        .isEqualTo("https://www.konkuk.ac.kr/bbs/konkuk/238/{noticeId}/artclView.do")
         );
     }
 
