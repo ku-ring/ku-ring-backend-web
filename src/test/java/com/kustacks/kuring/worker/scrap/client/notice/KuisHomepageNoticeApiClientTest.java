@@ -74,6 +74,21 @@ class KuisHomepageNoticeApiClientTest extends IntegrationTestSupport {
         );
     }
 
+    @DisplayName("Kuis 공지 전체 페이지중 예외가 발생하면 빈 리스트를 반환한다.")
+    @Test
+    void requestAll_exception() throws IOException {
+        // given
+        KuisHomepageNoticeApiClient noticeApiClient = new KuisHomepageNoticeApiClient(jsoupClient);
+
+        when(jsoupClient.get(anyString(), anyInt())).thenThrow(new IOException("test"));
+
+        // when
+        List<ScrapingResultDto> results = noticeApiClient.requestAll(studentKuisHomepageNoticeInfo);
+
+        // then
+        assertThat(results).isEmpty();
+    }
+
     @DisplayName("공지의 총 개수를 가져온다.")
     @Test
     void getTotalNoticeSize() throws IOException {

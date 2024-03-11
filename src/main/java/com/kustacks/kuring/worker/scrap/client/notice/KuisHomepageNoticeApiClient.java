@@ -56,7 +56,6 @@ public class KuisHomepageNoticeApiClient implements NoticeApiClient<ScrapingResu
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE, e);
         }
-
         return Collections.emptyList();
     }
 
@@ -64,9 +63,6 @@ public class KuisHomepageNoticeApiClient implements NoticeApiClient<ScrapingResu
         Document document = jsoupClient.get(url, LATEST_SCRAP_TIMEOUT);
 
         Element totalNoticeSizeElement = document.selectFirst(".util-search strong");
-        if (totalNoticeSizeElement == null) {
-            totalNoticeSizeElement = document.selectFirst(".total_count");
-        }
 
         if(totalNoticeSizeElement == null) { // 총 공지 개수가 없는 경우 650개로 가정
             return TOTAL_KUIS_NOTICES_COUNT;
