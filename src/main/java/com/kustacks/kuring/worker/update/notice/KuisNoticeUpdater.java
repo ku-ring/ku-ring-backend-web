@@ -20,7 +20,7 @@ import java.util.function.Function;
 
 @Slf4j
 @RequiredArgsConstructor
-public class CategoryNoticeUpdater {
+public class KuisNoticeUpdater {
 
     private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
     private final FirebaseNotificationService notificationService;
