@@ -3,7 +3,7 @@ package com.kustacks.kuring.worker.scrap.client.notice;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import com.kustacks.kuring.support.TestFileLoader;
 import com.kustacks.kuring.worker.dto.ScrapingResultDto;
-import com.kustacks.kuring.worker.scrap.client.JsoupClient;
+import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
 import com.kustacks.kuring.worker.scrap.noticeinfo.StudentKuisHomepageNoticeInfo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,12 +25,12 @@ import static org.mockito.Mockito.when;
 class KuisHomepageNoticeApiClientTest extends IntegrationTestSupport {
 
     @Mock
-    private JsoupClient jsoupClient;
+    private NormalJsoupClient jsoupClient;
 
     @Autowired
     private StudentKuisHomepageNoticeInfo studentKuisHomepageNoticeInfo;
 
-    @DisplayName("공지의 최신 페이지를 가져온다")
+    @DisplayName("Kuis 공지의 최신 페이지를 가져온다")
     @Test
     void request() throws IOException {
         // given
@@ -42,6 +42,28 @@ class KuisHomepageNoticeApiClientTest extends IntegrationTestSupport {
         // when
         List<ScrapingResultDto> results = new KuisHomepageNoticeApiClient(jsoupClient)
                 .request(studentKuisHomepageNoticeInfo);
+
+        // then
+        assertAll(
+                () -> assertThat(results).hasSize(1),
+                () -> assertThat(results.get(0).getDocument()).isNotNull(),
+                () -> assertThat(results.get(0).getViewUrl())
+                        .isEqualTo("https://www.konkuk.ac.kr/bbs/konkuk/238/{noticeId}/artclView.do")
+        );
+    }
+
+    @DisplayName("Kuis 공지 전체 페이지를 스크래핑한다.")
+    @Test
+    void requestAll() throws IOException {
+        // given
+        Document doc = Jsoup.parse(
+                TestFileLoader.loadHtmlFile("src/test/resources/notice/student-notice-2024.html")
+        );
+        when(jsoupClient.get(anyString(), anyInt())).thenReturn(doc);
+
+        // when
+        List<ScrapingResultDto> results = new KuisHomepageNoticeApiClient(jsoupClient)
+                .requestAll(studentKuisHomepageNoticeInfo);
 
         // then
         assertAll(
