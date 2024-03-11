@@ -25,7 +25,7 @@ import static org.mockito.Mockito.doReturn;
 
 @Disabled
 @SpringBootTest
-class CategoryNoticeUpdaterTest {
+class KuisNoticeUpdaterTest {
 
     @MockBean
     KuisNoticeScraperTemplate scrapperTemplate;
@@ -37,7 +37,7 @@ class CategoryNoticeUpdaterTest {
     LibraryNoticeApiClient libraryNoticeApiClient;
 
     @Autowired
-    CategoryNoticeUpdater categoryNoticeUpdater;
+    KuisNoticeUpdater kuisNoticeUpdater;
 
     @Autowired
     ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
@@ -54,7 +54,7 @@ class CategoryNoticeUpdaterTest {
         doNothing().when(firebaseService).sendNotificationList(anyList());
 
         // when
-        categoryNoticeUpdater.update();
+        kuisNoticeUpdater.update();
         noticeUpdaterThreadTaskExecutor.getThreadPoolExecutor().awaitTermination(1, TimeUnit.SECONDS);
 
         // then

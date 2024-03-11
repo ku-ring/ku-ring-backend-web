@@ -40,28 +40,35 @@ public class KuisHomepageNoticeUpdater {
     /*
     학사, 장학, 취창업, 국제, 학생, 산학, 일반, 도서관 공지 갱신
     */
-    @Scheduled(cron = "0 52/10 6-23 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 6:00 ~ 오후 11:55분 사이에 10분마다 업데이트 된다.
+    @Scheduled(cron = "0 0/10 6-23 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 6:00 ~ 오후 11:55분 사이에 10분마다 업데이트 된다.
     public void update() {
-        log.info("========== 공지 업데이트 시작 ==========");
+        log.info("========== KUIS Hompage 공지 업데이트 시작 ==========");
 
         updateLibrary(); // library는 Kuis공지가 아니라 별도로 먼저 수행한다
 
         for (KuisHomepageNoticeInfo kuisNoticeInfo : kuisNoticeInfoList) {
             CompletableFuture
-                    .supplyAsync(() -> updateKuisNoticeAsync(kuisNoticeInfo, KuisHomepageNoticeInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
-                    .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName()))
-                    .thenAccept(notificationService::sendNotificationList);
+                    .supplyAsync(
+                            () -> updateKuisNoticeAsync(kuisNoticeInfo, KuisHomepageNoticeInfo::scrapLatestPageHtml),
+                            noticeUpdaterThreadTaskExecutor
+                    ).thenApply(
+                            scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName())
+                    ).thenAccept(notificationService::sendNotificationList);
         }
     }
 
-    @Scheduled(cron = "0 0 2 * * *", zone = "Asia/Seoul") // 전체 업데이트는 매일 오전 2시에 한다.
+    @Scheduled(cron = "0 0 1 * * *", zone = "Asia/Seoul") // 전체 업데이트는 매일 오전 1시에 한다.
     public void updateAll() {
-        log.info("******** 학과별 전체 공지 업데이트 시작 ********");
+        log.info("******** KUIS Hompage 전체 공지 업데이트 시작 ********");
 
         for (KuisHomepageNoticeInfo kuisNoticeInfo : kuisNoticeInfoList) {
             CompletableFuture
-                    .supplyAsync(() -> updateKuisNoticeAsync(kuisNoticeInfo, KuisHomepageNoticeInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
-                    .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName()));
+                    .supplyAsync(
+                            () -> updateKuisNoticeAsync(kuisNoticeInfo, KuisHomepageNoticeInfo::scrapAllPageHtml),
+                            noticeUpdaterThreadTaskExecutor
+                    ).thenAccept(
+                            scrapResults -> compareAllAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName())
+                    );
         }
     }
 
