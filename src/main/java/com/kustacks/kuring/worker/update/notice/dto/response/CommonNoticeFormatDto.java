@@ -3,7 +3,6 @@ package com.kustacks.kuring.worker.update.notice.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
@@ -15,10 +14,8 @@ public class CommonNoticeFormatDto {
 
     private String subject;
 
-    @Setter
     private String postedDate;
 
-    @Setter
     private String fullUrl;
 
     private Boolean important;
