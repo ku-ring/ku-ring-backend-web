@@ -40,7 +40,7 @@ public class KuisHomepageNoticeUpdater {
     /*
     학사, 장학, 취창업, 국제, 학생, 산학, 일반, 도서관 공지 갱신
     */
-    @Scheduled(cron = "0 0/10 6-23 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 6:00 ~ 오후 11:55분 사이에 10분마다 업데이트 된다.
+    @Scheduled(cron = "0 0/10 6-21 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 6:00 ~ 오후 9:55분 사이에 10분마다 업데이트 된다.
     public void update() {
         log.info("========== KUIS Hompage 공지 업데이트 시작 ==========");
 
