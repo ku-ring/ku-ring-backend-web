@@ -26,11 +26,15 @@ public class KuisHomepageNoticeHtmlParser extends NoticeHtmlParserTemplate {
 
     @Override
     protected String[] extractNoticeFromRow(Element row) {
-        Elements tds = row.getElementsByTag("td");
+        Elements tds = row.getElementsByTag("td"); // jf_viewArtcl('job', '4083', '1116603')
 
         // articleId, postedDate, subject
-        String number = tds.get(1).select("a").attr("onclick")
-                .replaceAll("[^0-9]", "").substring(3);
+        String[] splitResults = tds.get(1).select("a").attr("onclick")
+                .replace("jf_viewArtcl('", "")
+                .replace("')", "")
+                .split("', '");
+
+        String number = splitResults[2];
         String date = tds.get(3).text();
         String title = tds.get(1).select("strong").text();
 
