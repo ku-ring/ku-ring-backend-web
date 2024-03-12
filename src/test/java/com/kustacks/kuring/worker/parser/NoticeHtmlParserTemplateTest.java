@@ -157,4 +157,57 @@ class NoticeHtmlParserTemplateTest {
         // then
         assertThat(result).isEqualTo("https://cse.konkuk.ac.kr/bbs/cse/775/5737/artclView.do");
     }
+
+    @DisplayName("공지의 articleId가 정상적으로 추출되는지 확인한다")
+    @Test
+    void extractNoticeFromRow() throws IOException {
+        // given
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/job-notice-2024.html"));
+        String viewUrl = "https://www.konkuk.ac.kr/bbs/job/4083/{noticeId}/artclView.do";
+
+        // when
+        RowsDto rowsDto = new KuisHomepageNoticeHtmlParser().parse(doc);
+        List<CommonNoticeFormatDto> important = rowsDto.buildImportantRowList(viewUrl);
+        List<CommonNoticeFormatDto> normal = rowsDto.buildNormalRowList(viewUrl);
+
+        // then
+        assertAll(
+                () -> assertThat(important).hasSize(16),
+                () -> assertThat(important)
+                        .extracting("articleId", String.class)
+                        .containsExactlyInAnyOrder(
+                                "1116603",
+                                "1116591",
+                                "1116531",
+                                "1116377",
+                                "1116198",
+                                "1116185",
+                                "1115993",
+                                "1115887",
+                                "1115881",
+                                "1115808",
+                                "1115671",
+                                "1115611",
+                                "1115608",
+                                "5529",
+                                "5527",
+                                "968642"
+                        ),
+                () -> assertThat(normal).hasSize(10),
+                () -> assertThat(normal)
+                        .extracting("articleId", String.class)
+                        .containsExactlyInAnyOrder(
+                                "1117037",
+                                "1116988",
+                                "1116925",
+                                "1116739",
+                                "1116659",
+                                "1116603",
+                                "1116591",
+                                "1116565",
+                                "1116559",
+                                "1116557"
+                        )
+        );
+    }
 }
