@@ -108,9 +108,7 @@ public class KuisHomepageNoticeUpdater {
 
     // 여기부터는 kUIS 공지
     private List<ComplexNoticeFormatDto> updateKuisNoticeAsync(KuisHomepageNoticeInfo deptInfo, Function<KuisHomepageNoticeInfo, List<ScrapingResultDto>> decisionMaker) {
-        List<ComplexNoticeFormatDto> noticeDtos = scrapperTemplate.scrap(deptInfo, decisionMaker);
-        Collections.reverse(noticeDtos);
-        return noticeDtos;
+        return scrapperTemplate.scrap(deptInfo, decisionMaker);
     }
 
     private List<Notice> compareLatestAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, CategoryName categoryName) {
@@ -161,6 +159,7 @@ public class KuisHomepageNoticeUpdater {
 
     private List<Notice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, CategoryName categoryName, boolean important) {
         List<Notice> newNotices = noticeUpdateSupport.filteringSoonSaveNotices(scrapResults, savedArticleIds, categoryName, important);
+        Collections.reverse(newNotices);
         noticeCommandPort.saveAllCategoryNotices(newNotices);
         return newNotices;
     }
@@ -172,6 +171,7 @@ public class KuisHomepageNoticeUpdater {
 
         List<String> deletedNoticesArticleIds = noticeUpdateSupport.filteringSoonDeleteNoticeIds(savedArticleIds, latestNoticeIds);
 
+        Collections.reverse(newNotices);
         noticeCommandPort.saveAllCategoryNotices(newNotices);
 
         if (!deletedNoticesArticleIds.isEmpty()) {
