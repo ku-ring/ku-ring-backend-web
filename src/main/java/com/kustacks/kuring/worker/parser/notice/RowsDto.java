@@ -5,6 +5,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RowsDto {
 
@@ -31,7 +32,7 @@ public class RowsDto {
                         )
                         .important(true)
                         .build())
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public List<CommonNoticeFormatDto> buildNormalRowList(String viewUrl) {
@@ -49,6 +50,6 @@ public class RowsDto {
                         )
                         .important(false)
                         .build())
-                .toList();
+                .collect(Collectors.toList());
     }
 }

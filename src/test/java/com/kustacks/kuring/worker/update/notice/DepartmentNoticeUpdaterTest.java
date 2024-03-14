@@ -68,7 +68,7 @@ class DepartmentNoticeUpdaterTest {
                     .important(true).build();
             importantNoticeList.add(importantFormatDto);
 
-            CommonNoticeFormatDto normalFormatDto = CommonNoticeFormatDto.builder().articleId(String.valueOf(i)).updatedDate("2021-01-01").subject("normal" + i)
+            CommonNoticeFormatDto normalFormatDto = CommonNoticeFormatDto.builder().articleId(String.valueOf(i) + 1000).updatedDate("2021-01-01").subject("normal" + i)
                     .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/notice/71921")
                     .important(false).build();
             normalNoticeList.add(normalFormatDto);
