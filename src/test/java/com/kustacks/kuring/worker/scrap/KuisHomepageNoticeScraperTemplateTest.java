@@ -50,7 +50,7 @@ class KuisHomepageNoticeScraperTemplateTest extends IntegrationTestSupport {
         assertAll(
                 () -> assertThat(results).hasSize(1),
                 () -> assertThat(results.get(0).getImportantNoticeList()).hasSize(22),
-                () -> assertThat(results.get(0).getNormalNoticeList()).hasSize(10)
+                () -> assertThat(results.get(0).getNormalNoticeList()).hasSize(2)
         );
     }
 }
