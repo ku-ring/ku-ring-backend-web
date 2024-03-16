@@ -7,6 +7,17 @@ server:
       enabled: true
 
 spring:
+  ai:
+    openai:
+      api-key: ${AI_API_KEY}
+      chat:
+        options:
+          model: gpt-3.5-turbo
+          temperature: 0.0
+          maxTokens: 300
+      embedding:
+        options:
+          model: text-embedding-3-small
   jpa:
     generate-ddl: false
     hibernate:

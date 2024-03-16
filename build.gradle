@@ -27,6 +27,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
 }
 
 sonarqube {
@@ -37,6 +38,12 @@ sonarqube {
 	}
 }
 
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.ai:spring-ai-bom:0.8.1"
+	}
+}
+
 dependencies {
 	// Web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -44,6 +51,10 @@ dependencies {
 	implementation 'org.springframework.retry:spring-retry'
 	implementation 'org.springframework:spring-aspects'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+	// AI
+	implementation 'org.springframework.ai:spring-ai-chroma-store-spring-boot-starter'
+	implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
 
 	// DB
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
