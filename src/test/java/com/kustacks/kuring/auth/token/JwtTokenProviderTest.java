@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class JwtTokenProviderTest {
 
     private String secretKey = "test-secret-key-test-secret-key-test-secret-key-test-secret-key";
-    private String expireLength = "3600000";
+    private long expireLength = 3600000;
 
     @Test
     @DisplayName("토큰을 성공적으로 발급하고 payload 추출한다")
@@ -39,7 +39,7 @@ class JwtTokenProviderTest {
     @DisplayName("만료된 토큰에서 payload 추출 시 예외를 반환한다")
     void parse_payload_by_expired_token() {
         // given
-        JwtTokenProperties properties = new JwtTokenProperties(secretKey, "-1");
+        JwtTokenProperties properties = new JwtTokenProperties(secretKey, -1l);
         JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(properties);
         String userId = "shine_id";
         String expiredToken = jwtTokenProvider.createToken(userId, List.of(AdminRole.ROLE_ROOT.name(), AdminRole.ROLE_CLIENT.name()));

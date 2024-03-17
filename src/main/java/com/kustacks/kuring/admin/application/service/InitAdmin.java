@@ -22,11 +22,11 @@ public class InitAdmin implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        Optional<Admin> optionalAdmin = adminQueryPort.findByLoginId(adminProperties.getId());
+        Optional<Admin> optionalAdmin = adminQueryPort.findByLoginId(adminProperties.id());
 
         if(optionalAdmin.isEmpty()) {
-            String encodedPassword = passwordEncoder.encode(adminProperties.getPassword());
-            Admin admin = new Admin(adminProperties.getId(), encodedPassword);
+            String encodedPassword = passwordEncoder.encode(adminProperties.password());
+            Admin admin = new Admin(adminProperties.id(), encodedPassword);
             admin.addRole(AdminRole.ROLE_ROOT);
             adminCommandPort.save(admin);
         }
