@@ -72,7 +72,7 @@ class KuisNoticeApiClientTest extends IntegrationTestSupport {
                 "{\"POSTED_DT\":\"" + notice2PostedDate + "\",\"SUBJECT\":\"" + notice2Subject + "\",\"ARTICLE_ID\":\"" + notice2ArticleId + "\"}" +
                 "]}";
 
-        server.expect(times(1), requestTo(kuisNoticeProperties.getRequestUrl()))
+        server.expect(times(1), requestTo(kuisNoticeProperties.requestUrl()))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(expectedResponseBody));
 
@@ -99,7 +99,7 @@ class KuisNoticeApiClientTest extends IntegrationTestSupport {
         String testSession = "JSESSIONID=SESSION_ID";
         given(kuisAuthManager.getSessionId()).willReturn(testSession);
 
-        server.expect(times(3), requestTo(kuisNoticeProperties.getRequestUrl()))
+        server.expect(times(3), requestTo(kuisNoticeProperties.requestUrl()))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withServerError());
 
@@ -119,7 +119,7 @@ class KuisNoticeApiClientTest extends IntegrationTestSupport {
         String testSession = "JSESSIONID=SESSION_ID";
         given(kuisAuthManager.getSessionId()).willReturn(testSession);
 
-        server.expect(times(3), requestTo(kuisNoticeProperties.getRequestUrl()))
+        server.expect(times(3), requestTo(kuisNoticeProperties.requestUrl()))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON));
 
@@ -140,7 +140,7 @@ class KuisNoticeApiClientTest extends IntegrationTestSupport {
         String testSession = "JSESSIONID=SESSION_ID";
 
         given(kuisAuthManager.getSessionId()).willReturn(testSession);
-        server.expect(times(3), requestTo(kuisNoticeProperties.getRequestUrl()))
+        server.expect(times(3), requestTo(kuisNoticeProperties.requestUrl()))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess().contentType(MediaType.APPLICATION_JSON).body(badResponseBody));
 

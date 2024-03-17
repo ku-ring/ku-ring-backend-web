@@ -10,7 +10,7 @@ import com.kustacks.kuring.auth.userdetails.AdminUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RequiredArgsConstructor

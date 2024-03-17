@@ -49,7 +49,7 @@ public class DeptInfo {
 
     public String createRequestUrl(int page, int row) {
         return UriComponentsBuilder
-                .fromUriString(latestPageNoticeProperties.getListUrl())
+                .fromUriString(latestPageNoticeProperties.listUrl())
                 .queryParam("page", page)
                 .queryParam("row", row)
                 .buildAndExpand(
@@ -60,7 +60,7 @@ public class DeptInfo {
     }
 
     public String createViewUrl() {
-        return latestPageNoticeProperties.getViewUrl()
+        return latestPageNoticeProperties.viewUrl()
                 .replaceAll("\\{department\\}", noticeScrapInfo.getSiteName())
                 .replace("{siteId}", String.valueOf(noticeScrapInfo.getSiteId()));
     }
