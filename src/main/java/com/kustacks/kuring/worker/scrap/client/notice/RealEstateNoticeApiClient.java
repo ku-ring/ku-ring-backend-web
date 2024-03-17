@@ -1,11 +1,11 @@
 package com.kustacks.kuring.worker.scrap.client.notice;
 
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.exception.InternalLogicException;
-import com.kustacks.kuring.worker.scrap.client.JsoupClient;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.worker.dto.ScrapingResultDto;
+import com.kustacks.kuring.worker.scrap.client.ProxyJsoupClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.RealEstateNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
-import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
@@ -24,10 +24,10 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
     private static final int UNKNOWN_PAGE_NUM = -1;
     private static final int ESTATE_SCRAP_TIMEOUT = 300000;
 
-    private final JsoupClient jsoupClient;
+    private final ProxyJsoupClient jsoupClient;
     private final RealEstateNoticeProperties realEstateNoticeProperties;
 
-    public RealEstateNoticeApiClient(JsoupClient proxyJsoupClient, RealEstateNoticeProperties realEstateNoticeProperties) {
+    public RealEstateNoticeApiClient(ProxyJsoupClient proxyJsoupClient, RealEstateNoticeProperties realEstateNoticeProperties) {
         this.jsoupClient = proxyJsoupClient;
         this.realEstateNoticeProperties = realEstateNoticeProperties;
     }
@@ -92,7 +92,7 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private String createRequestUrl(String sca, int pageNum) {
         return UriComponentsBuilder
-                .fromUriString(realEstateNoticeProperties.getListUrl())
+                .fromUriString(realEstateNoticeProperties.listUrl())
                 .queryParam("sca", sca)
                 .queryParam("page", pageNum)
                 .build()
@@ -101,7 +101,7 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private String createViewUrl(String sca) {
         return UriComponentsBuilder
-                .fromUriString(realEstateNoticeProperties.getViewUrl())
+                .fromUriString(realEstateNoticeProperties.viewUrl())
                 .queryParam("sca", sca)
                 .queryParam("wr_id", "")
                 .build()

@@ -1,9 +1,5 @@
 package com.kustacks.kuring.notice.adapter.in.web;
 
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_SEARCH_SUCCESS;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_SEARCH_SUCCESS;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_SEARCH_SUCCESS;
-
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeCategoryNameResponse;
@@ -16,15 +12,18 @@ import com.kustacks.kuring.notice.application.port.in.dto.NoticeRangeLookupComma
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
 
 @Tag(name = "Notice-Query", description = "공지 정보 조회")
 @Validated
@@ -55,7 +54,7 @@ public class NoticeQueryApiV2 {
     @Operation(summary = "키워드 공지 조회", description = "일반 공지 조회와 학과별 공지 검색을 지원하며, 2글자 이상의 키워드를 입력하길 권장합니다")
     @GetMapping("/search")
     public ResponseEntity<BaseResponse<NoticeContentSearchResponse>> searchNotice(
-            @NotBlank @RequestParam String content
+            @NotBlank @RequestParam(name = "content") String content
     ) {
         List<NoticeContentSearchResult> response = noticeQueryUseCase.findAllNoticeByContent(content);
         NoticeContentSearchResponse noticeContentSearchResponse = new NoticeContentSearchResponse(response);

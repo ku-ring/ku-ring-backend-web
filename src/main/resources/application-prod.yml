@@ -16,7 +16,6 @@ spring:
         jdbc:
           batch_size: 100
         format_sql: true
-        dialect: com.kustacks.kuring.config.CustomMariaDbDialect
     defer-datasource-initialization: false
     show-sql: false
     open-in-view: false

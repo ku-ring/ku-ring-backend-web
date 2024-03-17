@@ -1,8 +1,5 @@
 package com.kustacks.kuring.admin.adapter.in.web;
 
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.AUTH_AUTHENTICATION_SUCCESS;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.FEEDBACK_SEARCH_SUCCESS;
-
 import com.kustacks.kuring.admin.application.port.in.AdminQueryUseCase;
 import com.kustacks.kuring.admin.domain.AdminRole;
 import com.kustacks.kuring.auth.authorization.AuthenticationPrincipal;
@@ -15,9 +12,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +22,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.AUTH_AUTHENTICATION_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.FEEDBACK_SEARCH_SUCCESS;
 
 @Tag(name = "Admin-Query", description = "관리자가 주체가 되는 정보 조회")
 @Validated

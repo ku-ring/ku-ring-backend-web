@@ -3,7 +3,7 @@ package com.kustacks.kuring.worker.scrap.client.notice;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.worker.dto.ScrapingResultDto;
-import com.kustacks.kuring.worker.scrap.client.JsoupClient;
+import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
 import com.kustacks.kuring.worker.scrap.noticeinfo.KuisHomepageNoticeInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
@@ -25,9 +25,9 @@ public class KuisHomepageNoticeApiClient implements NoticeApiClient<ScrapingResu
     private static final int LATEST_SCRAP_ALL_TIMEOUT = 10000; // 10초
     private static final int TOTAL_KUIS_NOTICES_COUNT = 650;
 
-    private final JsoupClient jsoupClient;
+    private final NormalJsoupClient jsoupClient;
 
-    public KuisHomepageNoticeApiClient(JsoupClient normalJsoupClient) {
+    public KuisHomepageNoticeApiClient(NormalJsoupClient normalJsoupClient) {
         this.jsoupClient = normalJsoupClient;
     }
 

@@ -1,19 +1,12 @@
 package com.kustacks.kuring.common.properties;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 
-@Getter
-@ConstructorBinding
-@RequiredArgsConstructor
 @ConfigurationProperties(prefix = "server.deploy")
-public class ServerProperties {
-
+public record ServerProperties(
+        String environment
+) {
     private static final String DEV_SUFFIX = "dev";
-
-    private final String environment;
 
     public boolean isSameEnvironment(String devSuffix) {
         return this.environment.equals(devSuffix);
