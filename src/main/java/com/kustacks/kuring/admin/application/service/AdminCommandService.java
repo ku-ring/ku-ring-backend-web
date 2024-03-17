@@ -48,8 +48,8 @@ public class AdminCommandService implements AdminCommandUseCase {
                 command.subject(),
                 testCategoryName.getKorName(),
                 CategoryName.LIBRARY.equals(testCategoryName)
-                        ? noticeProperties.getLibraryBaseUrl()
-                        : noticeProperties.getNormalBaseUrl()
+                        ? noticeProperties.libraryBaseUrl()
+                        : noticeProperties.normalBaseUrl()
         );
     }
 

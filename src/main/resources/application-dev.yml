@@ -27,7 +27,6 @@ spring:
         jdbc:
           batch_size: 100
         format_sql: true
-        dialect: com.kustacks.kuring.config.CustomMariaDbDialect
     defer-datasource-initialization: false
     show-sql: false
     open-in-view: false
@@ -93,9 +92,9 @@ notice:
   recent:
     list-url: https://{department}.konkuk.ac.kr/bbs/{department}/{siteId}/artclList.do
     view-url: https://{department}.konkuk.ac.kr/bbs/{department}/{siteId}/{noticeId}/artclView.do
-  normal-base-url: https://old.konkuk.ac.kr/do/MessageBoard/ArticleRead.do
   library:
     request-url: https://library.konkuk.ac.kr/pyxis-api/1/bulletin-boards/1/bulletins
+  normal-base-url: https://old.konkuk.ac.kr/do/MessageBoard/ArticleRead.do
   library-base-url: https://library.konkuk.ac.kr/library-guide/bulletins/notice
 
 auth:

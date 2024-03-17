@@ -17,21 +17,21 @@ public class JwtTokenProvider {
     public String createToken(String principal, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(principal);
         Date now = new Date();
-        Date validity = new Date(now.getTime() + jwtTokenProperties.getExpireLength());
+        Date validity = new Date(now.getTime() + jwtTokenProperties.expireLength());
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .claim("roles", roles)
-                .signWith(SignatureAlgorithm.HS256, jwtTokenProperties.getSecretKey())
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProperties.secretKey())
                 .compact();
     }
 
     public String getPrincipal(String token) {
         try{
             return Jwts.parser()
-                    .setSigningKey(jwtTokenProperties.getSecretKey())
+                    .setSigningKey(jwtTokenProperties.secretKey())
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
@@ -43,7 +43,7 @@ public class JwtTokenProvider {
     public List<String> getRoles(String token) {
         try{
             return Jwts.parser()
-                    .setSigningKey(jwtTokenProperties.getSecretKey())
+                    .setSigningKey(jwtTokenProperties.secretKey())
                     .parseClaimsJws(token)
                     .getBody()
                     .get("roles", List.class);
@@ -54,7 +54,7 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(jwtTokenProperties.getSecretKey()).parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parser().setSigningKey(jwtTokenProperties.secretKey()).parseClaimsJws(token);
 
             return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {

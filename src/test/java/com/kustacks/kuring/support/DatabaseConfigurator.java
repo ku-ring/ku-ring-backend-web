@@ -1,17 +1,18 @@
 package com.kustacks.kuring.support;
 
-import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.adapter.out.persistence.AdminRepository;
+import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.domain.AdminRole;
 import com.kustacks.kuring.notice.adapter.out.persistence.NoticePersistenceAdapter;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.Notice;
-import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.adapter.out.persistence.StaffRepository;
+import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import com.kustacks.kuring.user.domain.User;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,7 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import javax.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;

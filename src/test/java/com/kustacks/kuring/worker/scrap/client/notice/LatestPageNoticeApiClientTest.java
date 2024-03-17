@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.scrap.client.notice;
 
 import com.kustacks.kuring.support.TestFileLoader;
-import com.kustacks.kuring.worker.scrap.client.JsoupClient;
+import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 class LatestPageNoticeApiClientTest {
 
     @Mock
-    private JsoupClient jsoupClient;
+    private NormalJsoupClient jsoupClient;
 
     @DisplayName("공지의 총 개수를 가져온다.")
     @Test

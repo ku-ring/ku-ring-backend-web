@@ -2,7 +2,7 @@ package com.kustacks.kuring.worker.scrap.client.staff;
 
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.worker.scrap.client.JsoupClient;
+import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.LivingDesignDept;
@@ -23,12 +23,12 @@ import java.util.Map;
 public class EachDeptStaffApiClient implements StaffApiClient {
 
     private static final int STAFF_SCRAP_TIMEOUT = 30000;
-    private final JsoupClient jsoupClient;
+    private final NormalJsoupClient jsoupClient;
 
     @Value("${staff.each-dept-url}")
     private String baseUrl;
 
-    public EachDeptStaffApiClient(JsoupClient normalJsoupClient) {
+    public EachDeptStaffApiClient(NormalJsoupClient normalJsoupClient) {
         this.jsoupClient = normalJsoupClient;
     }
 

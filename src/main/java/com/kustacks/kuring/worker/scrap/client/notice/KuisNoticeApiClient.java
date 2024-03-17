@@ -68,7 +68,7 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
     ) throws InternalLogicException {
         try {
             return restTemplate.postForEntity(
-                    kuisNoticeProperties.getRequestUrl(),
+                    kuisNoticeProperties.requestUrl(),
                     noticeRequestEntity,
                     KuisNoticeResponseDto.class);
         } catch (RestClientException e) {
@@ -96,7 +96,7 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
 
     private HttpHeaders createKuisNoticeRequestHeader(String sessionId) {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.REFERER, kuisNoticeProperties.getRefererUrl());
+        httpHeaders.add(HttpHeaders.REFERER, kuisNoticeProperties.refererUrl());
         httpHeaders.add(HttpHeaders.COOKIE, sessionId);
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         return httpHeaders;

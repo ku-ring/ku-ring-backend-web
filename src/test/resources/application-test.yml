@@ -1,4 +1,15 @@
 spring:
+  ai:
+    openai:
+      api-key: invalid-test-api-key
+      chat:
+        options:
+          model: gpt-3.5-turbo
+          temperature: 0.0
+          maxTokens: 300
+      embedding:
+        options:
+          model: text-embedding-3-small
   datasource:
     url: jdbc:tc:mariadb:10.2:///kuring?TC_REUSABLE=true
     username: test # 테스트컨테이너 용이라 노출되도 상관없다
@@ -19,7 +30,6 @@ spring:
         jdbc:
           batch_size: 100
         format_sql: true
-        dialect: com.kustacks.kuring.config.CustomMariaDbDialect
     defer-datasource-initialization: true
     open-in-view: false
   thymeleaf:
@@ -59,9 +69,9 @@ notice:
   recent:
     list-url: https://{department}.konkuk.ac.kr/bbs/{department}/{siteId}/artclList.do
     view-url: https://{department}.konkuk.ac.kr/bbs/{department}/{siteId}/{noticeId}/artclView.do
-  normal-base-url: https://old.konkuk.ac.kr/do/MessageBoard/ArticleRead.do
   library:
     request-url: https://library.konkuk.ac.kr/pyxis-api/1/bulletin-boards/1/bulletins
+  normal-base-url: https://old.konkuk.ac.kr/do/MessageBoard/ArticleRead.do
   library-base-url: https://library.konkuk.ac.kr/library-guide/bulletins/notice
 
 auth:

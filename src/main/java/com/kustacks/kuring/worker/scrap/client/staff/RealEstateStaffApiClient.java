@@ -2,7 +2,7 @@ package com.kustacks.kuring.worker.scrap.client.staff;
 
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.worker.scrap.client.JsoupClient;
+import com.kustacks.kuring.worker.scrap.client.ProxyJsoupClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
 import org.jsoup.nodes.Document;
@@ -17,12 +17,12 @@ import java.util.List;
 public class RealEstateStaffApiClient implements StaffApiClient {
 
     private static final int STAFF_SCRAP_TIMEOUT = 300000;
-    private final JsoupClient jsoupClient;
+    private final ProxyJsoupClient jsoupClient;
 
     @Value("${staff.real-estate-url}")
     private String baseUrl;
 
-    public RealEstateStaffApiClient(JsoupClient proxyJsoupClient) {
+    public RealEstateStaffApiClient(ProxyJsoupClient proxyJsoupClient) {
         this.jsoupClient = proxyJsoupClient;
     }
 

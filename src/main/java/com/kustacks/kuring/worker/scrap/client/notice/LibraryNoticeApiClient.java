@@ -51,7 +51,7 @@ public class LibraryNoticeApiClient implements NoticeApiClient<CommonNoticeForma
 
         List<LibraryNoticeDto> libraryNoticeDtoList = new LinkedList<>();
         for (int requestIndex = 0; requestIndex < MAX_REQUEST_COUNT; requestIndex++) {
-            String completeLibraryUrl = buildUrl(libraryNoticeProperties.getRequestUrl(), offset, max);
+            String completeLibraryUrl = buildUrl(libraryNoticeProperties.requestUrl(), offset, max);
             LibraryNoticeResponseDto libraryNoticeResponseDto = restTemplate
                     .getForEntity(completeLibraryUrl, LibraryNoticeResponseDto.class)
                     .getBody();

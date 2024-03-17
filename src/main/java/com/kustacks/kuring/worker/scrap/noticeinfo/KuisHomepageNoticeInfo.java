@@ -40,7 +40,7 @@ public class KuisHomepageNoticeInfo {
 
     public String createRequestUrl(int page, int row) {
         return UriComponentsBuilder
-                .fromUriString(kuisHomepageNoticeProperties.getListUrl())
+                .fromUriString(kuisHomepageNoticeProperties.listUrl())
                 .queryParam("page", page)
                 .queryParam("row", row)
                 .buildAndExpand(category, siteId)
@@ -48,7 +48,7 @@ public class KuisHomepageNoticeInfo {
     }
 
     public String createViewUrl() {
-        return kuisHomepageNoticeProperties.getViewUrl()
+        return kuisHomepageNoticeProperties.viewUrl()
                 .replace("{category}", category)
                 .replace("{siteId}", String.valueOf(siteId));
     }

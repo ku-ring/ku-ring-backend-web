@@ -2,7 +2,7 @@ package com.kustacks.kuring.auth.authentication;
 
 import org.apache.logging.log4j.util.Strings;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 
 public class AuthorizationExtractor {

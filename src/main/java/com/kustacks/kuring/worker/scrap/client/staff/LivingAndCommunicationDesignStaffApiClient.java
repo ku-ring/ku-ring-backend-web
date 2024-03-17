@@ -3,7 +3,7 @@ package com.kustacks.kuring.worker.scrap.client.staff;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.worker.scrap.client.JsoupClient;
+import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.art_design.LivingDesignDept;
@@ -22,12 +22,12 @@ public class LivingAndCommunicationDesignStaffApiClient implements StaffApiClien
 
     private static final int STAFF_SCRAP_TIMEOUT = 30000;
     private final Map<String, String> urlMap;
-    private final JsoupClient jsoupClient;
+    private final NormalJsoupClient jsoupClient;
 
     public LivingAndCommunicationDesignStaffApiClient(
             @Value("${staff.living-design-url}") String livingDesignUrl,
             @Value("${staff.communication-design-url}") String communicationDesignUrl,
-            JsoupClient normalJsoupClient)
+            NormalJsoupClient normalJsoupClient)
     {
         this.urlMap = new HashMap<>();
         this.urlMap.put(DepartmentName.COMM_DESIGN.getKorName(), communicationDesignUrl);

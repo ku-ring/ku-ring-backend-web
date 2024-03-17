@@ -4,7 +4,7 @@ import com.kustacks.kuring.notice.domain.CategoryName;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
