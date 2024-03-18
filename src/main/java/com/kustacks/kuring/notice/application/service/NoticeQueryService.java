@@ -109,7 +109,6 @@ public class NoticeQueryService implements NoticeQueryUseCase {
 
     private List<NoticeDepartmentNameResult> convertDepartmentNameDtos(List<DepartmentName> departmentNames) {
         return departmentNames.stream()
-                .filter(dn -> !dn.equals(DepartmentName.BIO_SCIENCE))
                 .filter(dn -> !dn.equals(DepartmentName.COMM_DESIGN))
                 .map(NoticeDepartmentNameResult::from)
                 .toList();

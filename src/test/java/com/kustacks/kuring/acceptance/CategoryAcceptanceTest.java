@@ -51,7 +51,7 @@ class CategoryAcceptanceTest extends IntegrationTestSupport {
         var 학과_조회_요청_응답 = 학과_조회_요청();
 
         // then
-        학과_조회_응답_확인(학과_조회_요청_응답, 60);
+        학과_조회_응답_확인(학과_조회_요청_응답, 61);
     }
 
     /**
