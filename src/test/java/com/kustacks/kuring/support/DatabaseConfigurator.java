@@ -1,17 +1,18 @@
 package com.kustacks.kuring.support;
 
-import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.adapter.out.persistence.AdminRepository;
+import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.domain.AdminRole;
 import com.kustacks.kuring.notice.adapter.out.persistence.NoticePersistenceAdapter;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.Notice;
-import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.staff.adapter.out.persistence.StaffRepository;
+import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import com.kustacks.kuring.user.domain.User;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,7 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import jakarta.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -182,21 +182,21 @@ public class DatabaseConfigurator implements InitializingBean {
     private List<DepartmentNotice> buildImportantDepartmentNotice(int cnt, DepartmentName departmentName, CategoryName categoryName, boolean important) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new DepartmentNotice("depart_import_article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName))
+                .map(i -> new DepartmentNotice("depart_import_article_" + i, "2023-04-03 00:00:1"+i, "2023-04-03 00:00:1"+i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName))
                 .toList();
     }
 
     private List<DepartmentNotice> buildNormalDepartmentNotice(int cnt, DepartmentName departmentName, CategoryName categoryName, boolean important) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new DepartmentNotice("depart_normal_article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName))
+                .map(i -> new DepartmentNotice("depart_normal_article_" + i, "2023-04-03 00:00:1"+i, "2023-04-03 00:00:1"+i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName))
                 .toList();
     }
 
     private static List<Notice> buildNotices(int cnt, CategoryName categoryName) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new Notice("article_" + i, "post_date_" + i, "update_date_" + i, "subject_" + i, categoryName, false, "https://www.example.com"))
+                .map(i -> new Notice("article_" + i, "2023-04-03 00:00:1"+i, "2023-04-03 00:00:1"+i, "subject_" + i, categoryName, false, "https://www.example.com"))
                 .toList();
     }
 

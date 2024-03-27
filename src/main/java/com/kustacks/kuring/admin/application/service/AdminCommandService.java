@@ -37,7 +37,7 @@ public class AdminCommandService implements AdminCommandUseCase {
     @Override
     public void createTestNotice(TestNotificationCommand command) {
         String testNoticePostedDate = LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         CategoryName testCategoryName = CategoryName.fromStringName(command.category());
 

@@ -14,7 +14,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-@Getter
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NoticeDateTime {
@@ -43,7 +42,7 @@ public class NoticeDateTime {
             return;
         }
 
-        if(isValidDateTime(postedDate, updatedDate)) {
+        if (isValidDateTime(postedDate, updatedDate)) {
             initDateTime(postedDate, updatedDate);
             return;
         }

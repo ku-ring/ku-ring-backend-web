@@ -17,7 +17,7 @@ class NoticeTest {
             "https://library.konkuk.ac.kr/library-guide/bulletins/notice/7192", "http://www.konkuk.ac.kr/do/MessageBoard/ArticleRead.do?forum=notice&sort=6&id=5b50736&cat=0000300001",
     "http://mae.konkuk.ac.kr/noticeView.do?siteId=MAE&boardSeq=988&menuSeq=6823&categorySeq=0&curBoardDispType=LIST&curPage=12&pageNum=1&seq=179896"})
     void create_member(String url) {
-        assertThatCode(() -> new Notice("artice_id", "postDate", "updatedDate", "subject", CategoryName.BACHELOR, false, url))
+        assertThatCode(() -> new Notice("artice_id", "2024-01-19 17:27:05", "2024-01-19 17:27:05", "subject", CategoryName.BACHELOR, false, url))
                 .doesNotThrowAnyException();
     }
 
@@ -25,7 +25,7 @@ class NoticeTest {
     @ParameterizedTest
     @ValueSource(strings = {"//www.example.com", "https:/www.example.com", "https://"})
     void member_invalid_email_id(String url) {
-        assertThatThrownBy(() -> new Notice("artice_id", "postDate", "updatedDate", "subject", CategoryName.BACHELOR, false, url))
+        assertThatThrownBy(() -> new Notice("artice_id", "2024-01-19 17:27:05", "2024-01-19 17:27:05", "subject", CategoryName.BACHELOR, false, url))
                 .isInstanceOf(InternalLogicException.class);
     }
 
