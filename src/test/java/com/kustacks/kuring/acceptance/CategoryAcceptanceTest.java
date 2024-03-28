@@ -34,8 +34,10 @@ class CategoryAcceptanceTest extends IntegrationTestSupport {
         var 카테고리_조회_요청_응답 = 지원하는_카테고리_조회_요청();
 
         // then
-        카테고리_조회_요청_응답_확인(카테고리_조회_요청_응답, "bachelor", "scholarship", "employment", "national",
-                "student", "industry_university", "normal", "library", "department");
+        카테고리_조회_요청_응답_확인(카테고리_조회_요청_응답,
+                "bachelor", "scholarship", "library",
+                "employment", "national", "student",
+                "industry_university", "normal", "department");
     }
 
 

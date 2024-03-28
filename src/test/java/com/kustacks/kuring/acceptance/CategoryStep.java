@@ -35,7 +35,7 @@ public class CategoryStep {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getList("data.name")).contains(categories)
+                () -> assertThat(response.jsonPath().getList("data.name")).containsExactly(categories)
         );
     }
 
