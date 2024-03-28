@@ -19,8 +19,10 @@ import java.util.regex.Pattern;
 public class NoticeDateTime {
 
     private static final String REGEX_DATE = "^\\d{4}-\\d{2}-\\d{2}$";
+    private static final String REGEX_DATE_DOT_SPLIT = "^\\d{4}\\.\\d{2}\\.\\d{2}$";
     private static final String REGEX_DATE_TIME = "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$";
     private static final Pattern compiledDatePattern = Pattern.compile(REGEX_DATE);
+    private static final Pattern compiledDateDotPattern = Pattern.compile(REGEX_DATE_DOT_SPLIT);
     private static final Pattern compiledDateTimePattern = Pattern.compile(REGEX_DATE_TIME);
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withLocale(Locale.KOREA);
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(" HH:mm:ss").withLocale(Locale.KOREA);
@@ -34,8 +36,21 @@ public class NoticeDateTime {
     private LocalDateTime updatedDate;
 
     public NoticeDateTime(String postedDate, String updatedDate) {
+        if (postedDate == null || postedDate.isBlank()) {
+            postedDate = LocalDateTime.now().format(dateTimeFormatter);
+        }
+
+        if (updatedDate == null || updatedDate.isBlank()) {
+            updatedDate = postedDate;
+        }
+
         postedDate = postedDate.trim();
         updatedDate = updatedDate.trim();
+
+        if (isValidDateDot(postedDate, updatedDate)) {
+            initDate(postedDate.replaceAll("[.]", "-"), updatedDate.replaceAll("[.]", "-"));
+            return;
+        }
 
         if (isValidDate(postedDate, updatedDate)) {
             initDate(postedDate, updatedDate);
@@ -68,6 +83,11 @@ public class NoticeDateTime {
         postedDate += now.format(timeFormatter);
         updatedDate += now.format(timeFormatter);
         initDateTime(postedDate, updatedDate);
+    }
+
+    private boolean isValidDateDot(String postedDate, String updatedDate) {
+        return compiledDateDotPattern.matcher(postedDate).matches() &&
+                compiledDateDotPattern.matcher(updatedDate).matches();
     }
 
     private boolean isValidDate(String postedDate, String updatedDate) {

@@ -33,7 +33,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     public List<NoticeDto> findNoticesByCategoryWithOffset(CategoryName categoryName, Pageable pageable) {
         StringTemplate postedDate = Expressions.stringTemplate(
                 "DATE_FORMAT({0}, {1})",
-                notice.noticePostDateTime.postedDate,
+                notice.noticeDateTime.postedDate,
                 ConstantImpl.create("%Y-%m-%d %H:%i:%s")
         );
 
@@ -50,7 +50,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .where(notice.categoryName.eq(categoryName))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(notice.noticePostDateTime.postedDate.desc())
+                .orderBy(notice.noticeDateTime.postedDate.desc())
                 .fetch();
     }
 
@@ -59,7 +59,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     public List<NoticeSearchDto> findAllByKeywords(List<String> keywords) {
         StringTemplate postedDate = Expressions.stringTemplate(
                 "DATE_FORMAT({0}, {1})",
-                notice.noticePostDateTime.postedDate,
+                notice.noticeDateTime.postedDate,
                 ConstantImpl.create("%Y-%m-%d %H:%i:%s")
         );
 
@@ -72,7 +72,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                         notice.url.value))
                 .from(notice)
                 .where(isContainSubject(keywords).or(isContainCategory(keywords)))
-                .orderBy(notice.noticePostDateTime.postedDate.desc())
+                .orderBy(notice.noticeDateTime.postedDate.desc())
                 .fetch();
     }
 
@@ -154,7 +154,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     public List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName) {
         StringTemplate postedDate = Expressions.stringTemplate(
                 "DATE_FORMAT({0}, {1})",
-                departmentNotice.noticePostDateTime.postedDate,
+                departmentNotice.noticeDateTime.postedDate,
                 ConstantImpl.create("%Y-%m-%d %H:%i:%s")
         );
 
@@ -169,7 +169,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName)
                         .and(departmentNotice.important.isTrue()))
-                .orderBy(departmentNotice.noticePostDateTime.postedDate.desc())
+                .orderBy(departmentNotice.noticeDateTime.postedDate.desc())
                 .fetch();
     }
 
@@ -178,7 +178,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     public List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Pageable pageable) {
         StringTemplate postedDate = Expressions.stringTemplate(
                 "DATE_FORMAT({0}, {1})",
-                departmentNotice.noticePostDateTime.postedDate,
+                departmentNotice.noticeDateTime.postedDate,
                 ConstantImpl.create("%Y-%m-%d %H:%i:%s")
         );
 
@@ -195,7 +195,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                         .and(departmentNotice.important.isFalse()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(departmentNotice.noticePostDateTime.postedDate.desc())
+                .orderBy(departmentNotice.noticeDateTime.postedDate.desc())
                 .fetch();
     }
 
@@ -218,7 +218,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     public List<BookmarkDto> findAllByBookmarkIds(List<String> ids) {
         StringTemplate postedDate = Expressions.stringTemplate(
                 "DATE_FORMAT({0}, {1})",
-                notice.noticePostDateTime.postedDate,
+                notice.noticeDateTime.postedDate,
                 ConstantImpl.create("%Y-%m-%d %H:%i:%s")
         );
 
@@ -232,7 +232,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                         )
                 ).from(notice)
                 .where(notice.articleId.in(ids))
-                .orderBy(notice.noticePostDateTime.postedDate.desc())
+                .orderBy(notice.noticeDateTime.postedDate.desc())
                 .fetch();
     }
 

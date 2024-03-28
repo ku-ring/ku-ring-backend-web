@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,7 +19,7 @@ class NoticeDateTimeTest {
 
     @DisplayName("날짜 시간이 있는 경우 yyyy-MM-dd HH:mm:ss 형태를 생성한다")
     @Test
-    public void date_time_test() {
+    void date_time_test() {
         // given
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.parse("2023-04-03 00:00:12", formatter);
@@ -36,10 +37,55 @@ class NoticeDateTimeTest {
 
     @DisplayName("날짜만 있는 경우에도 시간을 현재 시분초로 설정하여 yyyy-MM-dd HH:mm:ss 형태를 생성한다")
     @Test
-    public void date_test() {
+    void date_test() {
         // when
-        NoticeDateTime postDateTime =
-                new NoticeDateTime("2023-04-03", "2023-04-03");
+        NoticeDateTime postDateTime = new NoticeDateTime("2023-04-03", "2023-04-03");
+
+        // then
+        assertAll(
+                () -> assertThat(postDateTime.postedDateStr())
+                        .containsPattern("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"),
+                () -> assertThat(postDateTime.updatedDateStr())
+                        .containsPattern("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$")
+        );
+    }
+
+    @DisplayName("날짜만 yyyy.MM.dd 처럼 있는 경우에도 yyyy-MM-dd HH:mm:ss 형태를 생성한다")
+    @Test
+    void date_dot_test() {
+        // when
+        NoticeDateTime postDateTime = new NoticeDateTime("2023.04.03", "2023.04.03");
+
+        // then
+        assertAll(
+                () -> assertThat(postDateTime.postedDateStr())
+                        .containsPattern("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"),
+                () -> assertThat(postDateTime.updatedDateStr())
+                        .containsPattern("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$")
+        );
+    }
+
+    @DisplayName("업데이트 날자가 공지에 없어 null인 경우에도 yyyy-MM-dd HH:mm:ss 형태를 생성한다")
+    @NullAndEmptySource
+    @ParameterizedTest
+    void date_both_null_test(String dateTime) {
+        // when
+        NoticeDateTime postDateTime = new NoticeDateTime(dateTime, dateTime);
+
+        // then
+        assertAll(
+                () -> assertThat(postDateTime.postedDateStr())
+                        .containsPattern("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"),
+                () -> assertThat(postDateTime.updatedDateStr())
+                        .containsPattern("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$")
+        );
+    }
+
+    @DisplayName("업데이트 날자가 공지에 없어 null인 경우에도 yyyy-MM-dd HH:mm:ss 형태를 생성한다")
+    @Test
+    void update_date_null_test() {
+        // when
+        NoticeDateTime postDateTime = new NoticeDateTime("2023.04.03", null);
 
         // then
         assertAll(
@@ -56,8 +102,7 @@ class NoticeDateTimeTest {
     @ParameterizedTest
     void fromName(String dateTime) {
         // when
-        ThrowableAssert.ThrowingCallable actual =
-                () -> new NoticeDateTime(dateTime, dateTime);
+        ThrowableAssert.ThrowingCallable actual = () -> new NoticeDateTime(dateTime, dateTime);
 
         // then
         assertThatThrownBy(actual)
