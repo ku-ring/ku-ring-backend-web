@@ -51,7 +51,7 @@ class NoticeHtmlParserTemplateTest {
         );
     }
 
-    @DisplayName("오래된 학과의 홈페이지 공지를 분석한다")
+    @DisplayName("신규 개편된 학과의 홈페이지 공지를 분석한다")
     @Test
     void LatestPageNoticeHtmlParser() throws IOException {
         // given
@@ -105,7 +105,7 @@ class NoticeHtmlParserTemplateTest {
 
     @DisplayName("신규 2024 홈페이지의 학생 공지에서 noticeId가 성공적으로 분석되는지 확인한다")
     @Test
-    void LatestPageNoticeHtmlParserTwoNoticeId() throws IOException {
+    void LatestPageNoticeHtmlParserNoticeId() throws IOException {
         // given
         Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/designid-notice-2024.html"));
         String viewUrl = "https://www.konkuk.ac.kr/bbs/konkuk/4017/{noticeId}/artclView.do";
@@ -130,24 +130,6 @@ class NoticeHtmlParserTemplateTest {
                                 tuple("915663", "[학사팀] 재학생 졸업요건 관리를 위한 필수 확인사항 안내", "2022.11.07", "https://www.konkuk.ac.kr/bbs/konkuk/4017/915663/artclView.do", true)
                         ),
                 () -> assertThat(normal).hasSize(10)
-        );
-    }
-
-    @DisplayName("신규 개편된 학과의 홈페이지 공지를 분석한다")
-    @Test
-    void LatestPageNoticeHtmlParserTwo() throws IOException {
-        // given
-        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/kbeauty.html"));
-
-        // when
-        RowsDto rowsDto = new LatestPageNoticeHtmlParserTwo().parse(doc);
-        List<CommonNoticeFormatDto> important = rowsDto.buildImportantRowList("important");
-        List<CommonNoticeFormatDto> normal = rowsDto.buildNormalRowList("normal");
-
-        // then
-        assertAll(
-                () -> assertThat(important).hasSize(28),
-                () -> assertThat(normal).hasSize(12)
         );
     }
 
