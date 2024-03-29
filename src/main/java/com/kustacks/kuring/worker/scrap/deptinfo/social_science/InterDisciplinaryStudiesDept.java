@@ -24,9 +24,9 @@ public class InterDisciplinaryStudiesDept extends SocialSciencesCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("0");
+        List<String> professorForumIds = List.of("10430");
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(DISCI_STUDIES.getHostPrefix(), 0);
+        this.noticeScrapInfo = new NoticeScrapInfo(DISCI_STUDIES.getHostPrefix(), 433);
         this.departmentName = DISCI_STUDIES;
     }
 }

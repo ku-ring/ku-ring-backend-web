@@ -26,6 +26,8 @@ import static com.kustacks.kuring.notice.domain.QNotice.notice;
 @RequiredArgsConstructor
 class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
+    private static final String DATE_TIME_TEMPLATE = "%Y-%m-%d %H:%i:%s";
+
     private final JPAQueryFactory queryFactory;
 
     @Transactional(readOnly = true)
@@ -34,7 +36,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
         StringTemplate postedDate = Expressions.stringTemplate(
                 "DATE_FORMAT({0}, {1})",
                 notice.noticeDateTime.postedDate,
-                ConstantImpl.create("%Y-%m-%d %H:%i:%s")
+                ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
 
         return queryFactory
@@ -60,7 +62,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
         StringTemplate postedDate = Expressions.stringTemplate(
                 "DATE_FORMAT({0}, {1})",
                 notice.noticeDateTime.postedDate,
-                ConstantImpl.create("%Y-%m-%d %H:%i:%s")
+                ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
 
         return queryFactory
@@ -155,7 +157,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
         StringTemplate postedDate = Expressions.stringTemplate(
                 "DATE_FORMAT({0}, {1})",
                 departmentNotice.noticeDateTime.postedDate,
-                ConstantImpl.create("%Y-%m-%d %H:%i:%s")
+                ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
 
         return queryFactory
@@ -179,7 +181,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
         StringTemplate postedDate = Expressions.stringTemplate(
                 "DATE_FORMAT({0}, {1})",
                 departmentNotice.noticeDateTime.postedDate,
-                ConstantImpl.create("%Y-%m-%d %H:%i:%s")
+                ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
 
         return queryFactory
@@ -219,7 +221,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
         StringTemplate postedDate = Expressions.stringTemplate(
                 "DATE_FORMAT({0}, {1})",
                 notice.noticeDateTime.postedDate,
-                ConstantImpl.create("%Y-%m-%d %H:%i:%s")
+                ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
 
         return queryFactory.select(

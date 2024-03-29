@@ -103,6 +103,36 @@ class NoticeHtmlParserTemplateTest {
         );
     }
 
+    @DisplayName("신규 2024 홈페이지의 학생 공지에서 noticeId가 성공적으로 분석되는지 확인한다")
+    @Test
+    void LatestPageNoticeHtmlParserTwoNoticeId() throws IOException {
+        // given
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/designid-notice-2024.html"));
+        String viewUrl = "https://www.konkuk.ac.kr/bbs/konkuk/4017/{noticeId}/artclView.do";
+
+        // when
+        RowsDto rowsDto = new KuisHomepageNoticeHtmlParser().parse(doc);
+        List<CommonNoticeFormatDto> important = rowsDto.buildImportantRowList(viewUrl);
+        List<CommonNoticeFormatDto> normal = rowsDto.buildNormalRowList(viewUrl);
+
+        // then
+        assertAll(
+                () -> assertThat(important).hasSize(7),
+                () -> assertThat(important)
+                        .extracting("articleId", "subject", "postedDate", "fullUrl", "important")
+                        .containsExactlyInAnyOrder(
+                                tuple("5643", "[~8월] 2024 Kyoto Global Design Awards", "2024.02.19", "https://www.konkuk.ac.kr/bbs/konkuk/4017/5643/artclView.do", true),
+                                tuple("915679", "[-3.15(금)까지] 2024년 해외인턴지원사업 인턴 디자이너 모집(한국디자인진흥원)", "2024.02.06", "https://www.konkuk.ac.kr/bbs/konkuk/4017/915679/artclView.do", true),
+                                tuple("915678", "[재학생 및 신입생] ★2024 건국대학교 가이드북★", "2024.01.22", "https://www.konkuk.ac.kr/bbs/konkuk/4017/915678/artclView.do", true),
+                                tuple("915677", "산업디자인학과, 2023 졸업전시 한국디자인진흥원 온라인 특별 기획전 선정", "2023.12.19", "https://www.konkuk.ac.kr/bbs/konkuk/4017/915677/artclView.do", true),
+                                tuple("915674", "2023학년도 1학기 기초교양(외국어영역) 교과목 의무이수 면제 시행 안내", "2023.04.06", "https://www.konkuk.ac.kr/bbs/konkuk/4017/915674/artclView.do", true),
+                                tuple("915666", "휴·복학 개시 및 주의사항 안내", "2022.12.26", "https://www.konkuk.ac.kr/bbs/konkuk/4017/915666/artclView.do", true),
+                                tuple("915663", "[학사팀] 재학생 졸업요건 관리를 위한 필수 확인사항 안내", "2022.11.07", "https://www.konkuk.ac.kr/bbs/konkuk/4017/915663/artclView.do", true)
+                        ),
+                () -> assertThat(normal).hasSize(10)
+        );
+    }
+
     @DisplayName("신규 개편된 학과의 홈페이지 공지를 분석한다")
     @Test
     void LatestPageNoticeHtmlParserTwo() throws IOException {
