@@ -35,15 +35,15 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
     @Test
     void lookupAllNoticeByIds() {
         // given
-        Notice notice1 = new Notice("1", "2024-01-19", "updatedDate",
+        Notice notice1 = new Notice("1", "2024-01-19 17:27:05", "2023-04-03 17:27:05",
                 "notice1", CategoryName.BACHELOR, false, "https://www.example.com");
-        Notice notice2 = new Notice("2", "2024-01-20", "updatedDate",
+        Notice notice2 = new Notice("2", "2024-01-20 17:27:05", "2023-04-03 17:27:05",
                 "notice2", CategoryName.BACHELOR, false, "https://www.example.com");
         noticeCommandPort.saveAllCategoryNotices(List.of(notice1, notice2));
 
-        DepartmentNotice departmentNotice1 = new DepartmentNotice("3", "2024-01-22", "updatedDate",
+        DepartmentNotice departmentNotice1 = new DepartmentNotice("3", "2024-01-22 17:27:05", "2023-04-03 17:27:05",
                 "departmentNotice1", CategoryName.DEPARTMENT, false, "https://www.example.com", DepartmentName.ADMINISTRATION);
-        DepartmentNotice departmentNotice2 = new DepartmentNotice("4", "2024-01-24", "updatedDate",
+        DepartmentNotice departmentNotice2 = new DepartmentNotice("4", "2024-01-24 17:27:05", "2023-04-03 17:27:05",
                 "departmentNotice2", CategoryName.DEPARTMENT, false, "https://www.example.com", DepartmentName.ADMINISTRATION);
         noticeCommandPort.saveAllDepartmentNotices(List.of(departmentNotice1, departmentNotice2));
 
@@ -63,10 +63,10 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
         assertThat(bookmarks).hasSize(4)
                 .extracting("articleId", "postedDate", "subject")
                 .containsExactly(
-                        tuple("4", "2024-01-24", "departmentNotice2"),
-                        tuple("3", "2024-01-22", "departmentNotice1"),
-                        tuple("2", "2024-01-20", "notice2"),
-                        tuple("1", "2024-01-19", "notice1")
+                        tuple("4", "2024-01-24 17:27:05", "departmentNotice2"),
+                        tuple("3", "2024-01-22 17:27:05", "departmentNotice1"),
+                        tuple("2", "2024-01-20 17:27:05", "notice2"),
+                        tuple("1", "2024-01-19 17:27:05", "notice1")
                 );
     }
 }

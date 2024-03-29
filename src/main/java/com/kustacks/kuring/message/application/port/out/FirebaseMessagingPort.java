@@ -4,5 +4,5 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 
 public interface FirebaseMessagingPort {
-    String send(Message message) throws FirebaseMessagingException;
+    void send(Message message) throws FirebaseMessagingException;
 }
