@@ -111,7 +111,7 @@ class NoticeHtmlParserTemplateTest {
         String viewUrl = "https://www.konkuk.ac.kr/bbs/konkuk/4017/{noticeId}/artclView.do";
 
         // when
-        RowsDto rowsDto = new KuisHomepageNoticeHtmlParser().parse(doc);
+        RowsDto rowsDto = new LatestPageNoticeHtmlParser().parse(doc);
         List<CommonNoticeFormatDto> important = rowsDto.buildImportantRowList(viewUrl);
         List<CommonNoticeFormatDto> normal = rowsDto.buildNormalRowList(viewUrl);
 
