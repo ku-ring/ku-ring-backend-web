@@ -1,8 +1,7 @@
 package com.kustacks.kuring.message.application.port.out;
 
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
+import com.kustacks.kuring.message.application.service.exception.FirebaseInvalidTokenException;
 
 public interface FirebaseAuthPort {
-    FirebaseToken verifyIdToken(String idToken) throws FirebaseAuthException;
+    void verifyIdToken(String idToken) throws FirebaseInvalidTokenException;
 }

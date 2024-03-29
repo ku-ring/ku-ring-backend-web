@@ -2,7 +2,6 @@ package com.kustacks.kuring.message.application.service;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.TopicManagementResponse;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
@@ -13,9 +12,10 @@ import com.kustacks.kuring.message.application.port.out.FirebaseSubscribePort;
 import com.kustacks.kuring.message.application.service.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @Slf4j
 @UseCase
@@ -41,16 +41,11 @@ public class FirebaseSubscribeService implements FirebaseWithUserUseCase {
     @Override
     public void subscribe(UserSubscribeCommand command) throws FirebaseSubscribeException {
         try {
-            TopicManagementResponse response = firebaseSubscribePort
-                    .subscribeToTopic(
-                            List.of(command.token()),
-                            serverProperties.ifDevThenAddSuffix(command.topic())
-                    );
-
-            if (response.getFailureCount() > 0) {
-                throw new FirebaseSubscribeException();
-            }
-        } catch (FirebaseMessagingException | FirebaseSubscribeException exception) {
+            firebaseSubscribePort.subscribeToTopic(
+                    List.of(command.token()),
+                    serverProperties.ifDevThenAddSuffix(command.topic())
+            );
+        } catch (FirebaseSubscribeException exception) {
             throw new FirebaseSubscribeException();
         }
     }
@@ -58,13 +53,11 @@ public class FirebaseSubscribeService implements FirebaseWithUserUseCase {
     @Override
     public void unsubscribe(UserUnsubscribeCommand command) throws FirebaseUnSubscribeException {
         try {
-            TopicManagementResponse response = firebaseSubscribePort
-                    .unsubscribeFromTopic(List.of(command.token()), serverProperties.ifDevThenAddSuffix(command.topic()));
-
-            if (response.getFailureCount() > 0) {
-                throw new FirebaseUnSubscribeException();
-            }
-        } catch (FirebaseMessagingException | FirebaseUnSubscribeException exception) {
+            firebaseSubscribePort.unsubscribeFromTopic(
+                    List.of(command.token()),
+                    serverProperties.ifDevThenAddSuffix(command.topic())
+            );
+        } catch (FirebaseUnSubscribeException exception) {
             throw new FirebaseUnSubscribeException();
         }
     }
