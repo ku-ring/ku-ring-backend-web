@@ -9,8 +9,10 @@ import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.out.dto.BookmarkDto;
 import com.kustacks.kuring.user.application.port.out.dto.QBookmarkDto;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
+import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -24,34 +26,55 @@ import static com.kustacks.kuring.notice.domain.QNotice.notice;
 @RequiredArgsConstructor
 class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
+    private static final String DATE_TIME_TEMPLATE = "%Y-%m-%d %H:%i:%s";
+
     private final JPAQueryFactory queryFactory;
 
     @Transactional(readOnly = true)
     @Override
     public List<NoticeDto> findNoticesByCategoryWithOffset(CategoryName categoryName, Pageable pageable) {
+        StringTemplate postedDate = Expressions.stringTemplate(
+                "DATE_FORMAT({0}, {1})",
+                notice.noticeDateTime.postedDate,
+                ConstantImpl.create(DATE_TIME_TEMPLATE)
+        );
+
         return queryFactory
-                .select(new QNoticeDto(notice.articleId, notice.postedDate, notice.url.value, notice.subject, notice.categoryName.stringValue().toLowerCase(), notice.important))
-                .from(notice)
+                .select(
+                        new QNoticeDto(
+                                notice.articleId,
+                                postedDate,
+                                notice.url.value,
+                                notice.subject,
+                                notice.categoryName.stringValue().toLowerCase(),
+                                notice.important)
+                ).from(notice)
                 .where(notice.categoryName.eq(categoryName))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(notice.postedDate.desc())
+                .orderBy(notice.noticeDateTime.postedDate.desc())
                 .fetch();
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<NoticeSearchDto> findAllByKeywords(List<String> keywords) {
+        StringTemplate postedDate = Expressions.stringTemplate(
+                "DATE_FORMAT({0}, {1})",
+                notice.noticeDateTime.postedDate,
+                ConstantImpl.create(DATE_TIME_TEMPLATE)
+        );
+
         return queryFactory
                 .select(new QNoticeSearchDto(
                         notice.articleId,
-                        notice.postedDate,
+                        postedDate,
                         notice.subject,
                         notice.categoryName.stringValue().toLowerCase(),
                         notice.url.value))
                 .from(notice)
                 .where(isContainSubject(keywords).or(isContainCategory(keywords)))
-                .orderBy(notice.postedDate.desc())
+                .orderBy(notice.noticeDateTime.postedDate.desc())
                 .fetch();
     }
 
@@ -69,7 +92,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     @Transactional
     @Override
     public void deleteAllByIdsAndCategory(CategoryName categoryName, List<String> articleIds) {
-        if(articleIds.isEmpty()) {
+        if (articleIds.isEmpty()) {
             return;
         }
 
@@ -131,10 +154,16 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     @Transactional(readOnly = true)
     @Override
     public List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName) {
+        StringTemplate postedDate = Expressions.stringTemplate(
+                "DATE_FORMAT({0}, {1})",
+                departmentNotice.noticeDateTime.postedDate,
+                ConstantImpl.create(DATE_TIME_TEMPLATE)
+        );
+
         return queryFactory
                 .select(new QNoticeDto(
                         departmentNotice.articleId,
-                        departmentNotice.postedDate,
+                        postedDate,
                         departmentNotice.url.value,
                         departmentNotice.subject,
                         departmentNotice.categoryName.stringValue().toLowerCase(),
@@ -142,17 +171,23 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName)
                         .and(departmentNotice.important.isTrue()))
-                .orderBy(departmentNotice.postedDate.desc())
+                .orderBy(departmentNotice.noticeDateTime.postedDate.desc())
                 .fetch();
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Pageable pageable) {
+        StringTemplate postedDate = Expressions.stringTemplate(
+                "DATE_FORMAT({0}, {1})",
+                departmentNotice.noticeDateTime.postedDate,
+                ConstantImpl.create(DATE_TIME_TEMPLATE)
+        );
+
         return queryFactory
                 .select(new QNoticeDto(
                         departmentNotice.articleId,
-                        departmentNotice.postedDate,
+                        postedDate,
                         departmentNotice.url.value,
                         departmentNotice.subject,
                         departmentNotice.categoryName.stringValue().toLowerCase(),
@@ -162,14 +197,14 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                         .and(departmentNotice.important.isFalse()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(departmentNotice.postedDate.desc())
+                .orderBy(departmentNotice.noticeDateTime.postedDate.desc())
                 .fetch();
     }
 
     @Transactional
     @Override
     public void deleteAllByIdsAndDepartment(DepartmentName departmentName, List<String> articleIds) {
-        if(articleIds.isEmpty()) {
+        if (articleIds.isEmpty()) {
             return;
         }
 
@@ -183,24 +218,36 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     @Transactional(readOnly = true)
     @Override
     public List<BookmarkDto> findAllByBookmarkIds(List<String> ids) {
+        StringTemplate postedDate = Expressions.stringTemplate(
+                "DATE_FORMAT({0}, {1})",
+                notice.noticeDateTime.postedDate,
+                ConstantImpl.create(DATE_TIME_TEMPLATE)
+        );
+
         return queryFactory.select(
                         new QBookmarkDto(
                                 notice.articleId,
-                                notice.postedDate,
+                                postedDate,
                                 notice.subject,
                                 notice.categoryName.stringValue(),
                                 notice.url.value
                         )
                 ).from(notice)
                 .where(notice.articleId.in(ids))
-                .orderBy(notice.postedDate.desc())
+                .orderBy(notice.noticeDateTime.postedDate.desc())
                 .fetch();
     }
 
     private static BooleanBuilder isContainSubject(List<String> keywords) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         for (String containedName : keywords) {
-            NumberTemplate<Double> booleanTemplate = Expressions.numberTemplate(Double.class, "function('match',{0},{1})", notice.subject, "*" + containedName + "*");
+            NumberTemplate<Double> booleanTemplate =
+                    Expressions.numberTemplate(
+                            Double.class,
+                            "function('match',{0},{1})",
+                            notice.subject,
+                            "*" + containedName + "*"
+                    );
             booleanBuilder.or(booleanTemplate.gt(0));
         }
 

@@ -22,19 +22,14 @@ public class Notice {
     private String articleId;
 
     @Getter(AccessLevel.PUBLIC)
-    @Column(name = "posted_dt", length = 32, nullable = false)
-    private String postedDate;
-
-    @Getter(AccessLevel.PUBLIC)
-    @Column(name = "updated_dt", length = 32)
-    private String updatedDate;
-
-    @Getter(AccessLevel.PUBLIC)
     @Column(name = "subject", length = 128, nullable = false)
     private String subject;
 
     @Column(name = "important")
     private Boolean important = false;
+
+    @Embedded
+    protected NoticeDateTime noticeDateTime;
 
     @Embedded
     private Url url;
@@ -48,17 +43,17 @@ public class Notice {
                   String fullUrl)
     {
         this.articleId = articleId;
-        this.postedDate = postedDate;
-        this.updatedDate = updatedDate;
         this.subject = subject;
         this.categoryName = categoryName;
         this.important = important;
+        this.noticeDateTime = new NoticeDateTime(postedDate, updatedDate);
         this.url = new Url(fullUrl);
     }
 
     public boolean isImportant() {
         return this.important;
     }
+
     public String getCategoryName() {
         return this.categoryName.getName();
     }
@@ -69,6 +64,14 @@ public class Notice {
 
     public String getUrl() {
         return this.url.getValue();
+    }
+
+    public String getPostedDate() {
+        return this.noticeDateTime.postedDateStr();
+    }
+
+    public String getUpdatedDate() {
+        return this.noticeDateTime.updatedDateStr();
     }
 
     @Override

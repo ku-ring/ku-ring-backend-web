@@ -159,7 +159,6 @@ public class KuisHomepageNoticeUpdater {
 
     private List<Notice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, CategoryName categoryName, boolean important) {
         List<Notice> newNotices = noticeUpdateSupport.filteringSoonSaveNotices(scrapResults, savedArticleIds, categoryName, important);
-        Collections.reverse(newNotices);
         noticeCommandPort.saveAllCategoryNotices(newNotices);
         return newNotices;
     }

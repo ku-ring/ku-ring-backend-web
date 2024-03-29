@@ -24,9 +24,9 @@ public class PublicAdministrationDept extends SocialSciencesCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("2507");
+        List<String> professorForumIds = List.of("10264");
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(ADMINISTRATION.getHostPrefix(), 0);
+        this.noticeScrapInfo = new NoticeScrapInfo(ADMINISTRATION.getHostPrefix(), 855);
         this.departmentName = ADMINISTRATION;
     }
 }

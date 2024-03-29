@@ -4,10 +4,12 @@ import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 import static com.kustacks.kuring.acceptance.CategoryStep.지원하는_카테고리_조회_요청;
-import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_조회_요청_응답_확인;
 import static com.kustacks.kuring.acceptance.NoticeStep.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("인수 : 공지사항")
 class NoticeAcceptanceTest extends IntegrationTestSupport {
@@ -34,7 +36,20 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
         var 카테고리_조회_요청_응답 = 지원하는_카테고리_조회_요청();
 
         // then
-        카테고리_조회_요청_응답_확인(카테고리_조회_요청_응답, "student", "bachelor", "employment", "department", "library");
+        assertAll(
+                () -> assertThat(카테고리_조회_요청_응답.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(카테고리_조회_요청_응답.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(카테고리_조회_요청_응답.jsonPath().getList("data.name"))
+                        .containsExactly("bachelor",
+                                "scholarship",
+                                "library",
+                                "employment",
+                                "national",
+                                "student",
+                                "industry_university",
+                                "normal",
+                                "department")
+        );
     }
 
     /**

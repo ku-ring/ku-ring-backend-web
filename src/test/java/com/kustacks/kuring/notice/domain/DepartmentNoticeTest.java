@@ -20,7 +20,7 @@ class DepartmentNoticeTest {
             "https://library.konkuk.ac.kr/library-guide/bulletins/notice/7192", "http://www.konkuk.ac.kr/do/MessageBoard/ArticleRead.do?forum=notice&sort=6&id=5b50736&cat=0000300001",
             "http://mae.konkuk.ac.kr/noticeView.do?siteId=MAE&boardSeq=988&menuSeq=6823&categorySeq=0&curBoardDispType=LIST&curPage=12&pageNum=1&seq=179896"})
     void create_member(String url) {
-        assertThatCode(() -> new DepartmentNotice("artice_id", "postDate", "updatedDate", "subject", CategoryName.DEPARTMENT, false, url, DepartmentName.BIOLOGICAL))
+        assertThatCode(() -> new DepartmentNotice("artice_id", "2023-04-03 00:00:12", "2023-04-03 00:01:12", "subject", CategoryName.DEPARTMENT, false, url, DepartmentName.BIOLOGICAL))
                 .doesNotThrowAnyException();
     }
 
@@ -28,7 +28,7 @@ class DepartmentNoticeTest {
     @ParameterizedTest
     @ValueSource(strings = {"//www.example.com", "https:/www.example.com", "https://"})
     void member_invalid_email_id(String url) {
-        assertThatThrownBy(() -> new DepartmentNotice("artice_id", "postDate", "updatedDate", "subject", CategoryName.DEPARTMENT, false, url, DepartmentName.BIOLOGICAL))
+        assertThatThrownBy(() -> new DepartmentNotice("artice_id", "2023-04-03 00:00:12", "2023-04-03 00:01:12", "subject", CategoryName.DEPARTMENT, false, url, DepartmentName.BIOLOGICAL))
                 .isInstanceOf(InternalLogicException.class);
     }
 
@@ -41,7 +41,7 @@ class DepartmentNoticeTest {
     }
 
     private DepartmentNotice createDepartmentNotice(long id, String url) {
-        DepartmentNotice departmentNotice = new DepartmentNotice("artice_id", "postDate", "updatedDate", "subject", CategoryName.DEPARTMENT, false, url, DepartmentName.BIOLOGICAL);
+        DepartmentNotice departmentNotice = new DepartmentNotice("artice_id", "2023-04-03 00:00:12", "2023-04-03 00:01:12", "subject", CategoryName.DEPARTMENT, false, url, DepartmentName.BIOLOGICAL);
         ReflectionTestUtils.setField(departmentNotice, "id", id);
         return departmentNotice;
     }

@@ -16,12 +16,12 @@ public enum CategoryName {
 
     BACHELOR("bachelor", "bch", "학사"),
     SCHOLARSHIP("scholarship", "sch", "장학"),
+    LIBRARY("library", "lib", "도서관"),
     EMPLOYMENT("employment", "emp", "취창업"),
     NATIONAL("national", "nat", "국제"),
     STUDENT("student", "stu", "학생"),
     INDUSTRY_UNIVERSITY("industry_university", "ind", "산학"),
     NORMAL("normal", "nor", "일반"),
-    LIBRARY("library", "lib", "도서관"),
     DEPARTMENT("department", "dep", "학과");
 
     private static final Map<String, String> NAME_MAP;
