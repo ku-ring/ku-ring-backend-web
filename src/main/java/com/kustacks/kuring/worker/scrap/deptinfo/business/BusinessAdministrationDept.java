@@ -26,7 +26,7 @@ public class BusinessAdministrationDept extends BusinessCollege {
 
         List<String> professorForumIds = List.of("10499");
         this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(BUIS_ADMIN.getKorName(), 441);
+        this.noticeScrapInfo = new NoticeScrapInfo(BUIS_ADMIN.getKorName(), 437);
         this.departmentName = BUIS_ADMIN;
     }
 }
