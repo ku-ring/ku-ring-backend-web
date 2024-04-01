@@ -238,6 +238,18 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .fetch();
     }
 
+    @Transactional
+    @Override
+    public void changeNoticeImportantByArticleId(CategoryName categoryName, List<String> articleIds, boolean important) {
+        queryFactory
+                .update(notice)
+                .set(notice.important, important)
+                .where(
+                        notice.categoryName.eq(categoryName)
+                        .and(notice.articleId.in(articleIds))
+                ).execute();
+    }
+
     private static BooleanBuilder isContainSubject(List<String> keywords) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         for (String containedName : keywords) {
