@@ -106,7 +106,7 @@ public class KuisHomepageNoticeUpdater {
         return newNotices;
     }
 
-    // 여기부터는 kUIS 공지
+    // 여기부터는 KUIS 공지
     private List<ComplexNoticeFormatDto> updateKuisNoticeAsync(KuisHomepageNoticeInfo deptInfo, Function<KuisHomepageNoticeInfo, List<ScrapingResultDto>> decisionMaker) {
         return scrapperTemplate.scrap(deptInfo, decisionMaker);
     }
@@ -136,7 +136,7 @@ public class KuisHomepageNoticeUpdater {
         return newNoticeList;
     }
 
-    private void compareAllAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, CategoryName categoryName) {
+    public void compareAllAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, CategoryName categoryName) {
         if (scrapResults.isEmpty()) {
             return;
         }
@@ -157,10 +157,37 @@ public class KuisHomepageNoticeUpdater {
         }
     }
 
-    private List<Notice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, CategoryName categoryName, boolean important) {
-        List<Notice> newNotices = noticeUpdateSupport.filteringSoonSaveNotices(scrapResults, savedArticleIds, categoryName, important);
+    private List<Notice> saveNewNotices(
+            List<CommonNoticeFormatDto> scrapResults,
+            List<String> savedArticleIds,
+            CategoryName categoryName,
+            boolean important
+    ) {
+        List<Notice> newNotices = noticeUpdateSupport.
+                filteringSoonSaveNotices(scrapResults, savedArticleIds, categoryName, important);
+
+        if(!important) {
+            updateNoticesByImportantToNormal(savedArticleIds, newNotices, categoryName);
+        }
+
         noticeCommandPort.saveAllCategoryNotices(newNotices);
         return newNotices;
+    }
+
+    private void updateNoticesByImportantToNormal(
+            List<String> savedImportantArticleIds,
+            List<Notice> newNormalNotices,
+            CategoryName categoryName
+    ) {
+        List<String> changedImportantArticleIds = new ArrayList<>();
+        for (Notice notice : newNormalNotices) {
+            if (Collections.binarySearch(savedImportantArticleIds, notice.getArticleId()) >= 0) { // 정렬되어있다, 이진탐색으로 O(logN)안에 수행
+                changedImportantArticleIds.add(notice.getArticleId());
+                newNormalNotices.remove(notice);
+            }
+        }
+
+        noticeCommandPort.changeNoticeImportantToFalseByArticleId(categoryName, changedImportantArticleIds);
     }
 
     private void synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<String> savedArticleIds, CategoryName categoryName, boolean important) {

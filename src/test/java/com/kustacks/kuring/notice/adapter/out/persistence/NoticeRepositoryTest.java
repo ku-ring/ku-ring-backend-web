@@ -69,4 +69,25 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
                         tuple("1", "2024-01-19", "notice1")
                 );
     }
+
+    @DisplayName("공지 중요도를 변경할 수 있다")
+    @Test
+    void notice_change_important() {
+        // given
+        Notice notice1 = new Notice("1", "2024-01-19 17:27:05", "2023-04-03 17:27:05",
+                "notice1", CategoryName.BACHELOR, true, "https://www.example.com");
+        Notice notice2 = new Notice("2", "2024-01-20 17:27:05", "2023-04-03 17:27:05",
+                "notice2", CategoryName.BACHELOR, true, "https://www.example.com");
+        Notice notice3 = new Notice("3", "2024-01-20 17:27:05", "2023-04-03 17:27:05",
+                "notice3", CategoryName.BACHELOR, true, "https://www.example.com");
+
+        noticeCommandPort.saveAllCategoryNotices(List.of(notice1, notice2, notice3));
+
+        // when
+        noticeCommandPort.changeNoticeImportantToFalseByArticleId(CategoryName.BACHELOR, List.of("1", "2"));
+
+        // then
+        List<String> normalArticleIds = noticeQueryPort.findNormalArticleIdsByCategoryName(CategoryName.BACHELOR);
+        assertThat(normalArticleIds).containsExactly("1", "2");
+    }
 }

@@ -34,4 +34,6 @@ interface NoticeQueryRepository {
     void deleteAllByIdsAndDepartment(DepartmentName departmentName, List<String> articleIds);
 
     List<BookmarkDto> findAllByBookmarkIds(List<String> ids);
+
+    void changeNoticeImportantByArticleId(CategoryName categoryName, List<String> articleIds, boolean important);
 }

@@ -43,6 +43,11 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
     }
 
     @Override
+    public void changeNoticeImportantToFalseByArticleId(CategoryName categoryName, List<String> articleIds) {
+        this.noticeRepository.changeNoticeImportantByArticleId(categoryName, articleIds, false);
+    }
+
+    @Override
     public List<NoticeDto> findNoticesByCategoryWithOffset(CategoryName categoryName, Pageable pageable) {
         return this.noticeRepository.findNoticesByCategoryWithOffset(categoryName, pageable);
     }
