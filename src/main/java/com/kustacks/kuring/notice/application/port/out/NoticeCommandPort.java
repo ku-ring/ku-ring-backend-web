@@ -13,4 +13,5 @@ public interface NoticeCommandPort {
     void saveAllDepartmentNotices(List<DepartmentNotice> departmentNotices);
     void deleteAllByIdsAndCategory(CategoryName categoryName, List<String> articleIds);
     void deleteAllByIdsAndDepartment(DepartmentName departmentName, List<String> articleIds);
+    void changeNoticeImportantToFalseByArticleId(CategoryName categoryName, List<String> articleIds);
 }
