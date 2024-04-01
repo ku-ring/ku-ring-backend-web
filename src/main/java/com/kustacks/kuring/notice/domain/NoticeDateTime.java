@@ -25,13 +25,13 @@ public class NoticeDateTime {
     private static final Pattern compiledDateDotPattern = Pattern.compile(REGEX_DATE_DOT_SPLIT);
     private static final Pattern compiledDateTimePattern = Pattern.compile(REGEX_DATE_TIME);
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withLocale(Locale.KOREA);
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withLocale(Locale.KOREA);
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(" HH:mm:ss").withLocale(Locale.KOREA);
 
-    @Getter(AccessLevel.PUBLIC)
+    @Getter
     @Column(name = "posted_dt", length = 32, nullable = false)
     private LocalDateTime postedDate;
 
-    @Getter(AccessLevel.PUBLIC)
     @Column(name = "updated_dt", length = 32)
     private LocalDateTime updatedDate;
 
@@ -65,12 +65,10 @@ public class NoticeDateTime {
         throw new InternalLogicException(ErrorCode.DOMAIN_CANNOT_CREATE);
     }
 
-    public String postedDateStr() {
-        return this.postedDate.format(dateTimeFormatter);
-    }
+    public String postedDateStr() { return this.postedDate.format(dateFormatter); }
 
     public String updatedDateStr() {
-        return this.updatedDate.format(dateTimeFormatter);
+        return this.updatedDate.format(dateFormatter);
     }
 
     private void initDateTime(String postedDate, String updatedDate) {

@@ -63,10 +63,10 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
         assertThat(bookmarks).hasSize(4)
                 .extracting("articleId", "postedDate", "subject")
                 .containsExactly(
-                        tuple("4", "2024-01-24 17:27:05", "departmentNotice2"),
-                        tuple("3", "2024-01-22 17:27:05", "departmentNotice1"),
-                        tuple("2", "2024-01-20 17:27:05", "notice2"),
-                        tuple("1", "2024-01-19 17:27:05", "notice1")
+                        tuple("4", "2024-01-24", "departmentNotice2"),
+                        tuple("3", "2024-01-22", "departmentNotice1"),
+                        tuple("2", "2024-01-20", "notice2"),
+                        tuple("1", "2024-01-19", "notice1")
                 );
     }
 }
