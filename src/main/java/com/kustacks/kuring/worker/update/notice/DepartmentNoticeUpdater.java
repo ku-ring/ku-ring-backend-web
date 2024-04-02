@@ -43,9 +43,14 @@ public class DepartmentNoticeUpdater {
 
         for (DeptInfo deptInfo : deptInfoList) {
             CompletableFuture
-                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
-                    .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName()))
-                    .thenAccept(notificationService::sendNotificationList);
+                    .supplyAsync(
+                            () -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml),
+                            noticeUpdaterThreadTaskExecutor
+                    ).thenApply(
+                            scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName())
+                    ).thenAccept(
+                            notificationService::sendNotificationList
+                    );
         }
     }
 
