@@ -53,7 +53,9 @@ public class KuisHomepageNoticeUpdater {
                             noticeUpdaterThreadTaskExecutor
                     ).thenApply(
                             scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName())
-                    ).thenAccept(notificationService::sendNotificationList);
+                    ).thenAccept(
+                            notificationService::sendNotificationList
+                    );
         }
     }
 
