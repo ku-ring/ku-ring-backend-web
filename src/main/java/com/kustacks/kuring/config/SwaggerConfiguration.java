@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme.In;
 import io.swagger.v3.oas.models.security.SecurityScheme.Type;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 
 @Configuration
@@ -17,6 +18,7 @@ public class SwaggerConfiguration {
     private static final String FIREBASE_HEADER = "User-Token";
 
     @Bean
+    @Profile("!prod")
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
             .components(new Components()
@@ -29,9 +31,9 @@ public class SwaggerConfiguration {
         return new Info()
             .title("Kuring Backend API Docs")
             .description("Kuring의 Swagger API 문서입니다.")
-            .version("2.5.0")
+            .version("2.6.6")
             .contact(new Contact().name("Kuring Contact")
-                .url("https://kuring.notion.site/kuring/a69fdf7ff06848c2aedef1fdcf13ca57"));
+                    .url("https://kuring.notion.site/kuring/a69fdf7ff06848c2aedef1fdcf13ca57"));
     }
 
     private static SecurityScheme firebaseAuth() {
