@@ -19,38 +19,52 @@ import java.util.function.Function;
 @Component
 public class KuisHomepageNoticeScraperTemplate {
 
-    public List<ComplexNoticeFormatDto> scrap(KuisHomepageNoticeInfo kuisNoticeInfo, Function<KuisHomepageNoticeInfo, List<ScrapingResultDto>> decisionMaker) throws InternalLogicException {
+    public List<ComplexNoticeFormatDto> scrap(
+            KuisHomepageNoticeInfo kuisNoticeInfo,
+            Function<KuisHomepageNoticeInfo, List<ScrapingResultDto>> decisionMaker
+    ) throws InternalLogicException {
         List<ScrapingResultDto> requestResults = requestWithDeptInfo(kuisNoticeInfo, decisionMaker);
 
-        log.info("[{}] HTML 파싱 시작", kuisNoticeInfo.getCategoryName());
+        log.debug("[{}] HTML 파싱 시작", kuisNoticeInfo.getCategoryName());
         List<ComplexNoticeFormatDto> noticeDtoList = htmlParsingFromScrapingResult(kuisNoticeInfo, requestResults);
-        log.info("[{}] HTML 파싱 완료", kuisNoticeInfo.getCategoryName());
+        log.debug("[{}] HTML 파싱 완료", kuisNoticeInfo.getCategoryName());
 
+        validateScrapedNoticeCountIsNotZero(noticeDtoList);
+
+        return noticeDtoList;
+    }
+
+    private void validateScrapedNoticeCountIsNotZero(List<ComplexNoticeFormatDto> noticeDtoList) {
         for (ComplexNoticeFormatDto complexNoticeFormatDto : noticeDtoList) {
             if (complexNoticeFormatDto.getNormalNoticeSize() == 0) {
                 throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_SCRAP);
             }
         }
-
-        return noticeDtoList;
     }
 
-    private List<ScrapingResultDto> requestWithDeptInfo(KuisHomepageNoticeInfo kuisNoticeInfo, Function<KuisHomepageNoticeInfo, List<ScrapingResultDto>> decisionMaker) {
+    private List<ScrapingResultDto> requestWithDeptInfo(
+            KuisHomepageNoticeInfo kuisNoticeInfo,
+            Function<KuisHomepageNoticeInfo, List<ScrapingResultDto>> decisionMaker
+    ) {
         long startTime = System.currentTimeMillis();
 
-        log.info("[{}] HTML 요청", kuisNoticeInfo.getCategoryName());
+        log.debug("[{}] HTML 요청", kuisNoticeInfo.getCategoryName());
         List<ScrapingResultDto> reqResults = decisionMaker.apply(kuisNoticeInfo);
-        log.info("[{}] HTML 수신", kuisNoticeInfo.getCategoryName());
+        log.debug("[{}] HTML 수신", kuisNoticeInfo.getCategoryName());
 
         long endTime = System.currentTimeMillis();
-        log.info("[{}] 파싱에 소요된 초 = {}", kuisNoticeInfo.getCategoryName(), (endTime - startTime) / 1000.0);
+        log.debug("[{}] 파싱에 소요된 초 = {}", kuisNoticeInfo.getCategoryName(), (endTime - startTime) / 1000.0);
 
         return reqResults;
     }
 
 
-    private List<ComplexNoticeFormatDto> htmlParsingFromScrapingResult(KuisHomepageNoticeInfo kuisNoticeInfo, List<ScrapingResultDto> requestResults) {
+    private List<ComplexNoticeFormatDto> htmlParsingFromScrapingResult(
+            KuisHomepageNoticeInfo kuisNoticeInfo,
+            List<ScrapingResultDto> requestResults
+    ) {
         List<ComplexNoticeFormatDto> noticeDtoList = new LinkedList<>();
+
         for (ScrapingResultDto reqResult : requestResults) {
             Document document = reqResult.getDocument();
             String viewUrl = reqResult.getViewUrl();
@@ -58,7 +72,7 @@ public class KuisHomepageNoticeScraperTemplate {
             RowsDto rowsDto = kuisNoticeInfo.parse(document);
             List<CommonNoticeFormatDto> importantNoticeFormatDtos = rowsDto.buildImportantRowList(viewUrl);
             List<CommonNoticeFormatDto> normalNoticeFormatDtos = rowsDto.buildNormalRowList(viewUrl);
-            log.info("[{}] 공지 개수 = {}", kuisNoticeInfo.getCategoryName(), importantNoticeFormatDtos.size() + normalNoticeFormatDtos.size());
+            log.debug("[{}] 공지 개수 = {}", kuisNoticeInfo.getCategoryName(), importantNoticeFormatDtos.size() + normalNoticeFormatDtos.size());
             noticeDtoList.add(new ComplexNoticeFormatDto(importantNoticeFormatDtos, normalNoticeFormatDtos));
         }
 
