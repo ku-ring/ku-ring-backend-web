@@ -25,8 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
 
@@ -56,7 +54,6 @@ class KuisHomepageNoticeUpdaterTest extends IntegrationTestSupport {
         // given
         doReturn(createNoticesFixture()).when(scrapperTemplate).scrap(any(), any());
         doReturn(createLibraryFixture()).when(libraryNoticeApiClient).request(any());
-        doNothing().when(firebaseNotificationService).sendNotifications(anyList());
 
         // when
         kuisHomepageNoticeUpdater.update();
