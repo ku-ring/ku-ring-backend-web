@@ -4,8 +4,6 @@ import com.kustacks.kuring.admin.application.port.in.dto.RealNotificationCommand
 import com.kustacks.kuring.admin.application.port.in.dto.TestNotificationCommand;
 import com.kustacks.kuring.admin.application.service.AdminCommandService;
 import com.kustacks.kuring.auth.context.Authentication;
-import com.kustacks.kuring.message.application.port.in.dto.AdminNotificationCommand;
-import com.kustacks.kuring.message.application.port.in.dto.AdminTestNotificationCommand;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +16,6 @@ import java.util.List;
 
 import static com.kustacks.kuring.admin.domain.AdminRole.ROLE_ROOT;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 
 @DisplayName("[단위] 어드민 이벤트 리스너 테스트")
 class MessageAdminEventListenerTest extends IntegrationTestSupport {
@@ -33,8 +30,6 @@ class MessageAdminEventListenerTest extends IntegrationTestSupport {
     @Test
     void sendNotificationEvent() {
         // given
-        doNothing().when(firebaseNotificationService).sendNotificationByAdmin(any(AdminNotificationCommand.class));
-
         RealNotificationCommand command = new RealNotificationCommand(
                 "test title",
                 "test body",
@@ -54,8 +49,6 @@ class MessageAdminEventListenerTest extends IntegrationTestSupport {
     @Test
     void sendTestNotificationEvent() {
         // given
-        doNothing().when(firebaseNotificationService).sendTestNotificationByAdmin(any(AdminTestNotificationCommand.class));
-
         TestNotificationCommand command = new TestNotificationCommand(
                 CategoryName.STUDENT.getName(),
                 "test body",

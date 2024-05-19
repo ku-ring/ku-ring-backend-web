@@ -13,7 +13,7 @@ spring:
           batch_size: 100
         format_sql: true
     defer-datasource-initialization: false
-    show-sql: false
+    show-sql: true
     open-in-view: false
   datasource:
     hikari:
@@ -78,9 +78,12 @@ logging:
     org:
       apache:
         coyote:
-          http11: info
-  file:
-    name: classpath:/kuring.log
+          http11: trace
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
 
 management:
   endpoint:

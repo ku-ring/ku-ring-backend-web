@@ -22,55 +22,55 @@ public class CommonExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception) {
-        log.error("[MethodArgumentNotValidException] {}", exception.getMessage());
+        log.warn("[MethodArgumentNotValidException] {}", exception.getMessage());
         return ResponseEntity.status(ErrorCode.API_MISSING_PARAM.getHttpStatus())
                 .body(new ErrorResponse(ErrorCode.API_MISSING_PARAM));
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> NotFoundExceptionHandler(NotFoundException exception) {
-        log.error("[NotFoundException] {}", exception.getMessage());
+        log.warn("[NotFoundException] {}", exception.getMessage());
         return ResponseEntity.status(exception.getErrorCode().getHttpStatus())
                 .body(new ErrorResponse(exception.getErrorCode()));
     }
 
     @ExceptionHandler(AdminException.class)
     public ResponseEntity<ErrorResponse> AdminExceptionHandler(AdminException exception) {
-        log.error("[APIException] {}", exception.getErrorCode().getMessage(), exception);
+        log.warn("[APIException] {}", exception.getErrorCode().getMessage(), exception);
         return ResponseEntity.status(exception.getErrorCode().getHttpStatus())
                 .body(new ErrorResponse(exception.getErrorCode()));
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> MissingServletRequestParameterExceptionHandler(MissingServletRequestParameterException exception) {
-        log.error("[MissingServletRequestParameterException] {}", exception.getMessage());
+        log.warn("[MissingServletRequestParameterException] {}", exception.getMessage());
         return ResponseEntity.status(ErrorCode.API_MISSING_PARAM.getHttpStatus())
                 .body(new ErrorResponse(ErrorCode.API_MISSING_PARAM));
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> ConstraintViolationExceptionHandler(ConstraintViolationException exception) {
-        log.error("[ConstraintViolationException] {}", exception.getMessage());
+        log.warn("[ConstraintViolationException] {}", exception.getMessage());
         return ResponseEntity.status(ErrorCode.API_INVALID_PARAM.getHttpStatus())
                 .body(new ErrorResponse(ErrorCode.API_INVALID_PARAM));
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> HttpMediaTypeNotAcceptableExceptionHandler(HttpMediaTypeNotAcceptableException exception) {
-        log.error("[HttpMediaTypeNotAcceptableException] {}", exception.getMessage());
+        log.warn("[HttpMediaTypeNotAcceptableException] {}", exception.getMessage());
         return ResponseEntity.status(ErrorCode.API_NOT_ACCEPTABLE.getHttpStatus())
                 .body(new ErrorResponse(ErrorCode.API_NOT_ACCEPTABLE));
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> FirebaseSubscribeExceptionHandler(FirebaseSubscribeException exception) {
-        log.error("[FirebaseSubscribeException] {}", exception.getMessage());
+        log.warn("[FirebaseSubscribeException] {}", exception.getMessage());
         return ResponseEntity.status(ErrorCode.API_FB_SERVER_ERROR.getHttpStatus())
                 .body(new ErrorResponse(ErrorCode.API_FB_SERVER_ERROR));
     }
 
     @ExceptionHandler
     public void InternalLogicExceptionHandler(InternalLogicException e) {
-        log.error("[InternalLogicException] {}", e.getErrorCode().getMessage(), e);
+        log.warn("[InternalLogicException] {}", e.getErrorCode().getMessage(), e);
     }
 }

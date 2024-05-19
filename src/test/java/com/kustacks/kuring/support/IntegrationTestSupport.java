@@ -1,7 +1,6 @@
 package com.kustacks.kuring.support;
 
 
-import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
 import com.kustacks.kuring.message.application.service.FirebaseSubscribeService;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,9 +19,6 @@ public class IntegrationTestSupport {
 
     @MockBean
     protected FirebaseSubscribeService firebaseSubscribeService;
-
-    @MockBean
-    protected FirebaseNotificationService firebaseNotificationService;
 
     @LocalServerPort
     int port;
