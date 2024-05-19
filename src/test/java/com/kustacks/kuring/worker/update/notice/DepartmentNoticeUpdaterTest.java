@@ -46,7 +46,7 @@ class DepartmentNoticeUpdaterTest {
     void department_scrap_async_test() throws InterruptedException {
         // given
         doReturn(createDepartmentNoticesFixture()).when(scrapperTemplate).scrap(any(), any());
-        doNothing().when(firebaseService).sendNotificationList(anyList());
+        doNothing().when(firebaseService).sendNotifications(anyList());
 
         // when
         departmentNoticeUpdater.update();

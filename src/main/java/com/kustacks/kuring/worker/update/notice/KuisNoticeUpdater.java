@@ -45,7 +45,7 @@ public class KuisNoticeUpdater {
                 CompletableFuture
                         .supplyAsync(() -> updateKuisNoticeAsync(kuisNoticeInfo, KuisNoticeInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
                         .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName()))
-                        .thenAccept(notificationService::sendNotificationList);
+                        .thenAccept(notificationService::sendNotifications);
             }
         }
     }
@@ -53,7 +53,7 @@ public class KuisNoticeUpdater {
     private void updateLibrary() {
         List<CommonNoticeFormatDto> scrapResults = updateLibraryNotice(CategoryName.LIBRARY);
         List<Notice> notices = compareLatestAndUpdateDB(scrapResults, CategoryName.LIBRARY);
-        notificationService.sendNotificationList(notices);
+        notificationService.sendNotifications(notices);
     }
 
     private List<CommonNoticeFormatDto> updateLibraryNotice(CategoryName categoryName) {

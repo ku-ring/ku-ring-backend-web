@@ -51,7 +51,7 @@ class KuisNoticeUpdaterTest {
         // given
         doReturn(createNoticesFixture()).when(scrapperTemplate).scrap(any(), any());
         doReturn(createLibraryFixture()).when(libraryNoticeApiClient).request(any());
-        doNothing().when(firebaseService).sendNotificationList(anyList());
+        doNothing().when(firebaseService).sendNotifications(anyList());
 
         // when
         kuisNoticeUpdater.update();

@@ -49,7 +49,7 @@ public class DepartmentNoticeUpdater {
                     ).thenApply(
                             scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName())
                     ).thenAccept(
-                            notificationService::sendNotificationList
+                            notificationService::sendNotifications
                     );
         }
     }

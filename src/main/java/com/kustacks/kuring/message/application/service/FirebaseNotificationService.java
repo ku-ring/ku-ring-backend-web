@@ -52,25 +52,15 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
     @Override
     public void sendNotificationByAdmin(AdminNotificationCommand command) {
         try {
-            Message newMessage = Message.builder()
-                    .setNotification(Notification
-                            .builder()
-                            .setTitle(command.title())
-                            .setBody(command.body())
-                            .build())
-                    .putAllData(objectMapper.convertValue(command, Map.class))
-                    .setTopic(serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC))
-                    .build();
-
+            Message newMessage = createMessageFromCommand(command);
             firebaseMessagingPort.send(newMessage);
         } catch (FirebaseMessagingException exception) {
             throw new FirebaseMessageSendException();
         }
     }
 
-    public void sendNotificationList(List<? extends Notice> noticeList) {
+    public void sendNotifications(List<? extends Notice> noticeList) {
         List<NoticeMessageDto> notificationDtoList = createNotification(noticeList);
-
         if (notificationDtoList.isEmpty()) {
             log.info("새로운 공지가 없습니다.");
             return;
@@ -78,7 +68,7 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
 
         try {
             loggingNoticeSendInfo(notificationDtoList);
-            this.sendNoticeMessageList(notificationDtoList);
+            this.sendNoticeMessages(notificationDtoList);
         } catch (FirebaseMessageSendException e) {
             log.error("새로운 공지의 FCM 전송에 실패했습니다.");
             throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
@@ -120,22 +110,40 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
         sendBaseNotification(messageDto, serverProperties::ifDevThenAddSuffix);
     }
 
-    private void sendBaseNotification(NoticeMessageDto messageDto, UnaryOperator<String> suffixUtil) throws FirebaseMessageSendException {
+    private void sendBaseNotification(
+            NoticeMessageDto messageDto,
+            UnaryOperator<String> suffixUtil
+    ) throws FirebaseMessageSendException {
         try {
-            Message newMessage = Message.builder()
-                    .setNotification(Notification
-                            .builder()
-                            .setTitle(buildTitle(messageDto.getCategoryKorName()))
-                            .setBody(messageDto.getSubject())
-                            .build())
-                    .putAllData(objectMapper.convertValue(messageDto, Map.class))
-                    .setTopic(suffixUtil.apply(messageDto.getCategory()))
-                    .build();
-
+            Message newMessage = createMessageFromDto(messageDto, suffixUtil);
             firebaseMessagingPort.send(newMessage);
         } catch (FirebaseMessagingException exception) {
             throw new FirebaseMessageSendException();
         }
+    }
+
+    private Message createMessageFromCommand(AdminNotificationCommand command) {
+        return Message.builder()
+                .setNotification(Notification
+                        .builder()
+                        .setTitle(command.title())
+                        .setBody(command.body())
+                        .build())
+                .putAllData(objectMapper.convertValue(command, Map.class))
+                .setTopic(serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC))
+                .build();
+    }
+
+    private Message createMessageFromDto(NoticeMessageDto messageDto, UnaryOperator<String> suffixUtil) {
+        return Message.builder()
+                .setNotification(Notification
+                        .builder()
+                        .setTitle(buildTitle(messageDto.getCategoryKorName()))
+                        .setBody(messageDto.getSubject())
+                        .build())
+                .putAllData(objectMapper.convertValue(messageDto, Map.class))
+                .setTopic(suffixUtil.apply(messageDto.getCategory()))
+                .build();
     }
 
     private List<NoticeMessageDto> createNotification(List<? extends Notice> willBeNotiNotices) {
@@ -144,7 +152,7 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
                 .toList();
     }
 
-    private void sendNoticeMessageList(List<NoticeMessageDto> messageDtoList) throws FirebaseMessageSendException {
+    private void sendNoticeMessages(List<NoticeMessageDto> messageDtoList) throws FirebaseMessageSendException {
         messageDtoList.forEach(this::sendNotification);
     }
 

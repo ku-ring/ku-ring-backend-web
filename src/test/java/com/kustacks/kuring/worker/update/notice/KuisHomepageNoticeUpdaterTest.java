@@ -56,7 +56,7 @@ class KuisHomepageNoticeUpdaterTest extends IntegrationTestSupport {
         // given
         doReturn(createNoticesFixture()).when(scrapperTemplate).scrap(any(), any());
         doReturn(createLibraryFixture()).when(libraryNoticeApiClient).request(any());
-        doNothing().when(firebaseNotificationService).sendNotificationList(anyList());
+        doNothing().when(firebaseNotificationService).sendNotifications(anyList());
 
         // when
         kuisHomepageNoticeUpdater.update();
