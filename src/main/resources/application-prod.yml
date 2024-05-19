@@ -43,14 +43,10 @@ spring:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
 
-logging:
-  level:
-    org:
-      apache:
-        coyote:
-          http11: info
-  file:
-    name: classpath:/kuring.log
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: false
 
 management:
   endpoint:

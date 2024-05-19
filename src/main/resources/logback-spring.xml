@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 이 곳에 추가할 properties를 넣는다. -->
+    <timestamp key="BY_DATE" datePattern="yyyy-MM-dd"/>
+    <property name="LOG_PATH" value="./logs"/>
+    <property name="LOG_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] %green([%thread]) %highlight(%-5level) [%C.%M:%line] - %msg%n"/>
+
+    <springProfile name="!prod">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <!-- 로컬 환경에서는 기본 로그레벨 INFO -->
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+
+    <springProfile name="prod">
+        <!-- 운영 환경에서는 로그를 파일로 저장 -->
+        <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/kuring-info-${BY_DATE}.log</file> <!-- 파일을 저장할 경로를 정한다, 도커 사용 시 볼륨매핑 해주어야함 -->
+            <!-- filters 종류 키워드로 확인 -->
+            <filter class="ch.qos.logback.classic.filter.LevelFilter"> <!-- 지정한 레벨과 같은 로그이벤트 필터링 수행 -->
+                <level>INFO</level>
+                <onMatch>ACCEPT</onMatch> <!-- 해당 레벨만 기록한다. -->
+                <onMismatch>DENY</onMismatch> <!-- 지정 레벨과 맞지 않으면 onMisMatch 에 지정에 따라 수행, DENY -> print 하지않음 -->
+            </filter> <!-- 레벨별 필터링이 필요없을 경우 filter class 관련된 부분을 삭제하면 됨-->
+            <encoder>
+                <pattern>${LOG_PATTERN}</pattern>
+            </encoder>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/info/kuring-info-%d{yyyy-MM-dd}-%i.log</fileNamePattern> <!-- 해당 패턴 네이밍으로 이전 파일이 기록됨 -->
+                <maxFileSize>50MB</maxFileSize> <!-- 한 파일의 최대 용량 -->
+                <maxHistory>30</maxHistory> <!-- 한 파일의 최대 저장 기한 -->
+                <totalSizeCap>500MB</totalSizeCap> <!-- 전체 로그파일 크기 제한, 500MB 넘으면 오래된거 삭제 -->
+            </rollingPolicy>
+        </appender>
+
+        <appender name="WARN_OR_MORE_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/kuring-warn-or-more-${BY_DATE}.log</file>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter"> <!-- 지정레벨 이상의 로그만 print 하는 필터 -->
+                <level>WARN</level>
+            </filter>
+            <encoder>
+                <pattern>${LOG_PATTERN}</pattern>
+            </encoder>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/warn-or-more/kuring-warn-or-more-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+                <maxFileSize>50MB</maxFileSize> <!-- 한 파일의 최대 용량 -->
+                <maxHistory>30</maxHistory> <!-- 한 파일의 최대 저장 기한 -->
+                <totalSizeCap>500MB</totalSizeCap> <!-- 전체 로그파일 크기 제한, 500MB 넘으면 오래된거 삭제 -->
+            </rollingPolicy>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="WARN_OR_MORE_FILE"/>
+            <appender-ref ref="INFO_FILE"/>
+        </root>
+    </springProfile>
+</configuration>

@@ -87,9 +87,12 @@ logging:
     org:
       apache:
         coyote:
-          http11: info
-  file:
-    name: classpath:/kuring.log
+          http11: trace
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
 
 management:
   endpoint:
