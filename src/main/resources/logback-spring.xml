@@ -36,7 +36,7 @@
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
                 <fileNamePattern>${LOG_PATH}/info/kuring-info-%d{yyyy-MM-dd}-%i.log</fileNamePattern> <!-- 해당 패턴 네이밍으로 이전 파일이 기록됨 -->
                 <maxFileSize>50MB</maxFileSize> <!-- 한 파일의 최대 용량 -->
-                <maxHistory>30</maxHistory> <!-- 한 파일의 최대 저장 기한 -->
+                <maxHistory>10</maxHistory> <!-- 한 파일의 최대 저장 기한 -->
                 <totalSizeCap>500MB</totalSizeCap> <!-- 전체 로그파일 크기 제한, 500MB 넘으면 오래된거 삭제 -->
             </rollingPolicy>
         </appender>
@@ -52,7 +52,7 @@
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
                 <fileNamePattern>${LOG_PATH}/warn-or-more/kuring-warn-or-more-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
                 <maxFileSize>50MB</maxFileSize> <!-- 한 파일의 최대 용량 -->
-                <maxHistory>30</maxHistory> <!-- 한 파일의 최대 저장 기한 -->
+                <maxHistory>10</maxHistory> <!-- 한 파일의 최대 저장 기한 -->
                 <totalSizeCap>500MB</totalSizeCap> <!-- 전체 로그파일 크기 제한, 500MB 넘으면 오래된거 삭제 -->
             </rollingPolicy>
         </appender>
