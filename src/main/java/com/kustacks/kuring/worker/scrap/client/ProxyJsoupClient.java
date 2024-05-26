@@ -64,14 +64,14 @@ public class ProxyJsoupClient implements JsoupClient {
     private Document proxyTemplate(String url, int timeOut, MethodCallback callback) throws IOException {
         for (int idx = 0; idx < proxyQueue.size(); idx++) {
             ProxyInfo proxyInfo = proxyQueue.peek();
-            log.info("[index:{}] proxy = {}:{}", idx, proxyInfo.getIp(), proxyInfo.getPort());
+            log.debug("[index:{}] proxy = {}:{}", idx, proxyInfo.getIp(), proxyInfo.getPort());
 
             try {
                 return getDocument(url, timeOut, callback, proxyInfo);
             } catch (SocketTimeoutException e) {
-                log.error("Jsoup time out 오류 발생. {}", e.getMessage());
+                log.warn("Jsoup time out 오류 발생. {}", e.getMessage());
             } catch (IOException e) {
-                log.error("Jsoup 오류 발생. {}", e.getMessage());
+                log.warn("Jsoup 오류 발생. {}", e.getMessage());
                 proxyQueue.poll();
             }
         }
@@ -85,7 +85,7 @@ public class ProxyJsoupClient implements JsoupClient {
 
         Document document = callback.sendRequest(connection, proxyInfo.getIp(), proxyInfo.getPort());
 
-        log.info("{} 으로 성공!", proxyInfo.ip);
+        log.debug("{}로 우회 성공", proxyInfo.ip);
         return document;
     }
 

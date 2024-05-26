@@ -22,9 +22,9 @@ public class DepartmentNoticeScraperTemplate {
     public List<ComplexNoticeFormatDto> scrap(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) throws InternalLogicException {
         List<ScrapingResultDto> requestResults = requestWithDeptInfo(deptInfo, decisionMaker);
 
-        log.info("[{}] HTML 파싱 시작", deptInfo.getDeptName());
+        log.debug("[{}] HTML 파싱 시작", deptInfo.getDeptName());
         List<ComplexNoticeFormatDto> noticeDtoList = htmlParsingFromScrapingResult(deptInfo, requestResults);
-        log.info("[{}] HTML 파싱 완료", deptInfo.getDeptName());
+        log.debug("[{}] HTML 파싱 완료", deptInfo.getDeptName());
 
         for (ComplexNoticeFormatDto complexNoticeFormatDto : noticeDtoList) {
             if (complexNoticeFormatDto.getNormalNoticeSize() == 0) {
@@ -38,12 +38,12 @@ public class DepartmentNoticeScraperTemplate {
     private List<ScrapingResultDto> requestWithDeptInfo(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) {
         long startTime = System.currentTimeMillis();
 
-        log.info("[{}] HTML 요청", deptInfo.getDeptName());
+        log.debug("[{}] HTML 요청", deptInfo.getDeptName());
         List<ScrapingResultDto> reqResults = decisionMaker.apply(deptInfo);
-        log.info("[{}] HTML 수신", deptInfo.getDeptName());
+        log.debug("[{}] HTML 수신", deptInfo.getDeptName());
 
         long endTime = System.currentTimeMillis();
-        log.info("[{}] 파싱에 소요된 초 = {}", deptInfo.getDeptName(), (endTime - startTime) / 1000.0);
+        log.debug("[{}] 파싱에 소요된 초 = {}", deptInfo.getDeptName(), (endTime - startTime) / 1000.0);
 
         return reqResults;
     }
@@ -57,7 +57,7 @@ public class DepartmentNoticeScraperTemplate {
             RowsDto rowsDto = deptInfo.parse(document);
             List<CommonNoticeFormatDto> importantNoticeFormatDtos = rowsDto.buildImportantRowList(viewUrl);
             List<CommonNoticeFormatDto> normalNoticeFormatDtos = rowsDto.buildNormalRowList(viewUrl);
-            log.info("[{}] 공지 개수 = {}", deptInfo.getDeptName(), importantNoticeFormatDtos.size() + normalNoticeFormatDtos.size());
+            log.debug("[{}] 공지 개수 = {}", deptInfo.getDeptName(), importantNoticeFormatDtos.size() + normalNoticeFormatDtos.size());
             noticeDtoList.add(new ComplexNoticeFormatDto(importantNoticeFormatDtos, normalNoticeFormatDtos));
         }
 

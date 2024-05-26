@@ -51,16 +51,12 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
             ScrapingResultDto resultDto = getScrapingResultDto(deptInfo, totalNoticeSize, LATEST_SCRAP_ALL_TIMEOUT);
             return List.of(resultDto);
         } catch (IOException e) {
-            log.info("Department Scrap all IOException: {}", e.getMessage());
+            log.warn("Department Scrap all IOException: {}", e.getMessage());
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE, e);
         }
 
         return Collections.emptyList();
-    }
-
-    private String buildUrlForTotalNoticeCount(DeptInfo deptInfo) {
-        return deptInfo.createRequestUrl(1, 1);
     }
 
     public int getTotalNoticeSize(String url) throws IOException, IndexOutOfBoundsException, NullPointerException {
@@ -75,6 +71,10 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         return Integer.parseInt(totalNoticeSizeElement.ownText());
     }
 
+    private String buildUrlForTotalNoticeCount(DeptInfo deptInfo) {
+        return deptInfo.createRequestUrl(1, 1);
+    }
+
     private ScrapingResultDto getScrapingResultDto(DeptInfo deptInfo, int rowSize, int timeout) throws IOException {
         String requestUrl = deptInfo.createRequestUrl(START_PAGE_NUM, rowSize);
         String viewUrl = deptInfo.createViewUrl();
@@ -85,7 +85,7 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         Document document = jsoupClient.get(requestUrl, timeout);
 
         stopWatch.stop();
-        log.info("[{}] takes {}millis to respond", deptInfo.getDeptName(), stopWatch.getTotalTimeMillis());
+        log.debug("[{}] takes {}millis to respond", deptInfo.getDeptName(), stopWatch.getTotalTimeMillis());
 
         return new ScrapingResultDto(document, viewUrl);
     }

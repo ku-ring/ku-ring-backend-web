@@ -54,7 +54,7 @@ public class KuisHomepageNoticeUpdater {
                     ).thenApply(
                             scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName())
                     ).thenAccept(
-                            notificationService::sendNotificationList
+                            notificationService::sendNotifications
                     );
         }
     }
@@ -77,7 +77,7 @@ public class KuisHomepageNoticeUpdater {
     private void updateLibrary() {
         List<CommonNoticeFormatDto> scrapResults = updateLibraryNotice(CategoryName.LIBRARY);
         List<Notice> notices = compareLibraryLatestAndUpdateDB(scrapResults, CategoryName.LIBRARY);
-        notificationService.sendNotificationList(notices);
+        notificationService.sendNotifications(notices);
     }
 
     private List<CommonNoticeFormatDto> updateLibraryNotice(CategoryName categoryName) {

@@ -13,11 +13,13 @@ import com.kustacks.kuring.message.application.service.exception.FirebaseInvalid
 import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Component
 @Profile("prod | dev")
 @RequiredArgsConstructor
@@ -44,6 +46,7 @@ public class FirebaseAdapter implements FirebaseSubscribePort, FirebaseAuthPort,
             TopicManagementResponse response = firebaseMessaging.subscribeToTopic(tokens, topic);
 
             if (response.getFailureCount() > 0) {
+                log.warn("[{}] 구독 실패", tokens.get(0));
                 throw new FirebaseSubscribeException();
             }
         } catch (FirebaseMessagingException | FirebaseSubscribeException exception) {
@@ -60,6 +63,7 @@ public class FirebaseAdapter implements FirebaseSubscribePort, FirebaseAuthPort,
             TopicManagementResponse response = firebaseMessaging.unsubscribeFromTopic(tokens, topic);
 
             if (response.getFailureCount() > 0) {
+                log.warn("[{}] 구독 취소 실패", tokens.get(0));
                 throw new FirebaseUnSubscribeException();
             }
         } catch (FirebaseMessagingException | FirebaseUnSubscribeException exception) {

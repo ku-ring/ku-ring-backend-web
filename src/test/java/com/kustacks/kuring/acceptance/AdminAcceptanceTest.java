@@ -1,6 +1,7 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.admin.adapter.in.web.dto.RealNotificationRequest;
+import com.kustacks.kuring.admin.adapter.in.web.dto.TestNotificationRequest;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
@@ -15,8 +16,6 @@ import static com.kustacks.kuring.acceptance.AdminStep.피드백_조회_확인;
 import static com.kustacks.kuring.acceptance.AuthStep.로그인_되어_있음;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 
 @DisplayName("인수 : 관리자")
 class AdminAcceptanceTest extends IntegrationTestSupport {
@@ -48,7 +47,6 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
     @Test
     void role_root_admin_create_test_notification() {
         // given
-        doNothing().when(firebaseNotificationService).sendNotificationByAdmin(any());
         String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
 
         // when
@@ -57,7 +55,38 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .body(new RealNotificationRequest("테스트 공지", "테스트 공지입니다", "https://www.naver.com", ADMIN_PASSWORD))
+                .body(new TestNotificationRequest("bachelor", "테스트 공지입니다", "1234"))
+                .when().post("/api/v2/admin/notices/dev")
+                .then().log().all()
+                .extract();
+
+        // then
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("테스트 공지 생성에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getString("data")).isNull()
+        );
+    }
+
+    /**
+     * given : 사전에 등록된 어드민이 있다
+     * when : 실제 공지를 발송하면
+     * then : 성공적으로 발송된다.
+     */
+    @DisplayName("[v2] 실제 공지 발송")
+    @Test
+    void role_root_admin_create_real_notification() {
+        // given
+        String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
+
+        // when
+        var response = RestAssured
+                .given().log().all()
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .body(new RealNotificationRequest("real 공지", "real 공지입니다", "https://www.naver.com", ADMIN_PASSWORD))
                 .when().post("/api/v2/admin/notices/prod")
                 .then().log().all()
                 .extract();

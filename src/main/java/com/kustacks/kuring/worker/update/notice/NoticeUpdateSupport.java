@@ -31,10 +31,10 @@ public class NoticeUpdateSupport {
                     newNotices.add(newNotice);
                 }
             } catch (IncorrectResultSizeDataAccessException e) {
-                log.error("오류가 발생한 공지 정보");
-                log.error("articleId = {}", notice.getArticleId());
-                log.error("postedDate = {}", notice.getPostedDate());
-                log.error("subject = {}", notice.getSubject());
+                log.warn("오류가 발생한 공지 정보");
+                log.warn("articleId = {}", notice.getArticleId());
+                log.warn("postedDate = {}", notice.getPostedDate());
+                log.warn("subject = {}", notice.getSubject());
             }
         }
 
@@ -63,10 +63,10 @@ public class NoticeUpdateSupport {
                     newNotices.add(newDepartmentNotice);
                 }
             } catch (IncorrectResultSizeDataAccessException e) {
-                log.error("오류가 발생한 공지 정보");
-                log.error("articleId = {}", notice.getArticleId());
-                log.error("postedDate = {}", notice.getPostedDate());
-                log.error("subject = {}", notice.getSubject());
+                log.warn("오류가 발생한 공지 정보");
+                log.warn("articleId = {}", notice.getArticleId());
+                log.warn("postedDate = {}", notice.getPostedDate());
+                log.warn("subject = {}", notice.getSubject());
             }
         }
         return newNotices;
