@@ -52,7 +52,10 @@ class UserQueryService implements UserQueryUseCase {
     public List<UserBookmarkResult> lookupUserBookmarkedNotices(String userToken) {
         User user = findUserByToken(userToken);
         List<String> bookmarkIds = user.lookupAllBookmarkIds();
+        return lookupAllBookmarkByIds(bookmarkIds);
+    }
 
+    private List<UserBookmarkResult> lookupAllBookmarkByIds(List<String> bookmarkIds) {
         return noticeQueryPort.findAllByBookmarkIds(bookmarkIds)
                 .stream()
                 .map(dto -> new UserBookmarkResult(
