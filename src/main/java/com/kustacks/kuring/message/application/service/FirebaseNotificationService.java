@@ -30,6 +30,7 @@ import static com.kustacks.kuring.message.application.service.FirebaseSubscribeS
 public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
 
     private static final String NOTIFICATION_TITLE = "새로운 공지가 왔어요!";
+    private static final String NO_NEW_NOTICE = "새로운 공지가 없습니다.";
 
     private final FirebaseMessagingPort firebaseMessagingPort;
     private final ServerProperties serverProperties;
@@ -37,15 +38,7 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
 
     @Override
     public void sendTestNotificationByAdmin(AdminTestNotificationCommand command) {
-        NoticeMessageDto messageDto = NoticeMessageDto.builder()
-                .articleId(command.articleId())
-                .postedDate(command.postedDate())
-                .category(command.categoryName())
-                .subject(command.subject())
-                .categoryKorName(command.korName())
-                .baseUrl(command.url())
-                .build();
-
+        NoticeMessageDto messageDto = convertDtoFromCommand(command);
         sendBaseNotification(messageDto, serverProperties::addDevSuffix);
     }
 
@@ -60,12 +53,16 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
     }
 
     public void sendNotifications(List<? extends Notice> noticeList) {
-        List<NoticeMessageDto> notificationDtoList = createNotification(noticeList);
-        if (notificationDtoList.isEmpty()) {
-            log.info("새로운 공지가 없습니다.");
+        if (noticeList.isEmpty()) {
+            log.info(NO_NEW_NOTICE);
             return;
         }
 
+        List<NoticeMessageDto> notificationDtoList = createNotification(noticeList);
+        sendNotices(notificationDtoList);
+    }
+
+    private void sendNotices(List<NoticeMessageDto> notificationDtoList) {
         try {
             loggingNoticeSendInfo(notificationDtoList);
             this.sendNoticeMessages(notificationDtoList);
@@ -162,5 +159,16 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
                 .append("] ")
                 .append(NOTIFICATION_TITLE)
                 .toString();
+    }
+
+    private static NoticeMessageDto convertDtoFromCommand(AdminTestNotificationCommand command) {
+        return NoticeMessageDto.builder()
+                .articleId(command.articleId())
+                .postedDate(command.postedDate())
+                .category(command.categoryName())
+                .subject(command.subject())
+                .categoryKorName(command.korName())
+                .baseUrl(command.url())
+                .build();
     }
 }
