@@ -44,23 +44,9 @@ public class NoticeQueryService implements NoticeQueryUseCase {
 
     @Override
     public List<NoticeContentSearchResult> findAllNoticeByContent(String content) {
-        final String SPACE = " ";
-        final int DATE_INDEX = 0;
-
         String[] splitedKeywords = splitBySpace(content);
-
         List<String> keywords = noticeCategoryNameConvertEnglish(splitedKeywords);
-
-        return noticeQueryPort.findAllByKeywords(keywords)
-                .stream()
-                .map(dto -> new NoticeContentSearchResult(
-                        dto.getArticleId(),
-                        dto.getPostedDate().split(SPACE)[DATE_INDEX],
-                        dto.getSubject(),
-                        dto.getCategoryName(),
-                        dto.getBaseUrl()
-                ))
-                .toList();
+        return searchNoticesByKeywords(keywords);
     }
 
     @Override
@@ -73,6 +59,22 @@ public class NoticeQueryService implements NoticeQueryUseCase {
     @Override
     public List<NoticeDepartmentNameResult> lookupSupportedDepartments() {
         return convertDepartmentNameDtos(supportedDepartmentNameList);
+    }
+
+    private List<NoticeContentSearchResult> searchNoticesByKeywords(List<String> keywords) {
+        final String SPACE = " ";
+        final int DATE_INDEX = 0;
+
+        return noticeQueryPort.findAllByKeywords(keywords)
+                .stream()
+                .map(dto -> new NoticeContentSearchResult(
+                        dto.getArticleId(),
+                        dto.getPostedDate().split(SPACE)[DATE_INDEX],
+                        dto.getSubject(),
+                        dto.getCategoryName(),
+                        dto.getBaseUrl()
+                ))
+                .toList();
     }
 
     private List<NoticeRangeLookupResult> getNoticeRangeLookup(NoticeRangeLookupCommand command) {

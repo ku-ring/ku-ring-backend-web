@@ -59,7 +59,7 @@ public class AdminCommandService implements AdminCommandUseCase {
         Admin admin = (Admin) userDetailsServicePort
                 .loadUserByUsername(command.getStringPrincipal());
 
-        if (!passwordEncoder.matches(command.adminPassword(), admin.getPassword())) {
+        if (isNotMatchPassword(command.adminPassword(), admin.getPassword())) {
             throw new IllegalArgumentException("관리자 비밀번호가 일치하지 않습니다.");
         }
 
@@ -82,5 +82,9 @@ public class AdminCommandService implements AdminCommandUseCase {
             List<String> subList = allToken.subList(i, Math.min(i + 500, size));
             instance.subscribeToTopicAsync(subList, topic);
         }
+    }
+
+    private boolean isNotMatchPassword(final String commandPassword, final String adminPassword) {
+        return !passwordEncoder.matches(commandPassword, adminPassword);
     }
 }

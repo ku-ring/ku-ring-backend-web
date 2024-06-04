@@ -18,6 +18,10 @@ public class StaffQueryService implements StaffQueryUseCase {
 
     public List<StaffSearchResult> findAllStaffByContent(String content) {
         List<String> splitedKeywords = Arrays.asList(splitBySpace(content));
+        return searchStaffByKeywords(splitedKeywords);
+    }
+
+    private List<StaffSearchResult> searchStaffByKeywords(List<String> splitedKeywords) {
         return staffQueryPort.findAllByKeywords(splitedKeywords)
                 .stream()
                 .map(dto -> new StaffSearchResult(
