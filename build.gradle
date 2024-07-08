@@ -1,6 +1,6 @@
 plugins {
     id 'org.springframework.boot' version '3.2.3'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'io.spring.dependency-management' version '1.1.5'
     id 'java'
     id 'org.asciidoctor.jvm.convert' version "3.3.2"
     id 'org.sonarqube' version '3.5.0.2730' // sonarqube gradle plugin 의존성
@@ -20,6 +20,8 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
 }
 
 sonarqube {
@@ -30,6 +32,10 @@ sonarqube {
     }
 }
 
+ext {
+    set('springAiVersion', "1.0.0-M1")
+}
+
 dependencies {
     // Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -37,6 +43,9 @@ dependencies {
     implementation 'org.springframework.retry:spring-retry'
     implementation 'org.springframework:spring-aspects'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // AI
+    implementation "org.springframework.ai:spring-ai-openai-spring-boot-starter:${springAiVersion}"
 
     // DB
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -96,6 +105,12 @@ dependencies {
     testImplementation 'org.testcontainers:testcontainers:1.19.3'
     testImplementation 'org.testcontainers:junit-jupiter:1.19.3'
     testImplementation 'org.testcontainers:mariadb:1.19.3'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
 }
 
 // Swagger force conflict resolution
