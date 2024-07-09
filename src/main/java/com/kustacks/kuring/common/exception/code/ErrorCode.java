@@ -56,7 +56,6 @@ public enum ErrorCode {
 
     CAT_NOT_EXIST_CATEGORY(HttpStatus.BAD_REQUEST, "서버에서 지원하지 않는 카테고리입니다."),
 
-    // STAFF_SCRAPER_TAG_NOT_EXIST("Jsoup - 찾고자 하는 태그가 존재하지 않습니다."),
     STAFF_SCRAPER_EXCEED_RETRY_LIMIT("교직원 업데이트 재시도 횟수를 초과했습니다."),
     STAFF_SCRAPER_CANNOT_SCRAP("건국대학교 홈페이지가 불안정합니다. 교직원 정보를 가져올 수 없습니다."),
     STAFF_SCRAPER_CANNOT_PARSE("교직원 페이지 HTML 파싱에 실패했습니다."),
@@ -77,11 +76,15 @@ public enum ErrorCode {
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
 
+    // AI 관련
+    AI_SIMILAR_DOCUMENTS_NOT_FOUND(HttpStatus.NOT_FOUND, "죄송합니다, 관련된 내용에 대하여 알지 못합니다."),
+
     /**
      * ErrorCodes about DomainLogicException
      */
     DOMAIN_CANNOT_CREATE("해당 도메인을 생성할 수 없습니다."),
-    DEPARTMENT_NOT_FOUND("해당 학과를 찾을 수 없습니다.");
+    DEPARTMENT_NOT_FOUND("해당 학과를 찾을 수 없습니다."),
+    QUESTION_COUNT_NOT_ENOUGH(HttpStatus.TOO_MANY_REQUESTS, "남은 질문 횟수가 부족합니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

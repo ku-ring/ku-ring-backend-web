@@ -3,6 +3,7 @@ package com.kustacks.kuring.common.exception.handler;
 import com.kustacks.kuring.common.dto.ErrorResponse;
 import com.kustacks.kuring.common.exception.AdminException;
 import com.kustacks.kuring.common.exception.InternalLogicException;
+import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
@@ -67,6 +68,13 @@ public class CommonExceptionHandler {
         log.warn("[FirebaseSubscribeException] {}", exception.getMessage());
         return ResponseEntity.status(ErrorCode.API_FB_SERVER_ERROR.getHttpStatus())
                 .body(new ErrorResponse(ErrorCode.API_FB_SERVER_ERROR));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> InvalidStateExceptionHandler(InvalidStateException exception) {
+        log.info("[InvalidStateException] {}", exception.getMessage());
+        return ResponseEntity.status(exception.getErrorCode().getHttpStatus())
+                .body(new ErrorResponse(exception.getErrorCode()));
     }
 
     @ExceptionHandler
