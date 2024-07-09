@@ -2,13 +2,13 @@ package com.kustacks.kuring.user.domain;
 
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,8 @@ import java.util.Set;
 @SQLDelete(sql = "update user set deleted = true where id = ?")
 @Where(clause = "deleted = false")
 public class User implements Serializable {
+
+    private static final int MONTHLY_QUESTION_COUNT = 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,8 +47,12 @@ public class User implements Serializable {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = Boolean.FALSE;
 
+    @Column(columnDefinition = "integer default 0")
+    private Integer questionCount;
+
     public User(String token) {
         this.token = token;
+        this.questionCount = MONTHLY_QUESTION_COUNT;
     }
 
     public Long getId() {
@@ -121,6 +127,19 @@ public class User implements Serializable {
         return this.departments.getDepartmentNamesSet().stream()
                 .filter(oldDepartmentName -> !newDepartmentNames.contains(oldDepartmentName))
                 .toList();
+    }
+
+    public int decreaseQuestionCount() {
+        if(!isEnoughQuestionCount()) {
+            throw new IllegalStateException("잔여 질문 카운트가 0입니다.");
+        }
+
+        this.questionCount -= 1;
+        return this.questionCount;
+    }
+
+    private boolean isEnoughQuestionCount() {
+        return this.questionCount > 0;
     }
 
     @Override
