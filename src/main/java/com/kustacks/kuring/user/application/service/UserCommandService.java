@@ -1,6 +1,7 @@
 package com.kustacks.kuring.user.application.service;
 
 import com.kustacks.kuring.common.annotation.UseCase;
+import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.properties.ServerProperties;
@@ -70,6 +71,17 @@ class UserCommandService implements UserCommandUseCase {
         user.addBookmark(command.articleId());
     }
 
+    @Override
+    public void decreaseQuestionCount(UserDecreaseQuestionCountCommand command) {
+        User findUser = findUserByToken(command.userId());
+
+        try {
+            findUser.decreaseQuestionCount();
+        } catch (IllegalStateException e) {
+            throw new InvalidStateException(ErrorCode.QUESTION_COUNT_NOT_ENOUGH);
+        }
+    }
+
     private UserSubscribeCompareResult<CategoryName> editSubscribeCategoryList(
             String userToken,
             List<String> newCategoryStringNames
@@ -77,7 +89,6 @@ class UserCommandService implements UserCommandUseCase {
         User user = findUserByToken(userToken);
 
         List<CategoryName> newCategoryNames = convertToEnumList(newCategoryStringNames);
-
         List<CategoryName> savedCategoryNames = user.filteringNewCategoryName(newCategoryNames);
         List<CategoryName> deletedCategoryNames = user.filteringOldCategoryName(newCategoryNames);
 
@@ -100,9 +111,9 @@ class UserCommandService implements UserCommandUseCase {
         User user = findUserByToken(userToken);
 
         List<DepartmentName> newDepartmentNames = convertHostPrefixToEnum(departments);
-
         List<DepartmentName> savedDepartmentNames = user.filteringNewDepartmentName(newDepartmentNames);
         List<DepartmentName> deletedDepartmentNames = user.filteringOldDepartmentName(newDepartmentNames);
+
         return new UserSubscribeCompareResult<>(savedDepartmentNames, deletedDepartmentNames);
     }
 
