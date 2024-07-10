@@ -1,6 +1,6 @@
-package com.kustacks.kuring.ai.adapter.out;
+package com.kustacks.kuring.ai.adapter.out.model;
 
-import com.kustacks.kuring.ai.application.port.out.RAGQueryAiModelPort;
+import com.kustacks.kuring.ai.application.port.out.QueryAiModelPort;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -11,9 +11,9 @@ import reactor.core.publisher.Flux;
 
 @Slf4j
 @Component
-@Profile("prod | local | test")
+@Profile("prod")
 @RequiredArgsConstructor
-public class RAGQueryAiModelAdapter implements RAGQueryAiModelPort {
+public class QueryAiModelAdapter implements QueryAiModelPort {
 
     private final OpenAiChatModel openAiChatModel;
 

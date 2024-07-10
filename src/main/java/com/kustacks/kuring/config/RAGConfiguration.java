@@ -1,4 +1,4 @@
-package com.kustacks.kuring.ai;
+package com.kustacks.kuring.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;

@@ -1,8 +1,8 @@
 package com.kustacks.kuring.ai.application.service;
 
 import com.kustacks.kuring.ai.application.port.in.RAGQueryUseCase;
-import com.kustacks.kuring.ai.application.port.out.RAGQueryAiModelPort;
-import com.kustacks.kuring.ai.application.port.out.RAGQuerySimilarityPort;
+import com.kustacks.kuring.ai.application.port.out.QueryAiModelPort;
+import com.kustacks.kuring.ai.application.port.out.QueryVectorStorePort;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.domain.Events;
 import com.kustacks.kuring.common.exception.InvalidStateException;
@@ -24,8 +24,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class RAGQueryService implements RAGQueryUseCase {
 
-    private final RAGQuerySimilarityPort ragSimilarityPort;
-    private final RAGQueryAiModelPort ragChatModel;
+    private final QueryVectorStorePort vectorStorePort;
+    private final QueryAiModelPort ragChatModel;
 
     @Value("classpath:/ai/prompts/rag-prompt-template.st")
     private Resource ragPromptTemplate;
@@ -33,8 +33,8 @@ public class RAGQueryService implements RAGQueryUseCase {
 
     @Override
     public Flux<String> askAiModel(String question, String id) {
-        Prompt completePrompt = buildCompletePrompt(question);
         Events.raise(new UserDecreaseQuestionCountEvent(id));
+        Prompt completePrompt = buildCompletePrompt(question);
         return ragChatModel.call(completePrompt);
     }
 
@@ -44,7 +44,7 @@ public class RAGQueryService implements RAGQueryUseCase {
     }
 
     private Prompt buildCompletePrompt(String question) {
-        List<String> similarDocuments = ragSimilarityPort.findSimilarityContents(question);
+        List<String> similarDocuments = vectorStorePort.findSimilarityContents(question);
         if(similarDocuments.isEmpty()) {
             throw new InvalidStateException(ErrorCode.AI_SIMILAR_DOCUMENTS_NOT_FOUND);
         }
