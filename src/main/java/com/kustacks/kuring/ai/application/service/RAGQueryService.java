@@ -13,6 +13,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import reactor.core.publisher.Flux;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ public class RAGQueryService implements RAGQueryUseCase {
     private PromptTemplate promptTemplate;
 
     @Override
-    public String askAiModel(String question, String id) {
+    public Flux<String> askAiModel(String question, String id) {
         Prompt completePrompt = buildCompletePrompt(question);
         Events.raise(new UserDecreaseQuestionCountEvent(id));
         return ragChatModel.call(completePrompt);

@@ -1,5 +1,7 @@
 package com.kustacks.kuring.ai.application.port.in;
 
+import reactor.core.publisher.Flux;
+
 public interface RAGQueryUseCase {
-    String askAiModel(String question, String id);
+    Flux<String> askAiModel(String question, String id);
 }
