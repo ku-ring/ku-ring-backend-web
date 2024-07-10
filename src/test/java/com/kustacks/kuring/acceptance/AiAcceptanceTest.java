@@ -16,14 +16,14 @@ public class AiAcceptanceTest extends IntegrationTestSupport {
 
     /**
      * Given : 쿠링앱이 실행중이다
-     * When : 사용자가 수업연한초과자 등록기간을 묻는다
-     * Then : 수업연한초과자 등록일을 알려준다
+     * When : 교내,외 장학금 및 학자금 대출 관련 전화번호들을 묻는다
+     * Then : 해당 관련 전화번호들을 반환한다
      */
-    @DisplayName("[v2] 2024년도 2학기 등록일")
+    @DisplayName("[v2] 사용자가 궁금한 학교 정보를 물어볼 수 있다")
     @Test
     public void ask_to_open_ai() {
         // given
-        String question = "수업연한초과자 등록기간을 알려줘";
+        String question = "교내,외 장학금 및 학자금 대출 관련 전화번호들을 안내를 해줘";
 
         // when
         var response = RestAssured
@@ -38,8 +38,9 @@ public class AiAcceptanceTest extends IntegrationTestSupport {
         // then
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getString("message")).contains("2024년 9월 2일(월)부터 9월 6일(금)")
+                () -> assertThat(response.asString()).contains("학생복지처 장학복지팀의 전화번호는 02-450-3211~2이며, " +
+                        "건국사랑/장학사정관장학/기금장학과 관련된 문의는 02-450-3967로 하시면 됩니다.")
         );
     }
 }
+
