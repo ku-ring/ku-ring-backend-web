@@ -22,7 +22,7 @@ public class RAGQueryApiV2 {
 
     @Operation(summary = "사용자 AI에 질문요청", description = "사용자가 궁금한 학교 정보를 AI에게 질문합니다.")
     @SecurityRequirement(name = "User-Token")
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> askAIQuery(
             @RequestBody UserQuestionRequest questionRequest,
             @RequestHeader(USER_TOKEN_HEADER_KEY) String id
