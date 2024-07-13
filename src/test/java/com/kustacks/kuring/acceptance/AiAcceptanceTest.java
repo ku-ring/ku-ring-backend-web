@@ -1,12 +1,17 @@
 package com.kustacks.kuring.acceptance;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.kustacks.kuring.ai.adapter.in.web.dto.UserQuestionRequest;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import static com.kustacks.kuring.acceptance.AiStep.모델_응답_검증;
-import static com.kustacks.kuring.acceptance.AiStep.사용자_질문_요청;
+import static com.kustacks.kuring.acceptance.AiStep.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("인수 : 인공지능")
@@ -19,12 +24,17 @@ class AiAcceptanceTest extends IntegrationTestSupport {
      */
     @DisplayName("[v2] 사용자가 궁금한 학교 정보를 물어볼 수 있다")
     @Test
-    void ask_to_open_ai() {
+    void ask_to_open_ai() throws JsonProcessingException {
         // given
+        WebTestClient client = WebTestClient.bindToServer().baseUrl("http://localhost:" + port).build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
         String question = "교내,외 장학금 및 학자금 대출 관련 전화번호들을 안내를 해줘";
+        String jsonRequest = objectMapper.writeValueAsString(new UserQuestionRequest(question));
 
         // when
-        var 모델_응답 = 사용자_질문_요청(question, USER_FCM_TOKEN);
+        var 모델_응답 = 사용자_질문_요청(client, jsonRequest, USER_FCM_TOKEN);
 
         // then
         모델_응답_검증(모델_응답, HttpStatus.OK.value());
@@ -37,14 +47,14 @@ class AiAcceptanceTest extends IntegrationTestSupport {
      */
     @DisplayName("[v2] 가능한 질문 횟수를 모두 사용한 경우 AI에게 질문을 할 수 없다")
     @Test
-    void ask_to_open_ai_overflow_count() {
+    void ask_to_open_ai_overflow_count() throws JsonProcessingException {
         // given
         String question = "교내,외 장학금 및 학자금 대출 관련 전화번호들을 안내를 해줘";
-        사용자_질문_요청(question, USER_FCM_TOKEN);
-        사용자_질문_요청(question, USER_FCM_TOKEN);
+        사용자_질문_요청_REST(question, USER_FCM_TOKEN);
+        사용자_질문_요청_REST(question, USER_FCM_TOKEN);
 
         // when
-        var 모델_응답 = 사용자_질문_요청(question, USER_FCM_TOKEN);
+        var 모델_응답 = 사용자_질문_요청_REST(question, USER_FCM_TOKEN);
 
         // then
         assertThat(모델_응답.statusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS.value());
