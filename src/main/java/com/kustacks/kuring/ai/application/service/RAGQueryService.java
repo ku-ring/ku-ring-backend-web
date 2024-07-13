@@ -3,11 +3,10 @@ package com.kustacks.kuring.ai.application.service;
 import com.kustacks.kuring.ai.application.port.in.RAGQueryUseCase;
 import com.kustacks.kuring.ai.application.port.out.QueryAiModelPort;
 import com.kustacks.kuring.ai.application.port.out.QueryVectorStorePort;
+import com.kustacks.kuring.ai.application.port.out.RAGEventPort;
 import com.kustacks.kuring.common.annotation.UseCase;
-import com.kustacks.kuring.common.domain.Events;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.user.adapter.in.event.dto.UserDecreaseQuestionCountEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
@@ -26,6 +25,7 @@ public class RAGQueryService implements RAGQueryUseCase {
 
     private final QueryVectorStorePort vectorStorePort;
     private final QueryAiModelPort ragChatModel;
+    private final RAGEventPort ragEventPort;
 
     @Value("classpath:/ai/prompts/rag-prompt-template.st")
     private Resource ragPromptTemplate;
@@ -33,8 +33,8 @@ public class RAGQueryService implements RAGQueryUseCase {
 
     @Override
     public Flux<String> askAiModel(String question, String id) {
-        Events.raise(new UserDecreaseQuestionCountEvent(id));
         Prompt completePrompt = buildCompletePrompt(question);
+        ragEventPort.userDecreaseQuestionCountEvent(id);
         return ragChatModel.call(completePrompt);
     }
 
