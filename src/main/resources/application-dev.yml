@@ -34,14 +34,20 @@ spring:
     url: jdbc:${DB_URL}
     user: ${DB_USER}
     password: ${DB_PASSWORD}
-  thymeleaf:
-    cache: true
-    prefix: classpath:/templates/
-    suffix: .html
-    enabled: true
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
+  ai:
+    openai:
+      api-key: "temp_ai_api_key"
+      chat:
+        options:
+          model: gpt-3.5-turbo
+          temperature: 0.0
+          maxTokens: 300
+      embedding:
+        options:
+          model: text-embedding-3-small
 
 springdoc:
   swagger-ui:
