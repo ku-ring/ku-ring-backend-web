@@ -11,6 +11,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IntegrationTestSupport {
+
     public static final String ADMIN_LOGIN_ID = "admin@email.com";
     public static final String ADMIN_PASSWORD = "admin_password";
     public static final String USER_FCM_TOKEN = "test_fcm_token";
@@ -21,7 +22,7 @@ public class IntegrationTestSupport {
     protected FirebaseSubscribeService firebaseSubscribeService;
 
     @LocalServerPort
-    int port;
+    protected int port;
 
     @Autowired
     private DatabaseConfigurator databaseConfigurator;

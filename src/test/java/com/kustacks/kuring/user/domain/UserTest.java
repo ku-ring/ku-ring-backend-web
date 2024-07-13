@@ -2,14 +2,14 @@ package com.kustacks.kuring.user.domain;
 
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
+import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("도메인 : User")
 class UserTest {
@@ -123,6 +123,34 @@ class UserTest {
 
         // then
         assertThat(results).contains(DepartmentName.ENGLISH);
+    }
+
+    @DisplayName("질문 카운트를 감소시키고 남은 카운트가 반환된다")
+    @Test
+    void decrease_question_count() {
+        // given
+        User user = createUser(1L, "token_one");
+
+        // when
+        int leftCount = user.decreaseQuestionCount();
+
+        // then
+        assertThat(leftCount).isEqualTo(1);
+    }
+
+    @DisplayName("질문 카운트가 0보다 큰 경우에만 질문이 가능하다")
+    @Test
+    void is_enough_question_count() {
+        // given
+        User newUser = new User("token_one");
+        newUser.decreaseQuestionCount(); // after 1
+        newUser.decreaseQuestionCount(); // after 0
+
+        // when
+        ThrowableAssert.ThrowingCallable actual = newUser::decreaseQuestionCount;
+
+        // then
+        assertThatThrownBy(actual).isInstanceOf(IllegalStateException.class);
     }
 
     private User createUser(Long id, String token) {
