@@ -5,7 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 
 import static com.kustacks.kuring.acceptance.AiStep.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +19,7 @@ class AiAcceptanceTest extends IntegrationTestSupport {
      */
     @DisplayName("[v2] 사용자가 궁금한 학교 정보를 물어볼 수 있다")
     @Test
-    void ask_to_open_ai() throws JsonProcessingException {
+    void ask_to_open_ai() {
         // given
         WebTestClient client = WebTestClient.bindToServer().baseUrl("http://localhost:" + port).build();
         String question = "교내,외 장학금 및 학자금 대출 관련 전화번호들을 안내를 해줘";
@@ -39,7 +38,7 @@ class AiAcceptanceTest extends IntegrationTestSupport {
      */
     @DisplayName("[v2] 가능한 질문 횟수를 모두 사용한 경우 AI에게 질문을 할 수 없다")
     @Test
-    void ask_to_open_ai_overflow_count() throws JsonProcessingException {
+    void ask_to_open_ai_overflow_count() {
         // given
         String question = "교내,외 장학금 및 학자금 대출 관련 전화번호들을 안내를 해줘";
         사용자_질문_요청_REST(question, USER_FCM_TOKEN);

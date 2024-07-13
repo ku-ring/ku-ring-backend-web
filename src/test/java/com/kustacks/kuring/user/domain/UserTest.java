@@ -142,12 +142,12 @@ class UserTest {
     @Test
     void is_enough_question_count() {
         // given
-        User new_user = new User("token_one");
-        new_user.decreaseQuestionCount(); // after 1
-        new_user.decreaseQuestionCount(); // after 0
+        User newUser = new User("token_one");
+        newUser.decreaseQuestionCount(); // after 1
+        newUser.decreaseQuestionCount(); // after 0
 
         // when
-        ThrowableAssert.ThrowingCallable actual = new_user::decreaseQuestionCount;
+        ThrowableAssert.ThrowingCallable actual = newUser::decreaseQuestionCount;
 
         // then
         assertThatThrownBy(actual).isInstanceOf(IllegalStateException.class);
