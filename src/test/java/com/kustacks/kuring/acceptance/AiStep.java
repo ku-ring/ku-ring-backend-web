@@ -1,13 +1,11 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.ai.adapter.in.web.dto.UserQuestionRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.FluxExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.BodyInserters;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -16,12 +14,10 @@ public class AiStep {
 
     public static FluxExchangeResult<String> 사용자_질문_요청(WebTestClient client, String question, String userToken) {
         return client
-                .post()
-                .uri("/api/v2/ai/messages")
+                .get()
+                .uri("/api/v2/ai/messages?question={question}", question)
                 .header("User-Token", userToken)
-                .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.TEXT_EVENT_STREAM)
-                .body(BodyInserters.fromValue(question))
                 .exchange()
                 .returnResult(String.class);
     }
@@ -31,9 +27,7 @@ public class AiStep {
         return RestAssured
                 .given().log().all()
                 .header("User-Token", userToken)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(new UserQuestionRequest(question))
-                .when().post("/api/v2/ai/messages")
+                .when().get("/api/v2/ai/messages?question={question}", question)
                 .then().log().all()
                 .extract();
     }

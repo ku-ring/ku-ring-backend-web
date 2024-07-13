@@ -1,15 +1,11 @@
 package com.kustacks.kuring.acceptance;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.kustacks.kuring.ai.adapter.in.web.dto.UserQuestionRequest;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import static com.kustacks.kuring.acceptance.AiStep.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,14 +23,10 @@ class AiAcceptanceTest extends IntegrationTestSupport {
     void ask_to_open_ai() throws JsonProcessingException {
         // given
         WebTestClient client = WebTestClient.bindToServer().baseUrl("http://localhost:" + port).build();
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-
         String question = "교내,외 장학금 및 학자금 대출 관련 전화번호들을 안내를 해줘";
-        String jsonRequest = objectMapper.writeValueAsString(new UserQuestionRequest(question));
 
         // when
-        var 모델_응답 = 사용자_질문_요청(client, jsonRequest, USER_FCM_TOKEN);
+        var 모델_응답 = 사용자_질문_요청(client, question, USER_FCM_TOKEN);
 
         // then
         모델_응답_검증(모델_응답, HttpStatus.OK.value());
