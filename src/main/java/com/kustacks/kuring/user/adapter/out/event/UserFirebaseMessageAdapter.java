@@ -6,11 +6,9 @@ import com.kustacks.kuring.message.adapter.in.event.dto.UserUnsubscribeEvent;
 import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.user.application.port.out.UserEventPort;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class UserFirebaseMessageAdapter implements UserEventPort {
 
     @Override

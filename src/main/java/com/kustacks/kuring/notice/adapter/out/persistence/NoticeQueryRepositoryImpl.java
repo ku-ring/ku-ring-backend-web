@@ -26,6 +26,7 @@ import static com.kustacks.kuring.notice.domain.QNotice.notice;
 @RequiredArgsConstructor
 class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
+    private static final String DATE_FORMAT_TEMPLATE = "DATE_FORMAT({0}, {1})";
     private static final String DATE_TIME_TEMPLATE = "%Y-%m-%d %H:%i:%s";
 
     private final JPAQueryFactory queryFactory;
@@ -34,7 +35,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     @Override
     public List<NoticeDto> findNoticesByCategoryWithOffset(CategoryName categoryName, Pageable pageable) {
         StringTemplate postedDate = Expressions.stringTemplate(
-                "DATE_FORMAT({0}, {1})",
+                DATE_FORMAT_TEMPLATE,
                 notice.noticeDateTime.postedDate,
                 ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
@@ -60,7 +61,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     @Override
     public List<NoticeSearchDto> findAllByKeywords(List<String> keywords) {
         StringTemplate postedDate = Expressions.stringTemplate(
-                "DATE_FORMAT({0}, {1})",
+                DATE_FORMAT_TEMPLATE,
                 notice.noticeDateTime.postedDate,
                 ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
@@ -155,7 +156,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     @Override
     public List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName) {
         StringTemplate postedDate = Expressions.stringTemplate(
-                "DATE_FORMAT({0}, {1})",
+                DATE_FORMAT_TEMPLATE,
                 departmentNotice.noticeDateTime.postedDate,
                 ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
@@ -179,7 +180,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     @Override
     public List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Pageable pageable) {
         StringTemplate postedDate = Expressions.stringTemplate(
-                "DATE_FORMAT({0}, {1})",
+                DATE_FORMAT_TEMPLATE,
                 departmentNotice.noticeDateTime.postedDate,
                 ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
@@ -219,7 +220,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     @Override
     public List<BookmarkDto> findAllByBookmarkIds(List<String> ids) {
         StringTemplate postedDate = Expressions.stringTemplate(
-                "DATE_FORMAT({0}, {1})",
+                DATE_FORMAT_TEMPLATE,
                 notice.noticeDateTime.postedDate,
                 ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
