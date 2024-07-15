@@ -44,6 +44,12 @@ spring:
       embedding:
         options:
           model: text-embedding-3-small
+    vectorstore:
+      chroma:
+        collection-name: ${CHROMA_COLLECTION_NAME}
+        client:
+          key-token: ${CHROMA_API_KEY}
+
 
 springdoc:
   swagger-ui:

@@ -34,14 +34,25 @@ spring:
     url: jdbc:${DB_URL}
     user: ${DB_USER}
     password: ${DB_PASSWORD}
-  thymeleaf:
-    cache: true
-    prefix: classpath:/templates/
-    suffix: .html
-    enabled: true
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
+  ai:
+    openai:
+      api-key: ${AI_API_KEY}
+      chat:
+        options:
+          model: gpt-3.5-turbo
+          temperature: 0.0
+          maxTokens: 300
+      embedding:
+        options:
+          model: text-embedding-3-small
+    vectorstore:
+      chroma:
+        collection-name: ${CHROMA_COLLECTION_NAME}
+        client:
+          key-token: ${CHROMA_API_KEY}
 
 decorator:
   datasource:
