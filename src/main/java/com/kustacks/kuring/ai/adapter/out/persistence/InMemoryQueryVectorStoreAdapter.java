@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Slf4j
-@Profile("local | dev | test")
+@Profile("dev | test")
 @Component
 @RequiredArgsConstructor
 public class InMemoryQueryVectorStoreAdapter implements QueryVectorStorePort {
