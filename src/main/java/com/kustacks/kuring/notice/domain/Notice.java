@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
+
 import java.util.Objects;
 
 @Entity
@@ -26,7 +27,10 @@ public class Notice {
     private String subject;
 
     @Column(name = "important")
-    private Boolean important = false;
+    private Boolean important = Boolean.FALSE;
+
+    @Column(name = "embedded")
+    private Boolean embedded = Boolean.FALSE;
 
     @Embedded
     protected NoticeDateTime noticeDateTime;
@@ -40,8 +44,7 @@ public class Notice {
 
     public Notice(String articleId, String postedDate, String updatedDate,
                   String subject, CategoryName categoryName, Boolean important,
-                  String fullUrl)
-    {
+                  String fullUrl) {
         this.articleId = articleId;
         this.subject = subject;
         this.categoryName = categoryName;
@@ -72,6 +75,14 @@ public class Notice {
 
     public String getUpdatedDate() {
         return this.noticeDateTime.updatedDateStr();
+    }
+
+    public void embeddedSuccess() {
+        this.embedded = Boolean.TRUE;
+    }
+
+    public boolean isEmbedded() {
+        return this.embedded;
     }
 
     @Override
