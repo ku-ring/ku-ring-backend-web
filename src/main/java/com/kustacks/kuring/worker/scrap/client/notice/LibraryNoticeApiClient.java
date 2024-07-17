@@ -45,6 +45,11 @@ public class LibraryNoticeApiClient implements NoticeApiClient<CommonNoticeForma
         return Collections.emptyList();
     }
 
+    @Override
+    public CommonNoticeFormatDto requestSinglePageWithUrl(CategoryName noticeInfo, String url) {
+        throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE);
+    }
+
     private List<LibraryNoticeDto> scrapLibraryNoticeDtos() {
         int offset = 0;
         int max = 20;

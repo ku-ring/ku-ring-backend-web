@@ -59,6 +59,20 @@ public class KuisHomepageNoticeApiClient implements NoticeApiClient<ScrapingResu
         return Collections.emptyList();
     }
 
+    @Override
+    public ScrapingResultDto requestSinglePageWithUrl(KuisHomepageNoticeInfo noticeInfo, String url) {
+        try {
+            Document document = jsoupClient.get(url, LATEST_SCRAP_ALL_TIMEOUT);
+            return new ScrapingResultDto(document, url);
+        } catch (IOException e) {
+            log.info("Notice Text Scrap IOException", e);
+        } catch (NullPointerException | IndexOutOfBoundsException e) {
+            throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE, e);
+        }
+
+        throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE);
+    }
+
     public int getTotalNoticeSize(String url) throws IOException, IndexOutOfBoundsException, NullPointerException {
         Document document = jsoupClient.get(url, LATEST_SCRAP_TIMEOUT);
 

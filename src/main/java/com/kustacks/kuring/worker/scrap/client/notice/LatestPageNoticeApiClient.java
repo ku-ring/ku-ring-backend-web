@@ -59,6 +59,11 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         return Collections.emptyList();
     }
 
+    @Override
+    public ScrapingResultDto requestSinglePageWithUrl(DeptInfo noticeInfo, String url) {
+        throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE);
+    }
+
     public int getTotalNoticeSize(String url) throws IOException, IndexOutOfBoundsException, NullPointerException {
         Document document = jsoupClient.get(url, LATEST_SCRAP_TIMEOUT);
 
