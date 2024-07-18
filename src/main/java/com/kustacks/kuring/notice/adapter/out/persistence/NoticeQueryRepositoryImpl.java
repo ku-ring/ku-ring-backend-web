@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.kustacks.kuring.notice.domain.QDepartmentNotice.departmentNotice;
@@ -76,6 +77,31 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .from(notice)
                 .where(isContainSubject(keywords).or(isContainCategory(keywords)))
                 .orderBy(notice.noticeDateTime.postedDate.desc())
+                .fetch();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<NoticeDto> findNotYetEmbeddingNoticeByDate(CategoryName categoryName, LocalDateTime date) {
+        StringTemplate postedDate = Expressions.stringTemplate(
+                DATE_FORMAT_TEMPLATE,
+                notice.noticeDateTime.postedDate,
+                ConstantImpl.create(DATE_TIME_TEMPLATE)
+        );
+
+        return queryFactory.select(
+                        new QNoticeDto(
+                                notice.articleId,
+                                postedDate,
+                                notice.url.value,
+                                notice.subject,
+                                notice.categoryName.stringValue().toLowerCase(),
+                                notice.important
+                        )
+                ).from(notice)
+                .where(notice.categoryName.eq(categoryName)
+                        .and(notice.embedded.isFalse())
+                        .and(notice.noticeDateTime.postedDate.after(date)))
                 .fetch();
     }
 
@@ -247,7 +273,19 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .set(notice.important, important)
                 .where(
                         notice.categoryName.eq(categoryName)
-                        .and(notice.articleId.in(articleIds))
+                                .and(notice.articleId.in(articleIds))
+                ).execute();
+    }
+
+    @Transactional
+    @Override
+    public void updateNoticeEmbeddingStatus(List<String> articleIds, CategoryName categoryName) {
+        queryFactory
+                .update(notice)
+                .set(notice.embedded, true)
+                .where(
+                        notice.categoryName.eq(categoryName)
+                                .and(notice.articleId.in(articleIds))
                 ).execute();
     }
 

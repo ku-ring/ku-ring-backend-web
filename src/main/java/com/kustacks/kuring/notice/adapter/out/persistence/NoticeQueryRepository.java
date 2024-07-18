@@ -7,6 +7,7 @@ import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.out.dto.BookmarkDto;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 interface NoticeQueryRepository {
@@ -36,4 +37,8 @@ interface NoticeQueryRepository {
     List<BookmarkDto> findAllByBookmarkIds(List<String> ids);
 
     void changeNoticeImportantByArticleId(CategoryName categoryName, List<String> articleIds, boolean important);
+
+    void updateNoticeEmbeddingStatus(List<String> articleIds, CategoryName categoryName);
+
+    List<NoticeDto> findNotYetEmbeddingNoticeByDate(CategoryName categoryName, LocalDateTime date);
 }

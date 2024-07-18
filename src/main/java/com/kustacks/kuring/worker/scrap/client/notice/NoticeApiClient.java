@@ -10,5 +10,5 @@ public interface NoticeApiClient<T, P> {
 
     List<T> requestAll(P p) throws InternalLogicException;
 
-    T requestSinglePageWithUrl(P noticeInfo, String url);
+    T requestSinglePageWithUrl(P p, String url);
 }
