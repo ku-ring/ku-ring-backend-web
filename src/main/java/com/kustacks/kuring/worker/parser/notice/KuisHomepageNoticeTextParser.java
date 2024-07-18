@@ -2,7 +2,10 @@ package com.kustacks.kuring.worker.parser.notice;
 
 import com.kustacks.kuring.notice.domain.CategoryName;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.springframework.stereotype.Component;
 
+@Component
 public class KuisHomepageNoticeTextParser extends NoticeTextParserTemplate {
 
     @Override
@@ -22,6 +25,16 @@ public class KuisHomepageNoticeTextParser extends NoticeTextParserTemplate {
 
     @Override
     protected String extractTextBody(Document document) {
-        return document.selectFirst("div.board_content").text();
+        Element boardContent = document.selectFirst("div.board_content");
+        if(boardContent != null) {
+            return boardContent.text();
+        }
+
+        boardContent = document.selectFirst("div.view-con");
+        if(boardContent != null) {
+            return boardContent.text();
+        }
+
+        throw new IllegalArgumentException("공지의 본문을 찾을 수 없습니다.");
     }
 }
