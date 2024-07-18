@@ -51,6 +51,7 @@ public class Notice {
         this.important = important;
         this.noticeDateTime = new NoticeDateTime(postedDate, updatedDate);
         this.url = new Url(fullUrl);
+        this.embedded = Boolean.FALSE;
     }
 
     public boolean isImportant() {

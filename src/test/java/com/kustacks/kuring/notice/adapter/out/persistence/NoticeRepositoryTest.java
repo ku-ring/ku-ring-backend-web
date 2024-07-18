@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,10 +27,28 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
     private NoticeQueryPort noticeQueryPort;
 
     @Autowired
+    private NoticeRepository noticeRepository;
+
+    @Autowired
     private NoticeCommandPort noticeCommandPort;
 
     @Autowired
     private UserPersistenceAdapter userPersistenceAdapter;
+
+    @DisplayName("jdbc를 사용한 bulk insert 테스트")
+    @Test
+    public void jdbcBulkInsert() {
+        // given
+        noticeRepository.deleteAll();
+        List<Notice> notices = creatNotices(70);
+
+        // when
+        noticeCommandPort.saveAllCategoryNotices(notices);
+
+        // then
+        List<Notice> findNotices = noticeRepository.findAll();
+        assertThat(findNotices).hasSize(70);
+    }
 
     @DisplayName("사용자가 북마크해둔 공지의 ID로 해당 공지들을 찾아올 수 있다")
     @Test
@@ -89,5 +108,14 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
         // then
         List<String> normalArticleIds = noticeQueryPort.findNormalArticleIdsByCategoryName(CategoryName.BACHELOR);
         assertThat(normalArticleIds).containsExactly("1", "2");
+    }
+
+    private List<Notice> creatNotices(int count) {
+        List<Notice> notices = new ArrayList<>();
+        for(int i = 0; i < count; i++) {
+            notices.add(new Notice(String.valueOf(i), "2024-01-19 17:27:05", "2023-04-03 17:27:05",
+                    "notice" + i, CategoryName.BACHELOR, false, "https://www.example.com"));
+        }
+        return notices;
     }
 }
