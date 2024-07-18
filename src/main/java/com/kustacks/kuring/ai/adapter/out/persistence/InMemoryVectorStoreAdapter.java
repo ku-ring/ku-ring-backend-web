@@ -1,6 +1,9 @@
 package com.kustacks.kuring.ai.adapter.out.persistence;
 
+import com.kustacks.kuring.ai.application.port.out.CommandVectorStorePort;
 import com.kustacks.kuring.ai.application.port.out.QueryVectorStorePort;
+import com.kustacks.kuring.notice.domain.CategoryName;
+import com.kustacks.kuring.worker.parser.notice.PageTextDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
@@ -15,7 +18,7 @@ import java.util.stream.Stream;
 @Profile("dev | test")
 @Component
 @RequiredArgsConstructor
-public class InMemoryQueryVectorStoreAdapter implements QueryVectorStorePort {
+public class InMemoryVectorStoreAdapter implements QueryVectorStorePort, CommandVectorStorePort {
 
     @Override
     public List<String> findSimilarityContents(String question) {
@@ -26,6 +29,11 @@ public class InMemoryQueryVectorStoreAdapter implements QueryVectorStorePort {
         return Stream.of(document)
                 .map(Document::getContent)
                 .toList();
+    }
+
+    @Override
+    public void embedding(List<PageTextDto> extractTextResults, CategoryName categoryName) {
+        log.info("[InMemoryQueryVectorStoreAdapter] embedding {}", categoryName);
     }
 
     private Document createDocument(HashMap<String, Object> metadata) {
