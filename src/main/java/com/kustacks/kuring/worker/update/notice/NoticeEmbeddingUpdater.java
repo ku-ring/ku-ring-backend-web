@@ -33,7 +33,7 @@ public class NoticeEmbeddingUpdater {
     /*
     학사, 장학, 취창업, 국제, 학생, 산학, 일반, 공지 embedding
     */
-    @Scheduled(cron = "0 0 21 * * *", zone = "Asia/Seoul") // 매일 오후 9시 embedding 작업 수행
+    @Scheduled(cron = "0 5/20 7-19 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 7:05 ~ 오후 7:55분 사이에 20분마다 업데이트 된다.
     public void update() {
         log.info("========== KUIS Hompage Embedding 시작 ==========");
 
