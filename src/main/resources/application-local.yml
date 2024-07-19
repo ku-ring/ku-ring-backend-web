@@ -46,9 +46,10 @@ spring:
           model: text-embedding-3-small
     vectorstore:
       chroma:
-        collection-name: ${CHROMA_COLLECTION_NAME}
         client:
           key-token: ${CHROMA_API_KEY}
+        store:
+          collection-name: ${CHROMA_COLLECTION_NAME}
 
 
 springdoc:
