@@ -5,6 +5,7 @@ import org.springframework.ai.chroma.ChromaApi;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.reader.TextReader;
+import org.springframework.ai.transformer.splitter.TextSplitter;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.ChromaVectorStore;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
@@ -29,6 +30,11 @@ public class RAGConfiguration {
 
     @Value("vectorstore.json")
     private String vectorStoreName;
+
+    @Bean
+    public TextSplitter tokenTextSplitter() {
+        return new TokenTextSplitter();
+    }
 
     @Profile("test")
     @Bean
