@@ -22,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChromaVectorStoreAdapter implements QueryVectorStorePort, CommandVectorStorePort {
 
-    private static final double SIMILARITY_THRESHOLD = 0.80;
     private static final int TOP_K = 1;
 
     private final ChromaVectorStore chromaVectorStore;
@@ -30,9 +29,7 @@ public class ChromaVectorStoreAdapter implements QueryVectorStorePort, CommandVe
     @Override
     public List<String> findSimilarityContents(String question) {
         return chromaVectorStore.similaritySearch(
-                        SearchRequest.query(question)
-                                .withTopK(TOP_K)
-                                .withSimilarityThreshold(SIMILARITY_THRESHOLD)
+                        SearchRequest.query(question).withTopK(TOP_K)
                 ).stream()
                 .map(Document::getContent)
                 .toList();

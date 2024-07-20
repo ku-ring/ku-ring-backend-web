@@ -11,7 +11,7 @@ import reactor.core.publisher.Flux;
 
 @Slf4j
 @Component
-@Profile("prod")
+@Profile("prod | local")
 @RequiredArgsConstructor
 public class QueryAiModelAdapter implements QueryAiModelPort {
 
