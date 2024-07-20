@@ -7,10 +7,12 @@ import com.kustacks.kuring.worker.parser.notice.PageTextDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.TextReader;
-import org.springframework.ai.transformer.splitter.TextSplitter;
+import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.ChromaVectorStore;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,7 +26,6 @@ public class ChromaVectorStoreAdapter implements QueryVectorStorePort, CommandVe
     private static final int TOP_K = 1;
 
     private final ChromaVectorStore chromaVectorStore;
-    private final TextSplitter TokenTextSplitter;
 
     @Override
     public List<String> findSimilarityContents(String question) {
@@ -39,16 +40,26 @@ public class ChromaVectorStoreAdapter implements QueryVectorStorePort, CommandVe
 
     @Override
     public void embedding(List<PageTextDto> extractTextResults, CategoryName categoryName) {
+        TokenTextSplitter textSplitter = new TokenTextSplitter();
+
         for (PageTextDto textResult : extractTextResults) {
+            if (textResult.text().isBlank()) continue;
+
             List<Document> documents = createDocuments(categoryName, textResult);
-            List<Document> splitDocuments = TokenTextSplitter.apply(documents);
+            List<Document> splitDocuments = textSplitter.apply(documents);
             chromaVectorStore.accept(splitDocuments);
         }
     }
 
     private List<Document> createDocuments(CategoryName categoryName, PageTextDto textResult) {
-        TextReader textReader = new TextReader(textResult.text());
-        textReader.getCustomMetadata().put("filename", textResult.title());
+        Resource resource = new ByteArrayResource(textResult.text().getBytes()) {
+            @Override
+            public String getFilename() {
+                return textResult.title();
+            }
+        };
+
+        TextReader textReader = new TextReader(resource);
         textReader.getCustomMetadata().put("articleId", textResult.articleId());
         textReader.getCustomMetadata().put("category", categoryName.getName());
         return textReader.get();
