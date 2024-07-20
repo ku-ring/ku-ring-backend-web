@@ -10,7 +10,7 @@ public class KuisHomepageNoticeTextParser extends NoticeTextParserTemplate {
 
     @Override
     protected boolean support(CategoryName categoryName) {
-        return !(categoryName == CategoryName.LIBRARY);
+        return categoryName != CategoryName.LIBRARY;
     }
 
     @Override

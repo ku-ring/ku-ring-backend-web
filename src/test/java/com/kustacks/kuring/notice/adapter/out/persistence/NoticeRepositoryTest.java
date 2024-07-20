@@ -40,7 +40,7 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
 
     @DisplayName("jdbc를 사용한 bulk insert 테스트")
     @Test
-    public void jdbcBulkInsert() {
+    void jdbcBulkInsert() {
         // given
         noticeRepository.deleteAll();
         List<Notice> notices = creatNotices(70);
@@ -176,7 +176,7 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
 
     @DisplayName("Embedding 된 공지의 상태를 변경할 수 있다")
     @Test
-    public void updateNoticeEmbeddingStatus() {
+    void updateNoticeEmbeddingStatus() {
         // given
         Notice notice1 = new Notice("1", "2024-03-19 17:27:07", "2023-04-03 17:27:05",
                 "notice1", CategoryName.BACHELOR, false, "https://www.example.com");

@@ -36,7 +36,7 @@ class NoticeTest {
 
     @DisplayName("공지 임베딩 여부 확인 테스트")
     @Test
-    public void notice_embedded() {
+    void notice_embedded() {
         // given
         Notice notice = new Notice("artice_id", "2024-01-19 17:27:05",
                 "2024-01-19 17:27:05", "subject", CategoryName.BACHELOR,
