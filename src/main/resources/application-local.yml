@@ -40,7 +40,7 @@ spring:
         options:
           model: gpt-3.5-turbo
           temperature: 0.0
-          maxTokens: 300
+          maxTokens: 1000
       embedding:
         options:
           model: text-embedding-3-small
