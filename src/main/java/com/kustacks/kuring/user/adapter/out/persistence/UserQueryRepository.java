@@ -11,4 +11,6 @@ interface UserQueryRepository {
     List<FeedbackDto> findAllFeedbackByPageRequest(Pageable pageable);
 
     List<User> findByPageRequest(Pageable pageable);
+
+    void resetAllUserQuestionCount();
 }
