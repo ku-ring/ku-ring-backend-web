@@ -43,6 +43,7 @@ class AiAcceptanceTest extends IntegrationTestSupport {
         String question = "교내,외 장학금 및 학자금 대출 관련 전화번호들을 안내를 해줘";
         사용자_질문_요청_REST(question, USER_FCM_TOKEN);
         사용자_질문_요청_REST(question, USER_FCM_TOKEN);
+        사용자_질문_요청_REST(question, USER_FCM_TOKEN);
 
         // when
         var 모델_응답 = 사용자_질문_요청_REST(question, USER_FCM_TOKEN);
