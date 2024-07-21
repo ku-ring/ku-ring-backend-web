@@ -103,7 +103,7 @@ public class KuisHomepageNoticeScraperTemplate {
                 PageTextDto parsedText = noticeInfo.parseText(result.getDocument());
                 parsedTexts.add(parsedText);
             } catch (InternalLogicException e) {
-                log.error("Exception extracting url: {}", result.getViewUrl(), e);
+                log.warn("Exception extracting url: {}", result.getViewUrl(), e);
             }
         }
 
