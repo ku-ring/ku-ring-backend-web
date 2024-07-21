@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChromaVectorStoreAdapter implements QueryVectorStorePort, CommandVectorStorePort {
 
-    private static final int TOP_K = 1;
+    private static final int TOP_K = 2;
 
     private final ChromaVectorStore chromaVectorStore;
 
