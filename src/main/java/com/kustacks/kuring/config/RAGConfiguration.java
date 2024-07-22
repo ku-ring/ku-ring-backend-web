@@ -30,14 +30,14 @@ public class RAGConfiguration {
     @Value("vectorstore.json")
     private String vectorStoreName;
 
-    @Profile("test")
+    @Profile("dev | test")
     @Bean
     public ChromaApi chromaApi(RestTemplate restTemplate) {
         String chromaUrl = "http://127.0.0.1:8000";
         return new ChromaApi(chromaUrl, restTemplate);
     }
 
-    @Profile("test")
+    @Profile("dev | test")
     @Bean
     public ChromaVectorStore chromaVectorStore(EmbeddingModel embeddingModel, ChromaApi chromaApi) {
         return new ChromaVectorStore(embeddingModel, chromaApi, false);
