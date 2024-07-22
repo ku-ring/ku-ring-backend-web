@@ -14,4 +14,5 @@ public interface NoticeCommandPort {
     void deleteAllByIdsAndCategory(CategoryName categoryName, List<String> articleIds);
     void deleteAllByIdsAndDepartment(DepartmentName departmentName, List<String> articleIds);
     void changeNoticeImportantToFalseByArticleId(CategoryName categoryName, List<String> articleIds);
+    void updateNoticeEmbeddingStatus(CategoryName categoryName, List<String> articleIds);
 }

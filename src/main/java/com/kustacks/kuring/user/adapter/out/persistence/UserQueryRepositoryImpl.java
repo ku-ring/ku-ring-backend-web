@@ -6,11 +6,13 @@ import com.kustacks.kuring.user.domain.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static com.kustacks.kuring.user.domain.QFeedback.feedback;
 import static com.kustacks.kuring.user.domain.QUser.user;
+import static com.kustacks.kuring.user.domain.User.MONTHLY_QUESTION_COUNT;
 
 @RequiredArgsConstructor
 class UserQueryRepositoryImpl implements UserQueryRepository {
@@ -34,5 +36,13 @@ class UserQueryRepositoryImpl implements UserQueryRepository {
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+    }
+
+    @Transactional
+    @Override
+    public void resetAllUserQuestionCount() {
+        queryFactory.update(user)
+                .set(user.questionCount, MONTHLY_QUESTION_COUNT)
+                .execute();
     }
 }

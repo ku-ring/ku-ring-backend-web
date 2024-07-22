@@ -79,6 +79,11 @@ public class RealEstateNoticeApiClient implements NoticeApiClient<ScrapingResult
         return reqResults;
     }
 
+    @Override
+    public ScrapingResultDto requestSinglePageWithUrl(DeptInfo noticeInfo, String url) {
+        throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE);
+    }
+
     private int getTotalPageNum(Document document) {
         Element lastPageNumElement = document.select(".paging > ul > li").last();
         Element lastPageBtnElement = lastPageNumElement.getElementsByTag("a").get(1);

@@ -13,6 +13,7 @@ import com.kustacks.kuring.user.application.port.out.dto.BookmarkDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @PersistenceAdapter
@@ -48,6 +49,11 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
     }
 
     @Override
+    public void updateNoticeEmbeddingStatus(CategoryName categoryName, List<String> articleIds) {
+        this.noticeRepository.updateNoticeEmbeddingStatus(articleIds, categoryName);
+    }
+
+    @Override
     public List<NoticeDto> findNoticesByCategoryWithOffset(CategoryName categoryName, Pageable pageable) {
         return this.noticeRepository.findNoticesByCategoryWithOffset(categoryName, pageable);
     }
@@ -55,6 +61,11 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
     @Override
     public List<NoticeSearchDto> findAllByKeywords(List<String> containedNames) {
         return this.noticeRepository.findAllByKeywords(containedNames);
+    }
+
+    @Override
+    public List<NoticeDto> findNotYetEmbeddingNotice(CategoryName categoryName, LocalDateTime date) {
+        return this.noticeRepository.findNotYetEmbeddingNoticeByDate(categoryName, date);
     }
 
     @Override

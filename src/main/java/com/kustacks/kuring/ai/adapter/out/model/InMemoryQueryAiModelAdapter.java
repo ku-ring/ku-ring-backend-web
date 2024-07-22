@@ -12,7 +12,7 @@ import reactor.core.publisher.Flux;
 
 @Slf4j
 @Component
-@Profile("dev | local | test")
+@Profile("dev | test")
 @RequiredArgsConstructor
 public class InMemoryQueryAiModelAdapter implements QueryAiModelPort {
 

@@ -46,6 +46,7 @@ dependencies {
 
     // AI
     implementation "org.springframework.ai:spring-ai-openai-spring-boot-starter:${springAiVersion}"
+    implementation "org.springframework.ai:spring-ai-chroma-store-spring-boot-starter:${springAiVersion}"
 
     // DB
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -102,9 +103,10 @@ dependencies {
 
     // Test Container
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
-    testImplementation 'org.testcontainers:testcontainers:1.19.3'
-    testImplementation 'org.testcontainers:junit-jupiter:1.19.3'
-    testImplementation 'org.testcontainers:mariadb:1.19.3'
+    testImplementation 'org.testcontainers:testcontainers:1.19.8'
+    testImplementation 'org.testcontainers:junit-jupiter:1.19.8'
+    testImplementation 'org.testcontainers:mariadb:1.19.8'
+    testImplementation 'org.testcontainers:chromadb:1.19.8'
 }
 
 dependencyManagement {
