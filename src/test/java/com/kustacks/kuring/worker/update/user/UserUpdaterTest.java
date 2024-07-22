@@ -28,7 +28,6 @@ class UserUpdaterTest extends IntegrationTestSupport {
     void questionCountReset() {
         // given
         User savedUser = userPersistenceAdapter.findByToken(USER_FCM_TOKEN).get();
-        savedUser.decreaseQuestionCount(); // 3 -> 2
         savedUser.decreaseQuestionCount(); // 2 -> 1
         savedUser.decreaseQuestionCount(); // 1 -> 0
         em.flush();

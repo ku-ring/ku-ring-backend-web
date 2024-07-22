@@ -21,7 +21,7 @@ import java.util.Set;
 @SQLRestriction("deleted = false")
 public class User implements Serializable {
 
-    public static final int MONTHLY_QUESTION_COUNT = 3;
+    public static final int MONTHLY_QUESTION_COUNT = 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

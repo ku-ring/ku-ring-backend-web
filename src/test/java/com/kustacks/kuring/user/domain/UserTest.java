@@ -135,7 +135,7 @@ class UserTest {
         int leftCount = user.decreaseQuestionCount();
 
         // then
-        assertThat(leftCount).isEqualTo(2);
+        assertThat(leftCount).isEqualTo(1);
     }
 
     @DisplayName("질문 카운트가 0보다 큰 경우에만 질문이 가능하다")
@@ -143,7 +143,6 @@ class UserTest {
     void is_enough_question_count() {
         // given
         User newUser = new User("token_one");
-        newUser.decreaseQuestionCount(); // after 2
         newUser.decreaseQuestionCount(); // after 1
         newUser.decreaseQuestionCount(); // after 0
 
