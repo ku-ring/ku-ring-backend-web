@@ -37,7 +37,7 @@ public class DepartmentNoticeUpdater {
     private final FirebaseNotificationService notificationService;
     private final NoticeUpdateSupport noticeUpdateSupport;
 
-    @Scheduled(cron = "0 5/10 8-19 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 8:10 ~ 오후 7:55분 사이에 10분마다 업데이트 된다.
+    @Scheduled(cron = "0 15/20 7-19 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 7:15 ~ 오후 7:55분 사이에 20분마다 업데이트 된다.
     public void update() {
         log.info("******** 학과별 최신 공지 업데이트 시작 ********");
 
@@ -54,7 +54,7 @@ public class DepartmentNoticeUpdater {
         }
     }
 
-    @Scheduled(cron = "0 0 2 * * *", zone = "Asia/Seoul") // 전체 업데이트는 매일 오전 2시에 한다.
+    @Scheduled(cron = "0 0 23 * * 5", zone = "Asia/Seoul") // 전체 업데이트는 매주 금요일 오후 11시에 한다.
     public void updateAll() {
         log.info("******** 학과별 전체 공지 업데이트 시작 ********");
 

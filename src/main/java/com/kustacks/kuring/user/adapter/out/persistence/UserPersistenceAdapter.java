@@ -57,4 +57,9 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     public void deleteAll(List<User> allInvalidUsers) {
         userRepository.deleteAll(allInvalidUsers);
     }
+
+    @Override
+    public void resetAllUserQuestionCount() {
+        userRepository.resetAllUserQuestionCount();
+    }
 }

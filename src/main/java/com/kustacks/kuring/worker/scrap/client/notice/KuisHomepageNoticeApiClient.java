@@ -59,12 +59,26 @@ public class KuisHomepageNoticeApiClient implements NoticeApiClient<ScrapingResu
         return Collections.emptyList();
     }
 
+    @Override
+    public ScrapingResultDto requestSinglePageWithUrl(KuisHomepageNoticeInfo noticeInfo, String url) {
+        try {
+            Document document = jsoupClient.get(url, LATEST_SCRAP_TIMEOUT);
+            return new ScrapingResultDto(document, url);
+        } catch (IOException e) {
+            log.info("Notice Text Scrap IOException", e);
+        } catch (NullPointerException | IndexOutOfBoundsException e) {
+            throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE, e);
+        }
+
+        throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE);
+    }
+
     public int getTotalNoticeSize(String url) throws IOException, IndexOutOfBoundsException, NullPointerException {
         Document document = jsoupClient.get(url, LATEST_SCRAP_TIMEOUT);
 
         Element totalNoticeSizeElement = document.selectFirst(".util-search strong");
 
-        if(totalNoticeSizeElement == null) { // 총 공지 개수가 없는 경우 650개로 가정
+        if (totalNoticeSizeElement == null) { // 총 공지 개수가 없는 경우 650개로 가정
             return TOTAL_KUIS_NOTICES_COUNT;
         }
 

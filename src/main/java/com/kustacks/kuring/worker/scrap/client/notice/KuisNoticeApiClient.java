@@ -58,6 +58,11 @@ public class KuisNoticeApiClient implements NoticeApiClient<CommonNoticeFormatDt
         return Collections.emptyList();
     }
 
+    @Override
+    public CommonNoticeFormatDto requestSinglePageWithUrl(KuisNoticeInfo noticeInfo, String url) {
+        throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE);
+    }
+
     private HttpEntity<String> kuisNoticeRequests(KuisNoticeInfo kuisNoticeRequestBody, HttpHeaders noticeRequestHeader) {
         String encodedNoticeRequestBody = KuisInfo.toUrlEncodedString(kuisNoticeRequestBody);
         return new HttpEntity<>(encodedNoticeRequestBody, noticeRequestHeader);

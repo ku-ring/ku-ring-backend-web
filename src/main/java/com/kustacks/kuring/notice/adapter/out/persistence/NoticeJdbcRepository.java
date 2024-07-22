@@ -21,7 +21,7 @@ class NoticeJdbcRepository {
 
     @Transactional
     public void saveAllCategoryNotices(List<Notice> notices) {
-        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, posted_dt, subject, updated_dt, url, dtype) values (?, ?, ?, ?, ?, ?, ?, 'Notice')",
+        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, dtype) values (?, ?, ?, ?, ?, ?, ?, ?, 'Notice')",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -29,10 +29,11 @@ class NoticeJdbcRepository {
                         ps.setString(1, notice.getArticleId());
                         ps.setString(2, notice.getCategoryName().toUpperCase());
                         ps.setInt(3, notice.isImportant() ? 1 : 0);
-                        ps.setString(4, notice.getPostedDate());
-                        ps.setString(5, notice.getSubject());
-                        ps.setString(6, notice.getUpdatedDate());
-                        ps.setString(7, notice.getUrl());
+                        ps.setInt(4, notice.isEmbedded() ? 1 : 0);
+                        ps.setString(5, notice.getPostedDate());
+                        ps.setString(6, notice.getSubject());
+                        ps.setString(7, notice.getUpdatedDate());
+                        ps.setString(8, notice.getUrl());
                     }
 
                     @Override
@@ -44,7 +45,7 @@ class NoticeJdbcRepository {
 
     @Transactional
     public void saveAllDepartmentNotices(List<DepartmentNotice> departmentNotices) {
-        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, posted_dt, subject, updated_dt, url, department_name, dtype) values (?, ?, ?, ?, ?, ?, ?, ?, 'DepartmentNotice')",
+        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, department_name, dtype) values (?, ?, ?, ?, ?, ?, ?, ?, ?, 'DepartmentNotice')",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -52,11 +53,12 @@ class NoticeJdbcRepository {
                         ps.setString(1, departmentNotice.getArticleId());
                         ps.setString(2, departmentNotice.getCategoryName().toUpperCase());
                         ps.setInt(3, departmentNotice.isImportant() ? 1 : 0);
-                        ps.setString(4, departmentNotice.getPostedDate());
-                        ps.setString(5, departmentNotice.getSubject());
-                        ps.setString(6, departmentNotice.getUpdatedDate());
-                        ps.setString(7, departmentNotice.getUrl());
-                        ps.setString(8, DepartmentName.fromName(departmentNotice.getDepartmentName()).name());
+                        ps.setInt(4, departmentNotice.isEmbedded() ? 1 : 0);
+                        ps.setString(5, departmentNotice.getPostedDate());
+                        ps.setString(6, departmentNotice.getSubject());
+                        ps.setString(7, departmentNotice.getUpdatedDate());
+                        ps.setString(8, departmentNotice.getUrl());
+                        ps.setString(9, DepartmentName.fromName(departmentNotice.getDepartmentName()).name());
                     }
 
                     @Override

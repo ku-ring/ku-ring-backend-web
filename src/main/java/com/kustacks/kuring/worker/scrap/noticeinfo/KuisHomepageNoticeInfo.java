@@ -2,6 +2,8 @@ package com.kustacks.kuring.worker.scrap.noticeinfo;
 
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.worker.dto.ScrapingResultDto;
+import com.kustacks.kuring.worker.parser.notice.NoticeTextParserTemplate;
+import com.kustacks.kuring.worker.parser.notice.PageTextDto;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.KuisHomepageNoticeProperties;
 import com.kustacks.kuring.worker.parser.notice.NoticeHtmlParserTemplate;
@@ -18,6 +20,7 @@ public class KuisHomepageNoticeInfo {
     protected NoticeApiClient<ScrapingResultDto, KuisHomepageNoticeInfo> noticeApiClient;
     protected KuisHomepageNoticeProperties kuisHomepageNoticeProperties;
     protected NoticeHtmlParserTemplate htmlParser;
+    protected NoticeTextParserTemplate textParser;
     protected CategoryName categoryName;
     protected String category = "konkuk";
     protected Integer siteId;
@@ -30,8 +33,16 @@ public class KuisHomepageNoticeInfo {
         return noticeApiClient.requestAll(this);
     }
 
+    public ScrapingResultDto scrapSinglePageHtml(String url) {
+        return noticeApiClient.requestSinglePageWithUrl(this, url);
+    }
+
     public RowsDto parse(Document document) {
         return htmlParser.parse(document);
+    }
+
+    public PageTextDto parseText(Document document) {
+        return textParser.parse(document);
     }
 
     public CategoryName getCategoryName() {

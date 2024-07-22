@@ -33,8 +33,8 @@ public class RAGQueryService implements RAGQueryUseCase {
 
     @Override
     public Flux<String> askAiModel(String question, String id) {
-        Prompt completePrompt = buildCompletePrompt(question);
         ragEventPort.userDecreaseQuestionCountEvent(id);
+        Prompt completePrompt = buildCompletePrompt(question);
         return ragChatModel.call(completePrompt);
     }
 
@@ -45,7 +45,7 @@ public class RAGQueryService implements RAGQueryUseCase {
 
     private Prompt buildCompletePrompt(String question) {
         List<String> similarDocuments = vectorStorePort.findSimilarityContents(question);
-        if(similarDocuments.isEmpty()) {
+        if (similarDocuments.isEmpty()) {
             throw new InvalidStateException(ErrorCode.AI_SIMILAR_DOCUMENTS_NOT_FOUND);
         }
 

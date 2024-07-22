@@ -5,21 +5,24 @@ import com.kustacks.kuring.auth.dto.UserRegisterRequest;
 import com.kustacks.kuring.auth.exception.RegisterException;
 import com.kustacks.kuring.auth.handler.AuthenticationFailureHandler;
 import com.kustacks.kuring.auth.handler.AuthenticationSuccessHandler;
+import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.message.application.port.in.dto.UserSubscribeCommand;
-import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.domain.User;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.servlet.HandlerInterceptor;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.web.servlet.HandlerInterceptor;
+
 import java.io.IOException;
 import java.util.stream.Collectors;
 
 import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ALL_DEVICE_SUBSCRIBED_TOPIC;
 
+@Slf4j
 @RequiredArgsConstructor
 public class UserRegisterNonChainingFilter implements HandlerInterceptor {
 
@@ -35,7 +38,7 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         try {
-            if(request.getMethod().equals(REGISTER_HTTP_METHOD)) {
+            if (request.getMethod().equals(REGISTER_HTTP_METHOD)) {
                 String userFcmToken = convert(request);
                 register(userFcmToken);
                 afterAuthentication(request, response);
@@ -50,7 +53,12 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
     }
 
     private void register(String userFcmToken) {
-        userCommandPort.save(new User(userFcmToken));
+        try {
+            userCommandPort.save(new User(userFcmToken));
+        } catch (DuplicateKeyException e) { // 이미 등록된 사용자에 대한 처리는 필요없다
+            log.warn("User already exists: {}", userFcmToken, e);
+        }
+
         UserSubscribeCommand command =
                 new UserSubscribeCommand(
                         userFcmToken,
