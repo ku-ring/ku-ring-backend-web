@@ -11,9 +11,10 @@ public abstract class NoticeTextParserTemplate {
         try {
             String title = extractTitle(document);
             String articleId = extractArticleId(document);
+            String date = extractDate(document);
             String textBody = extractTextBody(document);
 
-            return new PageTextDto(title, articleId, textBody);
+            return new PageTextDto(title, articleId, date, textBody);
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE, e);
         }
@@ -24,6 +25,8 @@ public abstract class NoticeTextParserTemplate {
     protected abstract String extractTitle(Document document);
 
     protected abstract String extractArticleId(Document document);
+
+    protected abstract String extractDate(Document document);
 
     protected abstract String extractTextBody(Document document);
 }
