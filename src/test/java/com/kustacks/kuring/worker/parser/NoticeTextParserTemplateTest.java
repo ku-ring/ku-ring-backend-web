@@ -1,6 +1,8 @@
-package com.kustacks.kuring.worker.parser.notice;
+package com.kustacks.kuring.worker.parser;
 
 import com.kustacks.kuring.support.TestFileLoader;
+import com.kustacks.kuring.worker.parser.notice.KuisHomepageNoticeTextParser;
+import com.kustacks.kuring.worker.parser.notice.PageTextDto;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +23,7 @@ class NoticeTextParserTemplateTest {
     @ParameterizedTest
     @MethodSource("noticeTextInputProvider")
     void NoticeTextParser(
-            String path, String articleId, String title, List<String> textBody
+            String path, String articleId, String title, String date, List<String> textBody
     ) throws IOException {
         // given
         Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile(path));
@@ -33,6 +35,7 @@ class NoticeTextParserTemplateTest {
         assertAll(
                 () -> assertThat(results.articleId()).isEqualTo(articleId),
                 () -> assertThat(results.title()).isEqualTo(title),
+                () -> assertThat(results.date()).isEqualTo(date),
                 () -> assertThat(results.text()).contains(textBody)
         );
     }
@@ -40,11 +43,11 @@ class NoticeTextParserTemplateTest {
     private static Stream<Arguments> noticeTextInputProvider() {
         return Stream.of(
                 Arguments.of("src/test/resources/notice/bbs-article-2-2024.html",
-                        "1129848", "2024학년도 2학기 다·부·연계·융합전공 이수 및 포기 신청 안내",
+                        "1129848", "2024학년도 2학기 다·부·연계·융합전공 이수 및 포기 신청 안내", "2024.06.18",
                         List.of("2024학년도 2학기 다·부·연계·융합전공 이수 신청 안내", "문의사항: 학사팀 02-450-3192")
                 ),
                 Arguments.of("src/test/resources/notice/bbs-article-2024.html",
-                        "1117110", "2024년도 대학생 청소년교육지원 장학사업 멘토모집 안내",
+                        "1117110", "2024년도 대학생 청소년교육지원 장학사업 멘토모집 안내", "2024.03.11",
                         List.of("1. 멘토 신청기간: 2024. 3. 18. (월) ~ 2023. 3. 25. (월)",
                                 "2. 모집유형: 나눔지기(멘토) 발굴형",
                                 "3. 신청방법: 기관 협의 완료 후 한국장학재단 사이트에서 신청",

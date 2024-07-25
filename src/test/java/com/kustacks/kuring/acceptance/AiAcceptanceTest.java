@@ -51,5 +51,23 @@ class AiAcceptanceTest extends IntegrationTestSupport {
         // then
         assertThat(모델_응답.statusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS.value());
     }
+
+    /**
+     * Given : 사용자의 질문과 유사한 정보가 없다
+     * When : AI에게 질문을 한다
+     * Then : 질문 토큰이 부족하다는 메시지를 반환한다
+     */
+    @DisplayName("[v2] 유사한 정보가 없는 경우 AI에게 질문을 할 수 없다")
+    @Test
+    void ask_to_open_ai_no_info() {
+        // given
+        String question = "잘못된 질문";
+
+        // when
+        var 모델_응답 = 사용자_질문_요청_REST(question, USER_FCM_TOKEN);
+
+        // then
+        assertThat(모델_응답.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
 }
 

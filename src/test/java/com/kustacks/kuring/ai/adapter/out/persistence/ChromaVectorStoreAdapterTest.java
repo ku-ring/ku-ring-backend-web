@@ -53,7 +53,7 @@ class ChromaVectorStoreAdapterTest {
                 "※ 서류전형 합격자는 채용 인원의 5배수 이내로 하며, 면접 일정·장소 등은 서류전형 합격자에 한해 개별 통보 5. 제출 서류 가. " +
                 "원서 접수 기간에 제출하는 서류 ◦ 첨부된 양식의 입사지원서 1부 ◦ 첨부된 양식의 개인정보 수집 및 이용 동의서 1부 ";
 
-        PageTextDto pageTextDto = new PageTextDto("건국대학교 산학협력단 2024년 하반기 KOICA ODA 영프로페셔널(YP) 채용 공고", "articeId", text);
+        PageTextDto pageTextDto = new PageTextDto("건국대학교 산학협력단 2024년 하반기 KOICA ODA 영프로페셔널(YP) 채용 공고", "articeId", "2024.03.11", text);
 
         // when
         vectorStoreAdapter.embedding(List.of(pageTextDto), CategoryName.INDUSTRY_UNIVERSITY);
