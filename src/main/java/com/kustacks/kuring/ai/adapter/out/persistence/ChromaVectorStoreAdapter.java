@@ -58,6 +58,7 @@ public class ChromaVectorStoreAdapter implements QueryVectorStorePort, CommandVe
 
         TextReader textReader = new TextReader(resource);
         textReader.getCustomMetadata().put("articleId", textResult.articleId());
+        textReader.getCustomMetadata().put("date", textResult.date().replace('.', '-'));
         textReader.getCustomMetadata().put("category", categoryName.getName());
         return textReader.get();
     }
