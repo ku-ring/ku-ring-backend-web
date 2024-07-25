@@ -24,14 +24,20 @@ public class KuisHomepageNoticeTextParser extends NoticeTextParserTemplate {
     }
 
     @Override
+    protected String extractDate(Document document) {
+        // 날짜가 2024.06.18와 같이 추출 된다, 이후 로직에서 2024-06-18 와 같이 가공이 필요하다
+        return document.selectFirst("div.view-util > dl.write dd").text().trim();
+    }
+
+    @Override
     protected String extractTextBody(Document document) {
         Element boardContent = document.selectFirst("div.board_content");
-        if(boardContent != null) {
+        if (boardContent != null) {
             return boardContent.text();
         }
 
         boardContent = document.selectFirst("div.view-con");
-        if(boardContent != null) {
+        if (boardContent != null) {
             return boardContent.text();
         }
 

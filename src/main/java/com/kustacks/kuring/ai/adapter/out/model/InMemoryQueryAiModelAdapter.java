@@ -1,12 +1,12 @@
 package com.kustacks.kuring.ai.adapter.out.model;
 
 import com.kustacks.kuring.ai.application.port.out.QueryAiModelPort;
+import com.kustacks.kuring.common.exception.InvalidStateException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -15,9 +15,6 @@ import reactor.core.publisher.Flux;
 @Profile("dev | test")
 @RequiredArgsConstructor
 public class InMemoryQueryAiModelAdapter implements QueryAiModelPort {
-
-    @Value("classpath:/ai/docs/ku-uni-register.txt")
-    private Resource kuUniRegisterInfo;
 
     @Override
     public Flux<String> call(Prompt prompt) {
@@ -29,6 +26,10 @@ public class InMemoryQueryAiModelAdapter implements QueryAiModelPort {
                     "는", " ", "0", "2", "-", "4", "5", "0", "-", "3", "9", "6", "7", "로", " ", "하", "시",
                     "면", " ", "됩", "니", "다", "."
             );
+        }
+
+        if (prompt.getContents().contains("잘못된 질문")) {
+            throw new InvalidStateException(ErrorCode.AI_SIMILAR_DOCUMENTS_NOT_FOUND);
         }
 
         return Flux.just("미", "리", " ", "준", "비", "된", " ",
