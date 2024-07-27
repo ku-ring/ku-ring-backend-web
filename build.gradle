@@ -107,6 +107,7 @@ dependencies {
     testImplementation 'org.testcontainers:junit-jupiter:1.19.8'
     testImplementation 'org.testcontainers:mariadb:1.19.8'
     testImplementation 'org.testcontainers:chromadb:1.19.8'
+    testImplementation 'io.projectreactor:reactor-test'
 }
 
 dependencyManagement {

@@ -1,16 +1,25 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.support.IntegrationTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import static com.kustacks.kuring.acceptance.AiStep.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.kustacks.kuring.acceptance.AiStep.모델_응답_확인;
+import static com.kustacks.kuring.acceptance.AiStep.사용자_질문_요청;
 
 @DisplayName("인수 : 인공지능")
 class AiAcceptanceTest extends IntegrationTestSupport {
+
+    WebTestClient client;
+
+    @Override
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+        client = WebTestClient.bindToServer().baseUrl("http://localhost:" + port).build();
+    }
 
     /**
      * Given : 쿠링앱이 실행중이다
@@ -21,14 +30,18 @@ class AiAcceptanceTest extends IntegrationTestSupport {
     @Test
     void ask_to_open_ai() {
         // given
-        WebTestClient client = WebTestClient.bindToServer().baseUrl("http://localhost:" + port).build();
         String question = "교내,외 장학금 및 학자금 대출 관련 전화번호들을 안내를 해줘";
 
         // when
         var 모델_응답 = 사용자_질문_요청(client, question, USER_FCM_TOKEN);
 
         // then
-        모델_응답_검증(모델_응답, HttpStatus.OK.value());
+        모델_응답_확인(모델_응답, "학", "생", "복", "지", "처", "장", "학", "복", "지", "팀", "의",
+                "전", "화", "번", "호", "는", "0", "2", "-", "4", "5", "0", "-", "3", "2", "1",
+                "1", "~", "2", "이", "며", ",", "건", "국", "사", "랑", "/", "장", "학", "사", "정",
+                "관", "장", "학", "/", "기", "금", "장", "학", "과", "관", "련", "된", "문", "의",
+                "는", "0", "2", "-", "4", "5", "0", "-", "3", "9", "6", "7", "로", "하", "시",
+                "면", "됩", "니", "다", ".");
     }
 
     /**
@@ -41,15 +54,14 @@ class AiAcceptanceTest extends IntegrationTestSupport {
     void ask_to_open_ai_overflow_count() {
         // given
         String question = "교내,외 장학금 및 학자금 대출 관련 전화번호들을 안내를 해줘";
-        사용자_질문_요청_REST(question, USER_FCM_TOKEN);
-        사용자_질문_요청_REST(question, USER_FCM_TOKEN);
-        사용자_질문_요청_REST(question, USER_FCM_TOKEN);
+        사용자_질문_요청(client, question, USER_FCM_TOKEN);
+        사용자_질문_요청(client, question, USER_FCM_TOKEN);
 
         // when
-        var 모델_응답 = 사용자_질문_요청_REST(question, USER_FCM_TOKEN);
+        var 모델_응답 = 사용자_질문_요청(client, question, USER_FCM_TOKEN);
 
         // then
-        assertThat(모델_응답.statusCode()).isEqualTo(HttpStatus.TOO_MANY_REQUESTS.value());
+        모델_응답_확인(모델_응답, "남", "은", "질", "문", "횟", "수", "가", "부", "족", "합", "니", "다", ".");
     }
 
     /**
@@ -64,10 +76,11 @@ class AiAcceptanceTest extends IntegrationTestSupport {
         String question = "잘못된 질문";
 
         // when
-        var 모델_응답 = 사용자_질문_요청_REST(question, USER_FCM_TOKEN);
+        var 모델_응답 = 사용자_질문_요청(client, question, USER_FCM_TOKEN);
 
         // then
-        assertThat(모델_응답.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        모델_응답_확인(모델_응답, "죄", "송", "합", "니", "다", ",", "관", "련", "된", "내",
+                "용", "에", "대", "하", "여", "알", "지", "못", "합", "니", "다", ".");
     }
 }
 
