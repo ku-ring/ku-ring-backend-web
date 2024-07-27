@@ -10,6 +10,7 @@ import org.springframework.ai.document.Document;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Stream;
@@ -22,6 +23,8 @@ public class InMemoryVectorStoreAdapter implements QueryVectorStorePort, Command
 
     @Override
     public List<String> findSimilarityContents(String question) {
+        if(question.equals("잘못된 질문")) return Collections.emptyList();
+
         HashMap<String, Object> metadata = createMetaData();
 
         Document document = createDocument(metadata);
