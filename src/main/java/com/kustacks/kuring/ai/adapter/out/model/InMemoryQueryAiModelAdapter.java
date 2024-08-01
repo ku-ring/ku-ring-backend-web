@@ -1,8 +1,6 @@
 package com.kustacks.kuring.ai.adapter.out.model;
 
 import com.kustacks.kuring.ai.application.port.out.QueryAiModelPort;
-import com.kustacks.kuring.common.exception.InvalidStateException;
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -26,10 +24,6 @@ public class InMemoryQueryAiModelAdapter implements QueryAiModelPort {
                     "는", " ", "0", "2", "-", "4", "5", "0", "-", "3", "9", "6", "7", "로", " ", "하", "시",
                     "면", " ", "됩", "니", "다", "."
             );
-        }
-
-        if (prompt.getContents().contains("잘못된 질문")) {
-            throw new InvalidStateException(ErrorCode.AI_SIMILAR_DOCUMENTS_NOT_FOUND);
         }
 
         return Flux.just("미", "리", " ", "준", "비", "된", " ",
