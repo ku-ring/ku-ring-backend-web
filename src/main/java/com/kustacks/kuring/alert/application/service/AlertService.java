@@ -3,8 +3,8 @@ package com.kustacks.kuring.alert.application.service;
 import com.kustacks.kuring.alert.application.port.in.AlertCommandUseCase;
 import com.kustacks.kuring.alert.application.port.in.dto.AlertCreateCommand;
 import com.kustacks.kuring.alert.application.port.out.AlertCommandPort;
-import com.kustacks.kuring.alert.application.port.out.AlertEventPort;
 import com.kustacks.kuring.alert.application.port.out.AlertQueryPort;
+import com.kustacks.kuring.alert.application.port.out.MessageEventPort;
 import com.kustacks.kuring.alert.application.port.out.dto.AlertDto;
 import com.kustacks.kuring.alert.domain.Alert;
 import com.kustacks.kuring.alert.domain.AlertStatus;
@@ -33,7 +33,7 @@ public class AlertService implements AlertCommandUseCase {
     private final ConcurrentMap<Long, ScheduledFuture<?>> taskList = new ConcurrentHashMap<>();
     private final AlertCommandPort alertCommandPort;
     private final AlertQueryPort alertQueryPort;
-    private final AlertEventPort alertEventPort;
+    private final MessageEventPort messageEventPort;
     private final TaskScheduler taskScheduler;
     private final Clock clock;
 
@@ -82,7 +82,7 @@ public class AlertService implements AlertCommandUseCase {
 
     private void send(Long id, Alert entryAlert) {
         log.info("[EntryAlert 전송 시작] entryAlertId: {}", id);
-        alertEventPort.sendAlertEvent(entryAlert.getTitle(), entryAlert.getContent());
+        messageEventPort.sendMessageEvent(entryAlert.getTitle(), entryAlert.getContent());
         entryAlert.changeCompleted();
         taskList.remove(id);
     }
