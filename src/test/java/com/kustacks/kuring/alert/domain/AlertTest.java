@@ -28,7 +28,7 @@ class AlertTest {
     @Test
     void creat_alert() {
         // when, then
-        assertThatCode(() -> Alert.create("title", "contents", wakeTime, now))
+        assertThatCode(() -> Alert.createIfValidAlertTime("title", "contents", wakeTime, now))
                 .doesNotThrowAnyException();
     }
 
@@ -36,7 +36,7 @@ class AlertTest {
     @Test
     void exception_alert() {
         // when
-        ThrowableAssert.ThrowingCallable actual = () -> Alert.create("title", "contents", now, now);
+        ThrowableAssert.ThrowingCallable actual = () -> Alert.createIfValidAlertTime("title", "contents", now, now);
 
         // then
         assertThatThrownBy(actual)
@@ -47,24 +47,24 @@ class AlertTest {
     @Test
     void change_alert_status() {
         // given
-        Alert alert = Alert.create("title", "contents", wakeTime, now);
+        Alert alert = Alert.createIfValidAlertTime("title", "contents", wakeTime, now);
 
         // when
-        alert.changeRequested();
+        alert.changeCompleted();
 
         // then
-        assertThat(alert.getStatus()).isEqualTo(AlertStatus.REQUESTED);
+        assertThat(alert.getStatus()).isEqualTo(AlertStatus.COMPLETED);
     }
 
     @DisplayName("이미 requested 상태의 Alert 상태를 변경하려 하는 경우 예외가 발생한다")
     @Test
     void change_alert_status_exception() {
         // given
-        Alert alert = Alert.create("title", "contents", wakeTime, now);
-        alert.changeRequested();
+        Alert alert = Alert.createIfValidAlertTime("title", "contents", wakeTime, now);
+        alert.changeCompleted();
 
         // when
-        ThrowableAssert.ThrowingCallable actual = () -> alert.changeRequested();
+        ThrowableAssert.ThrowingCallable actual = () -> alert.changeCompleted();
 
         // then
         assertThatThrownBy(actual)

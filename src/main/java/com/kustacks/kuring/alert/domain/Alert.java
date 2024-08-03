@@ -41,7 +41,7 @@ public class Alert extends BaseTimeEntity {
         this.alertTime = alertTime;
     }
 
-    public static Alert create(
+    public static Alert createIfValidAlertTime(
             String title,
             String content,
             LocalDateTime wakeTime,
@@ -50,17 +50,25 @@ public class Alert extends BaseTimeEntity {
         if (currentTime.isAfter(wakeTime) || currentTime.isEqual(wakeTime)) {
             throw new IllegalArgumentException(ErrorCode.DOMAIN_CANNOT_CREATE.getMessage());
         }
+
         return new Alert(title, content, wakeTime);
     }
 
-    public void changeRequested() {
-        validateNotPending();
-        this.status = AlertStatus.REQUESTED;
+    public void changeCompleted() {
+        if(status == AlertStatus.PENDING) {
+            this.status = AlertStatus.COMPLETED;
+            return;
+        }
+
+        throw new IllegalStateException(ErrorCode.DOMAIN_CANNOT_CREATE.getMessage());
     }
 
-    private void validateNotPending() {
-        if (status != AlertStatus.PENDING) {
-            throw new IllegalStateException(ErrorCode.DOMAIN_CANNOT_CREATE.getMessage());
+    public void changeCanceled() {
+        if(status == AlertStatus.PENDING) {
+            this.status = AlertStatus.CANCELED;
+            return;
         }
+
+        throw new IllegalStateException(ErrorCode.DOMAIN_CANNOT_CREATE.getMessage());
     }
 }
