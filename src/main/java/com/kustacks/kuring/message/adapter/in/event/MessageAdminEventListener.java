@@ -2,6 +2,7 @@ package com.kustacks.kuring.message.adapter.in.event;
 
 import com.kustacks.kuring.message.adapter.in.event.dto.AdminNotificationEvent;
 import com.kustacks.kuring.message.adapter.in.event.dto.AdminTestNotificationEvent;
+import com.kustacks.kuring.message.adapter.in.event.dto.AlertSendEvent;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithAdminUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -28,5 +29,12 @@ public class MessageAdminEventListener {
             AdminTestNotificationEvent event
     ) {
         firebaseWithAdminUseCase.sendTestNotificationByAdmin(event.toCommand());
+    }
+
+    @EventListener
+    public void sendAlertEvent(
+            AlertSendEvent event
+    ) {
+        firebaseWithAdminUseCase.sendNotificationByAdmin(event.toCommand());
     }
 }
