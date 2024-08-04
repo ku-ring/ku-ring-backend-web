@@ -1,5 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
+import com.kustacks.kuring.alert.adapter.in.web.dto.AlertCreateRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -26,6 +27,37 @@ public class AdminStep {
                 .header("Authorization", "Bearer " + accessToken)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .when().get("/api/v2/admin/feedbacks?page=0&size=10")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 알림_예약(String accessToken, AlertCreateRequest alertCreateCommand) {
+        return RestAssured
+                .given().log().all()
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(alertCreateCommand)
+                .when().post("/api/v2/admin/alerts")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 예약_알림_조회(String accessToken) {
+        return RestAssured
+                .given().log().all()
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().get("/api/v2/admin/alerts?page=0&size=10")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 예약_알림_삭제(String accessToken, int alertId) {
+        return RestAssured
+                .given().log().all()
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().delete("/api/v2/admin/alerts/{id}", alertId)
                 .then().log().all()
                 .extract();
     }

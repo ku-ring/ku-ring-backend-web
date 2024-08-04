@@ -2,23 +2,44 @@ package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.admin.adapter.in.web.dto.RealNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.TestNotificationRequest;
+import com.kustacks.kuring.alert.adapter.in.web.dto.AlertCreateRequest;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import static com.kustacks.kuring.acceptance.AdminStep.사용자_피드백_조회_요청;
-import static com.kustacks.kuring.acceptance.AdminStep.피드백_조회_확인;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
+import static com.kustacks.kuring.acceptance.AdminStep.*;
 import static com.kustacks.kuring.acceptance.AuthStep.로그인_되어_있음;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("인수 : 관리자")
 class AdminAcceptanceTest extends IntegrationTestSupport {
+
+    AlertCreateRequest alertCreateCommand;
+
+    @Autowired
+    Clock clock;
+
+    @Override
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+        LocalDateTime expiredTime = LocalDateTime.now(clock).plus(1, ChronoUnit.HOURS);
+        alertCreateCommand = new AlertCreateRequest(
+                "title", "content", expiredTime.toString()
+        );
+    }
 
     /**
      * given : 사전에 등록된 어드민가 피드백들이 이다
@@ -97,6 +118,80 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("실제 공지 생성에 성공하였습니다"),
                 () -> assertThat(response.jsonPath().getString("data")).isNull()
+        );
+    }
+
+    /**
+     * Given : 등록된 ROLE_ROOT의 Admin이 있다.
+     * When : 원하는 시간에 예약 알림을 등록한다
+     * Then : 성공적으로 등록된다.
+     */
+    @DisplayName("[v2] Admin은 예약 알림을 생성할 수 있다")
+    @Test
+    void add_alert_test() {
+        // given
+        String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
+
+        // when
+        var 알림_예약_응답 = 알림_예약(accessToken, alertCreateCommand);
+
+        // then
+        assertAll(
+                () -> assertThat(알림_예약_응답.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(알림_예약_응답.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(알림_예약_응답.jsonPath().getString("message")).isEqualTo("실제 공지 생성에 성공하였습니다"),
+                () -> assertThat(알림_예약_응답.jsonPath().getString("data")).isNull()
+        );
+    }
+
+    /**
+     * Given : Admin이 등록한 예약 알림이 있다
+     * When : 예약 알림을 조회한다
+     * Then : 예약되어 있던 모든 알림을 조회한다
+     */
+    @DisplayName("[v2] Admin은 예약된 모든 알림을 조회할 수 있다")
+    @Test
+    void lookup_all_alert_test() {
+        // given
+        String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
+        알림_예약(accessToken, alertCreateCommand);
+
+        // when
+        var response = 예약_알림_조회(accessToken);
+
+        // then
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("예약 알림 조회에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getString("data")).contains("id", "title", "content", "status", "wakeTime")
+        );
+    }
+
+    /**
+     * Given : Admin이 등록한 예약 알림이 있다
+     * When : 특정 예약 알림을 삭제한다
+     * Then : 성공적으로 삭제된다.
+     */
+    @DisplayName("[v2] Admin은 예약 알림을 삭제할 수 있다")
+    @Test
+    void delete_alert_test() {
+        // given
+        String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
+        알림_예약(accessToken, alertCreateCommand);
+        int alertId = 예약_알림_조회(accessToken).jsonPath().getInt("data[0].id");
+
+        // when
+        var 예약_알림_삭제_응답 = 예약_알림_삭제(accessToken, alertId);
+
+        // then
+        assertThat(예약_알림_삭제_응답.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+        var response = 예약_알림_조회(accessToken);
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("예약 알림 조회에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getString("data[0].status")).isEqualTo("CANCELED")
         );
     }
 
