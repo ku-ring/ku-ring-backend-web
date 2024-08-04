@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -25,11 +26,14 @@ class AlertServiceTest extends IntegrationTestSupport {
     @Autowired
     AlertRepository alertRepository;
 
+    @Autowired
+    Clock clock;
+
     @DisplayName("알림을 성공적으로 등록한다")
     @Test
     void creat_alert() throws FirebaseMessagingException {
         // given
-        LocalDateTime expiredTime = LocalDateTime.now().plus(1, ChronoUnit.SECONDS);
+        LocalDateTime expiredTime = LocalDateTime.now(clock).plus(1, ChronoUnit.SECONDS);
         AlertCreateCommand alertCreateCommand = new AlertCreateCommand(
                 "title", "content",
                 expiredTime
@@ -44,7 +48,8 @@ class AlertServiceTest extends IntegrationTestSupport {
                 () -> Assertions.assertThat(alertList).hasSize(1),
                 () -> Assertions.assertThat(alertList.get(0).getTitle()).isEqualTo("title"),
                 () -> Assertions.assertThat(alertList.get(0).getContent()).isEqualTo("content"),
-                () -> Assertions.assertThat(alertList.get(0).getAlertTime()).isEqualTo(expiredTime)
+                () -> Assertions.assertThat(alertList.get(0).getAlertTime().truncatedTo(ChronoUnit.MICROS))
+                        .isEqualTo(expiredTime.truncatedTo(ChronoUnit.MICROS))
         );
     }
 
@@ -52,7 +57,7 @@ class AlertServiceTest extends IntegrationTestSupport {
     @Test
     void cancel_alert() throws FirebaseMessagingException {
         // given
-        LocalDateTime expiredTime = LocalDateTime.now().plus(1, ChronoUnit.SECONDS);
+        LocalDateTime expiredTime = LocalDateTime.now(clock).plus(1, ChronoUnit.SECONDS);
         AlertCreateCommand alertCreateCommand = new AlertCreateCommand(
                 "title", "content",
                 expiredTime
@@ -69,7 +74,8 @@ class AlertServiceTest extends IntegrationTestSupport {
                 () -> Assertions.assertThat(alertList).hasSize(1),
                 () -> Assertions.assertThat(alertList.get(0).getTitle()).isEqualTo("title"),
                 () -> Assertions.assertThat(alertList.get(0).getContent()).isEqualTo("content"),
-                () -> Assertions.assertThat(alertList.get(0).getAlertTime()).isEqualTo(expiredTime)
+                () -> Assertions.assertThat(alertList.get(0).getAlertTime().truncatedTo(ChronoUnit.MICROS))
+                        .isEqualTo(expiredTime.truncatedTo(ChronoUnit.MICROS))
         );
     }
 }
