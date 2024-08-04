@@ -30,7 +30,7 @@ public class StaffUpdater {
        values에 StaffDeptInfo 전체 값이 아닌, 매개변수로 들어온 값을 전달한다.
      */
     //@Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
-    @Deprecated
+    @Deprecated(since = "2.7.3", forRemoval = true)
     public void update() {
         log.info("========== 교직원 업데이트 시작 ==========");
 

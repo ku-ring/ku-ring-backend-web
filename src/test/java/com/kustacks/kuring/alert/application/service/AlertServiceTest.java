@@ -1,6 +1,5 @@
 package com.kustacks.kuring.alert.application.service;
 
-import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.alert.adapter.out.persistence.AlertRepository;
 import com.kustacks.kuring.alert.application.port.in.dto.AlertCreateCommand;
 import com.kustacks.kuring.alert.domain.Alert;
@@ -31,7 +30,7 @@ class AlertServiceTest extends IntegrationTestSupport {
 
     @DisplayName("알림을 성공적으로 등록한다")
     @Test
-    void creat_alert() throws FirebaseMessagingException {
+    void creat_alert() {
         // given
         LocalDateTime expiredTime = LocalDateTime.now(clock).plus(1, ChronoUnit.SECONDS);
         AlertCreateCommand alertCreateCommand = new AlertCreateCommand(
@@ -55,7 +54,7 @@ class AlertServiceTest extends IntegrationTestSupport {
 
     @DisplayName("알림을 성공적으로 취소한다")
     @Test
-    void cancel_alert() throws FirebaseMessagingException {
+    void cancel_alert() {
         // given
         LocalDateTime expiredTime = LocalDateTime.now(clock).plus(1, ChronoUnit.SECONDS);
         AlertCreateCommand alertCreateCommand = new AlertCreateCommand(
