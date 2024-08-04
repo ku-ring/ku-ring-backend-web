@@ -10,9 +10,11 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -26,11 +28,14 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
 
     AlertCreateRequest alertCreateCommand;
 
+    @Autowired
+    Clock clock;
+
     @Override
     @BeforeEach
     public void setUp() {
         super.setUp();
-        LocalDateTime expiredTime = LocalDateTime.now().plus(1, ChronoUnit.HOURS);
+        LocalDateTime expiredTime = LocalDateTime.now(clock).plus(1, ChronoUnit.HOURS);
         alertCreateCommand = new AlertCreateRequest(
                 "title", "content", expiredTime.toString()
         );

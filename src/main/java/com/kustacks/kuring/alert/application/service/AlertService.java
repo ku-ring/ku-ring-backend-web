@@ -49,7 +49,7 @@ public class AlertService implements AlertCommandUseCase {
     public void addAlertSchedule(AlertCreateCommand command) {
         Alert newAlert = alertCommandPort.save(
                 Alert.createIfValidAlertTime(
-                        command.title(), command.content(), command.alertTime(), LocalDateTime.now()
+                        command.title(), command.content(), command.alertTime(), LocalDateTime.now(clock)
                 )
         );
 
