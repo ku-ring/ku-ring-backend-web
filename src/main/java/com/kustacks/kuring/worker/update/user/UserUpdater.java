@@ -33,6 +33,7 @@ public class UserUpdater {
     // 사용자 제거 로직에 일부 오류가 있는것 같다, 정상 사용자가 제거 되었다.
     //@Transactional
     //@Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
+    @Deprecated
     public void update() {
         log.info("========== 토큰 유효성 필터링 시작 ==========");
 

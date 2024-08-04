@@ -7,14 +7,12 @@ import com.kustacks.kuring.worker.update.staff.dto.StaffDto;
 import com.kustacks.kuring.worker.update.staff.dto.StaffScrapResults;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,7 +29,8 @@ public class StaffUpdater {
        스크래핑 실패한 학과들을 재시도하기 위해 호출된 경우
        values에 StaffDeptInfo 전체 값이 아닌, 매개변수로 들어온 값을 전달한다.
      */
-    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
+    //@Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
+    @Deprecated
     public void update() {
         log.info("========== 교직원 업데이트 시작 ==========");
 
