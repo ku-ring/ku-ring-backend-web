@@ -4,9 +4,11 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.kustacks.kuring.admin.application.port.in.AdminCommandUseCase;
 import com.kustacks.kuring.admin.application.port.in.dto.RealNotificationCommand;
 import com.kustacks.kuring.admin.application.port.in.dto.TestNotificationCommand;
+import com.kustacks.kuring.admin.application.port.out.AdminAlertEventPort;
 import com.kustacks.kuring.admin.application.port.out.AdminEventPort;
 import com.kustacks.kuring.admin.application.port.out.AdminUserFeedbackPort;
 import com.kustacks.kuring.admin.domain.Admin;
+import com.kustacks.kuring.alert.application.port.in.dto.AlertCreateCommand;
 import com.kustacks.kuring.auth.userdetails.UserDetailsServicePort;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.properties.ServerProperties;
@@ -29,6 +31,7 @@ public class AdminCommandService implements AdminCommandUseCase {
 
     private final UserDetailsServicePort userDetailsServicePort;
     private final AdminUserFeedbackPort adminUserFeedbackPort;
+    private final AdminAlertEventPort adminAlertEventPort;
     private final AdminEventPort adminEventPort;
     private final NoticeProperties noticeProperties;
     private final ServerProperties serverProperties;
@@ -64,6 +67,16 @@ public class AdminCommandService implements AdminCommandUseCase {
         }
 
         adminEventPort.sendNotificationByAdmin(command.title(), command.body(), command.url());
+    }
+
+    @Override
+    public void addAlertSchedule(AlertCreateCommand command) {
+        adminAlertEventPort.addAlertSchedule(command.title(), command.content(), command.alertTime());
+    }
+
+    @Override
+    public void cancelAlertSchedule(Long id) {
+        adminAlertEventPort.cancelAlertSchedule(id);
     }
 
     /**
