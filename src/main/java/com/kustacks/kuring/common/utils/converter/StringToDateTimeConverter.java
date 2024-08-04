@@ -15,10 +15,15 @@ public class StringToDateTimeConverter {
 
     private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withLocale(Locale.KOREA);
     private static final DateTimeFormatter dateTimeTFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS").withLocale(Locale.KOREA);
+    private static final int MAX_DATE_TIME_LENGTH = 26;
 
     public static LocalDateTime convert(String dateTime) {
         if (dateTime == null || dateTime.isBlank()) {
             throw new IllegalArgumentException("Invalid date time format: " + dateTime);
+        }
+
+        if (dateTime.length() > MAX_DATE_TIME_LENGTH) {
+            dateTime = dateTime.substring(0, MAX_DATE_TIME_LENGTH);
         }
 
         if (isDateTime(dateTime)) {
