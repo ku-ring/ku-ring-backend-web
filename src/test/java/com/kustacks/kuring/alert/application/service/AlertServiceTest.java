@@ -5,7 +5,6 @@ import com.kustacks.kuring.alert.application.port.in.dto.AlertCreateCommand;
 import com.kustacks.kuring.alert.domain.Alert;
 import com.kustacks.kuring.alert.domain.AlertStatus;
 import com.kustacks.kuring.support.IntegrationTestSupport;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,10 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class AlertServiceTest extends IntegrationTestSupport {
@@ -44,10 +46,10 @@ class AlertServiceTest extends IntegrationTestSupport {
         // then
         List<Alert> alertList = alertRepository.findAllByStatus(AlertStatus.PENDING);
         assertAll(
-                () -> Assertions.assertThat(alertList).hasSize(1),
-                () -> Assertions.assertThat(alertList.get(0).getTitle()).isEqualTo("title"),
-                () -> Assertions.assertThat(alertList.get(0).getContent()).isEqualTo("content"),
-                () -> Assertions.assertThat(alertList.get(0).getAlertTime().truncatedTo(ChronoUnit.MICROS))
+                () -> assertThat(alertList).hasSize(1),
+                () -> assertThat(alertList.get(0).getTitle()).isEqualTo("title"),
+                () -> assertThat(alertList.get(0).getContent()).isEqualTo("content"),
+                () -> assertThat(alertList.get(0).getAlertTime().truncatedTo(ChronoUnit.MICROS))
                         .isEqualTo(expiredTime.truncatedTo(ChronoUnit.MICROS))
         );
     }
@@ -70,11 +72,33 @@ class AlertServiceTest extends IntegrationTestSupport {
         // then
         List<Alert> alertList = alertRepository.findAllByStatus(AlertStatus.CANCELED);
         assertAll(
-                () -> Assertions.assertThat(alertList).hasSize(1),
-                () -> Assertions.assertThat(alertList.get(0).getTitle()).isEqualTo("title"),
-                () -> Assertions.assertThat(alertList.get(0).getContent()).isEqualTo("content"),
-                () -> Assertions.assertThat(alertList.get(0).getAlertTime().truncatedTo(ChronoUnit.MICROS))
+                () -> assertThat(alertList).hasSize(1),
+                () -> assertThat(alertList.get(0).getTitle()).isEqualTo("title"),
+                () -> assertThat(alertList.get(0).getContent()).isEqualTo("content"),
+                () -> assertThat(alertList.get(0).getAlertTime().truncatedTo(ChronoUnit.MICROS))
                         .isEqualTo(expiredTime.truncatedTo(ChronoUnit.MICROS))
         );
+    }
+
+    @DisplayName("알림이 울린 후 성공적으로 상태를 변경한다")
+    @Test
+    void alert_change_status() {
+        // given
+        LocalDateTime expiredTime = LocalDateTime.now(clock).plus(1, ChronoUnit.SECONDS);
+        AlertCreateCommand alertCreateCommand = new AlertCreateCommand(
+                "title", "content",
+                expiredTime
+        );
+        alertService.addAlertSchedule(alertCreateCommand);
+
+        // when : 1.5초 기다린 후 알림 상태를 확인합니다.
+        await().atLeast(1500, TimeUnit.MICROSECONDS).atMost(2, TimeUnit.SECONDS).until(() -> {
+            List<Alert> alertList = alertRepository.findAllByStatus(AlertStatus.COMPLETED);
+            return !alertList.isEmpty(); // 조건이 충족될 때까지 대기
+        });
+
+        // then
+        List<Alert> alertList = alertRepository.findAllByStatus(AlertStatus.COMPLETED);
+        assertThat(alertList).hasSize(1);
     }
 }

@@ -1,6 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.alert.adapter.in.web.dto.AlertCreateRequest;
+import com.kustacks.kuring.admin.adapter.in.web.dto.AdminAlertCreateRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -31,7 +31,7 @@ public class AdminStep {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 알림_예약(String accessToken, AlertCreateRequest alertCreateCommand) {
+    public static ExtractableResponse<Response> 알림_예약(String accessToken, AdminAlertCreateRequest alertCreateCommand) {
         return RestAssured
                 .given().log().all()
                 .header("Authorization", "Bearer " + accessToken)
