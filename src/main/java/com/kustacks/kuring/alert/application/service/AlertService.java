@@ -15,6 +15,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -31,6 +32,7 @@ import java.util.concurrent.ScheduledFuture;
 public class AlertService implements AlertCommandUseCase {
 
     private final ConcurrentMap<Long, ScheduledFuture<?>> taskList = new ConcurrentHashMap<>();
+    private final TransactionTemplate transactionTemplate;
     private final AlertCommandPort alertCommandPort;
     private final AlertQueryPort alertQueryPort;
     private final MessageEventPort messageEventPort;
@@ -69,22 +71,25 @@ public class AlertService implements AlertCommandUseCase {
         }
     }
 
-    private static void cancle(Long id, Alert entryAlert) {
+    @Override
+    public void sendAlert(Long id) {
+        Alert findAlert = alertQueryPort.findByIdAndStatusForUpdate(id, AlertStatus.PENDING)
+                .orElseThrow(() -> new IllegalArgumentException("해당 알림이 존재하지 않습니다."));
+
+        send(id, findAlert.getTitle(), findAlert.getContent());
+
+        findAlert.changeCompleted();
+        taskList.remove(id);
+    }
+
+    private void cancle(Long id, Alert entryAlert) {
         entryAlert.changeCanceled();
         log.info("[EntryAlert 취소] entryAlertId: {}", id);
     }
 
-    @Override
-    public void sendAlert(Long id) {
-        alertQueryPort.findByIdAndStatusForUpdate(id, AlertStatus.PENDING)
-                .ifPresent(entryAlert -> send(id, entryAlert));
-    }
-
-    private void send(Long id, Alert entryAlert) {
+    private void send(Long id, String title, String content) {
         log.info("[EntryAlert 전송 시작] entryAlertId: {}", id);
-        messageEventPort.sendMessageEvent(entryAlert.getTitle(), entryAlert.getContent());
-        entryAlert.changeCompleted();
-        taskList.remove(id);
+        messageEventPort.sendMessageEvent(title, content);
     }
 
     private List<AlertDto> findAllPending() {
@@ -98,7 +103,14 @@ public class AlertService implements AlertCommandUseCase {
         Long alertId = alertDto.getId();
         Instant alertTime = toInstant(alertDto.getAlertTime());
         log.info("Alert 스케쥴링 추가. alertId: {}, alertTime: {}", alertId, alertTime);
-        ScheduledFuture<?> scheduled = taskScheduler.schedule(() -> this.sendAlert(alertId), alertTime);
+
+        ScheduledFuture<?> scheduled = taskScheduler.schedule(() -> {
+            transactionTemplate.execute(status -> {
+                sendAlert(alertId);
+                return null; // 트랜잭션 템플릿의 반환값, 필요에 따라 null 또는 다른 값을 반환
+            });
+        }, alertTime);
+
         taskList.put(alertId, scheduled);
     }
 
