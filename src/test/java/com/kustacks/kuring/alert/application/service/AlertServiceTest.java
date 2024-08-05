@@ -13,8 +13,10 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class AlertServiceTest extends IntegrationTestSupport {
@@ -89,8 +91,11 @@ class AlertServiceTest extends IntegrationTestSupport {
         );
         alertService.addAlertSchedule(alertCreateCommand);
 
-        // when : 1초 기다린 후 알림 상태를 확인합니다.
-        Thread.sleep(1500);
+        // when : 1.5초 기다린 후 알림 상태를 확인합니다.
+        await().atLeast(1500, TimeUnit.MICROSECONDS).atMost(2, TimeUnit.SECONDS).until(() -> {
+            List<Alert> alertList = alertRepository.findAllByStatus(AlertStatus.COMPLETED);
+            return !alertList.isEmpty(); // 조건이 충족될 때까지 대기
+        });
 
         // then
         List<Alert> alertList = alertRepository.findAllByStatus(AlertStatus.COMPLETED);

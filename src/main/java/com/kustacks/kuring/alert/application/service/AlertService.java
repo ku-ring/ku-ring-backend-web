@@ -104,12 +104,13 @@ public class AlertService implements AlertCommandUseCase {
         Instant alertTime = toInstant(alertDto.getAlertTime());
         log.info("Alert 스케쥴링 추가. alertId: {}, alertTime: {}", alertId, alertTime);
 
-        ScheduledFuture<?> scheduled = taskScheduler.schedule(() -> {
-            transactionTemplate.execute(status -> {
-                sendAlert(alertId);
-                return null; // 트랜잭션 템플릿의 반환값, 필요에 따라 null 또는 다른 값을 반환
-            });
-        }, alertTime);
+        ScheduledFuture<?> scheduled = taskScheduler.schedule(
+                () -> transactionTemplate.execute(status -> {
+                    sendAlert(alertId);
+                    return null; // 트랜잭션 템플릿의 반환값, 필요에 따라 null 또는 다른 값을 반환
+                }),
+                alertTime
+        );
 
         taskList.put(alertId, scheduled);
     }
