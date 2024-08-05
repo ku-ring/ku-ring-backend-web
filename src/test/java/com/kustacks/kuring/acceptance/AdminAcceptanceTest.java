@@ -1,8 +1,8 @@
 package com.kustacks.kuring.acceptance;
 
+import com.kustacks.kuring.admin.adapter.in.web.dto.AdminAlertCreateRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.RealNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.TestNotificationRequest;
-import com.kustacks.kuring.alert.adapter.in.web.dto.AlertCreateRequest;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DisplayName("인수 : 관리자")
 class AdminAcceptanceTest extends IntegrationTestSupport {
 
-    AlertCreateRequest alertCreateCommand;
+    AdminAlertCreateRequest alertCreateCommand;
 
     @Autowired
     Clock clock;
@@ -36,7 +36,7 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
     public void setUp() {
         super.setUp();
         LocalDateTime expiredTime = LocalDateTime.now(clock).plus(1, ChronoUnit.HOURS);
-        alertCreateCommand = new AlertCreateRequest(
+        alertCreateCommand = new AdminAlertCreateRequest(
                 "title", "content", expiredTime.toString()
         );
     }
