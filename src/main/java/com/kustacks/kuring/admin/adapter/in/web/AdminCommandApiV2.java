@@ -1,12 +1,12 @@
 package com.kustacks.kuring.admin.adapter.in.web;
 
 import com.google.firebase.database.annotations.NotNull;
+import com.kustacks.kuring.admin.adapter.in.web.dto.AdminAlertCreateRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.RealNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.TestNotificationRequest;
 import com.kustacks.kuring.admin.application.port.in.AdminCommandUseCase;
 import com.kustacks.kuring.admin.application.port.in.dto.RealNotificationCommand;
 import com.kustacks.kuring.admin.domain.AdminRole;
-import com.kustacks.kuring.alert.adapter.in.web.dto.AlertCreateRequest;
 import com.kustacks.kuring.alert.application.port.in.dto.AlertCreateCommand;
 import com.kustacks.kuring.auth.authorization.AuthenticationPrincipal;
 import com.kustacks.kuring.auth.context.Authentication;
@@ -66,7 +66,7 @@ public class AdminCommandApiV2 {
     @Secured(AdminRole.ROLE_ROOT)
     @PostMapping("/alerts")
     public ResponseEntity<BaseResponse<String>> createAlert(
-            @RequestBody AlertCreateRequest request
+            @RequestBody AdminAlertCreateRequest request
     ) {
         AlertCreateCommand command = new AlertCreateCommand(
                 request.title(), request.content(),

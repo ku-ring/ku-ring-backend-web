@@ -1,8 +1,8 @@
-package com.kustacks.kuring.alert.adapter.in.web.dto;
+package com.kustacks.kuring.admin.adapter.in.web.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 
-public record AlertCreateRequest(
+public record AdminAlertCreateRequest(
         @NotEmpty(message = "제목은 필수입니다")
         String title,
         String content,
