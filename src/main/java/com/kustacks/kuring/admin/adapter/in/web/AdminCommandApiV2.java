@@ -61,7 +61,7 @@ public class AdminCommandApiV2 {
         return ResponseEntity.ok().body(new BaseResponse<>(ADMIN_REAL_NOTICE_CREATE_SUCCESS, null));
     }
 
-    @Operation(summary = "예약 알림 등록", description = "서버에 예약 알림을 등록한다")
+    @Operation(summary = "예약 알림 등록", description = "서버에 알림 시간을 yyyy-MM-dd HH:mm:ss 형태로 요청시 예약 알림을 등록한다")
     @SecurityRequirement(name = "JWT")
     @Secured(AdminRole.ROLE_ROOT)
     @PostMapping("/alerts")
