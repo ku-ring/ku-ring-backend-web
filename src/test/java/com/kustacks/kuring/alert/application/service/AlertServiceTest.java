@@ -82,7 +82,7 @@ class AlertServiceTest extends IntegrationTestSupport {
 
     @DisplayName("알림이 울린 후 성공적으로 상태를 변경한다")
     @Test
-    void alert_change_status() throws InterruptedException {
+    void alert_change_status() {
         // given
         LocalDateTime expiredTime = LocalDateTime.now(clock).plus(1, ChronoUnit.SECONDS);
         AlertCreateCommand alertCreateCommand = new AlertCreateCommand(
