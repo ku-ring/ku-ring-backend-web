@@ -147,7 +147,7 @@ auth:
   login-url: https://kuis.konkuk.ac.kr/Login/login.do
 
 firebase:
-  file-path: third/ku-stack-firebase-adminsdk-87nwq-5ba04dfc12.json
+  file-path: third/ku-stack-firebase-adminsdk-87nwq-ae6a2df931.json
 
 admin:
   password: ${ADMIN_PASSWORD}

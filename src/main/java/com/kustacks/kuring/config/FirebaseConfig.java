@@ -22,12 +22,15 @@ public class FirebaseConfig {
 
     @Bean
     FirebaseApp firebaseApp(@Value("${firebase.file-path}") String filePath) throws IOException {
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(filePath).getInputStream()))
+        GoogleCredentials googleCredentials = GoogleCredentials
+                .fromStream(new ClassPathResource(filePath).getInputStream());
+
+        FirebaseOptions firebaseOptions = FirebaseOptions.builder()
+                .setCredentials(googleCredentials)
                 .build();
 
-        if(FirebaseApp.getApps().isEmpty()) {
-            return FirebaseApp.initializeApp(options);
+        if (FirebaseApp.getApps().isEmpty()) {
+            return FirebaseApp.initializeApp(firebaseOptions);
         }
 
         return FirebaseApp.getInstance();

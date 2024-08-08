@@ -85,7 +85,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.14.3'
 
     // Firebase
-    implementation 'com.google.firebase:firebase-admin:8.1.0'
+    implementation 'com.google.firebase:firebase-admin:9.3.0'
 
     // RestDocs
     asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
