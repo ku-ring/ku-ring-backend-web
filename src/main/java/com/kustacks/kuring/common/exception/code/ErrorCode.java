@@ -77,7 +77,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
 
     // AI 관련
-    AI_SIMILAR_DOCUMENTS_NOT_FOUND(HttpStatus.NOT_FOUND, "죄송합니다, 관련된 내용에 대하여 알지 못합니다."),
+    AI_SIMILAR_DOCUMENTS_NOT_FOUND(HttpStatus.NOT_FOUND, "죄송합니다, 해당 내용은 2024년도 6월 이후에 작성된 공지 내용에서 확인할 수 없는 내용입니다."),
 
     /**
      * ErrorCodes about DomainLogicException
