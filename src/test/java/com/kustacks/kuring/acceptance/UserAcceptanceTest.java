@@ -199,4 +199,22 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         // then
         북마크_조회_응답_확인(북마크_조회_응답);
     }
+
+    /**
+     * Given : 사용자가 AI 질문을 한적이 있다
+     * When : 남은 질문 가능 횟수를 조회한다
+     * Then : 성공적으로 질문 가능횟수와 가능한 최대 질문 횟수를 반환한다
+     */
+    @DisplayName("[v2] 사용자는 자신의 남은 질문 가능 횟수를 조회할 수 있다")
+    @Test
+    void lookup_ask_count() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+
+        // when
+        var 질문_횟수_조회_응답 = 남은_질문_횟수_조회(USER_FCM_TOKEN);
+
+        // then
+        질문_횟수_응답_검증(질문_횟수_조회_응답);
+    }
 }

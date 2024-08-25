@@ -47,6 +47,7 @@ public class User implements Serializable {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = Boolean.FALSE;
 
+    @Getter(AccessLevel.PUBLIC)
     @Column(columnDefinition = "integer default 0")
     private Integer questionCount;
 

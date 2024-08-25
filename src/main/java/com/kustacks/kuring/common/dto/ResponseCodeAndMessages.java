@@ -31,6 +31,7 @@ public enum ResponseCodeAndMessages {
     BOOKMARK_LOOKUP_SUCCESS(HttpStatus.OK.value(), "북마크 조회에 성공하였습니다"),
     FEEDBACK_SAVE_SUCCESS(HttpStatus.OK.value(), "피드백 저장에 성공하였습니다"),
     FEEDBACK_SEARCH_SUCCESS(HttpStatus.OK.value(), "피드백 조회에 성공하였습니다"),
+    ASK_COUNT_LOOKUP_SUCCESS(HttpStatus.OK.value(), "질문 가능 횟수 조회에 성공하였습니다"),
 
     /* Alert */
     ALERT_SEARCH_SUCCESS(HttpStatus.OK.value(), "예약 알림 조회에 성공하였습니다"),
