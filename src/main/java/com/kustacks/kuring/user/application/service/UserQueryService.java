@@ -8,6 +8,7 @@ import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.in.UserQueryUseCase;
+import com.kustacks.kuring.user.application.port.in.dto.UserAIAskCountResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoryNameResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserDepartmentNameResult;
@@ -53,6 +54,12 @@ class UserQueryService implements UserQueryUseCase {
         User user = findUserByToken(userToken);
         List<String> bookmarkIds = user.lookupAllBookmarkIds();
         return lookupAllBookmarkByIds(bookmarkIds);
+    }
+
+    @Override
+    public UserAIAskCountResult lookupUserAIAskCount(String userToken) {
+        User user = findUserByToken(userToken);
+        return new UserAIAskCountResult(user.getQuestionCount(), User.MONTHLY_QUESTION_COUNT);
     }
 
     private List<UserBookmarkResult> lookupAllBookmarkByIds(List<String> bookmarkIds) {

@@ -2,10 +2,12 @@ package com.kustacks.kuring.user.adapter.in.web;
 
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.dto.BaseResponse;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserAIAskCountResponse;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserBookmarkResponse;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoryNameResponse;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserDepartmentNameResponse;
 import com.kustacks.kuring.user.application.port.in.UserQueryUseCase;
+import com.kustacks.kuring.user.application.port.in.dto.UserAIAskCountResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -71,5 +73,16 @@ class UserQueryApiV2 {
                 .toList();
 
         return ResponseEntity.ok().body(new BaseResponse<>(BOOKMARK_LOOKUP_SUCCESS, responses));
+    }
+
+    @Operation(summary = "사용자 질문 가능횟수 조회", description = "사용자의 남은 질문횟수와 가능한 질문 횟수를 조회합니다")
+    @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
+    @GetMapping("/ask-counts")
+    public ResponseEntity<BaseResponse<UserAIAskCountResponse>> lookupUserAIAskCount(
+            @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken
+    ) {
+        UserAIAskCountResult result = userQueryUseCase.lookupUserAIAskCount(userToken);
+        UserAIAskCountResponse response = UserAIAskCountResponse.from(result);
+        return ResponseEntity.ok().body(new BaseResponse<>(ASK_COUNT_LOOKUP_SUCCESS, response));
     }
 }
