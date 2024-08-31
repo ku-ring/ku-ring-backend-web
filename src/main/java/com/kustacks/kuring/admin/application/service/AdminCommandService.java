@@ -7,17 +7,23 @@ import com.kustacks.kuring.admin.application.port.in.dto.TestNotificationCommand
 import com.kustacks.kuring.admin.application.port.out.AdminAlertEventPort;
 import com.kustacks.kuring.admin.application.port.out.AdminEventPort;
 import com.kustacks.kuring.admin.application.port.out.AdminUserFeedbackPort;
+import com.kustacks.kuring.admin.application.port.out.AiEventPort;
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.alert.application.port.in.dto.AlertCreateCommand;
+import com.kustacks.kuring.alert.application.port.in.dto.DataEmbeddingCommand;
 import com.kustacks.kuring.auth.userdetails.UserDetailsServicePort;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -33,6 +39,7 @@ public class AdminCommandService implements AdminCommandUseCase {
     private final AdminUserFeedbackPort adminUserFeedbackPort;
     private final AdminAlertEventPort adminAlertEventPort;
     private final AdminEventPort adminEventPort;
+    private final AiEventPort aiEventPort;
     private final NoticeProperties noticeProperties;
     private final ServerProperties serverProperties;
     private final PasswordEncoder passwordEncoder;
@@ -79,6 +86,27 @@ public class AdminCommandService implements AdminCommandUseCase {
         adminAlertEventPort.cancelAlertSchedule(id);
     }
 
+    @Override
+    public void embeddingCustomData(DataEmbeddingCommand command) {
+        try {
+            MultipartFile file = command.file();
+
+            String originalFilename = file.getOriginalFilename();
+            String contentType = file.getContentType();
+            Resource resource = new InputStreamResource(file.getInputStream());
+            String extension = extractExtension(originalFilename);
+
+            aiEventPort.sendDataEmbeddingEvent(
+                    originalFilename,
+                    extension,
+                    contentType,
+                    resource
+            );
+        } catch (IOException e) {
+            log.error("file read error", e);
+        }
+    }
+
     /**
      * TODO : 1회성 API - client v2 배포 후, 단 한번 모든 사용자를 공통 topic에 구독시킨 후 제거 예정
      */
@@ -99,5 +127,10 @@ public class AdminCommandService implements AdminCommandUseCase {
 
     private boolean isNotMatchPassword(final String commandPassword, final String adminPassword) {
         return !passwordEncoder.matches(commandPassword, adminPassword);
+    }
+
+    private String extractExtension(String originalFilename) {
+        int pos = originalFilename.lastIndexOf(".");
+        return originalFilename.substring(pos + 1);
     }
 }
