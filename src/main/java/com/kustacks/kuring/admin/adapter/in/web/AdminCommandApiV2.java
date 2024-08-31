@@ -8,6 +8,7 @@ import com.kustacks.kuring.admin.application.port.in.AdminCommandUseCase;
 import com.kustacks.kuring.admin.application.port.in.dto.RealNotificationCommand;
 import com.kustacks.kuring.admin.domain.AdminRole;
 import com.kustacks.kuring.alert.application.port.in.dto.AlertCreateCommand;
+import com.kustacks.kuring.alert.application.port.in.dto.DataEmbeddingCommand;
 import com.kustacks.kuring.auth.authorization.AuthenticationPrincipal;
 import com.kustacks.kuring.auth.context.Authentication;
 import com.kustacks.kuring.auth.secured.Secured;
@@ -24,9 +25,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_REAL_NOTICE_CREATE_SUCCESS;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_TEST_NOTICE_CREATE_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
 
 @Tag(name = "Admin-Command", description = "관리자가 주체가 되는 정보 수정")
 @Validated
@@ -86,6 +87,16 @@ public class AdminCommandApiV2 {
             @Parameter(description = "알림 아이디") @NotNull @PathVariable("id") Long id
     ) {
         adminCommandUseCase.cancelAlertSchedule(id);
+    }
+
+    @Operation(summary = "파일 임베딩", description = "어드민이 원하는 파일을 임베딩 하여 쿠링봇에서 사용할 수 있다")
+    @SecurityRequirement(name = "JWT")
+    @Secured(AdminRole.ROLE_ROOT)
+    @PostMapping("/embedding")
+    public ResponseEntity<BaseResponse<String>> embeddingCustomData(@RequestParam(name = "file") MultipartFile file) {
+        adminCommandUseCase.embeddingCustomData(new DataEmbeddingCommand(file));
+
+        return ResponseEntity.ok().body(new BaseResponse<>(ADMIN_EMBEDDING_NOTICE_SUCCESS, null));
     }
 
     @Hidden
