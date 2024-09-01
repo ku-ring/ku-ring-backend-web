@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -37,6 +38,11 @@ public class InMemoryVectorStoreAdapter implements QueryVectorStorePort, Command
     @Override
     public void embedding(List<PageTextDto> extractTextResults, CategoryName categoryName) {
         log.info("[InMemoryQueryVectorStoreAdapter] embedding {}", categoryName);
+    }
+
+    @Override
+    public void embeddingSingleTextFile(String originName, Resource resource) {
+        log.info("[InMemoryQueryVectorStoreAdapter] embeddingSingleTextFile {}", originName);
     }
 
     private Document createDocument(HashMap<String, Object> metadata) {
