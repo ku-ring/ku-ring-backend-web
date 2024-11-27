@@ -65,6 +65,10 @@ public class DeptInfo {
                 .replace("{siteId}", String.valueOf(noticeScrapInfo.getSiteId()));
     }
 
+    public boolean isSupportStaffScrap() {
+        return !this.staffScrapInfo.getSiteIds().isEmpty();
+    }
+
     @Override
     public String toString() {
         return departmentName.getName();
