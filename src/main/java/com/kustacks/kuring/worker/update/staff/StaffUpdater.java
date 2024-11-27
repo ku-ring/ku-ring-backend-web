@@ -44,10 +44,11 @@ public class StaffUpdater {
         Map<String, StaffDto> kuStaffDtoMap = new HashMap<>();
         List<String> successDepartmentNames = new LinkedList<>();
 
-        for (DeptInfo deptInfo : deptInfos) {
-            scrapSingleDepartmentsStaffs(kuStaffDtoMap, successDepartmentNames, deptInfo);
-        }
-
+        deptInfos.stream()
+                .filter(DeptInfo::isSupportStaffScrap)
+                .forEach(deptInfo -> {
+                    scrapSingleDepartmentsStaffs(kuStaffDtoMap, successDepartmentNames, deptInfo);
+                });
         return new StaffScrapResults(kuStaffDtoMap, successDepartmentNames);
     }
 
