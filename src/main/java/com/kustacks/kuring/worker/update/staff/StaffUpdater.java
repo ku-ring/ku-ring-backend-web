@@ -69,7 +69,8 @@ public class StaffUpdater {
 
     private Map<String, StaffDto> convertStaffDtoMap(List<StaffDto> scrapedStaffDtos) {
         return scrapedStaffDtos.stream()
-                .collect(Collectors.toMap(StaffDto::getEmail, staffDto -> staffDto));
+                .distinct()
+                .collect(Collectors.toMap(staffDto -> staffDto.getName()+staffDto.getEmail()+staffDto.getDeptName(), staffDto -> staffDto));
     }
 
     private void mergeForMultipleDepartmentsStaff(
