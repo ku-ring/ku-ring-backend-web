@@ -23,8 +23,8 @@ public class RealEstateDept extends RealEstateCollege {
         this.htmlParser = realEstateNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("13949");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(13949);
+        this.staffScrapInfo = new StaffScrapInfo("kure",siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(REAL_ESTATE.getHostPrefix(), 1563);
         this.departmentName = REAL_ESTATE;
     }

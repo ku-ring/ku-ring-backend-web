@@ -24,8 +24,8 @@ public class InternationalTradeDept extends SocialSciencesCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("10371");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(10371);
+        this.staffScrapInfo = new StaffScrapInfo(INT_TRADE.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(INT_TRADE.getHostPrefix(), 429);
         this.departmentName = INT_TRADE;
     }

@@ -24,8 +24,8 @@ public class EducationalTechnologyDept extends EducationCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("16532");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(16532);
+        this.staffScrapInfo = new StaffScrapInfo(EDU_TECH.getHostPrefix(),siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(EDU_TECH.getHostPrefix(), 4020);
         this.departmentName = EDU_TECH;
     }

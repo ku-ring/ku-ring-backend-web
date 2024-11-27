@@ -24,8 +24,8 @@ public class MathematicsDept extends ScienceCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("9733");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(9748);
+        this.staffScrapInfo = new StaffScrapInfo(MATH.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(MATH.getHostPrefix(), 727);
         this.departmentName = MATH;
     }

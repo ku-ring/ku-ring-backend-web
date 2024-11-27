@@ -24,8 +24,8 @@ public class SmartIctConvergenceDept extends KuIntegratedScienceCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("10673");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(15929);
+        this.staffScrapInfo = new StaffScrapInfo(SMART_ICT.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(SMART_ICT.getHostPrefix(), 455);
         this.departmentName = SMART_ICT;
     }

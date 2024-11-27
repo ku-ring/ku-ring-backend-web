@@ -23,8 +23,8 @@ public class ChemicalsDept extends ScienceCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("9794");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(9794);
+        this.staffScrapInfo = new StaffScrapInfo(CHEMICALS.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(CHEMICALS.getHostPrefix(), 739);
         this.departmentName = CHEMICALS;
     }

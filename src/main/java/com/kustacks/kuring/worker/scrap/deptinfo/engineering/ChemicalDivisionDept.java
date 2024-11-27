@@ -24,8 +24,8 @@ public class ChemicalDivisionDept extends EngineeringCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("9926");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(9926);
+        this.staffScrapInfo = new StaffScrapInfo(CHEMI_DIV.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(CHEMI_DIV.getHostPrefix(), 409);
         this.departmentName = CHEMI_DIV;
     }

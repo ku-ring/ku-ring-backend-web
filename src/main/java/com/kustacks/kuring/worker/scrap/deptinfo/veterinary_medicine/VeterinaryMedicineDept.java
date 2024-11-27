@@ -7,6 +7,7 @@ import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.kustacks.kuring.notice.domain.DepartmentName.VET_MEDICINE;
@@ -23,9 +24,8 @@ public class VeterinaryMedicineDept extends VeterinaryMedicineCollege {
         this.noticeApiClient = latestPageNoticeApiClient;
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
-
-        List<String> professorForumIds = List.of("11135", "11136");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(11135, 11136);
+        this.staffScrapInfo = new StaffScrapInfo(VET_MEDICINE.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(VET_MEDICINE.getHostPrefix(), 948);
         this.departmentName = VET_MEDICINE;
     }
