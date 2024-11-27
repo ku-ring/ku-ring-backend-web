@@ -12,6 +12,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -60,14 +61,31 @@ public class StaffScraper {
         return parseResult.stream()
                 .map(oneStaffInfo -> StaffDto.builder()
                         .name(oneStaffInfo[0])
-                        .major(oneStaffInfo[1])
-                        .lab(oneStaffInfo[2])
-                        .phone(oneStaffInfo[3])
-                        .email(oneStaffInfo[4])
+                        .position(oneStaffInfo[1])
+                        .major(oneStaffInfo[2])
+                        .lab(oneStaffInfo[3])
+                        .phone(convertFullExtensionNumber(oneStaffInfo[4]))
+                        .email(oneStaffInfo[5])
                         .deptName(deptInfo.getDeptName())
                         .collegeName(deptInfo.getCollegeName()
                         ).build()
                 ).toList();
+    }
+
+    private static String convertFullExtensionNumber(String number) {
+        if (number == null || number.isBlank()) {
+            return "";
+        }
+        if (number.matches("\\d{4}")) {
+            return "02-450-" + number;
+        }
+        if (number.matches("02-450-\\d{4}")) {
+            return number;
+        }
+        if (number.matches("02[)].*-\\d{4}")) {
+            return number.replace(")", "-");
+        }
+        return number;
     }
 
     private StaffHtmlParserTemplate findHtmlParser(DeptInfo deptInfo) {

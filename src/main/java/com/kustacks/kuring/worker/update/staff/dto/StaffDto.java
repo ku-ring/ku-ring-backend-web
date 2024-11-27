@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Objects;
 
@@ -26,8 +27,10 @@ public class StaffDto {
 
     private String collegeName;
 
+    private String position;
+
     @Builder
-    private StaffDto(String name, String major, String lab, String phone, String email, String deptName, String collegeName) {
+    private StaffDto(String name, String major, String lab, String phone, String email, String deptName, String collegeName, String position) {
         this.name = name;
         this.major = major;
         this.lab = lab;
@@ -35,6 +38,7 @@ public class StaffDto {
         this.email = email;
         this.deptName = deptName;
         this.collegeName = collegeName;
+        this.position = position;
     }
 
     public boolean isNotSameInformation(Staff staff) {
@@ -44,7 +48,8 @@ public class StaffDto {
                 || !staff.isSamePhone(phone)
                 || !staff.isSameEmail(email)
                 || !staff.isSameDept(deptName)
-                || !staff.isSameCollege(collegeName);
+                || !staff.isSameCollege(collegeName)
+                || !staff.isSamePosition(position);
     }
 
     public Staff toEntity() {
@@ -55,7 +60,9 @@ public class StaffDto {
                 .phone(phone)
                 .email(email)
                 .dept(deptName)
-                .college(collegeName).build();
+                .college(collegeName)
+                .position(position)
+                .build();
     }
 
     public void setDeptName(String deptName) {
@@ -73,7 +80,8 @@ public class StaffDto {
                 && Objects.equals(getPhone(), staffDto.getPhone())
                 && Objects.equals(getEmail(), staffDto.getEmail())
                 && Objects.equals(getDeptName(), staffDto.getDeptName())
-                && Objects.equals(getCollegeName(), staffDto.getCollegeName());
+                && Objects.equals(getCollegeName(), staffDto.getCollegeName())
+                && Objects.equals(getPosition(), staffDto.getPosition());
     }
 
     @Override
