@@ -48,8 +48,7 @@ public class StaffDto {
                 || !staff.isSamePhone(phone)
                 || !staff.isSameEmail(email)
                 || !staff.isSameDept(deptName)
-                || !staff.isSameCollege(collegeName)
-                || !staff.isSamePosition(position);
+                || !staff.isSameCollege(collegeName);
     }
 
     public Staff toEntity() {
@@ -61,7 +60,6 @@ public class StaffDto {
                 .email(email)
                 .dept(deptName)
                 .college(collegeName)
-                .position(position)
                 .build();
     }
 
