@@ -2,6 +2,8 @@ package com.kustacks.kuring.worker.scrap;
 
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.common.utils.converter.EmailConverter;
+import com.kustacks.kuring.common.utils.converter.PhoneNumberConverter;
 import com.kustacks.kuring.worker.scrap.client.staff.StaffApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.parser.staff.StaffHtmlParserTemplate;
@@ -63,8 +65,8 @@ public class StaffScraper {
                         .position(oneStaffInfo[1])
                         .major(oneStaffInfo[2])
                         .lab(oneStaffInfo[3])
-                        .email(oneStaffInfo[5])
                         .phone(PhoneNumberConverter.convertFullExtensionNumber(oneStaffInfo[4]))
+                        .email(EmailConverter.convertValidEmail(oneStaffInfo[5]))
                         .deptName(deptInfo.getDeptName())
                         .collegeName(deptInfo.getCollegeName()
                         ).build()
