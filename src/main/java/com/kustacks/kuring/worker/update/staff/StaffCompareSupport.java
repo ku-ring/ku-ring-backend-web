@@ -57,7 +57,8 @@ public class StaffCompareSupport {
                 staffDto.getPhone(),
                 staffDto.getEmail(),
                 staffDto.getDeptName(),
-                staffDto.getCollegeName()
+                staffDto.getCollegeName(),
+                staffDto.getPosition()
         );
     }
 }
