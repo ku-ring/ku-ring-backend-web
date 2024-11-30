@@ -69,7 +69,6 @@ public class StaffUpdater {
 
     private Map<String, StaffDto> convertStaffDtoMap(List<StaffDto> scrapedStaffDtos) {
         return scrapedStaffDtos.stream()
-                .distinct()
                 .collect(Collectors.toMap(StaffDto::identifier, staffDto -> staffDto));
     }
 
