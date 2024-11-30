@@ -47,7 +47,8 @@ public class StaffDto {
                 || !staff.isSamePhone(phone)
                 || !staff.isSameEmail(email)
                 || !staff.isSameDept(deptName)
-                || !staff.isSameCollege(collegeName);
+                || !staff.isSameCollege(collegeName)
+                || !staff.isSamePosition(position);
     }
 
     public Staff toEntity() {
