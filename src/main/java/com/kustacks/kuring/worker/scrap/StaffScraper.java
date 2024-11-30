@@ -63,28 +63,12 @@ public class StaffScraper {
                         .position(oneStaffInfo[1])
                         .major(oneStaffInfo[2])
                         .lab(oneStaffInfo[3])
-                        .phone(convertFullExtensionNumber(oneStaffInfo[4]))
                         .email(oneStaffInfo[5])
+                        .phone(PhoneNumberConverter.convertFullExtensionNumber(oneStaffInfo[4]))
                         .deptName(deptInfo.getDeptName())
                         .collegeName(deptInfo.getCollegeName()
                         ).build()
                 ).toList();
-    }
-
-    private static String convertFullExtensionNumber(String number) {
-        if (number == null || number.isBlank()) {
-            return "";
-        }
-        if (number.matches("\\d{4}")) {
-            return "02-450-" + number;
-        }
-        if (number.matches("02-450-\\d{4}")) {
-            return number;
-        }
-        if (number.matches("02[)].*-\\d{4}")) {
-            return number.replace(")", "-");
-        }
-        return number;
     }
 
     private StaffHtmlParserTemplate findHtmlParser(DeptInfo deptInfo) {
