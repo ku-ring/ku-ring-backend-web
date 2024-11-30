@@ -66,6 +66,10 @@ public class StaffDto {
         this.deptName = deptName;
     }
 
+    public String identifier() {
+        return String.join(",", name, position, deptName);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
