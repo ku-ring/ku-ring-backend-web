@@ -59,6 +59,7 @@ public class StaffDto {
                 .email(email)
                 .dept(deptName)
                 .college(collegeName)
+                .position(position)
                 .build();
     }
 
