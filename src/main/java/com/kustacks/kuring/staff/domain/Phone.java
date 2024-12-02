@@ -22,13 +22,14 @@ public class Phone {
             = Pattern.compile("(\\d{3,4})[-\\s]*(\\d{4})");
     private static final String SEOUL_AREA_CODE = "02";
     private static final String DELIMITER = "-";
+    private static final String EMPTY_NUMBER = "";
 
     @Column(name = "phone", length = 64)
     private String value;
 
     public Phone(String phone) {
         if(isEmptyNumbers(phone)) {
-            this.value = DELIMITER;
+            this.value = EMPTY_NUMBER;
             return;
         }
 
@@ -71,7 +72,7 @@ public class Phone {
     }
 
     private static boolean isEmptyNumbers(String phone) {
-        return phone == null || phone.isBlank() || phone.equals(DELIMITER);
+        return phone == null || phone.isBlank();
     }
 
     public boolean isSameValue(String phone) {
