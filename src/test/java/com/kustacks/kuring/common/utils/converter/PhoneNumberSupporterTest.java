@@ -41,7 +41,6 @@ class PhoneNumberSupporterTest {
 
         //then
         for (int i = 0; i < numbers.length; i++) {
-            System.out.println(numbers[i] + " " +convertedNumbers.get(i) + " " + answer[i]);
             assertThat(Objects.equals(convertedNumbers.get(i), answer[i])).isTrue();
         }
     }
