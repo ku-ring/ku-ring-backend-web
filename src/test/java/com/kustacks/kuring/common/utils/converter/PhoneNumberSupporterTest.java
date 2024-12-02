@@ -9,11 +9,11 @@ import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PhoneNumberConverterTest {
+class PhoneNumberSupporterTest {
 
     @DisplayName("전화번호 구조 변경 테스트")
     @Test
-    public void convertValidNumber() {
+    void convertValidNumber() {
         //given
         String[] numbers = new String[]{
                 "1234",
@@ -36,13 +36,40 @@ class PhoneNumberConverterTest {
 
         //when
         List<String> convertedNumbers = Arrays.stream(numbers)
-                .map(PhoneNumberConverter::convertFullExtensionNumber)
+                .map(PhoneNumberSupporter::convertFullExtensionNumber)
                 .toList();
 
         //then
         for (int i = 0; i < numbers.length; i++) {
             System.out.println(numbers[i] + " " +convertedNumbers.get(i) + " " + answer[i]);
             assertThat(Objects.equals(convertedNumbers.get(i), answer[i])).isTrue();
+        }
+    }
+
+    @DisplayName("전화번호 Null or Blank 테스트")
+    @Test
+    void validationEmailTest() {
+        //given
+        String[] numbers = new String[]{
+                "1234",
+                "02-450-1234",
+                "02)450-1234",
+                "02-2049-1234",
+                "02)2049-1234",
+                "218)",
+                "",
+                null};
+
+        Boolean[] answer = new Boolean[]{false, false, false, false, false, false, true, true};
+
+        //when
+        List<Boolean> validationResults = Arrays.stream(numbers)
+                .map(PhoneNumberSupporter::isNullOrBlank)
+                .toList();
+
+        //then
+        for (int i = 0; i < numbers.length; i++) {
+            assertThat(Objects.equals(validationResults.get(i), answer[i])).isTrue();
         }
     }
 }
