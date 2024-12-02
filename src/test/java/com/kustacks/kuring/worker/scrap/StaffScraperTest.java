@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("교직원 스크랩 테스트")
 @SpringBootTest
-public class StaffScraperTest {
+class StaffScraperTest {
 
     @Autowired
     private StaffScraper staffScraper;
@@ -37,14 +37,14 @@ public class StaffScraperTest {
     private RealEstateDept realEstateDept;
 
     private ClientAndServer mockServer;
-    private final int MOCK_SERVER_PORT = 9000;
+    private final int mockServerPort = 9000;
 
     @Value("${staff.each-dept-url}")
     private String eachDeptUrl;
 
     @BeforeEach
     public void startServer() {
-        mockServer = ClientAndServer.startClientAndServer(MOCK_SERVER_PORT); // 원하는 포트 지정
+        mockServer = ClientAndServer.startClientAndServer(mockServerPort); // 원하는 포트 지정
     }
 
     @AfterEach
@@ -108,6 +108,6 @@ public class StaffScraperTest {
     private void setUpMockServerWith200Response(String requestPath, String responseBody) {
         HttpRequest request = MockServerSupport.getMockRequest("GET", requestPath);
         HttpResponse response = MockServerSupport.getMockResponse(200, MediaType.TEXT_HTML_UTF_8, responseBody);
-        MockServerSupport.createNewMockServer(MOCK_SERVER_PORT, request, response);
+        MockServerSupport.createNewMockServer(mockServerPort, request, response);
     }
 }
