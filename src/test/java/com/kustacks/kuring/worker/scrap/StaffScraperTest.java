@@ -2,7 +2,6 @@ package com.kustacks.kuring.worker.scrap;
 
 import com.kustacks.kuring.support.MockServerSupport;
 import com.kustacks.kuring.support.TestFileLoader;
-import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.engineering.ComputerScienceDept;
 import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
 import com.kustacks.kuring.worker.update.staff.dto.StaffDto;

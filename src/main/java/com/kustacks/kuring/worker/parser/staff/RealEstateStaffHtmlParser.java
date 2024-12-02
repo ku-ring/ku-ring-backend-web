@@ -7,9 +7,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Component
 public class RealEstateStaffHtmlParser extends StaffHtmlParserTemplate {
 
