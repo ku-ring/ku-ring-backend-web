@@ -1,5 +1,7 @@
 package com.kustacks.kuring.worker.update.staff.dto;
 
+import com.kustacks.kuring.common.utils.converter.EmailSupporter;
+import com.kustacks.kuring.common.utils.converter.PhoneNumberSupporter;
 import com.kustacks.kuring.staff.domain.Staff;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -33,11 +35,27 @@ public class StaffDto {
         this.name = name;
         this.major = major;
         this.lab = lab;
-        this.phone = phone;
-        this.email = email;
+        this.phone = processPhone(phone);
+        this.email = processEmail(email);
         this.deptName = deptName;
         this.collegeName = collegeName;
         this.position = position;
+
+    }
+
+    private String processPhone(String phone) {
+        if (PhoneNumberSupporter.isNullOrBlank(phone)) {
+            return "";
+        }
+
+        return PhoneNumberSupporter.convertFullExtensionNumber(phone);
+    }
+
+    private String processEmail(String email) {
+        if (EmailSupporter.isNullOrBlank(email)) {
+            return "";
+        }
+        return EmailSupporter.convertValidEmail(email);
     }
 
     public boolean isNotSameInformation(Staff staff) {
@@ -89,6 +107,6 @@ public class StaffDto {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getMajor(), getLab(), getPhone(), getEmail(), getDeptName(), getCollegeName());
+        return Objects.hash(getName(), getMajor(), getLab(), getPhone(), getEmail(), getDeptName(), getCollegeName(), getPosition());
     }
 }
