@@ -26,7 +26,9 @@ public class EachDeptStaffApiClient implements StaffApiClient {
     }
 
     /*
-    TODO: 만약, 학과별로 다른 API Client를 구성해야 한다면 support 구현 필요.(현재는 교직원 스크랩을 위한 모든 API 클래이언트 스펙 동일, 파싱에서 분리) [2024.11.28 김한주]
+    만약, 학과별로 다른 API Client를 구성해야 한다면 support 구현 필요.
+    현재는 교직원 스크랩을 위한 모든 API 클래이언트 스펙 동일, 파싱에서 분리
+    [2024.11.28 김한주]
      */
     @Override
     public boolean support(DeptInfo deptInfo) {
@@ -59,7 +61,7 @@ public class EachDeptStaffApiClient implements StaffApiClient {
     }
 
     private String buildDeptStaffPageUrl(String department, int siteId) {
-        return baseUrl.replaceAll("\\{department\\}", department)
+        return baseUrl.replace("{department}", department)
                 .replace("{siteId}", String.valueOf(siteId));
     }
 }
