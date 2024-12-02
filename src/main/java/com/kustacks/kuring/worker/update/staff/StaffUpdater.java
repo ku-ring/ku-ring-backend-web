@@ -42,9 +42,7 @@ public class StaffUpdater {
 
         deptInfos.stream()
                 .filter(DeptInfo::isSupportStaffScrap)
-                .forEach(deptInfo -> {
-                    scrapSingleDepartmentsStaffs(kuStaffDtoMap, successDepartmentNames, deptInfo);
-                });
+                .forEach(deptInfo -> scrapSingleDepartmentsStaffs(kuStaffDtoMap, successDepartmentNames, deptInfo));
         return new StaffScrapResults(kuStaffDtoMap, successDepartmentNames);
     }
 
