@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-public class StaffHtmlParserTemplateTest {
+class StaffHtmlParserTemplateTest {
 
     @DisplayName("부동산 학과의 교수진 정보를 파싱한다.")
     @Test
@@ -32,7 +32,7 @@ public class StaffHtmlParserTemplateTest {
 
     @DisplayName("컴퓨터공학부 홈페이지의 교수진 정보를 파싱한다.")
     @Test
-    public void LatestStaffEachDeptHtmlParser() throws IOException {
+    void LatestStaffEachDeptHtmlParser() throws IOException {
         // given
         Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/staff/cse_staff_page.html"));
 
