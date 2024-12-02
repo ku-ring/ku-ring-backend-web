@@ -29,6 +29,7 @@ public class Staff {
     @Column(name = "lab", length = 64)
     private String lab;
 
+    @Getter(AccessLevel.PUBLIC)
     @Column(name = "position", length = 64)
     private String position;
 
@@ -112,6 +113,10 @@ public class Staff {
 
     public boolean isSamePosition(String position) {
         return this.position.equals(position);
+    }
+
+    public String identifier() {
+        return String.join(",", getName(), position, dept);
     }
 
     @Override

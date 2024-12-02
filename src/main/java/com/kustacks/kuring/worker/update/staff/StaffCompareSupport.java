@@ -12,7 +12,7 @@ import java.util.Map;
 public class StaffCompareSupport {
 
     public StaffCompareResults compareAllDepartmentsAndUpdateExistStaff(
-            List<StaffDto> scrapStaffStorage,
+            Map<String, StaffDto> scrapStaffStorage,
             Map<String, Staff> originStaffStorage
     ) {
         updateAlreadyExistsStaffs(scrapStaffStorage, originStaffStorage);
@@ -21,35 +21,35 @@ public class StaffCompareSupport {
         return new StaffCompareResults(newStaffs, deleteStaffs);
     }
 
-    private void updateAlreadyExistsStaffs(List<StaffDto> scrapStaffStorage, Map<String, Staff> originStaffStorage) {
-        scrapStaffStorage.stream()
-                .filter(staffDto -> originStaffStorage.containsKey(staffDto.getEmail()))
-                .forEach(staffDto -> updateSingleStaff(staffDto, originStaffStorage));
+    private void updateAlreadyExistsStaffs(Map<String, StaffDto> scrapStaffStorage, Map<String, Staff> originStaffStorage) {
+        scrapStaffStorage.keySet().stream()
+                .filter(originStaffStorage::containsKey)
+                .forEach(staffDtoKey -> updateSingleStaff(scrapStaffStorage.get(staffDtoKey), originStaffStorage));
     }
 
     private void updateSingleStaff(StaffDto staffDto, Map<String, Staff> originStaffStorage) {
-        Staff staff = originStaffStorage.get(staffDto.getEmail());
+        Staff staff = originStaffStorage.get(staffDto.identifier());
 
         if (staffDto.isNotSameInformation(staff)) {
             updateStaffInfo(staffDto, staff);
         }
     }
 
-    private List<Staff> filteringNewStaffs(List<StaffDto> scrapStaffStorage, Map<String, Staff> originStaffStorage) {
-        return scrapStaffStorage.stream()
-                .filter(staffDto -> !originStaffStorage.containsKey(staffDto.getEmail()))
-                .map(StaffDto::toEntity)
+    private List<Staff> filteringNewStaffs(Map<String, StaffDto> scrapStaffStorage, Map<String, Staff> originStaffStorage) {
+        return scrapStaffStorage.keySet().stream()
+                .filter(staffDtoKey -> !originStaffStorage.containsKey(staffDtoKey))
+                .map(staffDtoKey -> scrapStaffStorage.get(staffDtoKey).toEntity())
                 .toList();
     }
 
-    private List<Staff> filteringDeleteStaffs(List<StaffDto> scrapStaffStorage, Map<String, Staff> originStaffStorage) {
-        for (StaffDto staffDto : scrapStaffStorage) {
-            originStaffStorage.remove(staffDto.getEmail());
+    private List<Staff> filteringDeleteStaffs(Map<String, StaffDto> scrapStaffStorage, Map<String, Staff> originStaffStorage) {
+        for (String staffDtoKey : scrapStaffStorage.keySet()) {
+            originStaffStorage.remove(staffDtoKey);
         }
         return originStaffStorage.values().stream().toList();
     }
 
-    private static void updateStaffInfo(StaffDto staffDto, Staff staff) {
+    private void updateStaffInfo(StaffDto staffDto, Staff staff) {
         staff.updateInformation(
                 staffDto.getName(),
                 staffDto.getMajor(),
