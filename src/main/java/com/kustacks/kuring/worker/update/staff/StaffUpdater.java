@@ -26,7 +26,7 @@ public class StaffUpdater {
     private final StaffScraper staffScraper;
     private final List<DeptInfo> deptInfos;
     
-    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
+    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
     public void update() {
         log.info("========== 교직원 업데이트 시작 ==========");
 
