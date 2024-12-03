@@ -30,7 +30,8 @@ public class Email {
     }
 
     private boolean isValidEmail(String email) {
-        return !Objects.isNull(email) && patternMatches(email);
+        return Objects.nonNull(email) &&
+                (patternMatches(email) || Objects.equals(email,""));
     }
 
     private boolean patternMatches(String email) {

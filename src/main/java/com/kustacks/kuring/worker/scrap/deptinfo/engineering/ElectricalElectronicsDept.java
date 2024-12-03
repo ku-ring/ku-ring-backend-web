@@ -24,8 +24,8 @@ public class ElectricalElectronicsDept extends EngineeringCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("10962");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(10974);
+        this.staffScrapInfo = new StaffScrapInfo(ELEC_ELEC.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(ELEC_ELEC.getHostPrefix(), 407);
         this.departmentName = ELEC_ELEC;
     }

@@ -24,8 +24,8 @@ public class AnimalResourcesFoodScienceBiotechnologyDept extends SanghuoBiologyC
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("11016");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(11016);
+        this.staffScrapInfo = new StaffScrapInfo(ANIMAL_RESOURCES.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(ANIMAL_RESOURCES.getHostPrefix(), 923);
         this.departmentName = ANIMAL_RESOURCES;
     }

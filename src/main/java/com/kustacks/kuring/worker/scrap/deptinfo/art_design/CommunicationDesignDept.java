@@ -25,8 +25,8 @@ public class CommunicationDesignDept extends ArtDesignCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = Collections.emptyList();
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(11166);
+        this.staffScrapInfo = new StaffScrapInfo(COMM_DESIGN.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(COMM_DESIGN.getHostPrefix(), 0);
         this.departmentName = COMM_DESIGN;
     }

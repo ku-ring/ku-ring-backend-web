@@ -43,8 +43,12 @@ public class DeptInfo {
         return this.departmentName.equals(departmentName);
     }
 
-    public List<String> getProfessorForumIds() {
-        return this.staffScrapInfo.getProfessorForumId();
+    public List<Integer> getStaffSiteIds() {
+        return this.staffScrapInfo.getSiteIds();
+    }
+
+    public String getStaffSiteName() {
+        return this.staffScrapInfo.getSiteName();
     }
 
     public String createRequestUrl(int page, int row) {
@@ -63,6 +67,10 @@ public class DeptInfo {
         return latestPageNoticeProperties.viewUrl()
                 .replaceAll("\\{department\\}", noticeScrapInfo.getSiteName())
                 .replace("{siteId}", String.valueOf(noticeScrapInfo.getSiteId()));
+    }
+
+    public boolean isSupportStaffScrap() {
+        return !this.staffScrapInfo.getSiteIds().isEmpty();
     }
 
     @Override

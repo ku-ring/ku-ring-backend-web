@@ -24,8 +24,8 @@ public class KBeautyIndustryFusionDept extends EngineeringCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("10127");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(10142);
+        this.staffScrapInfo = new StaffScrapInfo(KBEAUTY.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(KBEAUTY.getHostPrefix(), 419);
         this.departmentName = KBEAUTY;
     }

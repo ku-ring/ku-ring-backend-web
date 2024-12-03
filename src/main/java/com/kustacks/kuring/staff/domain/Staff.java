@@ -29,6 +29,10 @@ public class Staff {
     @Column(name = "lab", length = 64)
     private String lab;
 
+    @Getter(AccessLevel.PUBLIC)
+    @Column(name = "position", length = 64)
+    private String position;
+
     @Embedded
     private Phone phone;
 
@@ -45,7 +49,7 @@ public class Staff {
     private College college;
 
     @Builder
-    private Staff(String name, String major, String lab, String phone, String email, String dept, String college) {
+    private Staff(String name, String major, String lab, String phone, String email, String dept, String college, String position) {
         this.name = new Name(name);
         this.major = major;
         this.lab = lab;
@@ -53,9 +57,10 @@ public class Staff {
         this.email = new Email(email);
         this.dept = dept;
         this.college = College.valueOf(college);
+        this.position = position;
     }
 
-    public void updateInformation(String name, String major, String lab, String phone, String email, String deptName, String college) {
+    public void updateInformation(String name, String major, String lab, String phone, String email, String deptName, String college, String position) {
         this.name = new Name(name);
         this.major = major;
         this.lab = lab;
@@ -63,6 +68,7 @@ public class Staff {
         this.email = new Email(email);
         this.dept = deptName;
         this.college = College.valueOf(college);
+        this.position = position;
     }
 
     public String getEmail() {
@@ -103,6 +109,14 @@ public class Staff {
 
     public boolean isSameCollege(String collegeName) {
         return this.college == College.valueOf(collegeName);
+    }
+
+    public boolean isSamePosition(String position) {
+        return this.position.equals(position);
+    }
+
+    public String identifier() {
+        return String.join(",", getName(), position, dept);
     }
 
     @Override

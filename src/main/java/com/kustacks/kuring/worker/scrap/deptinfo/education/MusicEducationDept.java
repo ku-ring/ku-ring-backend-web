@@ -24,8 +24,8 @@ public class MusicEducationDept extends EducationCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("11383");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(11399);
+        this.staffScrapInfo = new StaffScrapInfo(MUSIC_EDU.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(MUSIC_EDU.getHostPrefix(), 503);
         this.departmentName = MUSIC_EDU;
     }

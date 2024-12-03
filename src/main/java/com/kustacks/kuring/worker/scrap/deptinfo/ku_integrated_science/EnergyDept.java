@@ -24,8 +24,8 @@ public class EnergyDept extends KuIntegratedScienceCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("10614");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(10628);
+        this.staffScrapInfo = new StaffScrapInfo(ENERGY.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(ENERGY.getHostPrefix(), 451);
         this.departmentName = ENERGY;
     }

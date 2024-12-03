@@ -24,8 +24,8 @@ public class HistoryDept extends LiberalArtCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("4110");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(4124);
+        this.staffScrapInfo = new StaffScrapInfo(HISTORY.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(HISTORY.getHostPrefix(), 361);
         this.departmentName = HISTORY;
     }

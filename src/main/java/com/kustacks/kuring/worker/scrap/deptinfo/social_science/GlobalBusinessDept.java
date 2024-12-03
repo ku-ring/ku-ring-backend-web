@@ -24,8 +24,8 @@ public class GlobalBusinessDept extends SocialSciencesCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("10443");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(10443);
+        this.staffScrapInfo = new StaffScrapInfo(GLOBAL_BUSI.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(GLOBAL_BUSI.getHostPrefix(), 435);
         this.departmentName = GLOBAL_BUSI;
     }

@@ -30,7 +30,7 @@ public class StaffDataSynchronizer {
 
     private StaffCompareResults compare(StaffScrapResults scrapResults) {
         Map<String, Staff> originStaffStorage = findByDeptContainingMap(scrapResults.successDepartmentNames());
-        return staffCompareSupport.compareAllDepartmentsAndUpdateExistStaff(scrapResults.getStaffDtos(), originStaffStorage);
+        return staffCompareSupport.compareAllDepartmentsAndUpdateExistStaff(scrapResults.kuStaffDTOMap(), originStaffStorage);
     }
 
     private void synchronizationWithDb(StaffCompareResults compareResults) {
@@ -44,7 +44,7 @@ public class StaffDataSynchronizer {
                         deptName -> staffRepository.findByDeptContaining(deptName).stream()
                 ).collect(
                         Collectors.toMap(
-                                Staff::getEmail,
+                                Staff::identifier,
                                 Function.identity(),
                                 (existing, newValue) -> existing
                         )

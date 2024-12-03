@@ -4,20 +4,13 @@ import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
-import com.kustacks.kuring.worker.scrap.deptinfo.art_design.CommunicationDesignDept;
-import com.kustacks.kuring.worker.scrap.deptinfo.art_design.LivingDesignDept;
-import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class EachDeptStaffApiClient implements StaffApiClient {
@@ -32,49 +25,32 @@ public class EachDeptStaffApiClient implements StaffApiClient {
         this.jsoupClient = normalJsoupClient;
     }
 
+    /*
+    만약, 학과별로 다른 API Client를 구성해야 한다면 support 구현 필요.
+    현재는 교직원 스크랩을 위한 모든 API 클래이언트 스펙 동일, 파싱에서 분리
+    [2024.11.28 김한주]
+     */
     @Override
     public boolean support(DeptInfo deptInfo) {
-        return !(deptInfo instanceof RealEstateDept) &&
-                !(deptInfo instanceof LivingDesignDept) &&
-                !(deptInfo instanceof CommunicationDesignDept);
+        return true;
     }
 
     @Override
     public List<Document> getHTML(DeptInfo deptInfo) throws InternalLogicException {
-        return deptInfo.getProfessorForumIds().stream()
-                .flatMap(professorForumId -> getProfessorHtmlById(professorForumId).stream())
+        return deptInfo.getStaffSiteIds().stream()
+                .flatMap(siteId -> getProfessorHtmlByDeptAndSiteId(deptInfo.getStaffSiteName(), siteId).stream())
                 .toList();
     }
 
-    private List<Document> getProfessorHtmlById(String professorForumId) {
+    private List<Document> getProfessorHtmlByDeptAndSiteId(String siteName, int siteId) {
         LinkedList<Document> documents = new LinkedList<>();
 
-        String url = buildProfessorInfoUrl(professorForumId);
+        String url = buildDeptStaffPageUrl(siteName, siteId);
         Document document = getDocument(url);
         documents.add(document);
-
-        int totalPageNum = getTotalPageNumber(document);
-        for (int pageNumber = 2; pageNumber <= totalPageNum; pageNumber++) {
-            documents.add(parseDocumentByPageNumber(url, pageNumber));
-        }
-
         return documents;
     }
 
-    private Document parseDocumentByPageNumber(String url, int pageNumber) {
-        try {
-            Map<String, String> requestBody = new HashMap<>();
-            requestBody.put("pageNum", String.valueOf(pageNumber));
-            return jsoupClient.post(url, STAFF_SCRAP_TIMEOUT, requestBody);
-        } catch (IOException e) {
-            throw new InternalLogicException(ErrorCode.STAFF_SCRAPER_CANNOT_SCRAP, e);
-        }
-    }
-
-    private static int getTotalPageNumber(Document document) {
-        Element pageNumHiddenInput = document.getElementById("totalPageCount");
-        return Integer.parseInt(pageNumHiddenInput.val());
-    }
 
     private Document getDocument(String url) {
         try {
@@ -84,7 +60,8 @@ public class EachDeptStaffApiClient implements StaffApiClient {
         }
     }
 
-    private String buildProfessorInfoUrl(String pfForumId) {
-        return UriComponentsBuilder.fromUriString(baseUrl).queryParam("pfForumId", pfForumId).toUriString();
+    private String buildDeptStaffPageUrl(String department, int siteId) {
+        return baseUrl.replace("{department}", department)
+                .replace("{siteId}", String.valueOf(siteId));
     }
 }

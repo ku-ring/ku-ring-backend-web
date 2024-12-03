@@ -114,7 +114,4 @@ ip:
   proxy-list: 14.63.228.239:80, 101.79.15.198:80, 222.104.128.205:8678, 106.244.154.91:8080, 103.51.205.42:8181
 
 staff:
-  real-estate-url: http://www.realestate.ac.kr/gb/bbs/board.php?bo_table=faculty
-  communication-design-url: http://www.konkuk.ac.kr/jsp/Coll/coll_01_13_01_01_tab01.jsp
-  living-design-url: http://www.konkuk.ac.kr/jsp/Coll/coll_01_13_01_05_tab01.jsp
-  each-dept-url: http://home.konkuk.ac.kr/cms/Common/Professor/ProfessorList.do
+  each-dept-url: https://{department}.konkuk.ac.kr/{department}/{siteId}/subview.do

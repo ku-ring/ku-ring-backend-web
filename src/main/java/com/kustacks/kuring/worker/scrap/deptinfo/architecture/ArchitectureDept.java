@@ -24,8 +24,8 @@ public class ArchitectureDept extends ArchitectureCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("9815");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(9824);
+        this.staffScrapInfo = new StaffScrapInfo(ARCHITECTURE.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(ARCHITECTURE.getHostPrefix(), 397);
         this.departmentName = ARCHITECTURE;
     }

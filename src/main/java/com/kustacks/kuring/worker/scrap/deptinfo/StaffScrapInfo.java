@@ -7,9 +7,11 @@ import java.util.List;
 @Getter
 public class StaffScrapInfo extends ScrapInfo {
 
-    private final List<String> professorForumId;
+    private final String siteName;
+    private final List<Integer> siteIds;
 
-    public StaffScrapInfo(List<String> professorForumId) {
-        this.professorForumId = professorForumId;
+    public StaffScrapInfo(String siteName, List<Integer> siteIds) {
+        this.siteName = siteName;
+        this.siteIds = siteIds;
     }
 }
