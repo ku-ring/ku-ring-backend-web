@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -29,20 +28,19 @@ public class StaffDataSynchronizer {
     }
 
     private StaffCompareResults compare(StaffScrapResults scrapResults) {
-        Map<String, Staff> originStaffStorage = findByDeptContainingMap(scrapResults.successDepartmentNames());
+        Map<String, Staff> originStaffStorage = findAllOriginStaffs();
         return staffCompareSupport.compareAllDepartmentsAndUpdateExistStaff(scrapResults.kuStaffDTOMap(), originStaffStorage);
     }
 
     private void synchronizationWithDb(StaffCompareResults compareResults) {
+        System.out.println(compareResults.toString());
         staffRepository.deleteAll(compareResults.deleteStaffs());
         staffRepository.saveAll(compareResults.newStaffs());
     }
 
-    private Map<String, Staff> findByDeptContainingMap(List<String> scrapSuccessDepartmentNames) {
-        return scrapSuccessDepartmentNames.stream()
-                .flatMap(
-                        deptName -> staffRepository.findByDeptContaining(deptName).stream()
-                ).collect(
+    private Map<String, Staff> findAllOriginStaffs() {
+        return staffRepository.findAll().stream()
+                .collect(
                         Collectors.toMap(
                                 Staff::identifier,
                                 Function.identity(),
