@@ -1,2 +1,2 @@
 ALTER TABLE staff
-    ADD column position varchar(64) default false;
+    ADD column position varchar(64);
