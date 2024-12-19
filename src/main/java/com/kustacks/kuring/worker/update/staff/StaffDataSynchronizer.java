@@ -33,7 +33,6 @@ public class StaffDataSynchronizer {
     }
 
     private void synchronizationWithDb(StaffCompareResults compareResults) {
-        System.out.println(compareResults.toString());
         staffRepository.deleteAll(compareResults.deleteStaffs());
         staffRepository.saveAll(compareResults.newStaffs());
     }

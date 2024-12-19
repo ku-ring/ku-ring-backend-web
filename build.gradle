@@ -128,7 +128,7 @@ configurations.all {
     }
 }
 
-test.onlyIf { System.getenv('DEPLOY_ENV') == 'dev' }
+//test.onlyIf { System.getenv('DEPLOY_ENV') == 'dev' }
 
 test {
     jacoco {
