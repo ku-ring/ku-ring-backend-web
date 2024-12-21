@@ -4,11 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public record StaffScrapResults(
-        Map<String, StaffDto> kuStaffDTOMap,
-        List<String> successDepartmentNames
+        Map<String, StaffDto> kuStaffDTOMap
 ) {
 
-    public List<StaffDto> getStaffDtos() {
-        return kuStaffDTOMap.values().stream().toList();
-    }
 }

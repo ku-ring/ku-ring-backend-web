@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +25,7 @@ public class StaffUpdater {
     private final StaffScraper staffScraper;
     private final List<DeptInfo> deptInfos;
     
-    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.DAYS)
+    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
     public void update() {
         log.info("========== 교직원 업데이트 시작 ==========");
 
@@ -38,19 +37,17 @@ public class StaffUpdater {
 
     private StaffScrapResults scrapAllDepartmentsStaffs() {
         Map<String, StaffDto> kuStaffDtoMap = new HashMap<>();
-        List<String> successDepartmentNames = new LinkedList<>();
 
         deptInfos.stream()
                 .filter(DeptInfo::isSupportStaffScrap)
-                .forEach(deptInfo -> scrapSingleDepartmentsStaffs(kuStaffDtoMap, successDepartmentNames, deptInfo));
-        return new StaffScrapResults(kuStaffDtoMap, successDepartmentNames);
+                .forEach(deptInfo -> scrapSingleDepartmentsStaffs(kuStaffDtoMap, deptInfo));
+        return new StaffScrapResults(kuStaffDtoMap);
     }
 
-    private void scrapSingleDepartmentsStaffs(Map<String, StaffDto> kuStaffDtoMap, List<String> successDepartmentNames, DeptInfo deptInfo) {
+    private void scrapSingleDepartmentsStaffs(Map<String, StaffDto> kuStaffDtoMap, DeptInfo deptInfo) {
         try {
             Map<String, StaffDto> staffScrapResultMap = scrapStaffByDepartment(deptInfo);
             mergeForMultipleDepartmentsStaff(kuStaffDtoMap, staffScrapResultMap);
-            successDepartmentNames.add(deptInfo.getDeptName());
         } catch (InternalLogicException e) {
             log.error("[StaffScraperException] {}학과 교직원 스크래핑 문제 발생.", deptInfo.getDeptName());
         }

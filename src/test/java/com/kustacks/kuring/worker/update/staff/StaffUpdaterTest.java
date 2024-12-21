@@ -86,8 +86,7 @@ class StaffUpdaterTest extends IntegrationTestSupport {
         kuStaffDtoMap.put(dto1.identifier(), dto1);
         kuStaffDtoMap.put(dto2.identifier(), dto2);
 
-        List<String> successDepartmentNames = List.of("컴퓨터공학과", "생명과학부");
-        StaffScrapResults staffScrapResults = new StaffScrapResults(kuStaffDtoMap, successDepartmentNames);
+        StaffScrapResults staffScrapResults = new StaffScrapResults(kuStaffDtoMap);
 
         // when
         staffDataSynchronizer.compareAndUpdateDb(staffScrapResults);
