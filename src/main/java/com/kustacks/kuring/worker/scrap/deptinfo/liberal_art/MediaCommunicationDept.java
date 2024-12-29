@@ -24,8 +24,8 @@ public class MediaCommunicationDept extends LiberalArtCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("7879");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(7895);
+        this.staffScrapInfo = new StaffScrapInfo(MEDIA_COMM.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(MEDIA_COMM.getHostPrefix(), 375);
         this.departmentName = MEDIA_COMM;
     }

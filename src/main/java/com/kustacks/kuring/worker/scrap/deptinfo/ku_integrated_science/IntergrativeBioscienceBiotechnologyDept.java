@@ -24,8 +24,8 @@ public class IntergrativeBioscienceBiotechnologyDept extends KuIntegratedScience
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("10837");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(10851);
+        this.staffScrapInfo = new StaffScrapInfo(INT_BIO_TECH.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(INT_BIO_TECH.getHostPrefix(), 895);
         this.departmentName = INT_BIO_TECH;
     }

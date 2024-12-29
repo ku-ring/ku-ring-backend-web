@@ -24,8 +24,8 @@ public class ContemporaryArtDept extends ArtDesignCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("11236");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(11250);
+        this.staffScrapInfo = new StaffScrapInfo(CONT_ART.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(CONT_ART.getHostPrefix(), 489);
         this.departmentName = CONT_ART;
     }

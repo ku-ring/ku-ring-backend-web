@@ -39,4 +39,5 @@ out/
 ### API docs ###
 **/src/main/resources/static/docs/*
 
-**/ku-stack-firebase-adminsdk-87nwq-5ba04dfc12.json
+**/ku-stack-firebase-adminsdk-87nwq-ae6a2df931.json
+**/src/main/generated/

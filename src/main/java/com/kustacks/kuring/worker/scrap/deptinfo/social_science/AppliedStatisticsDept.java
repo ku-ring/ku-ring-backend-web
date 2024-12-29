@@ -24,8 +24,8 @@ public class AppliedStatisticsDept extends SocialSciencesCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("10389");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(10389);
+        this.staffScrapInfo = new StaffScrapInfo(STATISTICS.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(STATISTICS.getHostPrefix(), 431);
         this.departmentName = STATISTICS;
     }

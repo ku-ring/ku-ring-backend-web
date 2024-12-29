@@ -24,8 +24,8 @@ public class ComputerScienceDept extends EngineeringCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("9938");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(9960);
+        this.staffScrapInfo = new StaffScrapInfo(COMPUTER.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(COMPUTER.getHostPrefix(), 775);
         this.departmentName = COMPUTER;
     }

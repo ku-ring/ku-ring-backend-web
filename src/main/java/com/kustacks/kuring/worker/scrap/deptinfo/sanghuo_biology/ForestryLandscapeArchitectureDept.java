@@ -24,8 +24,8 @@ public class ForestryLandscapeArchitectureDept extends SanghuoBiologyCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("11103");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(11103);
+        this.staffScrapInfo = new StaffScrapInfo(FORESTRY_LANDSCAPE_ARCH.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(FORESTRY_LANDSCAPE_ARCH.getHostPrefix(), 479);
         this.departmentName = FORESTRY_LANDSCAPE_ARCH;
     }

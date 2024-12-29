@@ -24,8 +24,8 @@ public class StemCellRegenerativeBioTechnologyDept extends KuIntegratedScienceCo
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("10744");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(10758);
+        this.staffScrapInfo = new StaffScrapInfo(STEM_REGEN.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(STEM_REGEN.getHostPrefix(), 876);
         this.departmentName = STEM_REGEN;
     }

@@ -166,9 +166,9 @@ class StaffTest {
                 Arguments.of("02-2049-6052 / 02-457-1341(Lab)", "02-2049-6052 / 02-457-1341(Lab)"),
                 Arguments.of("02-450-3936 ( FAX : 02-3437-8360)", "02-450-3936 ( FAX : 02-3437-8360)"),
                 Arguments.of("1-505-667-2716", "1-505-667-2716"),
-                Arguments.of(" ", "-"),
-                Arguments.of("", "-"),
-                Arguments.of(null, "-")
+                Arguments.of(" ", ""),
+                Arguments.of("", ""),
+                Arguments.of(null, "")
         );
     }
 }

@@ -24,8 +24,8 @@ public class SystemBiotechnologyDept extends KuIntegratedScienceCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("10810");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(16019);
+        this.staffScrapInfo = new StaffScrapInfo(SYSTEM_BIO_TECH.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(SYSTEM_BIO_TECH.getHostPrefix(), 887);
         this.departmentName = SYSTEM_BIO_TECH;
     }

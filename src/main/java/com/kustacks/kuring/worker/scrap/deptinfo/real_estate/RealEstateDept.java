@@ -14,7 +14,6 @@ import static com.kustacks.kuring.notice.domain.DepartmentName.REAL_ESTATE;
 @RegisterDepartmentMap(key = REAL_ESTATE)
 public class RealEstateDept extends RealEstateCollege {
 
-    // 부동산학과는 교수진 정보를 렌더링하는 방법이 다름. 따라서 pfForumId 인자를 전달하지 않았다.
     public RealEstateDept(RealEstateNoticeApiClient realEstateNoticeApiClient,
                           RealEstateNoticeHtmlParser realEstateNoticeHtmlParser,
                           LatestPageNoticeProperties latestPageNoticeProperties) {
@@ -23,8 +22,8 @@ public class RealEstateDept extends RealEstateCollege {
         this.htmlParser = realEstateNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<String> professorForumIds = List.of("13949");
-        this.staffScrapInfo = new StaffScrapInfo(professorForumIds);
+        List<Integer> siteIds = List.of(13949);
+        this.staffScrapInfo = new StaffScrapInfo("kure",siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(REAL_ESTATE.getHostPrefix(), 1563);
         this.departmentName = REAL_ESTATE;
     }
