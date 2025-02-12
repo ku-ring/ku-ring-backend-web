@@ -37,6 +37,9 @@ public enum ResponseCodeAndMessages {
     /* Alert */
     ALERT_SEARCH_SUCCESS(HttpStatus.OK.value(), "예약 알림 조회에 성공하였습니다"),
 
+    /* Email */
+    EMAIL_SEND_SUCCESS(HttpStatus.OK.value(), "이메일 전송에 성공했습니다."),
+    EMAIL_CODE_VERIFY_SUCCESS(HttpStatus.OK.value(),"인증에 성공했습니다."),
     /**
      * ErrorCodes about auth
      */
