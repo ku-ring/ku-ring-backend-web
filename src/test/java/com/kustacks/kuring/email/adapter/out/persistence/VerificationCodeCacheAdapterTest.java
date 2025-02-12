@@ -1,5 +1,6 @@
 package com.kustacks.kuring.email.adapter.out.persistence;
 
+import com.kustacks.kuring.email.adapter.out.cache.VerificationCodeCacheAdapter;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
