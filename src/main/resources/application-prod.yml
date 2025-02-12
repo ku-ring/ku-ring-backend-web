@@ -54,6 +54,17 @@ spring:
           key-token: ${CHROMA_API_KEY}
         store:
           collection-name: ${CHROMA_COLLECTION_NAME}
+  mail:
+    host: ${MAIL_SMTP_HOST} # smtp 주소
+    port: 587 # STMP 서버 포트
+    username: ${MAIL_ADDRESS} # 이메일 보내는 용도의 계정
+    password: ${MAIL_PASSWORD} # 비밀번호
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true # TLS
 
 decorator:
   datasource:
