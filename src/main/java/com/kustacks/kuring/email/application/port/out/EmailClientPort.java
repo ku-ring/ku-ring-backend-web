@@ -1,5 +1,7 @@
 package com.kustacks.kuring.email.application.port.out;
 
+import jakarta.mail.internet.MimeMessage;
+
 public interface EmailClientPort {
-    void send(String fromEmail, String toEmail, String subject, String text);
+    void sendEmailAsync(MimeMessage mimeMessage);
 }
