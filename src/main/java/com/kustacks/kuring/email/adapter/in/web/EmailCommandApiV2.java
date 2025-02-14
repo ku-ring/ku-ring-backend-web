@@ -8,20 +8,25 @@ import com.kustacks.kuring.email.application.port.in.EmailCommandUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+@Slf4j
 @Tag(name = "Email-Query", description = "Email Send")
-@RestWebAdapter(path = "/api/v2/email")
+@RestWebAdapter(path = "/api/v2/verification-code")
 @RequiredArgsConstructor
 public class EmailCommandApiV2 {
     private final EmailCommandUseCase emailCommandUseCase;
 
     @Operation(summary = "이메일로 인증번호 보내기", description = "사용자 회원가입 시 이메일로 인증번호를 보냅니다.")
-    @PostMapping("/send-verification-code")
+    @PostMapping
     public ResponseEntity<BaseResponse<Void>> sendVerificationCode(@RequestBody EmailVerificationRequest request) {
+        long startTime = System.currentTimeMillis();
         emailCommandUseCase.sendVerificationEmail(request.email());
+        long endTime = System.currentTimeMillis();
+        log.info("소요된 초 = {}", (endTime - startTime) / 1000.0);
         return ResponseEntity.ok().body(new BaseResponse<>(ResponseCodeAndMessages.EMAIL_SEND_SUCCESS, null));
     }
 }
