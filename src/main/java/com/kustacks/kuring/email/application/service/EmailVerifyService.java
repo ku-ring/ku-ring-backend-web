@@ -2,7 +2,7 @@ package com.kustacks.kuring.email.application.service;
 
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.email.application.port.in.EmailQueryUseCase;
+import com.kustacks.kuring.email.application.port.in.EmailVerifyUseCase;
 import com.kustacks.kuring.email.application.port.out.VerificationCodeQueryPort;
 import com.kustacks.kuring.email.application.service.exception.EmailBusinessException;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import java.util.Objects;
 
 @UseCase
 @RequiredArgsConstructor
-public class EmailQueryService implements EmailQueryUseCase {
+public class EmailVerifyService implements EmailVerifyUseCase {
     private final VerificationCodeQueryPort verificationCodeQueryPort;
 
     @Override
