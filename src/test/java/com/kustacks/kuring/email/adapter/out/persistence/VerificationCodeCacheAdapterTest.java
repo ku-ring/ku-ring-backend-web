@@ -21,13 +21,13 @@ class VerificationCodeCacheAdapterTest extends IntegrationTestSupport {
 
     @DisplayName("인증 코드 캐싱 저장 테스트")
     @Test
-    public void save_code_cache() throws Exception {
+    void save_code_cache(){
         //given
         String email = "test@test.com";
         String code = "123456789";
 
         //when, then
-        verificationCodeCacheAdapter.saveCode(email, code);
+        verificationCodeCacheAdapter.saveVerificationCode(email, code);
 
         //then
         String resultCode = (String) cacheManager.getCache(CACHE_NAME).get(email)
@@ -38,7 +38,7 @@ class VerificationCodeCacheAdapterTest extends IntegrationTestSupport {
 
     @DisplayName("인증 코드 캐싱 조회 테스트")
     @Test
-    public void search_saved_code() throws Exception {
+    void search_saved_code(){
         //given
         String email = "test@test.com";
         String code = "123456789";

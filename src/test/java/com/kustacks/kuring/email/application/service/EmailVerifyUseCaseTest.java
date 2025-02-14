@@ -8,48 +8,44 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-class EmailQueryServiceTest {
+class EmailVerifyUseCaseTest {
 
-    private EmailQueryService emailQueryService;
+    private EmailVerifyService emailVerifyUseCase;
 
     @MockBean
     private VerificationCodeQueryPort verificationCodeQueryPort = Mockito.mock(VerificationCodeQueryPort.class);
 
-    public EmailQueryServiceTest() {
-        emailQueryService = new EmailQueryService(verificationCodeQueryPort);
+    public EmailVerifyUseCaseTest() {
+        emailVerifyUseCase = new EmailVerifyService(verificationCodeQueryPort);
     }
 
     @DisplayName("이메일 코드 검증 성공")
     @Test
-    public void success_verify_code() throws Exception {
+    void success_verify_code(){
         //given
         String email = "test@test.com";
         String code = "123456";
-
-        //when
         Mockito.when(verificationCodeQueryPort.findCodeByEmail(email)).thenReturn(code);
 
-        //then
+        //when, then
         Assertions.assertThatCode(
-                () -> emailQueryService.verifyCode(email, code)
+                () -> emailVerifyUseCase.verifyCode(email, code)
         ).doesNotThrowAnyException();
     }
 
     @DisplayName("이메일 코드 검증 실패")
     @Test
-    public void fail_verify_code() throws Exception {
+    void fail_verify_code() {
         //given
         String email = "test@test.com";
         String code = "123456";
 
         String wrongCode = "654321";
-
-        //when
         Mockito.when(verificationCodeQueryPort.findCodeByEmail(email)).thenReturn(wrongCode);
 
-        //then
+        //when, then
         Assertions.assertThatThrownBy(
-                        () -> emailQueryService.verifyCode(email, code))
+                        () -> emailVerifyUseCase.verifyCode(email, code))
                 .isInstanceOf(EmailBusinessException.class);
     }
 }
