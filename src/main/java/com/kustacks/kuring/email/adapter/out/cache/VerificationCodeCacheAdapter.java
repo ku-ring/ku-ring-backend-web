@@ -13,7 +13,7 @@ public class VerificationCodeCacheAdapter implements VerificationCodeCommandPort
 
     @Override
     @CachePut(key = "#email")
-    public String saveCode(String email, String verificationCode) {
+    public String saveVerificationCode(String email, String verificationCode) {
         return verificationCode;
     }
 
