@@ -11,7 +11,7 @@ import static com.kustacks.kuring.acceptance.EmailStep.인증코드_인증_요�
 import static com.kustacks.kuring.acceptance.EmailStep.인증코드_인증_응답_확인;
 
 @DisplayName("인수 : 이메일")
-public class EmailAcceptanceTest extends IntegrationTestSupport {
+class EmailAcceptanceTest extends IntegrationTestSupport {
 
 
     @DisplayName("인증코드 이메일을 성공적으로 발송한다.")

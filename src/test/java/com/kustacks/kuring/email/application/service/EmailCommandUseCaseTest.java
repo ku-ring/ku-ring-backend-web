@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.IOException;
 
 @ExtendWith(MockitoExtension.class)
-public class EmailCommandUseCaseTest {
+class EmailCommandUseCaseTest {
 
     @InjectMocks
     private EmailCommandService emailCommandService;
@@ -35,7 +35,6 @@ public class EmailCommandUseCaseTest {
     void send_verification_code_email_success() throws IOException {
         //given
         String email = "client@konkuk.ac.kr";
-        String code = "123456";
         String templatePage = TestFileLoader.loadHtmlFile("src/test/resources/email/thymeleaf_engine_process_result.html");
 
         Mockito.when(templateEnginePort.process(Mockito.anyString(), Mockito.anyMap())).thenReturn(templatePage);
