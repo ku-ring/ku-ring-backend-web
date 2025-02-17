@@ -58,10 +58,6 @@ dependencies {
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 
-    // Cache
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
-    implementation 'com.github.ben-manes.caffeine:caffeine:3.1.8'
-
     // QueryDsl
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
