@@ -5,11 +5,9 @@ import com.kustacks.kuring.email.application.port.out.VerificationCodeCommandPor
 import com.kustacks.kuring.email.application.port.out.VerificationCodeQueryPort;
 import com.kustacks.kuring.email.domain.VerificationCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 
 import java.util.List;
 
-@Profile("prod | dev")
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class VerificationCodePersistenceAdapter implements VerificationCodeCommandPort, VerificationCodeQueryPort {
