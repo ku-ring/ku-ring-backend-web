@@ -5,10 +5,11 @@ import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.email.application.port.in.EmailVerifyUseCase;
 import com.kustacks.kuring.email.application.port.out.VerificationCodeQueryPort;
 import com.kustacks.kuring.email.application.service.exception.EmailBusinessException;
+import com.kustacks.kuring.email.domain.VerificationCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
+import java.util.Comparator;
 
 @UseCase
 @RequiredArgsConstructor
@@ -18,14 +19,9 @@ public class EmailVerifyService implements EmailVerifyUseCase {
     @Override
     @Transactional(readOnly = true)
     public void verifyCode(String email, String code) {
-        String savedCode = verificationCodeQueryPort.findCodeByEmail(email);
-        if (!isValidCode(savedCode, code)) {
-            throw new EmailBusinessException(ErrorCode.EMAIL_INVALID_CODE);
-        }
-    }
-
-    private boolean isValidCode(String savedCode, String code) {
-        return Objects.nonNull(savedCode) &&
-                savedCode.equals(code);
+        verificationCodeQueryPort.findCodesByEmail(email).stream()
+                .max(Comparator.comparing(VerificationCode::getCreatedAt))
+                .filter(verificationCode -> verificationCode.isValidCode(code))
+                .orElseThrow(() -> new EmailBusinessException(ErrorCode.EMAIL_INVALID_CODE));
     }
 }

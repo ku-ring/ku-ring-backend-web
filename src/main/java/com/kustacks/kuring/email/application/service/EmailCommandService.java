@@ -7,6 +7,7 @@ import com.kustacks.kuring.email.application.port.out.EmailClientPort;
 import com.kustacks.kuring.email.application.port.out.TemplateEnginePort;
 import com.kustacks.kuring.email.application.port.out.VerificationCodeCommandPort;
 import com.kustacks.kuring.email.application.service.exception.EmailBusinessException;
+import com.kustacks.kuring.email.domain.VerificationCode;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
@@ -43,7 +44,7 @@ public class EmailCommandService implements EmailCommandUseCase {
         String htmlTextWithCode = templateEnginePort.process(TEMPLATE_FILE, variables);
         MimeMessage mimeMessage = createMimeMessage(FROM_EMAIL, email, VERIFICATION_CODE_SUBJECT, htmlTextWithCode);
         emailClientPort.sendEmailAsync(mimeMessage);
-        verificationCodeCommandPort.saveVerificationCode(email, code);
+        verificationCodeCommandPort.saveVerificationCode(new VerificationCode(email, code));
     }
 
     private MimeMessage createMimeMessage(String from, String to, String subject, String text) {
