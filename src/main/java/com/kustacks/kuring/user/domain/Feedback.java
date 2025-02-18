@@ -1,11 +1,12 @@
 package com.kustacks.kuring.user.domain;
 
 import com.kustacks.kuring.common.domain.BaseTimeEntity;
+import com.kustacks.kuring.common.domain.Content;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity

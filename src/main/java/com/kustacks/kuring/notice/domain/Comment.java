@@ -1,7 +1,7 @@
 package com.kustacks.kuring.notice.domain;
 
 import com.kustacks.kuring.common.domain.BaseTimeEntity;
-import com.kustacks.kuring.user.domain.Content;
+import com.kustacks.kuring.common.domain.Content;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
