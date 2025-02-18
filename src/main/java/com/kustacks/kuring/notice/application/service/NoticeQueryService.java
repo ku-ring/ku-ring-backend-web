@@ -154,7 +154,7 @@ public class NoticeQueryService implements NoticeQueryUseCase {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY));
     }
 
-    public static NoticeRangeLookupResult convertPortResult(NoticeDto dto) {
+    private static NoticeRangeLookupResult convertPortResult(NoticeDto dto) {
         return new NoticeRangeLookupResult(
                 dto.getId(),
                 dto.getArticleId(),
@@ -162,7 +162,8 @@ public class NoticeQueryService implements NoticeQueryUseCase {
                 dto.getUrl(),
                 dto.getSubject(),
                 dto.getCategory(),
-                dto.getImportant()
+                dto.getImportant(),
+                dto.getCommentCount()
         );
     }
 }

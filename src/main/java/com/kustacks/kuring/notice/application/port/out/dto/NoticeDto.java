@@ -27,8 +27,13 @@ public class NoticeDto {
 
     private Boolean important;
 
+    private Long commentCount;
+
     @QueryProjection
-    public NoticeDto(Long id, String articleId, String postedDate, String url, String subject, String category, Boolean important) {
+    public NoticeDto(
+            Long id, String articleId, String postedDate, String url, String subject,
+            String category, Boolean important, Long commentCount
+    ) {
         Assert.notNull(id, "id must not be null");
         Assert.notNull(articleId, "articleId must not be null");
         Assert.notNull(postedDate, "postedDate must not be null");
@@ -44,5 +49,6 @@ public class NoticeDto {
         this.subject = subject;
         this.category = category;
         this.important = important;
+        this.commentCount = commentCount;
     }
 }

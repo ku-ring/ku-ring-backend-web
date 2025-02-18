@@ -69,7 +69,7 @@ class KuisHomepageNoticeScraperTemplateTest extends IntegrationTestSupport {
         );
 
         NoticeDto noticeDto = new NoticeDto(1L, "1", "2024-01-01 00:00:00",
-                "http://example.com", "제목", "category", true);
+                "http://example.com", "제목", "category", true, 2L);
 
         when(normalJsoupClient.get(anyString(), anyInt())).thenReturn(doc);
 

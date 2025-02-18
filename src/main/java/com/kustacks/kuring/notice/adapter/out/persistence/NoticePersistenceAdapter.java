@@ -71,17 +71,7 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
 
     @Override
     public Optional<NoticeDto> findNoticeById(Long id) {
-        Optional<Notice> noticeOptional = noticeRepository.findById(id);
-
-        return noticeOptional.map(notice -> new NoticeDto(
-                notice.getId(),
-                notice.getArticleId(),
-                notice.getPostedDate(),
-                notice.getUrl(),
-                notice.getSubject(),
-                notice.getCategoryName(),
-                notice.isImportant()
-        ));
+        return this.noticeRepository.findNoticeReadModelByArticleId(id);
     }
 
     @Override
