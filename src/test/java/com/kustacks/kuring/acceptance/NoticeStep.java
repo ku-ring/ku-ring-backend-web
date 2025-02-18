@@ -21,7 +21,8 @@ public class NoticeStep {
                 () -> assertThat(response.jsonPath().getString("data[0].postedDate")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getString("data[0].url")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getString("data[0].subject")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getString("data[0].category")).isEqualTo(category)
+                () -> assertThat(response.jsonPath().getString("data[0].category")).isEqualTo(category),
+                () -> assertThat(response.jsonPath().getString("data[0].commentCount")).isNotBlank()
         );
     }
 
@@ -101,5 +102,12 @@ public class NoticeStep {
                 .when().post("/api/v2/notices/{id}/comments", id)
                 .then().log().all()
                 .extract();
+    }
+
+    public static void 공지사항_댓글수_응답_확인(ExtractableResponse<Response> response, long id, int count) {
+        assertAll(
+                () -> assertThat(response.jsonPath().getLong("data[0].id")).isEqualTo(id),
+                () -> assertThat(response.jsonPath().getLong("data[0].commentCount")).isEqualTo(count)
+        );
     }
 }

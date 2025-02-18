@@ -179,4 +179,26 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
+
+    /**
+     * Given : 사전에 저장된 공지를 조회한다
+     * When : 해당 공지에 댓글을 추가한다
+     * Then : 해당 공지 목록을 조회한다
+     * Then : 성공적으로 댓글이 추가된것을 확인할 수 있다.
+     */
+    @DisplayName("[v2] 공지에 댓글을 추가하고 조회시 댓글 수가 정상적으로 조회된다")
+    @Test
+    void add_comment_to_notice_and_query() {
+        // given
+        var 공지_조회_응답 = 공지사항_조회_요청("stu");
+        var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
+        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment1");
+        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment2");
+
+        // when
+        var response = 공지사항_조회_요청("stu");
+
+        // then
+        공지사항_댓글수_응답_확인(response, id, 2);
+    }
 }
