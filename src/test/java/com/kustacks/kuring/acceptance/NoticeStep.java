@@ -1,9 +1,11 @@
 package com.kustacks.kuring.acceptance;
 
+import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeCommentCreateRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -85,6 +87,18 @@ public class NoticeStep {
         return RestAssured
                 .given().log().all()
                 .when().get("/api/v2/notices/search?content={content}", content)
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 공지에_댓글_추가(long id, String userToken, String content) {
+        return RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", userToken)
+                .body(new NoticeCommentCreateRequest(content))
+                .when().post("/api/v2/notices/{id}/comments", id)
                 .then().log().all()
                 .extract();
     }

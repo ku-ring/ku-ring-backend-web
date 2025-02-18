@@ -128,7 +128,7 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     }
 
     /**
-     * Give : 사전에 저장된 공지가 있다
+     * Given : 사전에 저장된 공지가 있다
      * When : 키워드로 검색하면
      * Then : 해당하는 공지들이 조회된다
      */
@@ -140,5 +140,43 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
 
         // then
         공지_조회_응답_확인(공지_조회_응답);
+    }
+
+    /**
+     * Given : 사전에 저장된 공지를 조회한다
+     * When : 해당 공지에 댓글을 추가하면
+     * Then : 성공적으로 댓글이 추가된다
+     */
+    @DisplayName("[v2] 공지에 댓글을 추가한다")
+    @Test
+    void add_comment_to_notice() {
+        // given
+        var 공지_조회_응답 = 공지사항_조회_요청("stu");
+        var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
+
+        // when
+        var response = 공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment");
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    /**
+     * Given : 사전에 저장된 공지를 조회한다
+     * When : 잘못된 사용자가 해당 공지에 댓글을 추가하면
+     * Then : 실패 응답을 반환한다
+     */
+    @DisplayName("[v2] 잘못된 사용자가 공지에 댓글을 추가할 수 없다")
+    @Test
+    void add_comment_to_notice_by_invalid_user() {
+        // given
+        var 공지_조회_응답 = 공지사항_조회_요청("stu");
+        var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
+
+        // when
+        var response = 공지에_댓글_추가(id, "INVALID_FCM_TOKEN", "this is comment");
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 }
