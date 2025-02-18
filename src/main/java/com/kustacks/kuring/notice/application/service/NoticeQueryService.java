@@ -156,6 +156,7 @@ public class NoticeQueryService implements NoticeQueryUseCase {
 
     public static NoticeRangeLookupResult convertPortResult(NoticeDto dto) {
         return new NoticeRangeLookupResult(
+                dto.getId(),
                 dto.getArticleId(),
                 dto.getPostedDate(),
                 dto.getUrl(),

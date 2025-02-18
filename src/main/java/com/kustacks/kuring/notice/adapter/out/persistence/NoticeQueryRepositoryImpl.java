@@ -44,6 +44,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
         return queryFactory
                 .select(
                         new QNoticeDto(
+                                notice.id,
                                 notice.articleId,
                                 postedDate,
                                 notice.url.value,
@@ -91,6 +92,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
         return queryFactory.select(
                         new QNoticeDto(
+                                notice.id,
                                 notice.articleId,
                                 postedDate,
                                 notice.url.value,
@@ -189,6 +191,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
         return queryFactory
                 .select(new QNoticeDto(
+                        departmentNotice.id,
                         departmentNotice.articleId,
                         postedDate,
                         departmentNotice.url.value,
@@ -213,6 +216,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
         return queryFactory
                 .select(new QNoticeDto(
+                        departmentNotice.id,
                         departmentNotice.articleId,
                         postedDate,
                         departmentNotice.url.value,

@@ -13,6 +13,8 @@ public class NoticeDto {
     private static final String SPACE = " ";
     private static final int DATE_INDEX = 0;
 
+    private Long id;
+
     private String articleId;
 
     private String postedDate;
@@ -26,7 +28,8 @@ public class NoticeDto {
     private Boolean important;
 
     @QueryProjection
-    public NoticeDto(String articleId, String postedDate, String url, String subject, String category, Boolean important) {
+    public NoticeDto(Long id, String articleId, String postedDate, String url, String subject, String category, Boolean important) {
+        Assert.notNull(id, "id must not be null");
         Assert.notNull(articleId, "articleId must not be null");
         Assert.notNull(postedDate, "postedDate must not be null");
         Assert.notNull(url, "url must not be null");
@@ -34,6 +37,7 @@ public class NoticeDto {
         Assert.notNull(category, "category must not be null");
         Assert.notNull(important, "important must not be null");
 
+        this.id = id;
         this.articleId = articleId;
         this.postedDate = postedDate.split(SPACE)[DATE_INDEX];
         this.url = url;
