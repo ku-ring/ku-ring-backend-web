@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
@@ -66,6 +67,21 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
     @Override
     public List<NoticeDto> findNotYetEmbeddingNotice(CategoryName categoryName, LocalDateTime date) {
         return this.noticeRepository.findNotYetEmbeddingNoticeByDate(categoryName, date);
+    }
+
+    @Override
+    public Optional<NoticeDto> findNoticeById(Long id) {
+        Optional<Notice> noticeOptional = noticeRepository.findById(id);
+
+        return noticeOptional.map(notice -> new NoticeDto(
+                notice.getId(),
+                notice.getArticleId(),
+                notice.getPostedDate(),
+                notice.getUrl(),
+                notice.getSubject(),
+                notice.getCategoryName(),
+                notice.isImportant()
+        ));
     }
 
     @Override

@@ -62,6 +62,8 @@ public enum ErrorCode {
 
     NOTICE_SCRAPER_CANNOT_SCRAP("학과 홈페이지가 불안정합니다. 공지 정보를 가져올 수 없습니다."),
     NOTICE_SCRAPER_CANNOT_PARSE("공지 페이지 HTML 파싱에 실패했습니다."),
+    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 공지를 찾을 수 없습니다."),
+
 
     FB_FAIL_SUBSCRIBE(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 구독에 실패했습니다."),
     FB_FAIL_UNSUBSCRIBE(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 구독 해제에 실패했습니다."),

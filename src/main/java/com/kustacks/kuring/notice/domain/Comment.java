@@ -29,9 +29,9 @@ public class Comment extends BaseTimeEntity {
     private Content content;
 
     public Comment(Long userId, Long noticeId, String content) {
+        this.userId = userId;
         this.noticeId = noticeId;
         this.content = new Content(content);
-        this.userId = userId;
     }
 
     public String getContent() {
