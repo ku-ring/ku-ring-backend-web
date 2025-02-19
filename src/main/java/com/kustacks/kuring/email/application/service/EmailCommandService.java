@@ -40,24 +40,26 @@ public class EmailCommandService implements EmailCommandUseCase {
             throw new EmailBusinessException(ErrorCode.EMAIL_INVALID_SUFFIX);
         }
         String code = createVerificationCode();
-        Map<String, Object> variables = createVariables(code);
-        String htmlTextWithCode = templateEnginePort.process(TEMPLATE_FILE, variables);
+
+        String htmlTextWithCode = templateEnginePort.process(TEMPLATE_FILE, createVariables(code));
         MimeMessage mimeMessage = createMimeMessage(FROM_EMAIL, email, VERIFICATION_CODE_SUBJECT, htmlTextWithCode);
-        emailClientPort.sendEmailAsync(mimeMessage);
+
         verificationCodeCommandPort.saveVerificationCode(new VerificationCode(email, code));
+
+        emailClientPort.sendEmailAsync(mimeMessage);
     }
 
     private MimeMessage createMimeMessage(String from, String to, String subject, String text) {
-        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(new MimeMessage(Session.getInstance(System.getProperties())),"utf-8");
         try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(new MimeMessage(Session.getInstance(System.getProperties())),"utf-8");
             mimeMessageHelper.setFrom(from);
             mimeMessageHelper.setTo(to);
             mimeMessageHelper.setSubject(subject);
             mimeMessageHelper.setText(text, true);
+            return mimeMessageHelper.getMimeMessage();
         } catch (MessagingException e) {
             throw new EmailBusinessException(ErrorCode.EMAIL_INVALID_TEMPLATE);
         }
-        return mimeMessageHelper.getMimeMessage();
     }
 
     private Map<String, Object> createVariables(String code) {
@@ -67,11 +69,11 @@ public class EmailCommandService implements EmailCommandUseCase {
     }
 
     private String createVerificationCode() {
-        final int length = 6;
+        final int codeLength = 6;
         try {
             Random random = SecureRandom.getInstanceStrong();
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < length; i++) {
+            for (int i = 0; i < codeLength; i++) {
                 builder.append(random.nextInt(10));
             }
             return builder.toString();
