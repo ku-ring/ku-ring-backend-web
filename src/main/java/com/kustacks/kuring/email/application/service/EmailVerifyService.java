@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 @UseCase
 @RequiredArgsConstructor
@@ -18,10 +20,15 @@ public class EmailVerifyService implements EmailVerifyUseCase {
 
     @Override
     @Transactional(readOnly = true)
-    public void verifyCode(String email, String code) {
-        verificationCodeQueryPort.findCodesByEmail(email).stream()
-                .max(Comparator.comparing(VerificationCode::getCreatedAt))
-                .filter(verificationCode -> verificationCode.isValidCode(code))
+    public void verifyLatestCode(String email, String code) {
+        Optional<VerificationCode> latestVerificationCode = getLatestVerificationCode(email);
+        latestVerificationCode.filter(verificationCode -> verificationCode.isValidCode(code))
                 .orElseThrow(() -> new EmailBusinessException(ErrorCode.EMAIL_INVALID_CODE));
+    }
+
+    private Optional<VerificationCode> getLatestVerificationCode(String email) {
+        List<VerificationCode> codes = verificationCodeQueryPort.findCodesByEmail(email);
+        return codes.stream()
+                .max(Comparator.comparing(VerificationCode::getCreatedAt));
     }
 }

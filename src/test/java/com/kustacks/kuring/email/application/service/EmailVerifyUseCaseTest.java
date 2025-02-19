@@ -33,7 +33,7 @@ class EmailVerifyUseCaseTest {
 
         //when, then
         Assertions.assertThatCode(
-                () -> emailVerifyUseCase.verifyCode(email, code)
+                () -> emailVerifyUseCase.verifyLatestCode(email, code)
         ).doesNotThrowAnyException();
     }
 
@@ -47,7 +47,7 @@ class EmailVerifyUseCaseTest {
 
         //when, then
         Assertions.assertThatThrownBy(
-                        () -> emailVerifyUseCase.verifyCode(email, wrongCode))
+                        () -> emailVerifyUseCase.verifyLatestCode(email, wrongCode))
                 .isInstanceOf(EmailBusinessException.class);
     }
 }

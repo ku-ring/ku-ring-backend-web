@@ -21,7 +21,7 @@ public class EmailVerifyApiV2 {
     @Operation(summary = "인증번호 인증하기", description = "사용자의 이메일로 보낸 인증번호를 인증합니다.")
     @PostMapping("/verify")
     public ResponseEntity<BaseResponse<Void>> sendVerificationCode(@RequestBody EmailVerifyCodeRequest request) {
-        emailVerifyUseCase.verifyCode(request.email(), request.code());
+        emailVerifyUseCase.verifyLatestCode(request.email(), request.code());
         return ResponseEntity.ok().body(new BaseResponse<>(ResponseCodeAndMessages.EMAIL_CODE_VERIFY_SUCCESS, null));
     }
 }
