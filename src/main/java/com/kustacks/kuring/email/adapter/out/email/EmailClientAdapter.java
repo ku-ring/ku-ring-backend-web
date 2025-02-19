@@ -1,7 +1,6 @@
 package com.kustacks.kuring.email.adapter.out.email;
 
 import com.kustacks.kuring.email.application.port.out.EmailClientPort;
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,11 +19,6 @@ public class EmailClientAdapter implements EmailClientPort {
     @Async
     @Override
     public void sendEmailAsync(MimeMessage message) {
-        try {
-            mailSender.send(message);
-            log.info("{} 이메일 전송 성공", message.getAllRecipients());
-        } catch (MessagingException e) {
-            log.info("이메일 전송 실패");
-        }
+        mailSender.send(message);
     }
 }
