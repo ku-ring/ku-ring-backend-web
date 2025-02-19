@@ -23,10 +23,7 @@ public class EmailCommandApiV2 {
     @Operation(summary = "이메일로 인증번호 보내기", description = "사용자 회원가입 시 이메일로 인증번호를 보냅니다.")
     @PostMapping
     public ResponseEntity<BaseResponse<Void>> sendVerificationCode(@RequestBody EmailVerificationRequest request) {
-        long startTime = System.currentTimeMillis();
         emailCommandUseCase.sendVerificationEmail(request.email());
-        long endTime = System.currentTimeMillis();
-        log.info("소요된 초 = {}", (endTime - startTime) / 1000.0);
         return ResponseEntity.ok().body(new BaseResponse<>(ResponseCodeAndMessages.EMAIL_SEND_SUCCESS, null));
     }
 }
