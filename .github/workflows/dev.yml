@@ -35,6 +35,10 @@ jobs:
           git add .
           git commit -m "Build Ready"
 
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh 
+
       - name: Deploy to Heroku
         # You may pin to the exact commit or the version.
         # uses: AkhileshNS/heroku-deploy@79ef2ae4ff9b897010907016b268fd0f88561820
