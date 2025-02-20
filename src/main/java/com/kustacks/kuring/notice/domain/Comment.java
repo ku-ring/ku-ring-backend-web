@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -19,6 +20,9 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
+    @Column(name = "parent_id", nullable = true)
+    private Long parentId;
+
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
@@ -27,6 +31,9 @@ public class Comment extends BaseTimeEntity {
 
     @Embedded
     private Content content;
+
+    @Column(name = "destroyed_at", nullable = true)
+    private LocalDateTime destroyedAt;
 
     public Comment(Long userId, Long noticeId, String content) {
         this.userId = userId;
