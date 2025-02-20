@@ -40,6 +40,17 @@ spring:
       embedding:
         options:
           model: text-embedding-3-small
+  mail:
+    host: smtp.kuring.com
+    port: 587 # STMP 서버 포트
+    username: mailtest
+    password: mailtest
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true # TLS
 
 testcontainers:
   reuse:

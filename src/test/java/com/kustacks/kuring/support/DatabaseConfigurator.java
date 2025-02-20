@@ -3,6 +3,8 @@ package com.kustacks.kuring.support;
 import com.kustacks.kuring.admin.adapter.out.persistence.AdminRepository;
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.domain.AdminRole;
+import com.kustacks.kuring.email.adapter.out.persistence.VerificationCodeRepository;
+import com.kustacks.kuring.email.domain.VerificationCode;
 import com.kustacks.kuring.notice.adapter.out.persistence.NoticePersistenceAdapter;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
@@ -37,11 +39,13 @@ public class DatabaseConfigurator implements InitializingBean {
     protected static final String ADMIN_ROOT_PASSWORD = "admin_password";
     protected static final String ADMIN_CLIENT_LOGIN_ID = "client@email.com";
     protected static final String ADMIN_CLIENT_PASSWORD = "client_password";
+    protected static final String USER_EMAIL = "client@konkuk.ac.kr";
 
     private final NoticePersistenceAdapter noticePersistenceAdapter;
     private final UserPersistenceAdapter userPersistenceAdapter;
     private final StaffRepository staffRepository;
     private final AdminRepository adminRepository;
+    private final VerificationCodeRepository verificationCodeRepository;
     private final DataSource dataSource;
     private final JdbcTemplate jdbcTemplate;
     private final PasswordEncoder passwordEncoder;
@@ -49,12 +53,13 @@ public class DatabaseConfigurator implements InitializingBean {
     private List<String> tableNames;
 
     public DatabaseConfigurator(NoticePersistenceAdapter noticePersistenceAdapter, UserPersistenceAdapter userPersistenceAdapter,
-                                StaffRepository staffRepository, AdminRepository adminRepository,
+                                StaffRepository staffRepository, AdminRepository adminRepository, VerificationCodeRepository verificationCodeRepository,
                                 DataSource dataSource, JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
         this.noticePersistenceAdapter = noticePersistenceAdapter;
         this.userPersistenceAdapter = userPersistenceAdapter;
         this.staffRepository = staffRepository;
         this.adminRepository = adminRepository;
+        this.verificationCodeRepository = verificationCodeRepository;
         this.dataSource = dataSource;
         this.jdbcTemplate = jdbcTemplate;
         this.passwordEncoder = passwordEncoder;
@@ -95,6 +100,7 @@ public class DatabaseConfigurator implements InitializingBean {
         initFeedback();
         initStaff();
         initNotice();
+        initVerificationCode();
 
         log.info("[DatabaseConfigurator] init complete");
     }
@@ -178,6 +184,11 @@ public class DatabaseConfigurator implements InitializingBean {
         List<Staff> staffList = buildStaffs(5);
         staffRepository.saveAll(staffList);
     }
+
+    private void initVerificationCode() {
+        verificationCodeRepository.save(new VerificationCode(USER_EMAIL, "123456"));
+    }
+
 
     private List<DepartmentNotice> buildImportantDepartmentNotice(int cnt, DepartmentName departmentName, CategoryName categoryName, boolean important) {
         return Stream.iterate(0, i -> i + 1)
