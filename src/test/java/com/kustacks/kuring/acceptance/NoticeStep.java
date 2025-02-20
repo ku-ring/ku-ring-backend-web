@@ -93,12 +93,16 @@ public class NoticeStep {
     }
 
     public static ExtractableResponse<Response> 공지에_댓글_추가(long id, String userToken, String content) {
+        return 공지에_댓글_추가(id, null, userToken, content);
+    }
+
+    public static ExtractableResponse<Response> 공지에_댓글_추가(long id, Long parentId, String userToken, String content) {
         return RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .header("User-Token", userToken)
-                .body(new NoticeCommentCreateRequest(content))
+                .body(new NoticeCommentCreateRequest(content, parentId))
                 .when().post("/api/v2/notices/{id}/comments", id)
                 .then().log().all()
                 .extract();
@@ -108,6 +112,44 @@ public class NoticeStep {
         assertAll(
                 () -> assertThat(response.jsonPath().getLong("data[0].id")).isEqualTo(id),
                 () -> assertThat(response.jsonPath().getLong("data[0].commentCount")).isEqualTo(count)
+        );
+    }
+
+    public static ExtractableResponse<Response> 공지의_댓글_조회(long id, Long cursor, int size) {
+        if (cursor != null) {
+            return RestAssured
+                    .given().log().all()
+                    .queryParam("cursor", cursor)
+                    .queryParam("size", size)
+                    .when().get("/api/v2/notices/{id}/comments", id)
+                    .then().log().all()
+                    .extract();
+        }
+
+        return RestAssured
+                .given().log().all()
+                .queryParam("size", size)
+                .when().get("/api/v2/notices/{id}/comments", id)
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 댓글_대댓글_확인(ExtractableResponse<Response> response1, ExtractableResponse<Response> response2) {
+        assertAll(
+                () -> assertThat(response1.jsonPath().getList("data.comments").size()).isEqualTo(2),
+                () -> assertThat(response2.jsonPath().getList("data.comments").size()).isEqualTo(2),
+                () -> assertThat(response2.jsonPath().getList("data.comments[0].subComments").size()).isEqualTo(3),
+                () -> assertThat(response2.jsonPath().getList("data.comments[1].subComments").size()).isZero(),
+                () -> assertThat(response2.jsonPath().getList("data.endCursor")).isNull(),
+                () -> assertThat(response2.jsonPath().getBoolean("data.hasNext")).isFalse()
+        );
+    }
+
+    public static void 댓글_확인(ExtractableResponse<Response> response, int size, String cursor, boolean hasNext) {
+        assertAll(
+                () -> assertThat(response.jsonPath().getList("data.comments").size()).isEqualTo(size),
+                () -> assertThat(response.jsonPath().getString("data.endCursor")).isEqualTo(cursor),
+                () -> assertThat(response.jsonPath().getBoolean("data.hasNext")).isEqualTo(hasNext)
         );
     }
 }

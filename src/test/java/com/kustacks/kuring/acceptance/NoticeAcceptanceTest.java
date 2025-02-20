@@ -201,4 +201,67 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
         // then
         공지사항_댓글수_응답_확인(response, id, 2);
     }
+
+    /**
+     * Given : 사전에 저장된 공지와 댓글이 있다
+     * When : 특정 대글에 대댓글을 추가한다
+     * Then : 해당 공지 목록을 조회한다
+     * Then : 성공적으로 대댓글이 추가된것 수를 확인할 수 있다.
+     */
+    @DisplayName("[v2] 공지의 댓글을 대댓글 추가시 댓글 수가 정상적으로 조회된다")
+    @Test
+    void add_reply_to_comment_and_query() {
+        // given
+        var 공지_조회_응답 = 공지사항_조회_요청("stu");
+        var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
+        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment1");
+        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment2");
+
+        // when
+        var response1 = 공지의_댓글_조회(id, null, 10);
+
+        // given
+        long parentId = response1.jsonPath().getLong("data.comments[0].comment.id");
+        공지에_댓글_추가(id, parentId, USER_FCM_TOKEN, "this is comment1 for parent");
+        공지에_댓글_추가(id, parentId, USER_FCM_TOKEN, "this is comment2 for parent");
+        공지에_댓글_추가(id, parentId, USER_FCM_TOKEN, "this is comment3 for parent");
+
+        // when
+        var response2 = 공지의_댓글_조회(id, null, 10);
+
+        // then
+        댓글_대댓글_확인(response1, response2);
+    }
+
+    /**
+     * Given : 사전에 저장된 공지와 댓글 6개가 있다
+     * When : 댓글 5개 조회시
+     * Then : 성공적으로 5개를 조회하고, endCursor와 hasNext가 설정되어 반환된다
+     */
+    @DisplayName("[v2] 공지의 댓글을 커서 기반의 조회로 확인한다")
+    @Test
+    void get_cursor_based_look_up() {
+        // given
+        var 공지_조회_응답 = 공지사항_조회_요청("stu");
+        var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
+        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment1");
+        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment2");
+        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment3");
+        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment4");
+        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment5");
+        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment6");
+
+        // when
+        var response = 공지의_댓글_조회(id, null, 5);
+
+        // then
+        댓글_확인(response, 5, "5", true);
+
+        // when
+        Long nextCursor = Long.parseLong(response.jsonPath().getString("data.endCursor")) + 1;
+        var response2 = 공지의_댓글_조회(id, nextCursor, 5);
+
+        // then
+        댓글_확인(response2, 1, null, false);
+    }
 }
