@@ -264,4 +264,31 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
         // then
         댓글_확인(response2, 1, null, false);
     }
+
+    /**
+     * Given : 사전에 저장된 공지와 댓글이 있다
+     * When : 특정 대글을 수정하면
+     * Then : 성공적으로 대댓글이 수정된다
+     */
+    @DisplayName("[v2] 공지의 댓글을 수정할 수 있다")
+    @Test
+    void edit_comment_and_query() {
+        // given
+        var noticeId = 공지사항_조회_요청("stu").jsonPath().getLong("data[0].id");
+        공지에_댓글_추가(noticeId, USER_FCM_TOKEN, "this is comment");
+
+        long commentId = 공지의_댓글_조회(noticeId, null, 5)
+                .jsonPath()
+                .getLong("data.comments[0].comment.id");
+
+        // given
+        공지에_댓글_수정(noticeId, commentId, USER_FCM_TOKEN, "this is edited comment");
+
+        // then
+        assertThat(
+                공지의_댓글_조회(noticeId, null, 5)
+                        .jsonPath()
+                        .getString("data.comments[0].comment.content")
+        ).isEqualTo("this is edited comment");
+    }
 }

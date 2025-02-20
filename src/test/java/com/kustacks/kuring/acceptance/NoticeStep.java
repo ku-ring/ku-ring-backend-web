@@ -108,6 +108,18 @@ public class NoticeStep {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> 공지에_댓글_수정(long noticeId, long commentId, String userToken, String content) {
+        return RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", userToken)
+                .body(new NoticeCommentCreateRequest(content, null))
+                .when().post("/api/v2/notices/{id}/comments/{commentId}", noticeId, commentId)
+                .then().log().all()
+                .extract();
+    }
+
     public static void 공지사항_댓글수_응답_확인(ExtractableResponse<Response> response, long id, int count) {
         assertAll(
                 () -> assertThat(response.jsonPath().getLong("data[0].id")).isEqualTo(id),
