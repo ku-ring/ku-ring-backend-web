@@ -52,6 +52,10 @@ public class Comment extends BaseTimeEntity {
         return content.getValue();
     }
 
+    public void editContent(String content) {
+        this.content = new Content(content);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

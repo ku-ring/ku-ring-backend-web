@@ -3,6 +3,8 @@ package com.kustacks.kuring.notice.adapter.in.web;
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeCommentCreateRequest;
+import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeCommentEditRequest;
+import com.kustacks.kuring.notice.application.port.in.NoticeCommentEditingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentWritingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentWritingUseCase.WriteCommentCommand;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentWritingUseCase.WriteReplyCommand;
@@ -28,6 +30,7 @@ public class NoticeCommandApiV2 {
     private static final String USER_TOKEN_HEADER_KEY = "User-Token";
 
     private final NoticeCommentWritingUseCase noticeCommentWritingUseCase;
+    private final NoticeCommentEditingUseCase noticeCommentEditingUseCase;
 
     @Operation(summary = "공지 댓글 추가", description = "공지에 댓글을 추가합니다")
     @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
@@ -55,6 +58,22 @@ public class NoticeCommandApiV2 {
 
             noticeCommentWritingUseCase.process(command);
         }
+
+        return ResponseEntity.ok().body(new BaseResponse<>(NOTICE_COMMENT_SAVE_SUCCESS, null));
+    }
+
+    @Operation(summary = "공지 댓글 편집", description = "공지에 있는 기존의 댓글을 수정합니다")
+    @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
+    @PostMapping("/{id}/comments/{commentId}")
+    public ResponseEntity<BaseResponse> getSupportedCategories(
+            @PathVariable("id") Long id,
+            @PathVariable("commentId") Long commentId,
+            @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken,
+            @RequestBody NoticeCommentEditRequest request
+    ) {
+        var command = new NoticeCommentEditingUseCase.EditCommentCommand(userToken, id, commentId, request.content());
+
+        noticeCommentEditingUseCase.process(command);
 
         return ResponseEntity.ok().body(new BaseResponse<>(NOTICE_COMMENT_SAVE_SUCCESS, null));
     }

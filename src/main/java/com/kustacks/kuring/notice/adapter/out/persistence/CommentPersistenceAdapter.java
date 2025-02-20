@@ -35,6 +35,11 @@ public class CommentPersistenceAdapter implements CommentCommandPort, CommentQue
     }
 
     @Override
+    public Optional<Comment> findById(Long id) {
+        return commentRepository.findById(id);
+    }
+
+    @Override
     public List<CommentReadModel> findExcludeSubCommentByCursor(Long noticeId, String cursor, int size) {
         return commentRepository.findExcludeSubCommentByCursor(noticeId, cursor, size);
     }

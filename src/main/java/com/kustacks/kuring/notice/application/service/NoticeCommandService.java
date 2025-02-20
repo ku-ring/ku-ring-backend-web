@@ -3,23 +3,27 @@ package com.kustacks.kuring.notice.application.service;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.notice.application.port.in.NoticeCommentEditingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentWritingUseCase;
 import com.kustacks.kuring.notice.application.port.out.CommentCommandPort;
 import com.kustacks.kuring.notice.application.port.out.CommentQueryPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.application.port.out.dto.CommentReadModel;
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;
+import com.kustacks.kuring.notice.domain.Comment;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Slf4j
 @UseCase
 @Transactional
 @RequiredArgsConstructor
-public class NoticeCommandService implements NoticeCommentWritingUseCase {
+public class NoticeCommandService implements NoticeCommentWritingUseCase, NoticeCommentEditingUseCase {
 
     private final NoticeQueryPort noticeQueryPort;
     private final CommentCommandPort commentCommandPort;
@@ -53,5 +57,25 @@ public class NoticeCommandService implements NoticeCommentWritingUseCase {
         }
 
         commentCommandPort.createReply(findUser.getId(), findNotice.getId(), command.parentId(), command.content());
+    }
+
+    @Override
+    public void process(EditCommentCommand command) {
+        User findUser = userQueryPort.findByToken(command.userToken())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        NoticeDto findNotice = noticeQueryPort.findNoticeById(command.noticeId())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOTICE_NOT_FOUND));
+
+        Comment findComment = commentQueryPort.findById(command.commentId())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
+
+        if (!Objects.equals(findComment.getUserId(), findUser.getId())
+                || !Objects.equals(findComment.getNoticeId(), findNotice.getId())
+                || findComment.getDestroyedAt() != null) {
+            throw new NotFoundException(ErrorCode.COMMENT_NOT_FOUND);
+        }
+
+        findComment.editContent(command.content());
     }
 }
