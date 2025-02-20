@@ -21,6 +21,7 @@ public class IntegrationTestSupport {
     public static final String USER_FCM_TOKEN = "test_fcm_token";
     public static final String ADMIN_CLIENT_LOGIN_ID = "client@email.com";
     public static final String ADMIN_CLIENT_PASSWORD = "client_password";
+    public static final String USER_EMAIL = "client@konkuk.ac.kr";
 
     protected static final ChromaDBContainer chroma;
 

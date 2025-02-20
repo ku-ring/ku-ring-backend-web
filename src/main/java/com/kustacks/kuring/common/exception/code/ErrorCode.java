@@ -76,6 +76,11 @@ public enum ErrorCode {
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
 
+    EMAIL_NO_SUCH_ALGORITHM(HttpStatus.INTERNAL_SERVER_ERROR, "랜덤 숫자 생성 간 알고리즘을 찾을 수 없습니다."),
+    EMAIL_INVALID_SUFFIX(HttpStatus.BAD_REQUEST, "건국대학교 이메일 도메인이 아닙니다."),
+    EMAIL_INVALID_CODE(HttpStatus.BAD_REQUEST, "유효하지 않은 인증코드입니다."),
+    EMAIL_INVALID_TEMPLATE(HttpStatus.BAD_REQUEST, "잘못된 이메일 발송 양식입니다."),
+
     // AI 관련
     AI_SIMILAR_DOCUMENTS_NOT_FOUND(HttpStatus.NOT_FOUND, "죄송합니다, 해당 내용은 2024년도 6월 이후에 작성된 공지 내용에서 확인할 수 없는 내용입니다."),
 

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>쿠링 이메일 인증</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: #4caf50;
+            color: #ffffff;
+        }
+        .logo {
+            max-width: 120px;
+            margin-bottom: 15px;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+        .code {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            background: #ff5722;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+        .note {
+            color: #e53935;
+            font-weight: bold;
+        }
+        .social {
+            margin: 15px 0;
+        }
+        .social a {
+            color: #666;
+            text-decoration: underline;
+        }
+        .copyright {
+            margin-top: 15px;
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">
+        <h1>쿠링 이메일 인증 안내</h1>
+    </div>
+    <div class="content">
+        <p>요청하신 인증번호입니다.</p>
+        <p>아래 인증번호를 <span class="note">5분 내</span>에 입력해 주세요.</p>
+        <p>
+            <span class="code">[[${code}]]</span>
+        </p>
+    </div>
+    <div class="footer">
+        <p>궁금한 점이 있으시면 아래 인스타그램으로 문의해 주세요.</p>
+        <p class="social">
+            <a href="https://www.instagram.com/kuring.konkuk/" target="_blank">
+                instagram
+            </a>
+        </p>
+        <p class="copyright">© 2025 KU-RING. All rights reserved.</p>
+    </div>
+</div>
+</body>
+</html>

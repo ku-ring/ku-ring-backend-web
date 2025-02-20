@@ -103,6 +103,30 @@ class DependencyRuleTests {
 						.importPackages("com.kustacks.kuring.staff.."));
 	}
 
+	@DisplayName("Email 아키텍처 검증")
+	@Test
+	void validateEmailArchitecture() {
+		HexagonalArchitecture.boundedContext("com.kustacks.kuring.email")
+
+				.withDomainLayer("domain")
+
+				.withAdaptersLayer("adapter")
+				.incoming("in.web")
+				.outgoing("out.persistence")
+				.outgoing("out.email")
+				.and()
+
+				.withApplicationLayer("application")
+				.services("service")
+				.incomingPorts("port.in")
+				.outgoingPorts("port.out")
+				.and()
+
+				.withConfiguration("configuration")
+				.check(new ClassFileImporter()
+						.importPackages("com.kustacks.kuring.email.."));
+	}
+
 	@DisplayName("테스트 페키지 의존성 검증")
 	@Test
 	void testPackageDependencies() {
