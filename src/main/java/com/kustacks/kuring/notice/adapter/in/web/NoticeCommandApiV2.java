@@ -3,8 +3,9 @@ package com.kustacks.kuring.notice.adapter.in.web;
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeCommentCreateRequest;
-import com.kustacks.kuring.notice.application.port.in.NoticeCommandUseCase;
-import com.kustacks.kuring.notice.application.port.in.NoticeCommandUseCase.NoticeCommentCreateCommand;
+import com.kustacks.kuring.notice.application.port.in.NoticeCommentWritingUseCase;
+import com.kustacks.kuring.notice.application.port.in.NoticeCommentWritingUseCase.WriteCommentCommand;
+import com.kustacks.kuring.notice.application.port.in.NoticeCommentWritingUseCase.WriteReplyCommand;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,19 +27,34 @@ public class NoticeCommandApiV2 {
 
     private static final String USER_TOKEN_HEADER_KEY = "User-Token";
 
-    private final NoticeCommandUseCase noticeCommandUseCase;
+    private final NoticeCommentWritingUseCase noticeCommentWritingUseCase;
 
     @Operation(summary = "공지 댓글 추가", description = "공지에 댓글을 추가합니다")
     @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
     @PostMapping("/{id}/comments")
-    public ResponseEntity<BaseResponse> getSupportedCategories(
+    public ResponseEntity<BaseResponse> createComment(
             @PathVariable("id") Long id,
             @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken,
             @RequestBody NoticeCommentCreateRequest request
     ) {
-        NoticeCommentCreateCommand command = new NoticeCommentCreateCommand(userToken, id, request.content());
+        if (request.parentId() == null) {
+            var command = new WriteCommentCommand(
+                    userToken,
+                    id,
+                    request.content()
+            );
 
-        noticeCommandUseCase.createNotice(command);
+            noticeCommentWritingUseCase.process(command);
+        } else {
+            var command = new WriteReplyCommand(
+                    userToken,
+                    id,
+                    request.content(),
+                    request.parentId()
+            );
+
+            noticeCommentWritingUseCase.process(command);
+        }
 
         return ResponseEntity.ok().body(new BaseResponse<>(NOTICE_COMMENT_SAVE_SUCCESS, null));
     }

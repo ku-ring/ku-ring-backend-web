@@ -77,6 +77,7 @@ public enum ErrorCode {
     AD_UNAUTHENTICATED("관리자가 아닙니다."),
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글을 찾을 수 없습니다."),
 
     EMAIL_NO_SUCH_ALGORITHM(HttpStatus.INTERNAL_SERVER_ERROR, "랜덤 숫자 생성 간 알고리즘을 찾을 수 없습니다."),
     EMAIL_INVALID_SUFFIX(HttpStatus.BAD_REQUEST, "건국대학교 이메일 도메인이 아닙니다."),

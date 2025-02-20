@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends BaseTimeEntity {
 
     @Id
-    @Getter(AccessLevel.PRIVATE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
@@ -36,6 +36,13 @@ public class Comment extends BaseTimeEntity {
     private LocalDateTime destroyedAt;
 
     public Comment(Long userId, Long noticeId, String content) {
+        this.userId = userId;
+        this.noticeId = noticeId;
+        this.content = new Content(content);
+    }
+
+    public Comment(Long parentId, Long userId, Long noticeId, String content) {
+        this.parentId = parentId;
         this.userId = userId;
         this.noticeId = noticeId;
         this.content = new Content(content);
