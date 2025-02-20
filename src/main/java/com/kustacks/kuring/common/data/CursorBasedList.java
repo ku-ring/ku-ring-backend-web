@@ -151,21 +151,9 @@ public class CursorBasedList<T> implements List<T> {
         return new CursorBasedList<>(List.of(), null, false);
     }
 
-    public static <T> CursorBasedList<T> baseOf(
-            List<T> sourceContents,
+    public static <T> CursorBasedList<T> of(
             int limit,
-            Function<T, String> cursorGenerator
-    ) {
-        List<T> contents = sourceContents.subList(0, Math.min(limit, sourceContents.size()));
-        boolean hasNext = limit < sourceContents.size();
-        String endCursor = hasNext ? cursorGenerator.apply(contents.get(limit - 1)) : null;
-
-        return new CursorBasedList<>(contents, endCursor, hasNext);
-    }
-
-    public static <T> CursorBasedList<T> baseOf(
-            int limit,
-            Function<T, String> cursorGenerator,
+            CursorGenerator<T> cursorGenerator,
             Function<Integer, List<T>> sourceContentsLoader
     ) {
         List<T> sourceContents = sourceContentsLoader.apply(limit + NEXT_CURSOR_SIZE);
@@ -174,7 +162,7 @@ public class CursorBasedList<T> implements List<T> {
         List<T> contents = sourceContents.subList(0, subListSize);
 
         boolean hasNext = limit < sourceContents.size();
-        String endCursor = hasNext ? cursorGenerator.apply(contents.get(limit - 1)) : null;
+        String endCursor = hasNext ? cursorGenerator.generate(contents.get(limit - 1)) : null;
 
         return new CursorBasedList<>(contents, endCursor, hasNext);
     }

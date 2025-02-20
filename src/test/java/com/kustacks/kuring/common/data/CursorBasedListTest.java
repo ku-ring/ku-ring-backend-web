@@ -23,75 +23,18 @@ class CursorBasedListTest {
         assertFalse(emptyList.hasNext());
     }
 
-    @DisplayName("of()는 정확한 contents, endCursor, hasNext 값을 가진 CursorBasedList를 반환해야 한다.")
+    @DisplayName("baseOf()는 정확한 contents, endCursor, hasNext 값을 가진 CursorBasedList를 반환해야 한다.")
     @Test
     void of_shouldReturnCursorBasedListWithCorrectContentsEndCursorAndHasNext() {
         // Given
-        List<Integer> sourceContents = List.of(1, 2, 3, 4, 5);
         int limit = 3;
-        Function<Integer, String> cursorGenerator = (content) -> content.toString();
-
-        // When
-        CursorBasedList<Integer> cursorBasedList = CursorBasedList.baseOf(sourceContents, limit, cursorGenerator);
-
-        // Then
-        assertAll(
-                () -> assertThat(cursorBasedList.getContents()).isEqualTo(List.of(1, 2, 3)),
-                () -> assertThat(cursorBasedList.getEndCursor()).isEqualTo("3"),
-                () -> assertThat(cursorBasedList.hasNext()).isTrue()
-        );
-    }
-
-    @DisplayName("limit이 sourceContents의 크기보다 클 때, hasNext가 false인 CursorBasedList를 반환해야 한다.")
-    @Test
-    void of_shouldReturnCursorBasedListWithHasNextAsFalseWhenLimitIsGreaterThanSourceContentsSize() {
-        // Given
-        List<Integer> sourceContents = List.of(1, 2, 3);
-        int limit = 5;
-        Function<Integer, String> cursorGenerator = (content) -> content.toString();
-
-        // When
-        CursorBasedList<Integer> cursorBasedList = CursorBasedList.baseOf(sourceContents, limit, cursorGenerator);
-
-        // Then
-        assertAll(
-                () -> assertThat(cursorBasedList.getContents()).isEqualTo(List.of(1, 2, 3)),
-                () -> assertThat(cursorBasedList.getEndCursor()).isNull(),
-                () -> assertThat(cursorBasedList.hasNext()).isFalse()
-        );
-    }
-
-    @DisplayName("limit이 sourceContents의 크기와 같을 때, hasNext가 false인 CursorBasedList를 반환해야 한다.")
-    @Test
-    void of_shouldReturnCursorBasedListWithHasNextAsFalseWhenLimitIsEqualToSourceContentsSize() {
-        // Given
-        List<Integer> sourceContents = List.of(1, 2, 3, 4, 5);
-        int limit = 5;
-        Function<Integer, String> cursorGenerator = (content) -> content.toString();
-
-        // When
-        CursorBasedList<Integer> cursorBasedList = CursorBasedList.baseOf(sourceContents, limit, cursorGenerator);
-
-        // Then
-        assertAll(
-                () -> assertThat(cursorBasedList.getContents()).isEqualTo(List.of(1, 2, 3, 4, 5)),
-                () -> assertThat(cursorBasedList.getEndCursor()).isNull(),
-                () -> assertThat(cursorBasedList.hasNext()).isFalse()
-        );
-    }
-
-    @DisplayName("baseOf()는 정확한 contents, endCursor, hasNext 값을 가진 CursorBasedList를 반환해야 한다.")
-    @Test
-    void baseOf_shouldReturnCursorBasedListWithCorrectContentsEndCursorAndHasNext() {
-        // Given
-        int limit = 3;
-        Function<Integer, String> cursorGenerator = (content) -> content.toString();
+        CursorGenerator<Integer> cursorGenerator = (content) -> content.toString();
 
         List<Integer> sourceContents = List.of(1, 2, 3, 4, 5);
         Function<Integer, List<Integer>> sourceContentsLoader = (size) -> sourceContents.subList(0, size);
 
         // When
-        CursorBasedList<Integer> cursorBasedList = CursorBasedList.baseOf(limit, cursorGenerator, sourceContentsLoader);
+        CursorBasedList<Integer> cursorBasedList = CursorBasedList.of(limit, cursorGenerator, sourceContentsLoader);
 
         // Then
         assertAll(
@@ -103,16 +46,16 @@ class CursorBasedListTest {
 
     @DisplayName("baseOf()는 sourceContents가 limit보다 작은 경우, hasNext가 false인 CursorBasedList를 반환해야 한다.")
     @Test
-    void baseOf_shouldReturnCursorBasedListWithHasNextAsFalseWhenSourceContentsSmallerThanLimit() {
+    void of_shouldReturnCursorBasedListWithHasNextAsFalseWhenSourceContentsSmallerThanLimit() {
         // Given
         int limit = 3;
-        Function<Integer, String> cursorGenerator = (content) -> content.toString();
+        CursorGenerator<Integer> cursorGenerator = (content) -> content.toString();
 
         List<Integer> sourceContents = List.of(1, 2);
         Function<Integer, List<Integer>> sourceContentsLoader = (size) -> sourceContents.subList(0, Math.min(size, sourceContents.size()));
 
         // When
-        CursorBasedList<Integer> cursorBasedList = CursorBasedList.baseOf(limit, cursorGenerator, sourceContentsLoader);
+        CursorBasedList<Integer> cursorBasedList = CursorBasedList.of(limit, cursorGenerator, sourceContentsLoader);
 
         // Then
         assertAll(
@@ -124,16 +67,16 @@ class CursorBasedListTest {
 
     @DisplayName("baseOf()는 limit이 sourceContents의 크기와 같을 때, hasNext가 false인 CursorBasedList를 반환해야 한다.")
     @Test
-    void baseOf_shouldReturnCursorBasedListWithHasNextAsFalseWhenLimitIsEqualToSourceContentsSize() {
+    void of_shouldReturnCursorBasedListWithHasNextAsFalseWhenLimitIsEqualToSourceContentsSize() {
         // Given
         List<Integer> sourceContents = List.of(1, 2, 3);
         int limit = 3;
 
-        Function<Integer, String> cursorGenerator = (content) -> content.toString();
+        CursorGenerator<Integer> cursorGenerator = (content) -> content.toString();
         Function<Integer, List<Integer>> sourceContentsLoader = (size) -> sourceContents.subList(0, Math.min(size, sourceContents.size()));
 
         // When
-        CursorBasedList<Integer> cursorBasedList = CursorBasedList.baseOf(limit, cursorGenerator, sourceContentsLoader);
+        CursorBasedList<Integer> cursorBasedList = CursorBasedList.of(limit, cursorGenerator, sourceContentsLoader);
 
         // Then
         assertAll(
@@ -145,16 +88,16 @@ class CursorBasedListTest {
 
     @DisplayName("baseOf()는 limit이 sourceContents보다 작은 경우, hasNext가 true인 CursorBasedList를 반환해야 한다.")
     @Test
-    void baseOf_shouldReturnCursorBasedListWithHasNextAsTrueWhenLimitIsSmallerThanSourceContents() {
+    void of_shouldReturnCursorBasedListWithHasNextAsTrueWhenLimitIsSmallerThanSourceContents() {
         // Given
         int limit = 3;
-        Function<Integer, String> cursorGenerator = (content) -> content.toString();
+        CursorGenerator<Integer> cursorGenerator = (content) -> content.toString();
 
         List<Integer> sourceContents = List.of(1, 2, 3, 4, 5);
         Function<Integer, List<Integer>> sourceContentsLoader = (size) -> sourceContents.subList(0, size);
 
         // When
-        CursorBasedList<Integer> cursorBasedList = CursorBasedList.baseOf(limit, cursorGenerator, sourceContentsLoader);
+        CursorBasedList<Integer> cursorBasedList = CursorBasedList.of(limit, cursorGenerator, sourceContentsLoader);
 
         // Then
         assertAll(
