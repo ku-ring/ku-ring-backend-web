@@ -34,6 +34,7 @@ public enum ResponseCodeAndMessages {
     FEEDBACK_SEARCH_SUCCESS(HttpStatus.OK.value(), "피드백 조회에 성공하였습니다"),
     ASK_COUNT_LOOKUP_SUCCESS(HttpStatus.OK.value(), "질문 가능 횟수 조회에 성공하였습니다"),
     NOTICE_COMMENT_SAVE_SUCCESS(HttpStatus.OK.value(), "공지에 댓글 추가를 성공하였습니다"),
+    NOTICE_COMMENT_EDIT_SUCCESS(HttpStatus.OK.value(), "공지에 댓글 편집을 성공하였습니다"),
 
     /* Alert */
     ALERT_SEARCH_SUCCESS(HttpStatus.OK.value(), "예약 알림 조회에 성공하였습니다"),
