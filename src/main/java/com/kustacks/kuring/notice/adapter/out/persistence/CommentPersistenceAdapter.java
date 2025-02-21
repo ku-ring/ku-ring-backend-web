@@ -50,7 +50,7 @@ public class CommentPersistenceAdapter implements CommentCommandPort, CommentQue
     }
 
     @Override
-    public List<CommentReadModel> findSubCommentByIds(Set<Long> parentCommentIds) {
-        return commentRepository.findSubCommentByIds(parentCommentIds);
+    public List<CommentReadModel> findSubCommentByIds(Long noticeId, Set<Long> parentCommentIds) {
+        return commentRepository.findSubCommentByIds(noticeId, parentCommentIds);
     }
 }

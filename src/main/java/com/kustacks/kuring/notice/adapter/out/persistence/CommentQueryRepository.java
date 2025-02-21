@@ -12,5 +12,5 @@ public interface CommentQueryRepository {
 
     List<CommentReadModel> findExcludeSubCommentByCursor(Long noticeId, String cursor, int size);
 
-    List<CommentReadModel> findSubCommentByIds(Set<Long> parentCommentIds);
+    List<CommentReadModel> findSubCommentByIds(Long noticeId, Set<Long> parentCommentIds);
 }

@@ -84,7 +84,7 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
                             .map(CommentReadModel::getId)
                             .collect(Collectors.toSet());
 
-                    List<CommentReadModel> subComments = commentQueryPort.findSubCommentByIds(parentCommentIds);
+                    List<CommentReadModel> subComments = commentQueryPort.findSubCommentByIds(noticeId, parentCommentIds);
 
                     // 부모 댓글을 Key로 하고, 그에 해당하는 자식 댓글 리스트를 값으로 가지는 Map 생성
                     Map<Long, List<CommentDetailResponse>> parentToSubCommentsMap = subComments.stream()

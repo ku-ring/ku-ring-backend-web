@@ -60,7 +60,7 @@ class CommentQueryRepositoryImpl implements CommentQueryRepository {
     }
 
     @Override
-    public List<CommentReadModel> findSubCommentByIds(Set<Long> parentCommentIds) {
+    public List<CommentReadModel> findSubCommentByIds(Long noticeId, Set<Long> parentCommentIds) {
         return queryFactory.select(
                         new QCommentReadModel(
                                 comment.id,
@@ -73,8 +73,10 @@ class CommentQueryRepositoryImpl implements CommentQueryRepository {
                                 comment.updatedAt
                         )
                 ).from(comment)
-                .where(comment.parentId.in(parentCommentIds))
-                .fetch();
+                .where(
+                        comment.noticeId.eq(noticeId),
+                        comment.parentId.in(parentCommentIds)
+                ).fetch();
     }
 
     private static BooleanExpression cursorId(String cursorId) {
