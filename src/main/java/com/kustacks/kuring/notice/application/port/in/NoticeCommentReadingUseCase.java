@@ -9,6 +9,8 @@ public interface NoticeCommentReadingUseCase {
 
     /**
      * @param noticeId 공지의 아이디 값
+     * @param cursor 조회할 댓글의 시작 커서 값
+     * @param size 조회할 댓글의 사이즈 값
      */
     CursorBasedList<CommentAndSubCommentsResult> findComments(Long noticeId, String cursor, int size);
 
