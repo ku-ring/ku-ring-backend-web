@@ -6,12 +6,16 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Getter
+@SQLDelete(sql = "UPDATE comment SET destroyed_at = CURRENT_TIMESTAMP where id = ?")
+@SQLRestriction("destroyed_at IS NULL")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends BaseTimeEntity {
 
