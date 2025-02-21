@@ -23,7 +23,7 @@ class CursorBasedListTest {
         assertFalse(emptyList.hasNext());
     }
 
-    @DisplayName("baseOf()는 정확한 contents, endCursor, hasNext 값을 가진 CursorBasedList를 반환해야 한다.")
+    @DisplayName("of()는 정확한 contents, endCursor, hasNext 값을 가진 CursorBasedList를 반환해야 한다.")
     @Test
     void of_shouldReturnCursorBasedListWithCorrectContentsEndCursorAndHasNext() {
         // Given
@@ -31,7 +31,7 @@ class CursorBasedListTest {
         CursorGenerator<Integer> cursorGenerator = (content) -> content.toString();
 
         List<Integer> sourceContents = List.of(1, 2, 3, 4, 5);
-        Function<Integer, List<Integer>> sourceContentsLoader = (size) -> sourceContents.subList(0, size);
+        Function<Integer, List<Integer>> sourceContentsLoader = (size) -> subListWithSize(sourceContents, 0, size);
 
         // When
         CursorBasedList<Integer> cursorBasedList = CursorBasedList.of(limit, cursorGenerator, sourceContentsLoader);
@@ -44,7 +44,7 @@ class CursorBasedListTest {
         );
     }
 
-    @DisplayName("baseOf()는 sourceContents가 limit보다 작은 경우, hasNext가 false인 CursorBasedList를 반환해야 한다.")
+    @DisplayName("of()는 sourceContents가 limit보다 작은 경우, hasNext가 false인 CursorBasedList를 반환해야 한다.")
     @Test
     void of_shouldReturnCursorBasedListWithHasNextAsFalseWhenSourceContentsSmallerThanLimit() {
         // Given
@@ -52,7 +52,7 @@ class CursorBasedListTest {
         CursorGenerator<Integer> cursorGenerator = (content) -> content.toString();
 
         List<Integer> sourceContents = List.of(1, 2);
-        Function<Integer, List<Integer>> sourceContentsLoader = (size) -> sourceContents.subList(0, Math.min(size, sourceContents.size()));
+        Function<Integer, List<Integer>> sourceContentsLoader = (size) -> subListWithSize(sourceContents, 0, size);
 
         // When
         CursorBasedList<Integer> cursorBasedList = CursorBasedList.of(limit, cursorGenerator, sourceContentsLoader);
@@ -65,7 +65,7 @@ class CursorBasedListTest {
         );
     }
 
-    @DisplayName("baseOf()는 limit이 sourceContents의 크기와 같을 때, hasNext가 false인 CursorBasedList를 반환해야 한다.")
+    @DisplayName("of()는 limit이 sourceContents의 크기와 같을 때, hasNext가 false인 CursorBasedList를 반환해야 한다.")
     @Test
     void of_shouldReturnCursorBasedListWithHasNextAsFalseWhenLimitIsEqualToSourceContentsSize() {
         // Given
@@ -73,7 +73,7 @@ class CursorBasedListTest {
         int limit = 3;
 
         CursorGenerator<Integer> cursorGenerator = (content) -> content.toString();
-        Function<Integer, List<Integer>> sourceContentsLoader = (size) -> sourceContents.subList(0, Math.min(size, sourceContents.size()));
+        Function<Integer, List<Integer>> sourceContentsLoader = (size) -> subListWithSize(sourceContents, 0, size);
 
         // When
         CursorBasedList<Integer> cursorBasedList = CursorBasedList.of(limit, cursorGenerator, sourceContentsLoader);
@@ -86,7 +86,7 @@ class CursorBasedListTest {
         );
     }
 
-    @DisplayName("baseOf()는 limit이 sourceContents보다 작은 경우, hasNext가 true인 CursorBasedList를 반환해야 한다.")
+    @DisplayName("of()는 limit이 sourceContents보다 작은 경우, hasNext가 true인 CursorBasedList를 반환해야 한다.")
     @Test
     void of_shouldReturnCursorBasedListWithHasNextAsTrueWhenLimitIsSmallerThanSourceContents() {
         // Given
@@ -94,7 +94,7 @@ class CursorBasedListTest {
         CursorGenerator<Integer> cursorGenerator = (content) -> content.toString();
 
         List<Integer> sourceContents = List.of(1, 2, 3, 4, 5);
-        Function<Integer, List<Integer>> sourceContentsLoader = (size) -> sourceContents.subList(0, size);
+        Function<Integer, List<Integer>> sourceContentsLoader = (size) -> subListWithSize(sourceContents, 0, size);
 
         // When
         CursorBasedList<Integer> cursorBasedList = CursorBasedList.of(limit, cursorGenerator, sourceContentsLoader);
@@ -105,6 +105,18 @@ class CursorBasedListTest {
                 () -> assertThat(cursorBasedList.getEndCursor()).isEqualTo("3"),
                 () -> assertThat(cursorBasedList.hasNext()).isTrue()
         );
+    }
+
+    public static <T> List<T> subListWithSize(List<T> list, int start, int size) {
+        if (list == null) {
+            throw new IllegalArgumentException("List cannot be null");
+        }
+        if (start < 0 || size < 0 || start >= list.size()) {
+            throw new IndexOutOfBoundsException("Invalid start index or size");
+        }
+
+        int end = Math.min(start + size, list.size());
+        return list.subList(start, end);
     }
 }
 

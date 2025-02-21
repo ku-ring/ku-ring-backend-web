@@ -88,7 +88,7 @@ public class NoticeQueryApiV2 {
 
     @Operation(summary = "댓글 조회", description = "특정 공지에 추가된 모든 댓글을 조회합니다")
     @GetMapping("/{id}/comments")
-    public ResponseEntity<BaseResponse<CommentListResponse>> getComment(
+    public ResponseEntity<BaseResponse<CommentListResponse>> getComments(
             @Parameter(description = "공지 ID") @PathVariable(name = "id") Long id,
             @Parameter(description = "커서") @RequestParam(name = "cursor", required = false) String cursor,
             @Parameter(description = "단일 요청의 사이즈, 1 ~ 30까지 허용")
