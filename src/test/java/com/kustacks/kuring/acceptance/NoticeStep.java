@@ -164,4 +164,13 @@ public class NoticeStep {
                 () -> assertThat(response.jsonPath().getBoolean("data.hasNext")).isEqualTo(hasNext)
         );
     }
+
+    public static void 댓글_삭제(String userToken, long noticeId, long commentId) {
+        RestAssured
+                .given().log().all()
+                .header("User-Token", userToken)
+                .when().delete("/api/v2/notices/{id}/comments/{commentId}", noticeId, commentId)
+                .then().log().all()
+                .extract();
+    }
 }

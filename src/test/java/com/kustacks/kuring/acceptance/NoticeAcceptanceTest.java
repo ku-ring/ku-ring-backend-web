@@ -291,4 +291,32 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
                         .getString("data.comments[0].comment.content")
         ).isEqualTo("this is edited comment");
     }
+
+    /**
+     * Given : 사전에 저장된 공지와 댓글이 있다
+     * When : 특정 대글을 삭제하면
+     * Then : 성공적으로 대댓글이 삭제된다
+     */
+    @DisplayName("[v2] 공지의 댓글을 삭제할 수 있다")
+    @Test
+    void delete_comment() {
+        // given
+        var noticeId = 공지사항_조회_요청("stu").jsonPath().getLong("data[0].id");
+        공지에_댓글_추가(noticeId, USER_FCM_TOKEN, "this is comment");
+
+        long commentId = 공지의_댓글_조회(noticeId, null, 5)
+                .jsonPath()
+                .getLong("data.comments[0].comment.id");
+
+        // given
+        댓글_삭제(USER_FCM_TOKEN, noticeId, commentId);
+
+        // then
+        assertThat(
+                공지의_댓글_조회(noticeId, null, 5)
+                        .jsonPath()
+                        .getList("data.comments")
+                        .size()
+        ).isZero();
+    }
 }
