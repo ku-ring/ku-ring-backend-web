@@ -3,6 +3,7 @@ package com.kustacks.kuring.notice.application.service;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.notice.application.port.in.NoticeCommentDeletingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentEditingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentWritingUseCase;
 import com.kustacks.kuring.notice.application.port.out.CommentCommandPort;
@@ -23,8 +24,10 @@ import java.util.Objects;
 @UseCase
 @Transactional
 @RequiredArgsConstructor
-public class NoticeCommandService implements NoticeCommentWritingUseCase, NoticeCommentEditingUseCase {
-
+public class NoticeCommandService implements
+        NoticeCommentWritingUseCase,
+        NoticeCommentEditingUseCase,
+        NoticeCommentDeletingUseCase {
     private final NoticeQueryPort noticeQueryPort;
     private final CommentCommandPort commentCommandPort;
     private final CommentQueryPort commentQueryPort;
@@ -70,12 +73,34 @@ public class NoticeCommandService implements NoticeCommentWritingUseCase, Notice
         Comment findComment = commentQueryPort.findById(command.commentId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
 
-        if (!Objects.equals(findComment.getUserId(), findUser.getId())
-                || !Objects.equals(findComment.getNoticeId(), findNotice.getId())
-                || findComment.getDestroyedAt() != null) {
+        if (isNotCommentOwner(findComment, findUser, findNotice)) {
             throw new NotFoundException(ErrorCode.COMMENT_NOT_FOUND);
         }
 
         findComment.editContent(command.content());
+    }
+
+    @Override
+    public void process(DeleteCommentCommand command) {
+        User findUser = userQueryPort.findByToken(command.userToken())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        NoticeDto findNotice = noticeQueryPort.findNoticeById(command.noticeId())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOTICE_NOT_FOUND));
+
+        Comment findComment = commentQueryPort.findById(command.commentId())
+                .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
+
+        if (isNotCommentOwner(findComment, findUser, findNotice)) {
+            throw new NotFoundException(ErrorCode.COMMENT_NOT_FOUND);
+        }
+
+        commentCommandPort.delete(findComment);
+    }
+
+    private static boolean isNotCommentOwner(Comment findComment, User findUser, NoticeDto findNotice) {
+        return !Objects.equals(findComment.getUserId(), findUser.getId())
+                || !Objects.equals(findComment.getNoticeId(), findNotice.getId())
+                || findComment.getDestroyedAt() != null;
     }
 }

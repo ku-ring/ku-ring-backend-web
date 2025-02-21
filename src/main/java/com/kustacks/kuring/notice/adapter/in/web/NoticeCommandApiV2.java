@@ -4,6 +4,8 @@ import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeCommentCreateRequest;
 import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeCommentEditRequest;
+import com.kustacks.kuring.notice.application.port.in.NoticeCommentDeletingUseCase;
+import com.kustacks.kuring.notice.application.port.in.NoticeCommentDeletingUseCase.DeleteCommentCommand;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentEditingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentEditingUseCase.EditCommentCommand;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentWritingUseCase;
@@ -16,10 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_COMMENT_EDIT_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_COMMENT_SAVE_SUCCESS;
@@ -34,6 +33,7 @@ public class NoticeCommandApiV2 {
 
     private final NoticeCommentWritingUseCase noticeCommentWritingUseCase;
     private final NoticeCommentEditingUseCase noticeCommentEditingUseCase;
+    private final NoticeCommentDeletingUseCase noticeCommentDeletingUseCase;
 
     @Operation(summary = "공지 댓글 추가", description = "공지에 댓글을 추가합니다")
     @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
@@ -79,5 +79,20 @@ public class NoticeCommandApiV2 {
         noticeCommentEditingUseCase.process(command);
 
         return ResponseEntity.ok().body(new BaseResponse<>(NOTICE_COMMENT_EDIT_SUCCESS, null));
+    }
+
+    @Operation(summary = "공지 댓글 삭제", description = "공지에 있는 기존의 댓글을 삭제합니다")
+    @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
+    @DeleteMapping("/{id}/comments/{commentId}")
+    public ResponseEntity deleteComment(
+            @Parameter(description = "공지 ID") @PathVariable("id") Long id,
+            @Parameter(description = "댓글 ID") @PathVariable("commentId") Long commentId,
+            @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken
+    ) {
+        var command = new DeleteCommentCommand(userToken, id, commentId);
+
+        noticeCommentDeletingUseCase.process(command);
+
+        return ResponseEntity.noContent().build();
     }
 }

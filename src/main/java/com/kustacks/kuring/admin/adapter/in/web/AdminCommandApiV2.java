@@ -83,10 +83,12 @@ public class AdminCommandApiV2 {
     @Secured(AdminRole.ROLE_ROOT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/alerts/{id}")
-    public void cancelAlert(
+    public ResponseEntity cancelAlert(
             @Parameter(description = "알림 아이디") @NotNull @PathVariable("id") Long id
     ) {
         adminCommandUseCase.cancelAlertSchedule(id);
+
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "파일 임베딩", description = "어드민이 원하는 파일을 임베딩 하여 쿠링봇에서 사용할 수 있다")
