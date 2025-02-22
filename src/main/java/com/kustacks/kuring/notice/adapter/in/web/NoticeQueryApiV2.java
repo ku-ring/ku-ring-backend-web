@@ -1,6 +1,7 @@
 package com.kustacks.kuring.notice.adapter.in.web;
 
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
+import com.kustacks.kuring.common.data.Cursor;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.notice.adapter.in.web.dto.*;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentReadingUseCase;
@@ -29,9 +30,6 @@ import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
 @RequiredArgsConstructor
 @RestWebAdapter(path = "/api/v2/notices")
 public class NoticeQueryApiV2 {
-
-    private static final String AUTO_ADJUST_DEFAULT_CURSOR = "1";
-    private static final String DEFAULT_CURSOR = "0";
 
     private final NoticeCommentReadingUseCase noticeCommentReadingUseCase;
     private final NoticeQueryUseCase noticeQueryUseCase;
@@ -96,7 +94,7 @@ public class NoticeQueryApiV2 {
     ) {
         var comments = noticeCommentReadingUseCase.findComments(
                 id,
-                convertStartCursor(cursor),
+                Cursor.from(cursor),
                 size
         );
 
@@ -107,13 +105,5 @@ public class NoticeQueryApiV2 {
         );
 
         return ResponseEntity.ok().body(new BaseResponse<>(NOTICE_SEARCH_SUCCESS, response));
-    }
-
-    private static String convertStartCursor(String cursor) {
-        if (cursor != null && cursor.equals(AUTO_ADJUST_DEFAULT_CURSOR)) {
-            return DEFAULT_CURSOR;
-        }
-
-        return cursor;
     }
 }

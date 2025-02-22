@@ -1,6 +1,7 @@
 package com.kustacks.kuring.notice.application.service;
 
 import com.kustacks.kuring.common.annotation.UseCase;
+import com.kustacks.kuring.common.data.Cursor;
 import com.kustacks.kuring.common.data.CursorBasedList;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.NotFoundException;
@@ -72,13 +73,13 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
     }
 
     @Override
-    public CursorBasedList<CommentAndSubCommentsResult> findComments(Long noticeId, String cursor, int size) {
+    public CursorBasedList<CommentAndSubCommentsResult> findComments(Long noticeId, Cursor cursor, int size) {
         return CursorBasedList.of(
                 Math.min(size, MAX_COMMENT_QUERY_SIZE),
                 it -> it.comment().id().toString(),
                 searchSize -> {
                     List<CommentReadModel> parentComments = commentQueryPort
-                            .findExcludeSubCommentByCursor(noticeId, cursor, searchSize);
+                            .findExcludeSubCommentByCursor(noticeId, cursor.getStringCursor(), searchSize);
 
                     Set<Long> parentCommentIds = parentComments.stream()
                             .map(CommentReadModel::getId)
