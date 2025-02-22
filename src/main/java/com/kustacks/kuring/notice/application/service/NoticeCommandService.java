@@ -1,6 +1,7 @@
 package com.kustacks.kuring.notice.application.service;
 
 import com.kustacks.kuring.common.annotation.UseCase;
+import com.kustacks.kuring.common.exception.NoPermissionException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentDeletingUseCase;
@@ -74,7 +75,7 @@ public class NoticeCommandService implements
                 .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
 
         if (isNotCommentOwner(findComment, findUser, findNotice)) {
-            throw new NotFoundException(ErrorCode.COMMENT_NOT_FOUND);
+            throw new NoPermissionException(ErrorCode.COMMENT_NOT_FOUND);
         }
 
         findComment.editContent(command.content());
@@ -92,7 +93,7 @@ public class NoticeCommandService implements
                 .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
 
         if (isNotCommentOwner(findComment, findUser, findNotice)) {
-            throw new NotFoundException(ErrorCode.COMMENT_NOT_FOUND);
+            throw new NoPermissionException(ErrorCode.COMMENT_NOT_FOUND);
         }
 
         commentCommandPort.delete(findComment);
