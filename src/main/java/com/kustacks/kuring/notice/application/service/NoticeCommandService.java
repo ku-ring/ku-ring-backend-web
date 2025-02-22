@@ -43,6 +43,8 @@ public class NoticeCommandService implements
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOTICE_NOT_FOUND));
 
         commentCommandPort.createComment(findUser.getId(), findNotice.getId(), command.content());
+
+        log.info("write notice-comment, user{}, notice{}", findUser.getId(), findNotice.getId());
     }
 
     @Override
@@ -61,6 +63,8 @@ public class NoticeCommandService implements
         }
 
         commentCommandPort.createReply(findUser.getId(), findNotice.getId(), command.parentId(), command.content());
+
+        log.info("reply notice-comment, user{}, notice{}", findUser.getId(), findNotice.getId());
     }
 
     @Override
@@ -79,6 +83,8 @@ public class NoticeCommandService implements
         }
 
         findComment.editContent(command.content());
+
+        log.info("edit notice-comment, user{}, notice{}, comment{}", findUser.getId(), findNotice.getId(), findComment.getId());
     }
 
     @Override
@@ -97,6 +103,8 @@ public class NoticeCommandService implements
         }
 
         commentCommandPort.delete(findComment);
+
+        log.info("delete notice-comment, user{}, notice{}, comment{}", findUser.getId(), findNotice.getId(), findComment.getId());
     }
 
     private static boolean isNotCommentOwner(Comment findComment, User findUser, NoticeDto findNotice) {
