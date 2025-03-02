@@ -39,6 +39,6 @@ class UserUpdaterTest extends IntegrationTestSupport {
         // then
         User findUser = userPersistenceAdapter.findByToken(USER_FCM_TOKEN).get();
         int leftCount = findUser.decreaseQuestionCount();
-        assertThat(leftCount).isEqualTo(User.MONTHLY_QUESTION_COUNT - 1);
+        assertThat(leftCount).isEqualTo(User.FCM_USER_MONTHLY_QUESTION_COUNT - 1);
     }
 }
