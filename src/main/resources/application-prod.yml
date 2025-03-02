@@ -85,6 +85,7 @@ security:
     token:
       secret-key: ${JWT_SECRET_KEY}
       expire-length: ${JWT_EXPIRE_LENGTH}
+      user-expire-length: ${JWT_USER_EXPIRE_LENGTH}
 
 
 notice:

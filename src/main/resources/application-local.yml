@@ -127,6 +127,7 @@ security:
     token:
       secret-key: localtestsecretkey
       expire-length: 3600000
+      user-expire-length: 3600000
 
 
 notice:

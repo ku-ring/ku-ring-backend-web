@@ -65,6 +65,7 @@ security:
     token:
       secret-key: test-secret-key-test-secret-key-test-secret-key-test-secret-key
       expire-length: 3600000
+      user-expire-length: 3600000
 
 
 notice:
