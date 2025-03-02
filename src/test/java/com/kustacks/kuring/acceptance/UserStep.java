@@ -5,6 +5,8 @@ import com.kustacks.kuring.user.adapter.in.web.dto.UserBookmarkRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserDepartmentsSubscribeRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserFeedbackRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserLoginRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserSignupRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -17,6 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class UserStep {
+
+    public static final String USER_FCM_TOKEN = "test_fcm_token";
 
     public static ExtractableResponse<Response> 회원_가입_요청(String token) {
         return RestAssured.given().log().all()
@@ -184,6 +188,60 @@ public class UserStep {
                 () -> assertThat(질문_횟수_조회_응답.jsonPath().getString("message")).isEqualTo("질문 가능 횟수 조회에 성공하였습니다"),
                 () -> assertThat(질문_횟수_조회_응답.jsonPath().getInt("data.leftAskCount")).isEqualTo(2),
                 () -> assertThat(질문_횟수_조회_응답.jsonPath().getInt("data.maxAskCount")).isEqualTo(2)
+        );
+    }
+
+    public static ExtractableResponse<Response> 회원가입_요청(String email, String password) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(new UserSignupRequest(email, password))
+                .when().post("/api/v2/users/signup")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 회원가입_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(201),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("사용자 계정 생성에 성공했습니다.")
+        );
+    }
+
+    public static ExtractableResponse<Response> 로그인_요청(String fcmToken, String email, String password) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", fcmToken)
+                .body(new UserLoginRequest(email, password))
+                .when().post("/api/v2/users/login")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 로그인_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("로그인에 성공했습니다."),
+                () -> assertThat(response.jsonPath().getString("data.accessToken")).isNotBlank()
+        );
+    }
+
+    public static ExtractableResponse<Response> 로그아웃_요청(String fcmToken, String jwtToken) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", fcmToken)
+                .header("Authorization", "Bearer " + jwtToken)
+                .when().post("/api/v2/users/logout")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 로그아웃_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("로그아웃에 성공했습니다.")
         );
     }
 }
