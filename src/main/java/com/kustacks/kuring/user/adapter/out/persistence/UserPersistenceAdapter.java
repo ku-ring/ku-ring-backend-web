@@ -1,10 +1,12 @@
 package com.kustacks.kuring.user.adapter.out.persistence;
 
-import com.kustacks.kuring.user.application.port.out.dto.FeedbackDto;
 import com.kustacks.kuring.admin.application.port.out.AdminUserFeedbackPort;
 import com.kustacks.kuring.common.annotation.PersistenceAdapter;
+import com.kustacks.kuring.user.application.port.out.DeviceQueryPort;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
+import com.kustacks.kuring.user.application.port.out.dto.FeedbackDto;
+import com.kustacks.kuring.user.domain.Device;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -14,9 +16,20 @@ import java.util.Optional;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, AdminUserFeedbackPort {
+public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, AdminUserFeedbackPort, DeviceQueryPort {
 
     private final UserRepository userRepository;
+    private final DeviceRepository deviceRepository;
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public Optional<Device> findDeviceByToken(String fcmToken) {
+        return deviceRepository.findByFcmToken(fcmToken);
+    }
 
     @Override
     public List<FeedbackDto> findAllFeedbackByPageRequest(Pageable pageable) {
@@ -25,12 +38,12 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
 
     @Override
     public List<String> findAllToken() {
-        return userRepository.findAllToken();
+        return deviceRepository.findAllFcmTokens();
     }
 
     @Override
     public Optional<User> findByToken(String token) {
-        return userRepository.findByToken(token);
+        return deviceRepository.findUserByFcmToken(token);
     }
 
     @Override
@@ -51,6 +64,16 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     @Override
     public User save(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public boolean existByNickname(String nickname) {
+        return userRepository.findByNickname(nickname).isPresent();
+    }
+
+    @Override
+    public boolean existByEmail(String email) {
+        return userRepository.findByEmail(email).isPresent();
     }
 
     @Override
