@@ -2,10 +2,16 @@ package com.kustacks.kuring.user.domain;
 
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -15,22 +21,21 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+@Slf4j
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "update user set deleted = true where id = ?")
 @SQLRestriction("deleted = false")
 public class User implements Serializable {
 
-    public static final int MONTHLY_QUESTION_COUNT = 2;
+    public static final int FCM_USER_MONTHLY_QUESTION_COUNT = 2;
+    public static final int EMAIL_USER_EXTRA_QUESTION_COUNT = 3;
+    public static final int EMAIL_USER_MONTHLY_QUESTION_COUNT = FCM_USER_MONTHLY_QUESTION_COUNT + EMAIL_USER_EXTRA_QUESTION_COUNT;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @Getter(AccessLevel.PUBLIC)
-    @Column(name = "token", unique = true, length = 256, nullable = false)
-    private String token;
 
     @Embedded
     private Feedbacks feedbacks = new Feedbacks();
@@ -44,6 +49,9 @@ public class User implements Serializable {
     @Embedded
     private Bookmarks bookmarks = new Bookmarks();
 
+    @Embedded
+    private Devices devices = new Devices();
+
     @Column(name = "deleted", nullable = false)
     private boolean deleted = Boolean.FALSE;
 
@@ -51,9 +59,29 @@ public class User implements Serializable {
     @Column(columnDefinition = "integer default 0")
     private Integer questionCount;
 
+    @Getter(AccessLevel.PUBLIC)
+    @Column(unique = true, length = 256)
+    private String email;
+
+    @Getter(AccessLevel.PUBLIC)
+    @Column(nullable = true, length = 256)
+    private String password;
+
+    @Column(unique = true, length = 256)
+    private String nickname;
+
+    //Fcm Token User
     public User(String token) {
-        this.token = token;
-        this.questionCount = MONTHLY_QUESTION_COUNT;
+        this.devices.add(new Device(token, this));
+        this.questionCount = FCM_USER_MONTHLY_QUESTION_COUNT;
+    }
+
+    //Email User
+    public User(String email, String password, String nickname) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.questionCount = EMAIL_USER_MONTHLY_QUESTION_COUNT;
     }
 
     public Long getId() {
@@ -131,7 +159,7 @@ public class User implements Serializable {
     }
 
     public int decreaseQuestionCount() {
-        if(!isEnoughQuestionCount()) {
+        if (!isEnoughQuestionCount()) {
             throw new IllegalStateException("잔여 질문 카운트가 0입니다.");
         }
 
@@ -139,6 +167,23 @@ public class User implements Serializable {
         return this.questionCount;
     }
 
+    public void login(Device device) {
+        device.login(this);
+        this.devices.add(device); // 이 계정은 이 다비이스를 사용한다는 뜻.
+    }
+
+    public void logout(Device device) {
+        device.logout();
+        this.devices.remove(device); //이 계정은 이 디바이스에서 로그아웃
+    }
+
+    public void updateQuestionCount(int questionCount) {
+        this.questionCount = questionCount;
+    }
+
+    public List<Device> getAllDevices() {
+        return this.devices.getDevices();
+    }
     private boolean isEnoughQuestionCount() {
         return this.questionCount > 0;
     }
@@ -155,4 +200,5 @@ public class User implements Serializable {
     public int hashCode() {
         return Objects.hash(getId());
     }
+
 }
