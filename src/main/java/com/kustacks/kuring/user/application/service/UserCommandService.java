@@ -119,7 +119,7 @@ class UserCommandService implements UserCommandUseCase {
         syncQuestionCount(emailUser, device.getUser());
         changeUserOfDevice(emailUser, device);
 
-        String token = jwtTokenProvider.createToken(userLoginCommand.email());
+        String token = jwtTokenProvider.createUserToken(userLoginCommand.email());
         return new UserLoginResult(token);
     }
 
