@@ -62,7 +62,7 @@ public class UserUpdater {
 
     private boolean isValidUser(User user) {
         try {
-            firebaseService.validationToken(user.getToken());
+//            firebaseService.validationToken(user.getToken());
             return true;
         } catch (FirebaseInvalidTokenException e) {
             return false;
