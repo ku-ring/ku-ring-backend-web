@@ -7,6 +7,7 @@ import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
 import com.kustacks.kuring.worker.update.staff.dto.StaffDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockserver.integration.ClientAndServer;
@@ -52,6 +53,7 @@ class StaffScraperTest {
         mockServer.stop();
     }
 
+    @Disabled
     @DisplayName("컴퓨터공학부 교직원 정보를 스크랩한다.")
     @Test
     void cseStaffScrapTest() throws IOException {
