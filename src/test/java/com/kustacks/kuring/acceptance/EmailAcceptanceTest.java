@@ -5,10 +5,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
 import static com.kustacks.kuring.acceptance.EmailStep.인증_이메일_전송_요청;
 import static com.kustacks.kuring.acceptance.EmailStep.인증_이메일_전송_응답_확인;
 import static com.kustacks.kuring.acceptance.EmailStep.인증코드_인증_요청;
 import static com.kustacks.kuring.acceptance.EmailStep.인증코드_인증_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.회원가입_요청;
 
 @DisplayName("인수 : 이메일")
 class EmailAcceptanceTest extends IntegrationTestSupport {
@@ -41,7 +43,21 @@ class EmailAcceptanceTest extends IntegrationTestSupport {
         var 인증코드_인증_응답 = 인증코드_인증_요청(USER_EMAIL, "654321");
 
         // then
-        인증코드_인증_응답_확인(인증코드_인증_응답, HttpStatus.BAD_REQUEST);
+        실패_응답_확인(인증코드_인증_응답, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @DisplayName("이미 가입된 이메일로 인증코드 요청을 보냄.")
+    @Test
+    void duplicate_email_fail() {
+        //given
+        회원가입_요청(USER_EMAIL, USER_PASSWORD);
+
+        // when - 이미 가입된 이메일로 인증코드 요청
+        var 인증_이메일_전송_응답 = 인증_이메일_전송_요청(USER_EMAIL);
+
+        // then
+        실패_응답_확인(인증_이메일_전송_응답, HttpStatus.BAD_REQUEST);
     }
 
 }
