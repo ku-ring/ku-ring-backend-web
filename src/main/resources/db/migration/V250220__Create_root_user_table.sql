@@ -11,7 +11,7 @@ CREATE TABLE root_user
 
 -- 2.  login_user_id 추가
 ALTER TABLE user
-    ADD COLUMN login_user_id bigint;
+    ADD COLUMN login_user_id bigint null;
 
 ALTER TABLE user
     CHANGE COLUMN token fcm_token VARCHAR(256);
