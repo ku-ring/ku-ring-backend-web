@@ -2,11 +2,12 @@ package com.kustacks.kuring.user.adapter.out.persistence;
 
 import com.kustacks.kuring.admin.application.port.out.AdminUserFeedbackPort;
 import com.kustacks.kuring.common.annotation.PersistenceAdapter;
-import com.kustacks.kuring.user.application.port.out.DeviceQueryPort;
+import com.kustacks.kuring.user.application.port.out.RootUserCommandPort;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
 import com.kustacks.kuring.user.application.port.out.dto.FeedbackDto;
-import com.kustacks.kuring.user.domain.Device;
+import com.kustacks.kuring.user.domain.RootUser;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -14,36 +15,33 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
+import static com.kustacks.kuring.user.domain.RootUser.ROOT_USER_MONTHLY_QUESTION_COUNT;
+
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, AdminUserFeedbackPort, DeviceQueryPort {
+public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, AdminUserFeedbackPort, RootUserCommandPort, RootUserQueryPort {
 
     private final UserRepository userRepository;
-    private final DeviceRepository deviceRepository;
+    private final RootUserRepository rootUserRepository;
 
-    @Override
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    @Override
-    public Optional<Device> findDeviceByToken(String fcmToken) {
-        return deviceRepository.findByFcmToken(fcmToken);
-    }
-
-    @Override
+      @Override
     public List<FeedbackDto> findAllFeedbackByPageRequest(Pageable pageable) {
         return userRepository.findAllFeedbackByPageRequest(pageable);
     }
 
     @Override
     public List<String> findAllToken() {
-        return deviceRepository.findAllFcmTokens();
+        return userRepository.findAllFcmTokens();
     }
 
     @Override
     public Optional<User> findByToken(String token) {
-        return deviceRepository.findUserByFcmToken(token);
+        return userRepository.findByFcmToken(token);
+    }
+
+    @Override
+    public Optional<RootUser> findRootUserByEmail(String email) {
+        return rootUserRepository.findByEmail(email);
     }
 
     @Override
@@ -62,18 +60,23 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     }
 
     @Override
+    public RootUser saveRootUser(RootUser rootUser) {
+        return rootUserRepository.save(rootUser);
+    }
+
+    @Override
     public User save(User user) {
         return userRepository.save(user);
     }
 
     @Override
     public boolean existByNickname(String nickname) {
-        return userRepository.findByNickname(nickname).isPresent();
+        return rootUserRepository.findByNickname(nickname).isPresent();
     }
 
     @Override
-    public boolean existByEmail(String email) {
-        return userRepository.findByEmail(email).isPresent();
+    public boolean existRootUserByEmail(String email) {
+        return rootUserRepository.findByEmail(email).isPresent();
     }
 
     @Override
@@ -84,5 +87,10 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     @Override
     public void resetAllUserQuestionCount() {
         userRepository.resetAllUserQuestionCount();
+    }
+
+    @Override
+    public void resetAllRootUserQuestionCount() {
+        rootUserRepository.resetAllRootUserQuestionCount(ROOT_USER_MONTHLY_QUESTION_COUNT);
     }
 }

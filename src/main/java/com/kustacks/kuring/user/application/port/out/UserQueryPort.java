@@ -9,7 +9,6 @@ import java.util.Optional;
 public interface UserQueryPort {
 
     Optional<User> findByToken(String token);
-    Optional<User> findByEmail(String email);
 
     List<User> findAll();
     List<User> findByPageRequest(Pageable pageable);
@@ -17,5 +16,4 @@ public interface UserQueryPort {
     Long countUser();
 
     boolean existByNickname(String nickname);
-    boolean existByEmail(String email);
 }
