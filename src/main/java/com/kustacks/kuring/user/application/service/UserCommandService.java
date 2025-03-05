@@ -123,7 +123,7 @@ class UserCommandService implements UserCommandUseCase {
         checkUserIsNotLoggedIn(user);
 
         syncQuestionCount(rootUser, user);
-        user.login(rootUser);
+        user.login(rootUser.getId());
 
         String token = jwtTokenProvider.createUserToken(userLoginCommand.email());
         return new UserLoginResult(token);
