@@ -9,7 +9,7 @@ import com.kustacks.kuring.email.application.port.out.TemplateEnginePort;
 import com.kustacks.kuring.email.application.port.out.VerificationCodeCommandPort;
 import com.kustacks.kuring.email.application.service.exception.EmailBusinessException;
 import com.kustacks.kuring.email.domain.VerificationCode;
-import com.kustacks.kuring.user.application.port.out.UserQueryPort;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
@@ -30,7 +30,7 @@ public class EmailCommandService implements EmailCommandUseCase {
     private final TemplateEnginePort templateEnginePort;
     private final EmailClientPort emailClientPort;
     private final VerificationCodeCommandPort verificationCodeCommandPort;
-    private final UserQueryPort userQueryPort;
+    private final RootUserQueryPort rootUserQueryPort;
 
     private static final String TEMPLATE_FILE = "mail/email-verification";
     private static final String FROM_EMAIL = "no-reply@ku-ring.com";
@@ -54,7 +54,7 @@ public class EmailCommandService implements EmailCommandUseCase {
     }
 
     private void checkDuplicateEmail(String email) {
-        if (userQueryPort.existByEmail(email)) {
+        if (rootUserQueryPort.existRootUserByEmail(email)) {
             throw new InvalidStateException(ErrorCode.EMAIL_DUPLICATE);
         }
     }
