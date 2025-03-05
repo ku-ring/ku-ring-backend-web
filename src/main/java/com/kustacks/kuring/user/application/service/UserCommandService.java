@@ -22,11 +22,12 @@ import com.kustacks.kuring.user.application.port.in.dto.UserLoginResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserLogoutCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserSignupCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserSubscribeCompareResult;
-import com.kustacks.kuring.user.application.port.out.DeviceQueryPort;
+import com.kustacks.kuring.user.application.port.out.RootUserCommandPort;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.application.port.out.UserEventPort;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
-import com.kustacks.kuring.user.domain.Device;
+import com.kustacks.kuring.user.domain.RootUser;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ALL_DEVICE_SUBSCRIBED_TOPIC;
-import static com.kustacks.kuring.user.domain.User.EMAIL_USER_EXTRA_QUESTION_COUNT;
+import static com.kustacks.kuring.user.domain.RootUser.ROOT_USER_EXTRA_QUESTION_COUNT;
 
 @Slf4j
 @UseCase
@@ -47,7 +48,8 @@ class UserCommandService implements UserCommandUseCase {
 
     private final UserCommandPort userCommandPort;
     private final UserQueryPort userQueryPort;
-    private final DeviceQueryPort deviceQueryPort;
+    private final RootUserCommandPort rootUserCommandPort;
+    private final RootUserQueryPort rootUserQueryPort;
     private final UserEventPort userEventPort;
     private final ServerProperties serverProperties;
     private final PasswordEncoder passwordEncoder;
@@ -103,52 +105,58 @@ class UserCommandService implements UserCommandUseCase {
     @Override
     public void signupUser(UserSignupCommand userSignupCommand) {
         String nickname = createNickname();
-        User emailUser = new User(userSignupCommand.email(),
+        RootUser rootUser = new RootUser(
+                userSignupCommand.email(),
                 passwordEncoder.encode(userSignupCommand.password()),
-                nickname);
+                nickname
+        );
 
-        checkDuplicateEmailAndSave(emailUser);
+        checkDuplicateEmailAndSave(rootUser);
     }
 
     @Transactional
     @Override
     public UserLoginResult login(UserLoginCommand userLoginCommand) {
-        Device device = findDeviceByToken(userLoginCommand.fcmToken()); // 어떤 기기에서 로그인할건지를 구분
-        User emailUser = findUserByEmailAndPassword(userLoginCommand.email(), userLoginCommand.password()); // 이메일 유저가 있는지 확인하고 가져옴.
+        User user = findUserByToken(userLoginCommand.fcmToken());
+        RootUser rootUser = findRootUserByEmailAndPassword(userLoginCommand.email(), userLoginCommand.password());
 
-        syncQuestionCount(emailUser, device.getUser());
-        changeUserOfDevice(emailUser, device);
+        checkUserIsNotLoggedIn(user);
+
+        syncQuestionCount(rootUser, user);
+        user.login(rootUser);
 
         String token = jwtTokenProvider.createUserToken(userLoginCommand.email());
         return new UserLoginResult(token);
     }
 
+    private void checkUserIsNotLoggedIn(User user) {
+        if (user.isLoggedIn()) {
+            throw new InvalidStateException(ErrorCode.USER_ALREADY_LOGIN);
+        }
+    }
+
     @Transactional
     @Override
     public void logout(UserLogoutCommand userLogoutCommand) {
-        Device device = findDeviceByToken(userLogoutCommand.fcmToken());
+        User user = findUserByToken(userLogoutCommand.fcmToken());
+        RootUser rootUser = findRootUserByEmail(userLogoutCommand.email());
 
-        validateDeviceUser(userLogoutCommand.email(), device.getUser());
+        checkUserMatchesRootUser(user, rootUser);
 
-        syncQuestionCount(device.getUser(), device.getOriginUser());
-        changeUserOfDevice(device.getOriginUser(), device);
+        syncQuestionCount(rootUser, user);
+        user.logout();
     }
 
-    private void changeUserOfDevice(User newUserOfDevice, Device device) {
-        device.getUser().logout(device); // 원래 로그인된 사용자를 먼저 해제.
-        newUserOfDevice.login(device);
-    }
-
-    private void validateDeviceUser(String email, User deviceUser) {
-        if (!deviceUser.getEmail().equals(email)) {
+    private void checkUserMatchesRootUser(User user, RootUser rootUser) {
+        if (!user.matchLoginUserId(rootUser.getId())) {
             throw new InvalidStateException(ErrorCode.USER_MISMATCH_DEVICE);
         }
     }
 
-    private void syncQuestionCount(User emailUser, User tokenUser) {
+    private void syncQuestionCount(RootUser rootUser, User tokenUser) {
         // minQuestionCount = Min(이메일 계정에 남아있는 횟수 - 이메일 계정 추가 횟수, 기기에 남은 횟수)
-        int fcmUserQuestionCount = Math.min(emailUser.getQuestionCount() - EMAIL_USER_EXTRA_QUESTION_COUNT, tokenUser.getQuestionCount());
-        int emailUserQuestionCount = fcmUserQuestionCount + EMAIL_USER_EXTRA_QUESTION_COUNT;
+        int fcmUserQuestionCount = Math.min(rootUser.getQuestionCount() - ROOT_USER_EXTRA_QUESTION_COUNT, tokenUser.getQuestionCount());
+        int emailUserQuestionCount = fcmUserQuestionCount + ROOT_USER_EXTRA_QUESTION_COUNT;
 
         if (fcmUserQuestionCount < 0) {
             fcmUserQuestionCount = 0;
@@ -159,14 +167,15 @@ class UserCommandService implements UserCommandUseCase {
         }
 
         tokenUser.updateQuestionCount(fcmUserQuestionCount);
-        emailUser.updateQuestionCount(emailUserQuestionCount);
+        rootUser.updateQuestionCount(emailUserQuestionCount);
     }
 
-    private void checkDuplicateEmailAndSave(User emailUser) {
-        if (userQueryPort.existByEmail(emailUser.getEmail())) {
+    private void checkDuplicateEmailAndSave(RootUser rootUser) {
+        if (rootUserQueryPort.existRootUserByEmail(rootUser.getEmail())) {
             throw new InvalidStateException(ErrorCode.EMAIL_DUPLICATE);
         }
-        userCommandPort.save(emailUser);
+
+        rootUserCommandPort.saveRootUser(rootUser);
     }
 
     private String createNickname() {
@@ -307,17 +316,16 @@ class UserCommandService implements UserCommandUseCase {
                 .toList();
     }
 
-    private Device findDeviceByToken(String fcmToken) {
-        return deviceQueryPort.findDeviceByToken(fcmToken)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_DEVICE_NOT_FOUND));
+    private RootUser findRootUserByEmail(String email) {
+        return rootUserQueryPort.findRootUserByEmail(email)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ROOT_USER_NOT_FOUND));
     }
 
-    private User findUserByEmailAndPassword(String email, String password) {
-        User user = userQueryPort.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_SIGNUP));
-        if (!passwordEncoder.matches(password,user.getPassword())) {
-            throw new NotFoundException(ErrorCode.USER_MISMATCH_PASSWORD);
+    private RootUser findRootUserByEmailAndPassword(String email, String password) {
+        RootUser rootUser = findRootUserByEmail(email);
+        if (!passwordEncoder.matches(password, rootUser.getPassword())) {
+            throw new NotFoundException(ErrorCode.ROOT_USER_MISMATCH_PASSWORD);
         }
-        return user;
+        return rootUser;
     }
 }
