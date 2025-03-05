@@ -29,13 +29,14 @@ import java.util.Set;
 public class User implements Serializable {
 
     public static final int FCM_USER_MONTHLY_QUESTION_COUNT = 2;
-    public static final int EMAIL_USER_EXTRA_QUESTION_COUNT = 3;
-    public static final int EMAIL_USER_MONTHLY_QUESTION_COUNT = FCM_USER_MONTHLY_QUESTION_COUNT + EMAIL_USER_EXTRA_QUESTION_COUNT;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+
+    @Column(name = "fcm_token", unique = true, nullable = false)
+    private String fcmToken;
 
     @Embedded
     private Feedbacks feedbacks = new Feedbacks();
@@ -49,9 +50,6 @@ public class User implements Serializable {
     @Embedded
     private Bookmarks bookmarks = new Bookmarks();
 
-    @Embedded
-    private Devices devices = new Devices();
-
     @Column(name = "deleted", nullable = false)
     private boolean deleted = Boolean.FALSE;
 
@@ -60,28 +58,13 @@ public class User implements Serializable {
     private Integer questionCount;
 
     @Getter(AccessLevel.PUBLIC)
-    @Column(unique = true, length = 256)
-    private String email;
-
-    @Getter(AccessLevel.PUBLIC)
-    @Column(nullable = true, length = 256)
-    private String password;
-
-    @Column(unique = true, length = 256)
-    private String nickname;
+    @Column(nullable = true)
+    private Long loginUserId;
 
     //Fcm Token User
     public User(String token) {
-        this.devices.add(new Device(token, this));
+        this.fcmToken = token;
         this.questionCount = FCM_USER_MONTHLY_QUESTION_COUNT;
-    }
-
-    //Email User
-    public User(String email, String password, String nickname) {
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-        this.questionCount = EMAIL_USER_MONTHLY_QUESTION_COUNT;
     }
 
     public Long getId() {
@@ -167,23 +150,18 @@ public class User implements Serializable {
         return this.questionCount;
     }
 
-    public void login(Device device) {
-        device.login(this);
-        this.devices.add(device); // 이 계정은 이 다비이스를 사용한다는 뜻.
+    public void login(RootUser rootUser) {
+        this.loginUserId = rootUser.getId();
     }
 
-    public void logout(Device device) {
-        device.logout();
-        this.devices.remove(device); //이 계정은 이 디바이스에서 로그아웃
+    public void logout() {
+        this.loginUserId = null;
     }
 
     public void updateQuestionCount(int questionCount) {
         this.questionCount = questionCount;
     }
 
-    public List<Device> getAllDevices() {
-        return this.devices.getDevices();
-    }
     private boolean isEnoughQuestionCount() {
         return this.questionCount > 0;
     }
@@ -201,4 +179,11 @@ public class User implements Serializable {
         return Objects.hash(getId());
     }
 
+    public boolean matchLoginUserId(Long id) {
+        return isLoggedIn() && this.loginUserId.equals(id);
+    }
+
+    public boolean isLoggedIn() {
+        return this.loginUserId != null;
+    }
 }
