@@ -3,7 +3,6 @@ package com.kustacks.kuring.user.adapter.out.persistence;
 import com.kustacks.kuring.user.application.port.out.dto.FeedbackDto;
 import com.kustacks.kuring.user.application.port.out.dto.QFeedbackDto;
 import com.kustacks.kuring.user.domain.User;
-import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +12,6 @@ import java.util.List;
 
 import static com.kustacks.kuring.user.domain.QFeedback.feedback;
 import static com.kustacks.kuring.user.domain.QUser.user;
-import static com.kustacks.kuring.user.domain.User.EMAIL_USER_MONTHLY_QUESTION_COUNT;
 import static com.kustacks.kuring.user.domain.User.FCM_USER_MONTHLY_QUESTION_COUNT;
 
 @RequiredArgsConstructor
@@ -44,9 +42,7 @@ class UserQueryRepositoryImpl implements UserQueryRepository {
     @Override
     public void resetAllUserQuestionCount() {
         queryFactory.update(user)
-                .set(user.questionCount, new CaseBuilder()
-                        .when(user.email.isNotNull()).then(EMAIL_USER_MONTHLY_QUESTION_COUNT)
-                        .otherwise(FCM_USER_MONTHLY_QUESTION_COUNT))
+                .set(user.questionCount, FCM_USER_MONTHLY_QUESTION_COUNT)
                 .execute();
     }
 }
