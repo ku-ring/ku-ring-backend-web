@@ -250,7 +250,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         인증_이메일_전송_요청(USER_EMAIL);
         인증코드_인증_요청(USER_EMAIL, "123456");
 
-        회원가입_요청(USER_EMAIL, USER_PASSWORD);
+        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
 
         var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
         String jwtToken = 로그인_응답.jsonPath().getString("data.accessToken");
@@ -270,7 +270,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
         // when
-        var 회원가입_응답 = 회원가입_요청(USER_EMAIL, USER_PASSWORD);
+        var 회원가입_응답 = 회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
 
         // then
         회원가입_응답_확인(회원가입_응답);
@@ -282,7 +282,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         // given
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
-        회원가입_요청(USER_EMAIL, USER_PASSWORD);
+        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
 
         // when
         var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
@@ -297,7 +297,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         // given
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
-        회원가입_요청(USER_EMAIL, USER_PASSWORD);
+        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
 
         var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
         String jwtToken = 로그인_응답.jsonPath().getString("data.accessToken");
@@ -315,7 +315,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         // given
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
-        회원가입_요청(USER_EMAIL, USER_PASSWORD);
+        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
 
         // when
         var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, "wrong_password");
@@ -344,10 +344,10 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
         // 첫번째 회원가입
-        회원가입_요청(USER_EMAIL, USER_PASSWORD);
+        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
 
         // when 같은 이메일로 회원가입 요청
-        var 중복_회원가입_응답 = 회원가입_요청(USER_EMAIL, USER_PASSWORD);
+        var 중복_회원가입_응답 = 회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
 
         // then
         실패_응답_확인(중복_회원가입_응답, HttpStatus.BAD_REQUEST);
