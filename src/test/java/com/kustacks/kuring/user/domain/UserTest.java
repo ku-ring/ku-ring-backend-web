@@ -19,9 +19,6 @@ class UserTest {
     void creat_user() {
         assertThatCode(() -> new User("token"))
                 .doesNotThrowAnyException();
-
-        assertThatCode(() -> new User("client@konkuk.ac.kr","1234","nickname"))
-                .doesNotThrowAnyException();
     }
 
     @DisplayName("User의 ID가 같은 경우 equals를 통해 동일한 객체로 판단하는지 확인한다.")
@@ -160,40 +157,37 @@ class UserTest {
     @Test
     void login_user() {
         // given
-        User tokenUser = createUser(1L, "token");
-        User emailUser = createEmailUser(2L, "client@konkuk.ac.kr","1234","nickname");
-        Device device = new Device("token", tokenUser);
+        User user = createUser(1L, "token");
+        RootUser rootUser = createRootUser(2L, "client@konkuk.ac.kr", "1234", "nickname");
 
         // when
-        emailUser.login(device);
+        user.login(rootUser);
 
         // then
-        assertThat(emailUser.getAllDevices())
-                .hasSize(1)
-                .contains(device);
+        assertThat(user.getLoginUserId())
+                .isEqualTo(2L);
     }
 
     @DisplayName("사용자가 로그아웃한다.")
     @Test
     void logout_user() {
         // given
-        User tokenUser = createUser(1L, "token");
-        User emailUser = createEmailUser(2L, "client@konkuk.ac.kr","1234","nickname");
-        Device device = new Device("token", tokenUser);
-        emailUser.login(device);
+        User user = createUser(1L, "token");
+        RootUser rootUser = createRootUser(2L, "client@konkuk.ac.kr", "1234", "nickname");
+        user.login(rootUser);
 
         // when
-        emailUser.logout(device);
+        user.logout();
 
         // then
-        assertThat(emailUser.getAllDevices())
-                .hasSize(0);
+        assertThat(user.getLoginUserId())
+                .isNull();
     }
 
-    private User createEmailUser(Long id, String email, String password, String nickname) {
-        User emailUser = new User(email, password, nickname);
-        ReflectionTestUtils.setField(emailUser,"id",id);
-        return emailUser;
+    private RootUser createRootUser(Long id, String email, String password, String nickname) {
+        RootUser rootUser = new RootUser(email, password, nickname);
+        ReflectionTestUtils.setField(rootUser, "id", id);
+        return rootUser;
     }
 
     private User createUser(Long id, String token) {
