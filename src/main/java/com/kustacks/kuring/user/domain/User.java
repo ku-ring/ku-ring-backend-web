@@ -150,8 +150,8 @@ public class User implements Serializable {
         return this.questionCount;
     }
 
-    public void login(RootUser rootUser) {
-        this.loginUserId = rootUser.getId();
+    public void login(Long loginUserId) {
+        this.loginUserId = loginUserId;
     }
 
     public void logout() {
@@ -166,6 +166,14 @@ public class User implements Serializable {
         return this.questionCount > 0;
     }
 
+    public boolean matchLoginUserId(Long id) {
+        return isLoggedIn() && this.loginUserId.equals(id);
+    }
+
+    public boolean isLoggedIn() {
+        return this.loginUserId != null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -177,13 +185,5 @@ public class User implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
-    }
-
-    public boolean matchLoginUserId(Long id) {
-        return isLoggedIn() && this.loginUserId.equals(id);
-    }
-
-    public boolean isLoggedIn() {
-        return this.loginUserId != null;
     }
 }

@@ -161,7 +161,7 @@ class UserTest {
         RootUser rootUser = createRootUser(2L, "client@konkuk.ac.kr", "1234", "nickname");
 
         // when
-        user.login(rootUser);
+        user.login(rootUser.getId());
 
         // then
         assertThat(user.getLoginUserId())
@@ -174,7 +174,7 @@ class UserTest {
         // given
         User user = createUser(1L, "token");
         RootUser rootUser = createRootUser(2L, "client@konkuk.ac.kr", "1234", "nickname");
-        user.login(rootUser);
+        user.login(rootUser.getId());
 
         // when
         user.logout();
