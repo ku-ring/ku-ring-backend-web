@@ -191,9 +191,11 @@ public class UserStep {
         );
     }
 
-    public static ExtractableResponse<Response> 회원가입_요청(String email, String password) {
+    public static ExtractableResponse<Response> 회원가입_요청(String token, String email, String password) {
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", token)
+
                 .body(new UserSignupRequest(email, password))
                 .when().post("/api/v2/users/signup")
                 .then().log().all()
