@@ -75,10 +75,10 @@ public enum ErrorCode {
     AD_UNAUTHENTICATED("관리자가 아닙니다."),
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
-    USER_NOT_SIGNUP(HttpStatus.NOT_FOUND, "회원가입하지 않은 사용자 ID입니다."),
-    USER_DEVICE_NOT_FOUND(HttpStatus.NOT_FOUND, "기기를 찾을 수 없습니다."),
-    USER_MISMATCH_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다."),
-    USER_MISMATCH_DEVICE(HttpStatus.BAD_REQUEST, "기기에 접속한 사용자가 아닙니다."),
+    ROOT_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "계정을 찾을 수 없습니다."),
+    ROOT_USER_MISMATCH_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다."),
+    USER_MISMATCH_DEVICE(HttpStatus.BAD_REQUEST, "로그인한 사용자가 아닙니다."),
+    USER_ALREADY_LOGIN(HttpStatus.BAD_REQUEST, "이미 로그인된 사용자입니다."),
 
     EMAIL_NO_SUCH_ALGORITHM(HttpStatus.INTERNAL_SERVER_ERROR, "랜덤 숫자 생성 간 알고리즘을 찾을 수 없습니다."),
     EMAIL_INVALID_SUFFIX(HttpStatus.BAD_REQUEST, "건국대학교 이메일 도메인이 아닙니다."),
