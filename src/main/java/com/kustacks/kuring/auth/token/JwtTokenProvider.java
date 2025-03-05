@@ -15,7 +15,7 @@ public class JwtTokenProvider {
     private final JwtTokenProperties jwtTokenProperties;
 
     public String createAdminToken(String principal, List<String> roles) {
-        Date validity = new Date(new Date().getTime() + jwtTokenProperties.expireLength());
+        Date validity = new Date(new Date().getTime() + jwtTokenProperties.adminExpireLength());
 
         return getJwtBuilderWithPrincipal(principal)
                 .claim("roles", roles)
