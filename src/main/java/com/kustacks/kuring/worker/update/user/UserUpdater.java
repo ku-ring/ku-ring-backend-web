@@ -2,6 +2,7 @@ package com.kustacks.kuring.worker.update.user;
 
 import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.message.application.service.exception.FirebaseInvalidTokenException;
+import com.kustacks.kuring.user.application.port.out.RootUserCommandPort;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
 import com.kustacks.kuring.user.domain.User;
@@ -21,12 +22,14 @@ public class UserUpdater {
 
     private final FirebaseWithUserUseCase firebaseService;
     private final UserCommandPort userCommandPort;
+    private final RootUserCommandPort rootUserCommandPort;
     private final UserQueryPort userQueryPort;
 
     @Scheduled(cron = "0 59 23 L * ?") // 매달 마지막날 23:59에 실행
     public void questionCountReset() {
         log.info("========== RAG 질문 토큰 초기화 시작 ==========");
         userCommandPort.resetAllUserQuestionCount();
+        rootUserCommandPort.resetAllRootUserQuestionCount();
         log.info("========== RAG 질문 토큰 초기화 종료 ==========");
     }
 
