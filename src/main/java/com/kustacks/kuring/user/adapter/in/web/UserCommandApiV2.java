@@ -95,9 +95,11 @@ class UserCommandApiV2 {
     }
 
     @Operation(summary = "사용자 회원가입", description = "사용자가 회원가입합니다.")
+    @SecurityRequirement(name = FCM_TOKEN_HEADER_KEY)
     @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<BaseResponse<Void>> signup(
-            @RequestBody UserSignupRequest request
+            @RequestBody UserSignupRequest request,
+            @RequestHeader(FCM_TOKEN_HEADER_KEY) String id
     ) {
         userCommandUseCase.signupUser(new UserSignupCommand(request.email(), request.password()));
         return ResponseEntity.ok().body(new BaseResponse<>(USER_SIGNUP, null));
