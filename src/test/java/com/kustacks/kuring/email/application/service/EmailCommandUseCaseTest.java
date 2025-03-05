@@ -5,7 +5,7 @@ import com.kustacks.kuring.email.application.port.out.TemplateEnginePort;
 import com.kustacks.kuring.email.application.port.out.VerificationCodeCommandPort;
 import com.kustacks.kuring.email.domain.VerificationCode;
 import com.kustacks.kuring.support.TestFileLoader;
-import com.kustacks.kuring.user.application.port.out.UserQueryPort;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ class EmailCommandUseCaseTest {
     private TemplateEnginePort templateEnginePort;
 
     @Mock
-    private UserQueryPort userQueryPort;
+    private RootUserQueryPort rootUserQueryPort;
 
     @DisplayName("인증코드 이메일 전송 성공 테스트")
     @Test
@@ -42,7 +42,7 @@ class EmailCommandUseCaseTest {
         String templatePage = TestFileLoader.loadHtmlFile("src/test/resources/email/thymeleaf_engine_process_result.html");
 
         Mockito.when(templateEnginePort.process(Mockito.anyString(), Mockito.anyMap())).thenReturn(templatePage);
-        Mockito.when(userQueryPort.existByEmail(Mockito.anyString())).thenReturn(false);
+        Mockito.when(rootUserQueryPort.existRootUserByEmail(Mockito.anyString())).thenReturn(false);
 
         //when
         emailCommandService.sendVerificationEmail(email);
