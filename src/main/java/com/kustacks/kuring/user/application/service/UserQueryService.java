@@ -59,7 +59,7 @@ class UserQueryService implements UserQueryUseCase {
     @Override
     public UserAIAskCountResult lookupUserAIAskCount(String userToken) {
         User user = findUserByToken(userToken);
-        return new UserAIAskCountResult(user.getQuestionCount(), User.MONTHLY_QUESTION_COUNT);
+        return new UserAIAskCountResult(user.getQuestionCount(), User.FCM_USER_MONTHLY_QUESTION_COUNT);
     }
 
     private List<UserBookmarkResult> lookupAllBookmarkByIds(List<String> bookmarkIds) {

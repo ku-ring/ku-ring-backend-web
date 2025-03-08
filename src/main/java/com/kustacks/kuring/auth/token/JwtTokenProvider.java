@@ -14,19 +14,23 @@ public class JwtTokenProvider {
 
     private final JwtTokenProperties jwtTokenProperties;
 
-    public String createToken(String principal, List<String> roles) {
-        Claims claims = Jwts.claims().setSubject(principal);
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + jwtTokenProperties.expireLength());
+    public String createAdminToken(String principal, List<String> roles) {
+        Date validity = new Date(new Date().getTime() + jwtTokenProperties.adminExpireLength());
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(validity)
+        return getJwtBuilderWithPrincipal(principal)
                 .claim("roles", roles)
-                .signWith(SignatureAlgorithm.HS256, jwtTokenProperties.secretKey())
+                .setExpiration(validity)
                 .compact();
     }
+
+    public String createUserToken(String principal) {
+        Date validity = new Date(new Date().getTime() + jwtTokenProperties.userExpireLength());
+
+        return getJwtBuilderWithPrincipal(principal)
+                .setExpiration(validity)
+                .compact();
+    }
+
 
     public String getPrincipal(String token) {
         try{
@@ -60,6 +64,16 @@ public class JwtTokenProvider {
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    private JwtBuilder getJwtBuilderWithPrincipal(String principal) {
+        Claims claims = Jwts.claims().setSubject(principal);
+        Date now = new Date();
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .signWith(SignatureAlgorithm.HS256, jwtTokenProperties.secretKey());
     }
 }
 

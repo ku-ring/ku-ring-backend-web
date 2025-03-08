@@ -12,7 +12,7 @@ import java.util.List;
 
 import static com.kustacks.kuring.user.domain.QFeedback.feedback;
 import static com.kustacks.kuring.user.domain.QUser.user;
-import static com.kustacks.kuring.user.domain.User.MONTHLY_QUESTION_COUNT;
+import static com.kustacks.kuring.user.domain.User.FCM_USER_MONTHLY_QUESTION_COUNT;
 
 @RequiredArgsConstructor
 class UserQueryRepositoryImpl implements UserQueryRepository {
@@ -42,7 +42,7 @@ class UserQueryRepositoryImpl implements UserQueryRepository {
     @Override
     public void resetAllUserQuestionCount() {
         queryFactory.update(user)
-                .set(user.questionCount, MONTHLY_QUESTION_COUNT)
+                .set(user.questionCount, FCM_USER_MONTHLY_QUESTION_COUNT)
                 .execute();
     }
 }

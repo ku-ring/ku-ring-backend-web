@@ -12,7 +12,31 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.*;
+import static com.kustacks.kuring.acceptance.EmailStep.인증_이메일_전송_요청;
+import static com.kustacks.kuring.acceptance.EmailStep.인증코드_인증_요청;
+import static com.kustacks.kuring.acceptance.UserStep.구독한_학과_목록_조회_요청;
+import static com.kustacks.kuring.acceptance.UserStep.남은_질문_횟수_조회;
+import static com.kustacks.kuring.acceptance.UserStep.로그아웃_요청;
+import static com.kustacks.kuring.acceptance.UserStep.로그아웃_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.로그인_요청;
+import static com.kustacks.kuring.acceptance.UserStep.로그인_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.북마크_생성_요청;
+import static com.kustacks.kuring.acceptance.UserStep.북마크_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.북마크_조회_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.북마크한_공지_조회_요청;
+import static com.kustacks.kuring.acceptance.UserStep.사용자_카테고리_구독_목록_조회_요청;
+import static com.kustacks.kuring.acceptance.UserStep.사용자_학과_조회_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.질문_횟수_응답_검증;
+import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_목록_조회_요청_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_요청;
+import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_요청_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.피드백_요청_v2;
+import static com.kustacks.kuring.acceptance.UserStep.피드백_요청_응답_확인_v2;
+import static com.kustacks.kuring.acceptance.UserStep.학과_구독_요청;
+import static com.kustacks.kuring.acceptance.UserStep.학과_구독_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.회원_가입_요청;
+import static com.kustacks.kuring.acceptance.UserStep.회원가입_요청;
+import static com.kustacks.kuring.acceptance.UserStep.회원가입_응답_확인;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -216,5 +240,116 @@ class UserAcceptanceTest extends IntegrationTestSupport {
 
         // then
         질문_횟수_응답_검증(질문_횟수_조회_응답);
+    }
+
+    @DisplayName("[v2] 사용자는 이메일 인증 후 회원가입, 로그인, 로그아웃을 차례로 할 수 있다.")
+    @Test
+    void verify_email_and_signup() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+        인증_이메일_전송_요청(USER_EMAIL);
+        인증코드_인증_요청(USER_EMAIL, "123456");
+
+        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        String jwtToken = 로그인_응답.jsonPath().getString("data.accessToken");
+
+        // when
+        var 로그아웃_응답 = 로그아웃_요청(USER_FCM_TOKEN, jwtToken);
+
+        // then
+        로그아웃_응답_확인(로그아웃_응답);
+    }
+
+
+    @DisplayName("[v2] 사용자는 회원가입을 할 수 있다")
+    @Test
+    void signup_success() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+
+        // when
+        var 회원가입_응답 = 회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        // then
+        회원가입_응답_확인(회원가입_응답);
+    }
+
+    @DisplayName("[v2] 사용자는 로그인을 할 수 있다")
+    @Test
+    void login_success() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+
+        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        // when
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        // then
+        로그인_응답_확인(로그인_응답);
+    }
+
+    @DisplayName("[v2] 사용자는 로그아웃을 할 수 있다")
+    @Test
+    void logout_success() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+
+        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        String jwtToken = 로그인_응답.jsonPath().getString("data.accessToken");
+
+        // when
+        var 로그아웃_응답 = 로그아웃_요청(USER_FCM_TOKEN, jwtToken);
+
+        // then
+        로그아웃_응답_확인(로그아웃_응답);
+    }
+
+    @DisplayName("[v2] 잘못된 비밀번호로 로그인 시 실패한다")
+    @Test
+    void login_fail_with_wrong_password() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+
+        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        // when
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, "wrong_password");
+
+        // then
+        실패_응답_확인(로그인_응답, HttpStatus.BAD_REQUEST);
+    }
+
+    @DisplayName("[v2] 존재하지 않는 이메일로 로그인 시 실패한다")
+    @Test
+    void login_fail_with_nonexistent_email() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+        //회원가입 생략
+
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        // then
+        실패_응답_확인(로그인_응답, HttpStatus.NOT_FOUND);
+    }
+
+    @DisplayName("[v2] 이미 존재하는 이메일로 회원가입 시 실패한다")
+    @Test
+    void signup_fail_with_duplicate_email() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+
+        // 첫번째 회원가입
+        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        // when 같은 이메일로 회원가입 요청
+        var 중복_회원가입_응답 = 회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        // then
+        실패_응답_확인(중복_회원가입_응답, HttpStatus.BAD_REQUEST);
     }
 }
