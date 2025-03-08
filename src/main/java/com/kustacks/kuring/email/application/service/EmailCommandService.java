@@ -1,6 +1,7 @@
 package com.kustacks.kuring.email.application.service;
 
 import com.kustacks.kuring.common.annotation.UseCase;
+import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.email.application.port.in.EmailCommandUseCase;
 import com.kustacks.kuring.email.application.port.out.EmailClientPort;
@@ -8,6 +9,7 @@ import com.kustacks.kuring.email.application.port.out.TemplateEnginePort;
 import com.kustacks.kuring.email.application.port.out.VerificationCodeCommandPort;
 import com.kustacks.kuring.email.application.service.exception.EmailBusinessException;
 import com.kustacks.kuring.email.domain.VerificationCode;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Session;
 import jakarta.mail.internet.MimeMessage;
@@ -28,6 +30,7 @@ public class EmailCommandService implements EmailCommandUseCase {
     private final TemplateEnginePort templateEnginePort;
     private final EmailClientPort emailClientPort;
     private final VerificationCodeCommandPort verificationCodeCommandPort;
+    private final RootUserQueryPort rootUserQueryPort;
 
     private static final String TEMPLATE_FILE = "mail/email-verification";
     private static final String FROM_EMAIL = "no-reply@ku-ring.com";
@@ -36,6 +39,7 @@ public class EmailCommandService implements EmailCommandUseCase {
 
     @Override
     public void sendVerificationEmail(String email) {
+        checkDuplicateEmail(email);
         if (!email.endsWith(TO_EMIL_SUFFIX)) {
             throw new EmailBusinessException(ErrorCode.EMAIL_INVALID_SUFFIX);
         }
@@ -47,6 +51,12 @@ public class EmailCommandService implements EmailCommandUseCase {
         verificationCodeCommandPort.saveVerificationCode(new VerificationCode(email, code));
 
         emailClientPort.sendEmailAsync(mimeMessage);
+    }
+
+    private void checkDuplicateEmail(String email) {
+        if (rootUserQueryPort.existRootUserByEmail(email)) {
+            throw new InvalidStateException(ErrorCode.EMAIL_DUPLICATE);
+        }
     }
 
     private MimeMessage createMimeMessage(String from, String to, String subject, String text) {

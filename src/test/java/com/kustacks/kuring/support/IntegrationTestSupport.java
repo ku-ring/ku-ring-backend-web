@@ -22,6 +22,7 @@ public class IntegrationTestSupport {
     public static final String ADMIN_CLIENT_LOGIN_ID = "client@email.com";
     public static final String ADMIN_CLIENT_PASSWORD = "client_password";
     public static final String USER_EMAIL = "client@konkuk.ac.kr";
+    public static final String USER_PASSWORD = "1234";
 
     protected static final ChromaDBContainer chroma;
 

@@ -153,6 +153,43 @@ class UserTest {
         assertThatThrownBy(actual).isInstanceOf(IllegalStateException.class);
     }
 
+    @DisplayName("사용자가 로그인한다.")
+    @Test
+    void login_user() {
+        // given
+        User user = createUser(1L, "token");
+        RootUser rootUser = createRootUser(2L, "client@konkuk.ac.kr", "1234", "nickname");
+
+        // when
+        user.login(rootUser.getId());
+
+        // then
+        assertThat(user.getLoginUserId())
+                .isEqualTo(2L);
+    }
+
+    @DisplayName("사용자가 로그아웃한다.")
+    @Test
+    void logout_user() {
+        // given
+        User user = createUser(1L, "token");
+        RootUser rootUser = createRootUser(2L, "client@konkuk.ac.kr", "1234", "nickname");
+        user.login(rootUser.getId());
+
+        // when
+        user.logout();
+
+        // then
+        assertThat(user.getLoginUserId())
+                .isNull();
+    }
+
+    private RootUser createRootUser(Long id, String email, String password, String nickname) {
+        RootUser rootUser = new RootUser(email, password, nickname);
+        ReflectionTestUtils.setField(rootUser, "id", id);
+        return rootUser;
+    }
+
     private User createUser(Long id, String token) {
         User user = new User(token);
         ReflectionTestUtils.setField(user, "id", id);

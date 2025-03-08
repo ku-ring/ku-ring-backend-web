@@ -25,7 +25,7 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        String token = jwtTokenProvider.createToken(String.valueOf(authentication.getPrincipal()), authentication.getAuthorities());
+        String token = jwtTokenProvider.createAdminToken(String.valueOf(authentication.getPrincipal()), authentication.getAuthorities());
         AdminLoginTokenResponse adminLoginTokenResponse = new AdminLoginTokenResponse(token);
         BaseResponse<AdminLoginTokenResponse> loginSuccessResponse = new BaseResponse<>(AUTH_AUTHENTICATION_SUCCESS, adminLoginTokenResponse);
 
