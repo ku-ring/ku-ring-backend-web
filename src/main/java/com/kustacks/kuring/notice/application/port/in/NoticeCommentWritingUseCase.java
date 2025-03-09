@@ -7,14 +7,14 @@ public interface NoticeCommentWritingUseCase {
     void process(WriteReplyCommand command);
 
     record WriteCommentCommand(
-            String userToken,
+            String email,
             Long noticeId,
             String content
     ) {
     }
 
     record WriteReplyCommand(
-            String userToken,
+            String email,
             Long noticeId,
             String content,
             Long parentId

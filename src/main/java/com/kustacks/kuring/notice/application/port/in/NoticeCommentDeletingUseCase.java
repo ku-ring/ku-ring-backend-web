@@ -5,7 +5,7 @@ public interface NoticeCommentDeletingUseCase {
     void process(DeleteCommentCommand command);
 
     record DeleteCommentCommand(
-            String userToken,
+            String email,
             Long noticeId,
             Long commentId
     ) {

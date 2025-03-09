@@ -5,7 +5,7 @@ public interface NoticeCommentEditingUseCase {
     void process(EditCommentCommand command);
 
     record EditCommentCommand(
-            String userToken,
+            String email,
             Long noticeId,
             Long commentId,
             String content
