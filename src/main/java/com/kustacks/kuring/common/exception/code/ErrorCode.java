@@ -84,6 +84,8 @@ public enum ErrorCode {
     USER_MISMATCH_DEVICE(HttpStatus.BAD_REQUEST, "로그인한 사용자가 아닙니다."),
     USER_ALREADY_LOGIN(HttpStatus.BAD_REQUEST, "이미 로그인된 사용자입니다."),
 
+    JWT_INVALID_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 Access Token입니다."),
+
     EMAIL_NO_SUCH_ALGORITHM(HttpStatus.INTERNAL_SERVER_ERROR, "랜덤 숫자 생성 간 알고리즘을 찾을 수 없습니다."),
     EMAIL_INVALID_SUFFIX(HttpStatus.BAD_REQUEST, "건국대학교 이메일 도메인이 아닙니다."),
     EMAIL_INVALID_CODE(HttpStatus.BAD_REQUEST, "유효하지 않은 인증코드입니다."),
