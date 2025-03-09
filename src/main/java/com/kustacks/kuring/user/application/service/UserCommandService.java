@@ -118,7 +118,7 @@ class UserCommandService implements UserCommandUseCase {
     @Override
     public UserLoginResult login(UserLoginCommand userLoginCommand) {
         User user = findUserByToken(userLoginCommand.fcmToken());
-        RootUser rootUser = findRootUserByEmailAndPassword(userLoginCommand.email(), userLoginCommand.password());
+        RootUser rootUser = findRootUserByEmailAndPasswordOrThrow(userLoginCommand.email(), userLoginCommand.password());
 
         checkUserIsNotLoggedIn(user);
 
@@ -139,7 +139,7 @@ class UserCommandService implements UserCommandUseCase {
     @Override
     public void logout(UserLogoutCommand userLogoutCommand) {
         User user = findUserByToken(userLogoutCommand.fcmToken());
-        RootUser rootUser = findRootUserByEmail(userLogoutCommand.email());
+        RootUser rootUser = findRootUserByEmailOrThrow(userLogoutCommand.email());
 
         checkUserMatchesRootUser(user, rootUser);
 
@@ -316,13 +316,13 @@ class UserCommandService implements UserCommandUseCase {
                 .toList();
     }
 
-    private RootUser findRootUserByEmail(String email) {
+    private RootUser findRootUserByEmailOrThrow(String email) {
         return rootUserQueryPort.findRootUserByEmail(email)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.ROOT_USER_NOT_FOUND));
     }
 
-    private RootUser findRootUserByEmailAndPassword(String email, String password) {
-        RootUser rootUser = findRootUserByEmail(email);
+    private RootUser findRootUserByEmailAndPasswordOrThrow(String email, String password) {
+        RootUser rootUser = findRootUserByEmailOrThrow(email);
         if (!passwordEncoder.matches(password, rootUser.getPassword())) {
             throw new NotFoundException(ErrorCode.ROOT_USER_MISMATCH_PASSWORD);
         }

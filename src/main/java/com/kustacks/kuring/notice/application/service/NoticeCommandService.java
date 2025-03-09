@@ -36,9 +36,9 @@ public class NoticeCommandService implements
 
     @Override
     public void process(WriteCommentCommand command) {
-        RootUser rootUser = findRootUserByEmail(command.email());
+        RootUser rootUser = findRootUserByEmailOrThrow(command.email());
 
-        NoticeDto findNotice = findNoticeById(command.noticeId());
+        NoticeDto findNotice = findNoticeByIdOrThrow(command.noticeId());
 
         commentCommandPort.createComment(rootUser.getId(), findNotice.getId(), command.content());
 
@@ -47,9 +47,9 @@ public class NoticeCommandService implements
 
     @Override
     public void process(WriteReplyCommand command) {
-        RootUser rootUser = findRootUserByEmail(command.email());
+        RootUser rootUser = findRootUserByEmailOrThrow(command.email());
 
-        NoticeDto findNotice = findNoticeById(command.noticeId());
+        NoticeDto findNotice = findNoticeByIdOrThrow(command.noticeId());
 
         CommentReadModel commentReadModel = commentQueryPort.findComment(command.parentId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
@@ -65,11 +65,11 @@ public class NoticeCommandService implements
 
     @Override
     public void process(EditCommentCommand command) {
-        RootUser rootUser = findRootUserByEmail(command.email());
+        RootUser rootUser = findRootUserByEmailOrThrow(command.email());
 
-        NoticeDto findNotice = findNoticeById(command.noticeId());
+        NoticeDto findNotice = findNoticeByIdOrThrow(command.noticeId());
 
-        Comment findComment = findCommentById(command.commentId());
+        Comment findComment = findCommentByIdOrThrow(command.commentId());
 
         if (isNotCommentOwner(findComment, rootUser, findNotice)) {
             throw new NoPermissionException(ErrorCode.COMMENT_NOT_FOUND);
@@ -82,11 +82,11 @@ public class NoticeCommandService implements
 
     @Override
     public void process(DeleteCommentCommand command) {
-        RootUser rootUser = findRootUserByEmail(command.email());
+        RootUser rootUser = findRootUserByEmailOrThrow(command.email());
 
-        NoticeDto findNotice = findNoticeById(command.noticeId());
+        NoticeDto findNotice = findNoticeByIdOrThrow(command.noticeId());
 
-        Comment findComment = findCommentById(command.commentId());
+        Comment findComment = findCommentByIdOrThrow(command.commentId());
 
         if (isNotCommentOwner(findComment, rootUser, findNotice)) {
             throw new NoPermissionException(ErrorCode.COMMENT_NOT_FOUND);
@@ -103,17 +103,17 @@ public class NoticeCommandService implements
                 || findComment.getDestroyedAt() != null;
     }
 
-    private RootUser findRootUserByEmail(String email) {
+    private RootUser findRootUserByEmailOrThrow(String email) {
         return rootUserQueryPort.findRootUserByEmail(email)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.ROOT_USER_NOT_FOUND));
     }
 
-    private NoticeDto findNoticeById(Long noticeId) {
+    private NoticeDto findNoticeByIdOrThrow(Long noticeId) {
         return noticeQueryPort.findNoticeById(noticeId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.NOTICE_NOT_FOUND));
     }
 
-    private Comment findCommentById(Long commentId) {
+    private Comment findCommentByIdOrThrow(Long commentId) {
         return commentQueryPort.findById(commentId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
     }
