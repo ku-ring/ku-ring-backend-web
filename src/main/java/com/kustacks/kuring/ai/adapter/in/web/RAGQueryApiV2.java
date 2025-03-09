@@ -18,16 +18,16 @@ import reactor.core.publisher.Flux;
 @RestWebAdapter(path = "/api/v2/ai/messages")
 public class RAGQueryApiV2 {
 
-    private static final String USER_TOKEN_HEADER_KEY = "User-Token";
+    private static final String FCM_TOKEN_HEADER_KEY = "User-Token";
 
     private final RAGQueryUseCase ragQueryUseCase;
 
     @Operation(summary = "사용자 AI에 질문요청", description = "사용자가 궁금한 학교 정보를 AI에게 질문합니다.")
-    @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
+    @SecurityRequirement(name = FCM_TOKEN_HEADER_KEY)
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> askAIQuery(
             @Parameter(description = "사용자 질문") @RequestParam("question") String question,
-            @RequestHeader(USER_TOKEN_HEADER_KEY) String id
+            @RequestHeader(FCM_TOKEN_HEADER_KEY) String id
     ) {
         return ragQueryUseCase.askAiModel(question, id);
     }
