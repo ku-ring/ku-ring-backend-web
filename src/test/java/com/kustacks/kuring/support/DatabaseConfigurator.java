@@ -13,6 +13,7 @@ import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.staff.adapter.out.persistence.StaffRepository;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
+import com.kustacks.kuring.user.domain.RootUser;
 import com.kustacks.kuring.user.domain.User;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -39,7 +40,9 @@ public class DatabaseConfigurator implements InitializingBean {
     protected static final String ADMIN_ROOT_PASSWORD = "admin_password";
     protected static final String ADMIN_CLIENT_LOGIN_ID = "client@email.com";
     protected static final String ADMIN_CLIENT_PASSWORD = "client_password";
-    protected static final String USER_EMAIL = "client@konkuk.ac.kr";
+    protected static final String ROOT_USER_EMAIL = "client@konkuk.ac.kr";
+    protected static final String ROOT_USER_PASSWORD = "client123!";
+    protected static final String ROOT_USER_NICKNAME = "쿠링이000001";
 
     private final NoticePersistenceAdapter noticePersistenceAdapter;
     private final UserPersistenceAdapter userPersistenceAdapter;
@@ -96,6 +99,7 @@ public class DatabaseConfigurator implements InitializingBean {
 
         initAdmin();
         initUser();
+        initRootUser();
         initUserCategory();
         initFeedback();
         initStaff();
@@ -154,6 +158,12 @@ public class DatabaseConfigurator implements InitializingBean {
         userPersistenceAdapter.save(newUser);
     }
 
+    private void initRootUser() {
+        String encodedPassword = passwordEncoder.encode(ROOT_USER_PASSWORD);
+        RootUser rootUser = new RootUser(ROOT_USER_EMAIL, encodedPassword, ROOT_USER_NICKNAME);
+        userPersistenceAdapter.saveRootUser(rootUser);
+    }
+
     private void initUserCategory() {
         User findUser = userPersistenceAdapter.findByToken(USER_FCM_TOKEN).get();
         findUser.subscribeCategory(CategoryName.STUDENT);
@@ -186,7 +196,7 @@ public class DatabaseConfigurator implements InitializingBean {
     }
 
     private void initVerificationCode() {
-        verificationCodeRepository.save(new VerificationCode(USER_EMAIL, "123456"));
+        verificationCodeRepository.save(new VerificationCode(ROOT_USER_EMAIL, "123456"));
     }
 
 
