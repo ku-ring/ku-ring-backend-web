@@ -4,6 +4,7 @@ import com.kustacks.kuring.common.dto.ErrorResponse;
 import com.kustacks.kuring.common.exception.AdminException;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.InvalidStateException;
+import com.kustacks.kuring.common.exception.NoPermissionException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
@@ -73,6 +74,13 @@ public class CommonExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> InvalidStateExceptionHandler(InvalidStateException exception) {
         log.info("[InvalidStateException] {}", exception.getMessage());
+        return ResponseEntity.status(exception.getErrorCode().getHttpStatus())
+                .body(new ErrorResponse(exception.getErrorCode()));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> NoPermissionExceptionHandler(NoPermissionException exception) {
+        log.info("[NoPermissionException] {}", exception.getMessage());
         return ResponseEntity.status(exception.getErrorCode().getHttpStatus())
                 .body(new ErrorResponse(exception.getErrorCode()));
     }
