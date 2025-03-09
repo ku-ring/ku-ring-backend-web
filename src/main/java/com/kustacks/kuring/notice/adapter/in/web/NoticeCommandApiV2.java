@@ -1,7 +1,12 @@
 package com.kustacks.kuring.notice.adapter.in.web;
 
+import com.kustacks.kuring.auth.authentication.AuthorizationExtractor;
+import com.kustacks.kuring.auth.authentication.AuthorizationType;
+import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.dto.BaseResponse;
+import com.kustacks.kuring.common.exception.InvalidStateException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeCommentCreateRequest;
 import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeCommentEditRequest;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentDeletingUseCase;
@@ -16,6 +21,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,23 +35,27 @@ import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_COMM
 @RestWebAdapter(path = "/api/v2/notices")
 public class NoticeCommandApiV2 {
 
-    private static final String USER_TOKEN_HEADER_KEY = "User-Token";
+    private static final String JWT_TOKEN_HEADER_KEY = "JWT";
 
     private final NoticeCommentWritingUseCase noticeCommentWritingUseCase;
     private final NoticeCommentEditingUseCase noticeCommentEditingUseCase;
     private final NoticeCommentDeletingUseCase noticeCommentDeletingUseCase;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Operation(summary = "공지 댓글 추가", description = "공지에 댓글을 추가합니다")
-    @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
+    @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
     @PostMapping("/{id}/comments")
     public ResponseEntity<BaseResponse> createComment(
             @Parameter(description = "공지 ID") @PathVariable("id") Long id,
-            @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken,
+            @RequestHeader (AuthorizationExtractor.AUTHORIZATION) String bearerToken,
             @RequestBody NoticeCommentCreateRequest request
     ) {
+        String jwtToken = extract(bearerToken, AuthorizationType.BEARER);
+        String email = validateJwtAndGetEmail(jwtToken);
+
         if (request.parentId() == null) {
             var command = new WriteCommentCommand(
-                    userToken,
+                    email,
                     id,
                     request.content()
             );
@@ -53,7 +63,7 @@ public class NoticeCommandApiV2 {
             noticeCommentWritingUseCase.process(command);
         } else {
             var command = new WriteReplyCommand(
-                    userToken,
+                    email,
                     id,
                     request.content(),
                     request.parentId()
@@ -66,15 +76,18 @@ public class NoticeCommandApiV2 {
     }
 
     @Operation(summary = "공지 댓글 편집", description = "공지에 있는 기존의 댓글을 수정합니다")
-    @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
+    @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
     @PostMapping("/{id}/comments/{commentId}")
     public ResponseEntity<BaseResponse> editComment(
             @Parameter(description = "공지 ID") @PathVariable("id") Long id,
             @Parameter(description = "댓글 ID") @PathVariable("commentId") Long commentId,
-            @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken,
+            @RequestHeader (AuthorizationExtractor.AUTHORIZATION) String bearerToken,
             @RequestBody NoticeCommentEditRequest request
     ) {
-        var command = new EditCommentCommand(userToken, id, commentId, request.content());
+        String jwtToken = extract(bearerToken, AuthorizationType.BEARER);
+        String email = validateJwtAndGetEmail(jwtToken);
+
+        var command = new EditCommentCommand(email, id, commentId, request.content());
 
         noticeCommentEditingUseCase.process(command);
 
@@ -82,17 +95,43 @@ public class NoticeCommandApiV2 {
     }
 
     @Operation(summary = "공지 댓글 삭제", description = "공지에 있는 기존의 댓글을 삭제합니다")
-    @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
+    @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
     @DeleteMapping("/{id}/comments/{commentId}")
     public ResponseEntity deleteComment(
             @Parameter(description = "공지 ID") @PathVariable("id") Long id,
             @Parameter(description = "댓글 ID") @PathVariable("commentId") Long commentId,
-            @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken
+            @RequestHeader (AuthorizationExtractor.AUTHORIZATION) String bearerToken
     ) {
-        var command = new DeleteCommentCommand(userToken, id, commentId);
+        String jwtToken = extract(bearerToken, AuthorizationType.BEARER);
+        String email = validateJwtAndGetEmail(jwtToken);
+
+        var command = new DeleteCommentCommand(email, id, commentId);
 
         noticeCommentDeletingUseCase.process(command);
 
         return ResponseEntity.noContent().build();
+    }
+
+    private String validateJwtAndGetEmail(String jwtToken) {
+        if (!jwtTokenProvider.validateToken(jwtToken)) {
+            throw new InvalidStateException(ErrorCode.JWT_INVALID_TOKEN);
+        }
+        return jwtTokenProvider.getPrincipal(jwtToken);
+    }
+
+    private String extract(String value, AuthorizationType type) {
+        String typeToLowerCase = type.toLowerCase();
+        int typeLength = typeToLowerCase.length();
+
+        if ((value.toLowerCase().startsWith(typeToLowerCase))) {
+            String authHeaderValue = value.substring(typeLength).trim();
+            int commaIndex = authHeaderValue.indexOf(',');
+            if (commaIndex > 0) {
+                authHeaderValue = authHeaderValue.substring(0, commaIndex);
+            }
+            return authHeaderValue;
+        }
+
+        return Strings.EMPTY;
     }
 }

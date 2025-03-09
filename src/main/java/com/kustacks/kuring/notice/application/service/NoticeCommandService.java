@@ -13,8 +13,8 @@ import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.application.port.out.dto.CommentReadModel;
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;
 import com.kustacks.kuring.notice.domain.Comment;
-import com.kustacks.kuring.user.application.port.out.UserQueryPort;
-import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
+import com.kustacks.kuring.user.domain.RootUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,28 +32,24 @@ public class NoticeCommandService implements
     private final NoticeQueryPort noticeQueryPort;
     private final CommentCommandPort commentCommandPort;
     private final CommentQueryPort commentQueryPort;
-    private final UserQueryPort userQueryPort;
+    private final RootUserQueryPort rootUserQueryPort;
 
     @Override
     public void process(WriteCommentCommand command) {
-        User findUser = userQueryPort.findByToken(command.userToken())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        RootUser rootUser = findRootUserByEmail(command.email());
 
-        NoticeDto findNotice = noticeQueryPort.findNoticeById(command.noticeId())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOTICE_NOT_FOUND));
+        NoticeDto findNotice = findNoticeById(command.noticeId());
 
-        commentCommandPort.createComment(findUser.getId(), findNotice.getId(), command.content());
+        commentCommandPort.createComment(rootUser.getId(), findNotice.getId(), command.content());
 
-        log.info("write notice-comment, user{}, notice{}", findUser.getId(), findNotice.getId());
+        log.info("write notice-comment, user{}, notice{}", rootUser.getId(), findNotice.getId());
     }
 
     @Override
     public void process(WriteReplyCommand command) {
-        User findUser = userQueryPort.findByToken(command.userToken())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        RootUser rootUser = findRootUserByEmail(command.email());
 
-        NoticeDto findNotice = noticeQueryPort.findNoticeById(command.noticeId())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOTICE_NOT_FOUND));
+        NoticeDto findNotice = findNoticeById(command.noticeId());
 
         CommentReadModel commentReadModel = commentQueryPort.findComment(command.parentId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
@@ -62,54 +58,63 @@ public class NoticeCommandService implements
             throw new NotFoundException(ErrorCode.COMMENT_NOT_FOUND);
         }
 
-        commentCommandPort.createReply(findUser.getId(), findNotice.getId(), command.parentId(), command.content());
+        commentCommandPort.createReply(rootUser.getId(), findNotice.getId(), command.parentId(), command.content());
 
-        log.info("reply notice-comment, user{}, notice{}", findUser.getId(), findNotice.getId());
+        log.info("reply notice-comment, user{}, notice{}", rootUser.getId(), findNotice.getId());
     }
 
     @Override
     public void process(EditCommentCommand command) {
-        User findUser = userQueryPort.findByToken(command.userToken())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        RootUser rootUser = findRootUserByEmail(command.email());
 
-        NoticeDto findNotice = noticeQueryPort.findNoticeById(command.noticeId())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOTICE_NOT_FOUND));
+        NoticeDto findNotice = findNoticeById(command.noticeId());
 
-        Comment findComment = commentQueryPort.findById(command.commentId())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
+        Comment findComment = findCommentById(command.commentId());
 
-        if (isNotCommentOwner(findComment, findUser, findNotice)) {
+        if (isNotCommentOwner(findComment, rootUser, findNotice)) {
             throw new NoPermissionException(ErrorCode.COMMENT_NOT_FOUND);
         }
 
         findComment.editContent(command.content());
 
-        log.info("edit notice-comment, user{}, notice{}, comment{}", findUser.getId(), findNotice.getId(), findComment.getId());
+        log.info("edit notice-comment, user{}, notice{}, comment{}", rootUser.getId(), findNotice.getId(), findComment.getId());
     }
 
     @Override
     public void process(DeleteCommentCommand command) {
-        User findUser = userQueryPort.findByToken(command.userToken())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+        RootUser rootUser = findRootUserByEmail(command.email());
 
-        NoticeDto findNotice = noticeQueryPort.findNoticeById(command.noticeId())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOTICE_NOT_FOUND));
+        NoticeDto findNotice = findNoticeById(command.noticeId());
 
-        Comment findComment = commentQueryPort.findById(command.commentId())
-                .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
+        Comment findComment = findCommentById(command.commentId());
 
-        if (isNotCommentOwner(findComment, findUser, findNotice)) {
+        if (isNotCommentOwner(findComment, rootUser, findNotice)) {
             throw new NoPermissionException(ErrorCode.COMMENT_NOT_FOUND);
         }
 
         commentCommandPort.delete(findComment);
 
-        log.info("delete notice-comment, user{}, notice{}, comment{}", findUser.getId(), findNotice.getId(), findComment.getId());
+        log.info("delete notice-comment, user{}, notice{}, comment{}", rootUser.getId(), findNotice.getId(), findComment.getId());
     }
 
-    private static boolean isNotCommentOwner(Comment findComment, User findUser, NoticeDto findNotice) {
-        return !Objects.equals(findComment.getUserId(), findUser.getId())
+    private static boolean isNotCommentOwner(Comment findComment, RootUser findUser, NoticeDto findNotice) {
+        return !Objects.equals(findComment.getRootUserId(), findUser.getId())
                 || !Objects.equals(findComment.getNoticeId(), findNotice.getId())
                 || findComment.getDestroyedAt() != null;
+    }
+
+    private RootUser findRootUserByEmail(String email) {
+        return rootUserQueryPort.findRootUserByEmail(email)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ROOT_USER_NOT_FOUND));
+    }
+
+    private NoticeDto findNoticeById(Long noticeId) {
+        return noticeQueryPort.findNoticeById(noticeId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOTICE_NOT_FOUND));
+    }
+
+    private Comment findCommentById(Long commentId) {
+        return commentQueryPort.findById(commentId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
     }
 }
