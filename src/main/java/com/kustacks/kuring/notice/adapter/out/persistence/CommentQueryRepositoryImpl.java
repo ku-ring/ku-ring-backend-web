@@ -25,7 +25,7 @@ class CommentQueryRepositoryImpl implements CommentQueryRepository {
                         new QCommentReadModel(
                                 comment.id,
                                 comment.parentId,
-                                comment.userId,
+                                comment.rootUserId,
                                 comment.noticeId,
                                 comment.content.value,
                                 comment.destroyedAt,
@@ -45,7 +45,7 @@ class CommentQueryRepositoryImpl implements CommentQueryRepository {
                         new QCommentReadModel(
                                 comment.id,
                                 comment.parentId,
-                                comment.userId,
+                                comment.rootUserId,
                                 comment.noticeId,
                                 comment.content.value,
                                 comment.destroyedAt,
@@ -65,7 +65,7 @@ class CommentQueryRepositoryImpl implements CommentQueryRepository {
                         new QCommentReadModel(
                                 comment.id,
                                 comment.parentId,
-                                comment.userId,
+                                comment.rootUserId,
                                 comment.noticeId,
                                 comment.content.value,
                                 comment.destroyedAt,
