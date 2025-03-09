@@ -27,8 +27,8 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "parent_id", nullable = true)
     private Long parentId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(name = "root_user_id", nullable = false)
+    private Long rootUserId;
 
     @Column(name = "notice_id", nullable = false)
     private Long noticeId;
@@ -39,15 +39,15 @@ public class Comment extends BaseTimeEntity {
     @Column(name = "destroyed_at", nullable = true)
     private LocalDateTime destroyedAt;
 
-    public Comment(Long userId, Long noticeId, String content) {
-        this.userId = userId;
+    public Comment(Long rootUserId, Long noticeId, String content) {
+        this.rootUserId = rootUserId;
         this.noticeId = noticeId;
         this.content = new Content(content);
     }
 
-    public Comment(Long parentId, Long userId, Long noticeId, String content) {
+    public Comment(Long parentId, Long rootUserId, Long noticeId, String content) {
         this.parentId = parentId;
-        this.userId = userId;
+        this.rootUserId = rootUserId;
         this.noticeId = noticeId;
         this.content = new Content(content);
     }
