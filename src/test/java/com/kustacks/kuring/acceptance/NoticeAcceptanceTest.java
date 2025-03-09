@@ -14,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @DisplayName("인수 : 공지사항")
 class NoticeAcceptanceTest extends IntegrationTestSupport {
 
+    public static final String NEW_EMAIL = "new-client@konkuk.ac.kr";
+
     /**
      * Given : 쿠링앱이 실행중이다
      * When : 학생 공지페이지 요청시
@@ -151,11 +153,12 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     @Test
     void add_comment_to_notice() {
         // given
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
         var 공지_조회_응답 = 공지사항_조회_요청("stu");
         var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
 
         // when
-        var response = 공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment");
+        var response = 공지에_댓글_추가(id, accessToken, "this is comment");
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -166,7 +169,7 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
      * When : 잘못된 사용자가 해당 공지에 댓글을 추가하면
      * Then : 실패 응답을 반환한다
      */
-    @DisplayName("[v2] 잘못된 사용자가 공지에 댓글을 추가할 수 없다")
+    @DisplayName("[v2] 잘못된 토큰을 가진 사용자는 공지에 댓글을 추가할 수 없다")
     @Test
     void add_comment_to_notice_by_invalid_user() {
         // given
@@ -174,10 +177,10 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
         var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
 
         // when
-        var response = 공지에_댓글_추가(id, "INVALID_FCM_TOKEN", "this is comment");
+        var response = 공지에_댓글_추가(id, "INVALID_ACCESS_TOKEN", "this is comment");
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
     /**
@@ -190,10 +193,11 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     @Test
     void add_comment_to_notice_and_query() {
         // given
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
         var 공지_조회_응답 = 공지사항_조회_요청("stu");
         var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
-        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment1");
-        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment2");
+        공지에_댓글_추가(id, accessToken, "this is comment1");
+        공지에_댓글_추가(id, accessToken, "this is comment2");
 
         // when
         var response = 공지사항_조회_요청("stu");
@@ -212,19 +216,20 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     @Test
     void add_reply_to_comment_and_query() {
         // given
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
         var 공지_조회_응답 = 공지사항_조회_요청("stu");
         var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
-        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment1");
-        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment2");
+        공지에_댓글_추가(id, accessToken, "this is comment1");
+        공지에_댓글_추가(id, accessToken, "this is comment2");
 
         // when
         var response1 = 공지의_댓글_조회(id, null, 10);
 
         // given
         long parentId = response1.jsonPath().getLong("data.comments[0].comment.id");
-        공지에_댓글_추가(id, parentId, USER_FCM_TOKEN, "this is comment1 for parent");
-        공지에_댓글_추가(id, parentId, USER_FCM_TOKEN, "this is comment2 for parent");
-        공지에_댓글_추가(id, parentId, USER_FCM_TOKEN, "this is comment3 for parent");
+        공지에_댓글_추가(id, parentId, accessToken, "this is comment1 for parent");
+        공지에_댓글_추가(id, parentId, accessToken, "this is comment2 for parent");
+        공지에_댓글_추가(id, parentId, accessToken, "this is comment3 for parent");
 
         // when
         var response2 = 공지의_댓글_조회(id, null, 10);
@@ -242,14 +247,15 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     @Test
     void get_cursor_based_look_up() {
         // given
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
         var 공지_조회_응답 = 공지사항_조회_요청("stu");
         var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
-        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment1");
-        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment2");
-        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment3");
-        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment4");
-        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment5");
-        공지에_댓글_추가(id, USER_FCM_TOKEN, "this is comment6");
+        공지에_댓글_추가(id, accessToken, "this is comment1");
+        공지에_댓글_추가(id, accessToken, "this is comment2");
+        공지에_댓글_추가(id, accessToken, "this is comment3");
+        공지에_댓글_추가(id, accessToken, "this is comment4");
+        공지에_댓글_추가(id, accessToken, "this is comment5");
+        공지에_댓글_추가(id, accessToken, "this is comment6");
 
         // when
         var response = 공지의_댓글_조회(id, null, 5);
@@ -274,15 +280,16 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     @Test
     void edit_comment_and_query() {
         // given
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
         var noticeId = 공지사항_조회_요청("stu").jsonPath().getLong("data[0].id");
-        공지에_댓글_추가(noticeId, USER_FCM_TOKEN, "this is comment");
+        공지에_댓글_추가(noticeId, accessToken, "this is comment");
 
         long commentId = 공지의_댓글_조회(noticeId, null, 5)
                 .jsonPath()
                 .getLong("data.comments[0].comment.id");
 
         // given
-        공지에_댓글_수정(noticeId, commentId, USER_FCM_TOKEN, "this is edited comment");
+        공지에_댓글_수정(noticeId, commentId, accessToken, "this is edited comment");
 
         // then
         assertThat(
@@ -301,15 +308,16 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     @Test
     void delete_comment() {
         // given
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
         var noticeId = 공지사항_조회_요청("stu").jsonPath().getLong("data[0].id");
-        공지에_댓글_추가(noticeId, USER_FCM_TOKEN, "this is comment");
+        공지에_댓글_추가(noticeId, accessToken, "this is comment");
 
         long commentId = 공지의_댓글_조회(noticeId, null, 5)
                 .jsonPath()
                 .getLong("data.comments[0].comment.id");
 
         // given
-        댓글_삭제(USER_FCM_TOKEN, noticeId, commentId);
+        댓글_삭제(accessToken, noticeId, commentId);
 
         // then
         assertThat(
