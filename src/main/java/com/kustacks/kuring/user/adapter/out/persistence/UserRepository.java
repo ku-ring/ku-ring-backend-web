@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 interface UserRepository extends JpaRepository<User, Long>, UserQueryRepository {
-    Optional<User> findByToken(String token);
+    Optional<User> findByFcmToken(String fcmToken);
 
-    @Query("SELECT u.token FROM User u")
-    List<String> findAllToken();
+    @Query("SELECT u.fcmToken FROM User u")
+    List<String> findAllFcmTokens();
 }

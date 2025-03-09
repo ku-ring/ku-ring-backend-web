@@ -64,7 +64,8 @@ security:
   jwt:
     token:
       secret-key: test-secret-key-test-secret-key-test-secret-key-test-secret-key
-      expire-length: 3600000
+      admin-expire-length: 3600000
+      user-expire-length: 604800000
 
 
 notice:

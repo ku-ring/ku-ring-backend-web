@@ -36,6 +36,10 @@ public enum ResponseCodeAndMessages {
     NOTICE_COMMENT_SAVE_SUCCESS(HttpStatus.OK.value(), "공지에 댓글 추가를 성공하였습니다"),
     NOTICE_COMMENT_EDIT_SUCCESS(HttpStatus.OK.value(), "공지에 댓글 편집을 성공하였습니다"),
 
+    USER_SIGNUP(HttpStatus.CREATED.value(), "사용자 계정 생성에 성공했습니다."),
+    USER_LOGIN(HttpStatus.OK.value(), "로그인에 성공했습니다."),
+    USER_LOGOUT(HttpStatus.OK.value(), "로그아웃에 성공했습니다."),
+
     /* Alert */
     ALERT_SEARCH_SUCCESS(HttpStatus.OK.value(), "예약 알림 조회에 성공하였습니다"),
 

@@ -1,28 +1,44 @@
 package com.kustacks.kuring.user.application.service;
 
+import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.properties.ServerProperties;
+import com.kustacks.kuring.common.utils.generator.RandomGenerator;
 import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
-import com.kustacks.kuring.user.application.port.in.dto.*;
+import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserDecreaseQuestionCountCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserDepartmentsSubscribeCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserFeedbackCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserLoginCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserLoginResult;
+import com.kustacks.kuring.user.application.port.in.dto.UserLogoutCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserSignupCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserSubscribeCompareResult;
+import com.kustacks.kuring.user.application.port.out.RootUserCommandPort;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.application.port.out.UserEventPort;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
+import com.kustacks.kuring.user.domain.RootUser;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ALL_DEVICE_SUBSCRIBED_TOPIC;
+import static com.kustacks.kuring.user.domain.RootUser.ROOT_USER_EXTRA_QUESTION_COUNT;
 
 @Slf4j
 @UseCase
@@ -32,8 +48,12 @@ class UserCommandService implements UserCommandUseCase {
 
     private final UserCommandPort userCommandPort;
     private final UserQueryPort userQueryPort;
+    private final RootUserCommandPort rootUserCommandPort;
+    private final RootUserQueryPort rootUserQueryPort;
     private final UserEventPort userEventPort;
     private final ServerProperties serverProperties;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public void editSubscribeCategories(UserCategoriesSubscribeCommand command) {
@@ -80,6 +100,90 @@ class UserCommandService implements UserCommandUseCase {
         } catch (IllegalStateException e) {
             throw new InvalidStateException(ErrorCode.QUESTION_COUNT_NOT_ENOUGH);
         }
+    }
+
+    @Override
+    public void signupUser(UserSignupCommand userSignupCommand) {
+        String nickname = createNickname();
+        RootUser rootUser = new RootUser(
+                userSignupCommand.email(),
+                passwordEncoder.encode(userSignupCommand.password()),
+                nickname
+        );
+
+        checkDuplicateEmailAndSave(rootUser);
+    }
+
+    @Transactional
+    @Override
+    public UserLoginResult login(UserLoginCommand userLoginCommand) {
+        User user = findUserByToken(userLoginCommand.fcmToken());
+        RootUser rootUser = findRootUserByEmailAndPassword(userLoginCommand.email(), userLoginCommand.password());
+
+        checkUserIsNotLoggedIn(user);
+
+        syncQuestionCount(rootUser, user);
+        user.login(rootUser.getId());
+
+        String token = jwtTokenProvider.createUserToken(userLoginCommand.email());
+        return new UserLoginResult(token);
+    }
+
+    private void checkUserIsNotLoggedIn(User user) {
+        if (user.isLoggedIn()) {
+            throw new InvalidStateException(ErrorCode.USER_ALREADY_LOGIN);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void logout(UserLogoutCommand userLogoutCommand) {
+        User user = findUserByToken(userLogoutCommand.fcmToken());
+        RootUser rootUser = findRootUserByEmail(userLogoutCommand.email());
+
+        checkUserMatchesRootUser(user, rootUser);
+
+        syncQuestionCount(rootUser, user);
+        user.logout();
+    }
+
+    private void checkUserMatchesRootUser(User user, RootUser rootUser) {
+        if (!user.matchLoginUserId(rootUser.getId())) {
+            throw new InvalidStateException(ErrorCode.USER_MISMATCH_DEVICE);
+        }
+    }
+
+    private void syncQuestionCount(RootUser rootUser, User tokenUser) {
+        // minQuestionCount = Min(이메일 계정에 남아있는 횟수 - 이메일 계정 추가 횟수, 기기에 남은 횟수)
+        int fcmUserQuestionCount = Math.min(rootUser.getQuestionCount() - ROOT_USER_EXTRA_QUESTION_COUNT, tokenUser.getQuestionCount());
+        int emailUserQuestionCount = fcmUserQuestionCount + ROOT_USER_EXTRA_QUESTION_COUNT;
+
+        if (fcmUserQuestionCount < 0) {
+            fcmUserQuestionCount = 0;
+        }
+
+        if(emailUserQuestionCount < 0) {
+            emailUserQuestionCount = 0;
+        }
+
+        tokenUser.updateQuestionCount(fcmUserQuestionCount);
+        rootUser.updateQuestionCount(emailUserQuestionCount);
+    }
+
+    private void checkDuplicateEmailAndSave(RootUser rootUser) {
+        if (rootUserQueryPort.existRootUserByEmail(rootUser.getEmail())) {
+            throw new InvalidStateException(ErrorCode.EMAIL_DUPLICATE);
+        }
+
+        rootUserCommandPort.saveRootUser(rootUser);
+    }
+
+    private String createNickname() {
+        String nickname = "";
+        do {
+            nickname = RandomGenerator.generateRandomNickname(6);
+        } while (userQueryPort.existByNickname(nickname));
+        return nickname;
     }
 
     private UserSubscribeCompareResult<CategoryName> editSubscribeCategoryList(
@@ -210,5 +314,18 @@ class UserCommandService implements UserCommandUseCase {
         return departments.stream()
                 .map(DepartmentName::fromHostPrefix)
                 .toList();
+    }
+
+    private RootUser findRootUserByEmail(String email) {
+        return rootUserQueryPort.findRootUserByEmail(email)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ROOT_USER_NOT_FOUND));
+    }
+
+    private RootUser findRootUserByEmailAndPassword(String email, String password) {
+        RootUser rootUser = findRootUserByEmail(email);
+        if (!passwordEncoder.matches(password, rootUser.getPassword())) {
+            throw new NotFoundException(ErrorCode.ROOT_USER_MISMATCH_PASSWORD);
+        }
+        return rootUser;
     }
 }

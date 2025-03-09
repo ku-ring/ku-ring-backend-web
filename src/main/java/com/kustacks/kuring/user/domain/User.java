@@ -2,10 +2,16 @@ package com.kustacks.kuring.user.domain;
 
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -15,22 +21,22 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+@Slf4j
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "update user set deleted = true where id = ?")
 @SQLRestriction("deleted = false")
 public class User implements Serializable {
 
-    public static final int MONTHLY_QUESTION_COUNT = 2;
+    public static final int FCM_USER_MONTHLY_QUESTION_COUNT = 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Getter(AccessLevel.PUBLIC)
-    @Column(name = "token", unique = true, length = 256, nullable = false)
-    private String token;
+    @Column(name = "fcm_token", unique = true, nullable = false)
+    private String fcmToken;
 
     @Embedded
     private Feedbacks feedbacks = new Feedbacks();
@@ -51,9 +57,14 @@ public class User implements Serializable {
     @Column(columnDefinition = "integer default 0")
     private Integer questionCount;
 
+    @Getter(AccessLevel.PUBLIC)
+    @Column(nullable = true)
+    private Long loginUserId;
+
+    //Fcm Token User
     public User(String token) {
-        this.token = token;
-        this.questionCount = MONTHLY_QUESTION_COUNT;
+        this.fcmToken = token;
+        this.questionCount = FCM_USER_MONTHLY_QUESTION_COUNT;
     }
 
     public Long getId() {
@@ -131,7 +142,7 @@ public class User implements Serializable {
     }
 
     public int decreaseQuestionCount() {
-        if(!isEnoughQuestionCount()) {
+        if (!isEnoughQuestionCount()) {
             throw new IllegalStateException("잔여 질문 카운트가 0입니다.");
         }
 
@@ -139,8 +150,28 @@ public class User implements Serializable {
         return this.questionCount;
     }
 
+    public void login(Long loginUserId) {
+        this.loginUserId = loginUserId;
+    }
+
+    public void logout() {
+        this.loginUserId = null;
+    }
+
+    public void updateQuestionCount(int questionCount) {
+        this.questionCount = questionCount;
+    }
+
     private boolean isEnoughQuestionCount() {
         return this.questionCount > 0;
+    }
+
+    public boolean matchLoginUserId(Long id) {
+        return isLoggedIn() && this.loginUserId.equals(id);
+    }
+
+    public boolean isLoggedIn() {
+        return this.loginUserId != null;
     }
 
     @Override
