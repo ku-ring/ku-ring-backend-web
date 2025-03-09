@@ -47,6 +47,7 @@ import static org.mockito.Mockito.doThrow;
 class UserAcceptanceTest extends IntegrationTestSupport {
 
     public static final String NEW_EMAIL = "new-client@konkuk.ac.kr";
+
     /**
      * Given: 가입되지 않은 사용자가 있다
      * When: 토큰과 함께 가입 요청을 보내온다

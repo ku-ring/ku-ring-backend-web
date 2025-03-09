@@ -16,6 +16,7 @@ import static com.kustacks.kuring.acceptance.UserStep.회원가입_요청;
 class EmailAcceptanceTest extends IntegrationTestSupport {
 
     public static final String NEW_EMAIL = "new-client@konkuk.ac.kr";
+
     @DisplayName("인증코드 이메일을 성공적으로 발송한다.")
     @Test
     void send_verification_code_email() {
