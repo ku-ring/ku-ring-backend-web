@@ -15,12 +15,12 @@ import static com.kustacks.kuring.acceptance.UserStep.회원가입_요청;
 @DisplayName("인수 : 이메일")
 class EmailAcceptanceTest extends IntegrationTestSupport {
 
-
+    public static final String NEW_EMAIL = "new-client@konkuk.ac.kr";
     @DisplayName("인증코드 이메일을 성공적으로 발송한다.")
     @Test
     void send_verification_code_email() {
         // when
-        var 인증_이메일_전송_응답 = 인증_이메일_전송_요청(USER_EMAIL);
+        var 인증_이메일_전송_응답 = 인증_이메일_전송_요청(NEW_EMAIL);
 
         // then
         인증_이메일_전송_응답_확인((인증_이메일_전송_응답));
@@ -59,5 +59,4 @@ class EmailAcceptanceTest extends IntegrationTestSupport {
         // then
         실패_응답_확인(인증_이메일_전송_응답, HttpStatus.BAD_REQUEST);
     }
-
 }
