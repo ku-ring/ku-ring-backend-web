@@ -92,28 +92,28 @@ public class NoticeStep {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 공지에_댓글_추가(long id, String userToken, String content) {
-        return 공지에_댓글_추가(id, null, userToken, content);
+    public static ExtractableResponse<Response> 공지에_댓글_추가(long id, String accessToken, String content) {
+        return 공지에_댓글_추가(id, null, accessToken, content);
     }
 
-    public static ExtractableResponse<Response> 공지에_댓글_추가(long id, Long parentId, String userToken, String content) {
+    public static ExtractableResponse<Response> 공지에_댓글_추가(long id, Long parentId, String accessToken, String content) {
         return RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .header("User-Token", userToken)
+                .header("Authorization", "Bearer " + accessToken)
                 .body(new NoticeCommentCreateRequest(content, parentId))
                 .when().post("/api/v2/notices/{id}/comments", id)
                 .then().log().all()
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 공지에_댓글_수정(long noticeId, long commentId, String userToken, String content) {
+    public static ExtractableResponse<Response> 공지에_댓글_수정(long noticeId, long commentId, String accessToken, String content) {
         return RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .header("User-Token", userToken)
+                .header("Authorization", "Bearer " + accessToken)
                 .body(new NoticeCommentCreateRequest(content, null))
                 .when().post("/api/v2/notices/{id}/comments/{commentId}", noticeId, commentId)
                 .then().log().all()
@@ -165,10 +165,10 @@ public class NoticeStep {
         );
     }
 
-    public static void 댓글_삭제(String userToken, long noticeId, long commentId) {
-        RestAssured
+    public static ExtractableResponse<Response> 댓글_삭제(String accessToken, long noticeId, long commentId) {
+        return RestAssured
                 .given().log().all()
-                .header("User-Token", userToken)
+                .header("Authorization", "Bearer " + accessToken)
                 .when().delete("/api/v2/notices/{id}/comments/{commentId}", noticeId, commentId)
                 .then().log().all()
                 .extract();
