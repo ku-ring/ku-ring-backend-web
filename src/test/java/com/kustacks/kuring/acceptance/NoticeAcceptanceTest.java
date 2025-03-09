@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 
 import static com.kustacks.kuring.acceptance.CategoryStep.지원하는_카테고리_조회_요청;
 import static com.kustacks.kuring.acceptance.NoticeStep.*;
+import static com.kustacks.kuring.acceptance.UserStep.사용자_로그인_되어_있음;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
