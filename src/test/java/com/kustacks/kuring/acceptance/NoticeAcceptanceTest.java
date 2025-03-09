@@ -327,4 +327,32 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
                         .size()
         ).isZero();
     }
+
+
+    @DisplayName("[v2] 사용자는 자신이 작성한 댓글이 아니면 삭제할 수 없다.")
+    @Test
+    void add_comment_to_notice_by_different_user() {
+        // given
+        String userAccessToken1 = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        var noticeId = 공지사항_조회_요청("stu").jsonPath().getLong("data[0].id");
+        공지에_댓글_추가(noticeId, userAccessToken1, "this is comment");
+        UserStep.로그아웃_요청(USER_FCM_TOKEN, userAccessToken1);
+
+        long commentId = 공지의_댓글_조회(noticeId, null, 5)
+                .jsonPath()
+                .getLong("data.comments[0].comment.id");
+
+        //given 새로운 사용자 로그인
+        UserStep.회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, "123456");
+        String accessToken2 = 사용자_로그인_되어_있음(USER_FCM_TOKEN, NEW_EMAIL, "123456");
+
+
+        // when
+        var 댓글_삭제_응답 = 댓글_삭제(accessToken2, noticeId, commentId);
+
+        // then
+        assertThat(댓글_삭제_응답.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+
+    }
+
 }
