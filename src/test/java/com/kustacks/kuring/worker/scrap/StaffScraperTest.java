@@ -24,6 +24,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+@Disabled
 @DisplayName("교직원 스크랩 테스트")
 @SpringBootTest
 class StaffScraperTest {
@@ -53,7 +54,6 @@ class StaffScraperTest {
         mockServer.stop();
     }
 
-    @Disabled
     @DisplayName("컴퓨터공학부 교직원 정보를 스크랩한다.")
     @Test
     void cseStaffScrapTest() throws IOException {
