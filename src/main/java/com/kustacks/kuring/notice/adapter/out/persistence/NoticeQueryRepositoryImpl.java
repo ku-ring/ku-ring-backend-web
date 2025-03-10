@@ -6,6 +6,7 @@ import com.kustacks.kuring.notice.application.port.out.dto.QNoticeDto;
 import com.kustacks.kuring.notice.application.port.out.dto.QNoticeSearchDto;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
+import com.kustacks.kuring.notice.domain.QComment;
 import com.kustacks.kuring.user.application.port.out.dto.BookmarkDto;
 import com.kustacks.kuring.user.application.port.out.dto.QBookmarkDto;
 import com.querydsl.core.BooleanBuilder;
@@ -13,6 +14,7 @@ import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.core.types.dsl.StringTemplate;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -20,9 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
+import static com.kustacks.kuring.notice.domain.QComment.comment;
 import static com.kustacks.kuring.notice.domain.QDepartmentNotice.departmentNotice;
 import static com.kustacks.kuring.notice.domain.QNotice.notice;
+import static com.querydsl.jpa.JPAExpressions.select;
 
 @RequiredArgsConstructor
 class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
@@ -41,15 +46,24 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
 
+        QComment comment = QComment.comment;
+
+        JPQLQuery<Long> commentCount = select(comment.count())
+                .from(comment)
+                .where(comment.noticeId.eq(notice.id));
+
         return queryFactory
                 .select(
                         new QNoticeDto(
+                                notice.id,
                                 notice.articleId,
                                 postedDate,
                                 notice.url.value,
                                 notice.subject,
                                 notice.categoryName.stringValue().toLowerCase(),
-                                notice.important)
+                                notice.important,
+                                commentCount
+                        )
                 ).from(notice)
                 .where(notice.categoryName.eq(categoryName))
                 .offset(pageable.getOffset())
@@ -89,20 +103,57 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
 
+        JPQLQuery<Long> commentCount = select(comment.count())
+                .from(comment)
+                .where(comment.noticeId.eq(notice.id));
+
         return queryFactory.select(
                         new QNoticeDto(
+                                notice.id,
                                 notice.articleId,
                                 postedDate,
                                 notice.url.value,
                                 notice.subject,
                                 notice.categoryName.stringValue().toLowerCase(),
-                                notice.important
+                                notice.important,
+                                commentCount
                         )
                 ).from(notice)
                 .where(notice.categoryName.eq(categoryName)
                         .and(notice.embedded.isFalse())
                         .and(notice.noticeDateTime.postedDate.after(date)))
                 .fetch();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<NoticeDto> findNoticeReadModelByArticleId(Long id) {
+        StringTemplate postedDate = Expressions.stringTemplate(
+                DATE_FORMAT_TEMPLATE,
+                notice.noticeDateTime.postedDate,
+                ConstantImpl.create(DATE_TIME_TEMPLATE)
+        );
+
+        JPQLQuery<Long> commentCount = select(comment.count())
+                .from(comment)
+                .where(comment.noticeId.eq(notice.id));
+
+        NoticeDto noticeDto = queryFactory.select(
+                        new QNoticeDto(
+                                notice.id,
+                                notice.articleId,
+                                postedDate,
+                                notice.url.value,
+                                notice.subject,
+                                notice.categoryName.stringValue().toLowerCase(),
+                                notice.important,
+                                commentCount
+                        )
+                ).from(notice)
+                .where(notice.id.eq(id))
+                .fetchOne();
+
+        return Optional.ofNullable(noticeDto);
     }
 
     @Transactional(readOnly = true)
@@ -187,14 +238,22 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
 
+        JPQLQuery<Long> commentCount = select(comment.count())
+                .from(comment)
+                .where(comment.noticeId.eq(departmentNotice.id));
+
         return queryFactory
                 .select(new QNoticeDto(
-                        departmentNotice.articleId,
-                        postedDate,
-                        departmentNotice.url.value,
-                        departmentNotice.subject,
-                        departmentNotice.categoryName.stringValue().toLowerCase(),
-                        departmentNotice.important))
+                                departmentNotice.id,
+                                departmentNotice.articleId,
+                                postedDate,
+                                departmentNotice.url.value,
+                                departmentNotice.subject,
+                                departmentNotice.categoryName.stringValue().toLowerCase(),
+                                departmentNotice.important,
+                                commentCount
+                        )
+                )
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName)
                         .and(departmentNotice.important.isTrue()))
@@ -211,14 +270,22 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
 
+        JPQLQuery<Long> commentCount = select(comment.count())
+                .from(comment)
+                .where(comment.noticeId.eq(departmentNotice.id));
+
         return queryFactory
                 .select(new QNoticeDto(
-                        departmentNotice.articleId,
-                        postedDate,
-                        departmentNotice.url.value,
-                        departmentNotice.subject,
-                        departmentNotice.categoryName.stringValue().toLowerCase(),
-                        departmentNotice.important))
+                                departmentNotice.id,
+                                departmentNotice.articleId,
+                                postedDate,
+                                departmentNotice.url.value,
+                                departmentNotice.subject,
+                                departmentNotice.categoryName.stringValue().toLowerCase(),
+                                departmentNotice.important,
+                                commentCount
+                        )
+                )
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName)
                         .and(departmentNotice.important.isFalse()))

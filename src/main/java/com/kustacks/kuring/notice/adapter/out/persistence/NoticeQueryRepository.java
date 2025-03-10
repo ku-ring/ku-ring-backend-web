@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 interface NoticeQueryRepository {
 
@@ -41,4 +42,6 @@ interface NoticeQueryRepository {
     void updateNoticeEmbeddingStatus(List<String> articleIds, CategoryName categoryName);
 
     List<NoticeDto> findNotYetEmbeddingNoticeByDate(CategoryName categoryName, LocalDateTime date);
+
+    Optional<NoticeDto> findNoticeReadModelByArticleId(Long id);
 }

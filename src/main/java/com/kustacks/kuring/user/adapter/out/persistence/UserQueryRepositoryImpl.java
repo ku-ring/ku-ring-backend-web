@@ -21,7 +21,7 @@ class UserQueryRepositoryImpl implements UserQueryRepository {
 
     @Override
     public List<FeedbackDto> findAllFeedbackByPageRequest(Pageable pageable) {
-        return queryFactory.select(new QFeedbackDto(feedback.content.value, feedback.user.id, feedback.createdAt))
+        return queryFactory.select(new QFeedbackDto(feedback.content, feedback.user.id, feedback.createdAt))
                 .from(feedback)
                 .orderBy(feedback.createdAt.desc())
                 .offset(pageable.getOffset())

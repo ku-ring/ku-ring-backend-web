@@ -1,34 +1,45 @@
 package com.kustacks.kuring.notice.application.service;
 
 import com.kustacks.kuring.common.annotation.UseCase;
+import com.kustacks.kuring.common.data.Cursor;
+import com.kustacks.kuring.common.data.CursorBasedList;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.notice.adapter.in.web.dto.CommentDetailResponse;
+import com.kustacks.kuring.notice.application.port.in.NoticeCommentReadingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeQueryUseCase;
 import com.kustacks.kuring.notice.application.port.in.dto.*;
+import com.kustacks.kuring.notice.application.port.out.CommentQueryPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
+import com.kustacks.kuring.notice.application.port.out.dto.CommentReadModel;
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.kustacks.kuring.notice.domain.CategoryName.DEPARTMENT;
 
 @UseCase
 @Transactional(readOnly = true)
-public class NoticeQueryService implements NoticeQueryUseCase {
+public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentReadingUseCase {
+
+    private static final int MAX_COMMENT_QUERY_SIZE = 30;
+    private static final int START_INDEX = 0;
 
     private static final String SPACE_REGEX = "[\\s+]";
     private final NoticeQueryPort noticeQueryPort;
+    private final CommentQueryPort commentQueryPort;
     private final List<CategoryName> supportedCategoryNameList;
     private final List<DepartmentName> supportedDepartmentNameList;
 
-    public NoticeQueryService(NoticeQueryPort noticeQueryPort) {
+    public NoticeQueryService(NoticeQueryPort noticeQueryPort, CommentQueryPort commentQueryPort) {
         this.noticeQueryPort = noticeQueryPort;
+        this.commentQueryPort = commentQueryPort;
         this.supportedCategoryNameList = Arrays.asList(CategoryName.values());
         this.supportedDepartmentNameList = Arrays.asList(DepartmentName.values());
     }
@@ -59,6 +70,48 @@ public class NoticeQueryService implements NoticeQueryUseCase {
     @Override
     public List<NoticeDepartmentNameResult> lookupSupportedDepartments() {
         return convertDepartmentNameDtos(supportedDepartmentNameList);
+    }
+
+    @Override
+    public CursorBasedList<CommentAndSubCommentsResult> findComments(Long noticeId, Cursor cursor, int size) {
+        return CursorBasedList.of(
+                Math.min(size, MAX_COMMENT_QUERY_SIZE),
+                it -> it.comment().id().toString(),
+                searchSize -> {
+                    List<CommentReadModel> parentComments = commentQueryPort
+                            .findExcludeSubCommentByCursor(noticeId, cursor.getStringCursor(), searchSize);
+
+                    Set<Long> parentCommentIds = parentComments.stream()
+                            .map(CommentReadModel::getId)
+                            .collect(Collectors.toSet());
+
+                    List<CommentReadModel> subComments = commentQueryPort.findSubCommentByIds(noticeId, parentCommentIds);
+
+                    // 부모 댓글을 Key로 하고, 그에 해당하는 자식 댓글 리스트를 값으로 가지는 Map 생성
+                    Map<Long, List<CommentDetailResponse>> parentToSubCommentsMap = subComments.stream()
+                            .filter(subComment -> subComment.getParentId() != null)
+                            .map(CommentDetailResponse::of)
+                            .collect(Collectors.groupingBy(CommentDetailResponse::parentId));
+
+                    // 부모 댓글과 자식 댓글을 조합하여 CommentAndSubCommentsResult 리스트 생성
+                    List<CommentAndSubCommentsResult> commentResults = parentComments.stream()
+                            .map(parent -> {
+                                List<CommentDetailResponse> subCommentList = parentToSubCommentsMap
+                                        .getOrDefault(parent.getId(), Collections.emptyList());
+
+                                // 부모 댓글이 삭제되었고, 답글이 없는 경우 제외
+                                if (parent.getDestroyedAt() != null && subCommentList.isEmpty()) {
+                                    return null;
+                                }
+
+                                return new CommentAndSubCommentsResult(CommentDetailResponse.of(parent), subCommentList);
+                            })
+                            .filter(Objects::nonNull)
+                            .toList();
+
+                    return commentResults.subList(START_INDEX, Math.min(searchSize, commentResults.size()));
+                }
+        );
     }
 
     private List<NoticeContentSearchResult> searchNoticesByKeywords(List<String> keywords) {
@@ -154,14 +207,16 @@ public class NoticeQueryService implements NoticeQueryUseCase {
                 .orElseThrow(() -> new NotFoundException(ErrorCode.API_NOTICE_NOT_EXIST_CATEGORY));
     }
 
-    public static NoticeRangeLookupResult convertPortResult(NoticeDto dto) {
+    private static NoticeRangeLookupResult convertPortResult(NoticeDto dto) {
         return new NoticeRangeLookupResult(
+                dto.getId(),
                 dto.getArticleId(),
                 dto.getPostedDate(),
                 dto.getUrl(),
                 dto.getSubject(),
                 dto.getCategory(),
-                dto.getImportant()
+                dto.getImportant(),
+                dto.getCommentCount()
         );
     }
 }

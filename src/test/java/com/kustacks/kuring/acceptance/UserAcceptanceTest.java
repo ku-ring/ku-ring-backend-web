@@ -46,6 +46,8 @@ import static org.mockito.Mockito.doThrow;
 @DisplayName("인수 : 사용자")
 class UserAcceptanceTest extends IntegrationTestSupport {
 
+    public static final String NEW_EMAIL = "new-client@konkuk.ac.kr";
+
     /**
      * Given: 가입되지 않은 사용자가 있다
      * When: 토큰과 함께 가입 요청을 보내온다
@@ -247,12 +249,12 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     void verify_email_and_signup() {
         // given
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
-        인증_이메일_전송_요청(USER_EMAIL);
-        인증코드_인증_요청(USER_EMAIL, "123456");
+        인증_이메일_전송_요청(NEW_EMAIL);
+        인증코드_인증_요청(NEW_EMAIL, "123456");
 
-        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
-        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
         String jwtToken = 로그인_응답.jsonPath().getString("data.accessToken");
 
         // when
@@ -270,7 +272,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
         // when
-        var 회원가입_응답 = 회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        var 회원가입_응답 = 회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         // then
         회원가입_응답_확인(회원가입_응답);
@@ -282,10 +284,10 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         // given
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
-        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         // when
-        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         // then
         로그인_응답_확인(로그인_응답);
@@ -297,9 +299,9 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         // given
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
-        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
-        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
         String jwtToken = 로그인_응답.jsonPath().getString("data.accessToken");
 
         // when
@@ -315,10 +317,10 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         // given
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
-        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         // when
-        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, "wrong_password");
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, NEW_EMAIL, "wrong_password");
 
         // then
         실패_응답_확인(로그인_응답, HttpStatus.BAD_REQUEST);
@@ -331,7 +333,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
         //회원가입 생략
 
-        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         // then
         실패_응답_확인(로그인_응답, HttpStatus.NOT_FOUND);
@@ -344,10 +346,10 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
         // 첫번째 회원가입
-        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         // when 같은 이메일로 회원가입 요청
-        var 중복_회원가입_응답 = 회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        var 중복_회원가입_응답 = 회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         // then
         실패_응답_확인(중복_회원가입_응답, HttpStatus.BAD_REQUEST);

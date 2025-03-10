@@ -62,6 +62,8 @@ public enum ErrorCode {
 
     NOTICE_SCRAPER_CANNOT_SCRAP("학과 홈페이지가 불안정합니다. 공지 정보를 가져올 수 없습니다."),
     NOTICE_SCRAPER_CANNOT_PARSE("공지 페이지 HTML 파싱에 실패했습니다."),
+    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 공지를 찾을 수 없습니다."),
+
 
     FB_FAIL_SUBSCRIBE(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 구독에 실패했습니다."),
     FB_FAIL_UNSUBSCRIBE(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 구독 해제에 실패했습니다."),
@@ -75,10 +77,14 @@ public enum ErrorCode {
     AD_UNAUTHENTICATED("관리자가 아닙니다."),
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글을 찾을 수 없습니다."),
+
     ROOT_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "계정을 찾을 수 없습니다."),
     ROOT_USER_MISMATCH_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다."),
     USER_MISMATCH_DEVICE(HttpStatus.BAD_REQUEST, "로그인한 사용자가 아닙니다."),
     USER_ALREADY_LOGIN(HttpStatus.BAD_REQUEST, "이미 로그인된 사용자입니다."),
+
+    JWT_INVALID_TOKEN(HttpStatus.BAD_REQUEST, "잘못된 Access Token입니다."),
 
     EMAIL_NO_SUCH_ALGORITHM(HttpStatus.INTERNAL_SERVER_ERROR, "랜덤 숫자 생성 간 알고리즘을 찾을 수 없습니다."),
     EMAIL_INVALID_SUFFIX(HttpStatus.BAD_REQUEST, "건국대학교 이메일 도메인이 아닙니다."),

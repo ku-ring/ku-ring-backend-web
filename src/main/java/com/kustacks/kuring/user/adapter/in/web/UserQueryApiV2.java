@@ -29,15 +29,15 @@ import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
 @RestWebAdapter(path = "/api/v2/users")
 class UserQueryApiV2 {
 
-    private static final String USER_TOKEN_HEADER_KEY = "User-Token";
+    private static final String FCM_TOKEN_HEADER_KEY = "User-Token";
 
     private final UserQueryUseCase userQueryUseCase;
 
     @Operation(summary = "사용자 카테고리 조회", description = "사용자가 구독한 카테고리 목록을 조회합니다")
-    @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
+    @SecurityRequirement(name = FCM_TOKEN_HEADER_KEY)
     @GetMapping("/subscriptions/categories")
     public ResponseEntity<BaseResponse<List<UserCategoryNameResponse>>> lookupUserSubscribeCategories(
-            @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken
+            @RequestHeader(FCM_TOKEN_HEADER_KEY) String userToken
     ) {
         List<UserCategoryNameResponse> responses = userQueryUseCase.lookupSubscribeCategories(userToken)
                 .stream()
@@ -48,10 +48,10 @@ class UserQueryApiV2 {
     }
 
     @Operation(summary = "사용자 학과 조회", description = "사용자가 구독한 학과의 목록을 조회합니다")
-    @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
+    @SecurityRequirement(name = FCM_TOKEN_HEADER_KEY)
     @GetMapping("/subscriptions/departments")
     public ResponseEntity<BaseResponse<List<UserDepartmentNameResponse>>> lookupUserSubscribeDepartments(
-            @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken
+            @RequestHeader(FCM_TOKEN_HEADER_KEY) String userToken
     ) {
         List<UserDepartmentNameResponse> responses = userQueryUseCase.lookupSubscribeDepartments(userToken)
                 .stream()
@@ -62,10 +62,10 @@ class UserQueryApiV2 {
     }
 
     @Operation(summary = "사용자 북마크 조회", description = "사용자가 북마크한 공지의 목록을 조회합니다")
-    @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
+    @SecurityRequirement(name = FCM_TOKEN_HEADER_KEY)
     @GetMapping("/bookmarks")
     public ResponseEntity<BaseResponse<List<UserBookmarkResponse>>> lookupUserBookmarks(
-            @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken
+            @RequestHeader(FCM_TOKEN_HEADER_KEY) String userToken
     ) {
         List<UserBookmarkResponse> responses = userQueryUseCase.lookupUserBookmarkedNotices(userToken)
                 .stream()
@@ -76,10 +76,10 @@ class UserQueryApiV2 {
     }
 
     @Operation(summary = "사용자 질문 가능횟수 조회", description = "사용자의 남은 질문횟수와 가능한 질문 횟수를 조회합니다")
-    @SecurityRequirement(name = USER_TOKEN_HEADER_KEY)
+    @SecurityRequirement(name = FCM_TOKEN_HEADER_KEY)
     @GetMapping("/ask-counts")
     public ResponseEntity<BaseResponse<UserAIAskCountResponse>> lookupUserAIAskCount(
-            @RequestHeader(USER_TOKEN_HEADER_KEY) String userToken
+            @RequestHeader(FCM_TOKEN_HEADER_KEY) String userToken
     ) {
         UserAIAskCountResult result = userQueryUseCase.lookupUserAIAskCount(userToken);
         UserAIAskCountResponse response = UserAIAskCountResponse.from(result);
