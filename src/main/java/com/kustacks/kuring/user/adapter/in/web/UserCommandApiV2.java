@@ -5,6 +5,8 @@ import com.kustacks.kuring.auth.authentication.AuthorizationType;
 import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.dto.BaseResponse;
+import com.kustacks.kuring.common.exception.InvalidStateException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserBookmarkRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserDepartmentsSubscribeRequest;
@@ -134,7 +136,9 @@ class UserCommandApiV2 {
     }
 
     private String validateJwtAndGetEmail(String jwtToken) {
-        jwtTokenProvider.validateToken(jwtToken);
+        if (!jwtTokenProvider.validateToken(jwtToken)) {
+            throw new InvalidStateException(ErrorCode.JWT_INVALID_TOKEN);
+        }
         return jwtTokenProvider.getPrincipal(jwtToken);
     }
 

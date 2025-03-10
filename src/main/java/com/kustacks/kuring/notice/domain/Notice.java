@@ -1,10 +1,9 @@
 package com.kustacks.kuring.notice.domain;
 
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import jakarta.persistence.*;
 
 import java.util.Objects;
 
@@ -13,7 +12,7 @@ import java.util.Objects;
 public class Notice {
 
     @Id
-    @Getter(AccessLevel.PROTECTED)
+    @Getter(AccessLevel.PUBLIC)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;

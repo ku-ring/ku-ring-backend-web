@@ -48,8 +48,7 @@ class UserUpdaterTest extends IntegrationTestSupport {
     @Test
     void rootUserQuestionCountReset() {
         // given
-        RootUser rootUser = new RootUser(USER_EMAIL, USER_PASSWORD, "쿠링이");
-        RootUser savedRootUser = userPersistenceAdapter.saveRootUser(rootUser);
+        RootUser savedRootUser = userPersistenceAdapter.findRootUserByEmail(USER_EMAIL).get();
         savedRootUser.updateQuestionCount(0);
         em.flush();
         em.clear();

@@ -1,10 +1,9 @@
-package com.kustacks.kuring.user.domain;
-
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+package com.kustacks.kuring.common.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -246,4 +246,10 @@ public class UserStep {
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("로그아웃에 성공했습니다.")
         );
     }
+
+    public static String 사용자_로그인_되어_있음(String userToken, String loginId, String password) {
+        ExtractableResponse<Response> response = 로그인_요청(userToken, loginId, password);
+        return response.jsonPath().getString("data.accessToken");
+    }
+
 }

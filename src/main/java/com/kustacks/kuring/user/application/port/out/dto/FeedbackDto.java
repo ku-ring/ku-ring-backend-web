@@ -1,5 +1,6 @@
 package com.kustacks.kuring.user.application.port.out.dto;
 
+import com.kustacks.kuring.common.domain.Content;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,8 +17,8 @@ public class FeedbackDto {
     private LocalDateTime createdAt;
 
     @QueryProjection
-    public FeedbackDto(String contents, Long userId, LocalDateTime createdAt) {
-        this.contents = contents;
+    public FeedbackDto(Content contents, Long userId, LocalDateTime createdAt) {
+        this.contents = contents.getValue();
         this.userId = userId;
         this.createdAt = createdAt;
     }
