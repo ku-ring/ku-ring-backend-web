@@ -344,7 +344,7 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
                 .getLong("data.comments[0].comment.id");
 
         //given 새로운 사용자 로그인
-        UserStep.회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, "123456");
+        UserStep.사용자_회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, "123456");
         String accessToken2 = 사용자_로그인_되어_있음(USER_FCM_TOKEN, NEW_EMAIL, "123456");
 
 
