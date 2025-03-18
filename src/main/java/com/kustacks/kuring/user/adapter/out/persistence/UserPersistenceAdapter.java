@@ -75,6 +75,11 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     }
 
     @Override
+    public List<User> findByLoggedInUserId(Long id) {
+        return userRepository.findByLoginUserId(id);
+    }
+
+    @Override
     public boolean existRootUserByEmail(String email) {
         return rootUserRepository.findByEmail(email).isPresent();
     }
