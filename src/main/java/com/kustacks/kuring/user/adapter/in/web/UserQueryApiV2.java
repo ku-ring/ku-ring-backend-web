@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extract;
+import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extractAuthorizationValue;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ASK_COUNT_LOOKUP_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.BOOKMARK_LOOKUP_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_USER_SUBSCRIBES_LOOKUP_SUCCESS;
@@ -111,7 +111,7 @@ class UserQueryApiV2 {
     public ResponseEntity<BaseResponse<UserInfoResponse>> lookupUserInfo(
                         @RequestHeader (AuthorizationExtractor.AUTHORIZATION) String bearerToken
     ) {
-        String jwtToken = extract(bearerToken, AuthorizationType.BEARER);
+        String jwtToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
         String email = validateJwtAndGetEmail(jwtToken);
 
         return lookupAndConvertResponse(

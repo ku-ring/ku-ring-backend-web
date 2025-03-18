@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extract;
+import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extractAuthorizationValue;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.BOOKMARK_SAVE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_SUBSCRIBE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_SUBSCRIBE_SUCCESS;
@@ -134,7 +134,7 @@ class UserCommandApiV2 {
             @RequestHeader(FCM_TOKEN_HEADER_KEY) String id,
             @RequestHeader (AuthorizationExtractor.AUTHORIZATION) String bearerToken
     ) {
-        String jwtToken = extract(bearerToken, AuthorizationType.BEARER);
+        String jwtToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
         String email = validateJwtAndGetEmail(jwtToken);
 
         userCommandUseCase.logout(new UserLogoutCommand(id, email));

@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extract;
+import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extractAuthorizationValue;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_COMMENT_EDIT_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_COMMENT_SAVE_SUCCESS;
 
@@ -54,7 +54,7 @@ public class NoticeCommandApiV2 {
             @RequestHeader (AuthorizationExtractor.AUTHORIZATION) String bearerToken,
             @RequestBody NoticeCommentCreateRequest request
     ) {
-        String jwtToken = extract(bearerToken, AuthorizationType.BEARER);
+        String jwtToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
         String email = validateJwtAndGetEmail(jwtToken);
 
         if (request.parentId() == null) {
@@ -88,7 +88,7 @@ public class NoticeCommandApiV2 {
             @RequestHeader (AuthorizationExtractor.AUTHORIZATION) String bearerToken,
             @RequestBody NoticeCommentEditRequest request
     ) {
-        String jwtToken = extract(bearerToken, AuthorizationType.BEARER);
+        String jwtToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
         String email = validateJwtAndGetEmail(jwtToken);
 
         var command = new EditCommentCommand(email, id, commentId, request.content());
@@ -106,7 +106,7 @@ public class NoticeCommandApiV2 {
             @Parameter(description = "댓글 ID") @PathVariable("commentId") Long commentId,
             @RequestHeader (AuthorizationExtractor.AUTHORIZATION) String bearerToken
     ) {
-        String jwtToken = extract(bearerToken, AuthorizationType.BEARER);
+        String jwtToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
         String email = validateJwtAndGetEmail(jwtToken);
 
         var command = new DeleteCommentCommand(email, id, commentId);
