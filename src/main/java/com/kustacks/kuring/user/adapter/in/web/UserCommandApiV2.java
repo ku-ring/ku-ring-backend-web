@@ -14,6 +14,7 @@ import com.kustacks.kuring.user.adapter.in.web.dto.UserFeedbackRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserLoginRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserLoginResponse;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserSignupRequest;
+import com.kustacks.kuring.user.application.port.in.dto.UserWithdrawCommand;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
@@ -33,6 +34,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -135,6 +137,19 @@ class UserCommandApiV2 {
         return ResponseEntity.ok().body(new BaseResponse<>(USER_LOGOUT, null));
     }
 
+    @Operation(summary = "사용자 회원 탈퇴", description = "사용자가 회원탈퇴합니다.")
+    @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
+    @DeleteMapping(value = "/withdraw")
+    public ResponseEntity<BaseResponse<Void>> withdraw(
+                        @RequestHeader (AuthorizationExtractor.AUTHORIZATION) String bearerToken
+    ) {
+        String jwtToken = extract(bearerToken, AuthorizationType.BEARER);
+        String email = validateJwtAndGetEmail(jwtToken);
+
+        userCommandUseCase.withdraw(new UserWithdrawCommand(email));
+        return ResponseEntity.ok().body(new BaseResponse<>(USER_WITHDRAW, null));
+    }
+
     private String validateJwtAndGetEmail(String jwtToken) {
         if (!jwtTokenProvider.validateToken(jwtToken)) {
             throw new InvalidStateException(ErrorCode.JWT_INVALID_TOKEN);
@@ -142,7 +157,7 @@ class UserCommandApiV2 {
         return jwtTokenProvider.getPrincipal(jwtToken);
     }
 
-    private static String extract(String value, AuthorizationType type) {
+    private String extract(String value, AuthorizationType type) {
         String typeToLowerCase = type.toLowerCase();
         int typeLength = typeToLowerCase.length();
 

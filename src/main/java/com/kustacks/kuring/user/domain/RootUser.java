@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serializable;
 
@@ -15,6 +17,8 @@ import static com.kustacks.kuring.user.domain.User.FCM_USER_MONTHLY_QUESTION_COU
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "update root_user set deleted = true where id = ?")
+@SQLRestriction("deleted = false")
 public class RootUser implements Serializable {
     public static final int ROOT_USER_EXTRA_QUESTION_COUNT = 3;
     public static final int ROOT_USER_MONTHLY_QUESTION_COUNT = FCM_USER_MONTHLY_QUESTION_COUNT + ROOT_USER_EXTRA_QUESTION_COUNT;
@@ -39,6 +43,9 @@ public class RootUser implements Serializable {
     @Getter(AccessLevel.PUBLIC)
     @Column(columnDefinition = "integer default 0")
     private Integer questionCount;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = Boolean.FALSE;
 
     public RootUser(String email, String password, String nickname) {
         this.email = email;

@@ -93,4 +93,9 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     public void resetAllRootUserQuestionCount() {
         rootUserRepository.resetAllRootUserQuestionCount(ROOT_USER_MONTHLY_QUESTION_COUNT);
     }
+
+    @Override
+    public void deleteRootUser(RootUser rootUser) {
+        rootUserRepository.delete(rootUser);
+    }
 }

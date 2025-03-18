@@ -11,6 +11,7 @@ import com.kustacks.kuring.message.application.service.exception.FirebaseSubscri
 import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
+import com.kustacks.kuring.user.application.port.in.dto.UserWithdrawCommand;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
@@ -129,13 +130,27 @@ class UserCommandService implements UserCommandUseCase {
         return new UserLoginResult(token);
     }
 
+    @Override
+    public void withdraw(UserWithdrawCommand userWithdrawCommand) {
+        RootUser rootUser = findRootUserByEmailOrThrow(userWithdrawCommand.email());
+
+        //회원탈퇴 하기 전에 로그인되어 있는 모든 기기들 로그아웃 처리
+        logoutAllLoginedUser(rootUser);
+
+        rootUserCommandPort.deleteRootUser(rootUser);
+    }
+
+    private void logoutAllLoginedUser(RootUser rootUser) {
+        userQueryPort.findByLoginedUserId(rootUser.getId())
+                .forEach(User::logout);
+    }
+
     private void checkUserIsNotLoggedIn(User user) {
         if (user.isLoggedIn()) {
             throw new InvalidStateException(ErrorCode.USER_ALREADY_LOGIN);
         }
     }
 
-    @Transactional
     @Override
     public void logout(UserLogoutCommand userLogoutCommand) {
         User user = findUserByToken(userLogoutCommand.fcmToken());
