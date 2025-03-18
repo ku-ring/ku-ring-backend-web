@@ -260,7 +260,7 @@ public class UserStep {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("로그아웃에 성공했습니다.")  // 컨트롤러에서 USER_LOGOUT 메시지 사용
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("회원탈퇴 되었습니다")
         );
     }
 
