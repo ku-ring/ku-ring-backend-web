@@ -52,7 +52,7 @@ class EmailAcceptanceTest extends IntegrationTestSupport {
     @Test
     void duplicate_email_fail() {
         //given
-        회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        사용자_회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
 
         // when - 이미 가입된 이메일로 인증코드 요청
         var 인증_이메일_전송_응답 = 인증_이메일_전송_요청(USER_EMAIL);
