@@ -33,7 +33,7 @@ public class AuthorizationExtractor {
         return Strings.EMPTY;
     }
 
-    public static String extract(String value, AuthorizationType type) {
+    public static String extractAuthorizationValue(String value, AuthorizationType type) {
         String typeToLowerCase = type.toLowerCase();
         int typeLength = typeToLowerCase.length();
 
