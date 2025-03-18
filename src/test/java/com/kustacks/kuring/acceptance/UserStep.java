@@ -258,6 +258,17 @@ public class UserStep {
                 .extract();
     }
 
+
+    public static ExtractableResponse<Response> 액세스_토큰으로_비밀번호_변경_요청(String jwtToken, String newPassword) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + jwtToken)
+                .body(new UserPasswordModifyRequest(null, newPassword))
+                .when().patch("/api/v2/users/password")
+                .then().log().all()
+                .extract();
+    }
+
     public static void 비밀번호_변경_응답_확인(ExtractableResponse<Response> response) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
