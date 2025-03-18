@@ -24,6 +24,9 @@ import static com.kustacks.kuring.acceptance.UserStep.북마크_생성_요청;
 import static com.kustacks.kuring.acceptance.UserStep.북마크_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.북마크_조회_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.북마크한_공지_조회_요청;
+import static com.kustacks.kuring.acceptance.UserStep.사용자_로그인_되어_있음;
+import static com.kustacks.kuring.acceptance.UserStep.사용자_정보_조회_요청;
+import static com.kustacks.kuring.acceptance.UserStep.사용자_정보_조회_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.사용자_카테고리_구독_목록_조회_요청;
 import static com.kustacks.kuring.acceptance.UserStep.사용자_학과_조회_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.질문_횟수_응답_검증;
@@ -353,5 +356,34 @@ class UserAcceptanceTest extends IntegrationTestSupport {
 
         // then
         실패_응답_확인(중복_회원가입_응답, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @DisplayName("[v2] 사용자는 본인의 정보를 조회할 수 있다")
+    @Test
+    void lookup_user_info() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+
+        String jwtToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        // when
+        var 사용자_정보_조회_응답 = 사용자_정보_조회_요청(USER_FCM_TOKEN, jwtToken);
+
+        // then
+        사용자_정보_조회_응답_확인(사용자_정보_조회_응답, USER_EMAIL);
+    }
+
+    @DisplayName("[v2] 유효하지 않은 JWT 토큰으로 사용자 정보 조회 시 실패한다")
+    @Test
+    void lookup_user_info_with_invalid_jwt_token() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+
+        // when
+        var 사용자_정보_조회_응답 = 사용자_정보_조회_요청(USER_FCM_TOKEN, "wrong_token");
+
+        // then
+        실패_응답_확인(사용자_정보_조회_응답, HttpStatus.UNAUTHORIZED);
     }
 }

@@ -247,9 +247,27 @@ public class UserStep {
         );
     }
 
+    public static ExtractableResponse<Response> 사용자_정보_조회_요청(String fcmToken, String jwtToken) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", fcmToken)
+                .header("Authorization", "Bearer " + jwtToken)
+                .when().get("/api/v2/users/user-me")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 사용자_정보_조회_응답_확인(ExtractableResponse<Response> response, String email) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("회원정보 조회에 성공했습니다."),
+                () -> assertThat(response.jsonPath().getString("data.email")).isEqualTo(email)
+        );
+    }
+
     public static String 사용자_로그인_되어_있음(String userToken, String loginId, String password) {
         ExtractableResponse<Response> response = 로그인_요청(userToken, loginId, password);
         return response.jsonPath().getString("data.accessToken");
     }
-
 }
