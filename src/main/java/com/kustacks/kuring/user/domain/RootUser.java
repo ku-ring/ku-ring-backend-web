@@ -33,6 +33,7 @@ public class RootUser implements Serializable {
     @Column(nullable = true, length = 256)
     private String password;
 
+    @Getter(AccessLevel.PUBLIC)
     @Column(unique = true, length = 256)
     private String nickname;
 
