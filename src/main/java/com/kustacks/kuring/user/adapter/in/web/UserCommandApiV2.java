@@ -13,6 +13,7 @@ import com.kustacks.kuring.user.adapter.in.web.dto.UserDepartmentsSubscribeReque
 import com.kustacks.kuring.user.adapter.in.web.dto.UserFeedbackRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserLoginRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserLoginResponse;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserPasswordModifyRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserSignupRequest;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
@@ -22,6 +23,7 @@ import com.kustacks.kuring.user.application.port.in.dto.UserFeedbackCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserLoginCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserLoginResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserLogoutCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserPasswordModifyCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserSignupCommand;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -33,6 +35,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -133,6 +136,24 @@ class UserCommandApiV2 {
 
         userCommandUseCase.logout(new UserLogoutCommand(id, email));
         return ResponseEntity.ok().body(new BaseResponse<>(USER_LOGOUT, null));
+    }
+
+    @Operation(summary = "사용자 비밀번호 변경", description = "사용자가 비밀번호 변경합니다.")
+    @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
+    @PatchMapping(value = "/password")
+    public ResponseEntity<BaseResponse<Void>> modifyPassword(
+                @RequestBody UserPasswordModifyRequest request,
+                @RequestHeader (value = AuthorizationExtractor.AUTHORIZATION, required = false) String bearerToken
+    ) {
+        if (bearerToken == null) {
+            userCommandUseCase.changePassword(new UserPasswordModifyCommand(request.email(), request.password()));
+        }else{
+            String jwtToken = extract(bearerToken, AuthorizationType.BEARER);
+            String email = validateJwtAndGetEmail(jwtToken);
+            userCommandUseCase.changePassword(new UserPasswordModifyCommand(email, request.password()));
+        }
+
+        return ResponseEntity.ok().body(new BaseResponse<>(USER_PASSWORD_MODIFY, null));
     }
 
     private String validateJwtAndGetEmail(String jwtToken) {
