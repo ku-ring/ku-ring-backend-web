@@ -19,7 +19,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extract;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ASK_COUNT_LOOKUP_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.BOOKMARK_LOOKUP_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_USER_SUBSCRIBES_LOOKUP_SUCCESS;
@@ -136,21 +136,5 @@ class UserQueryApiV2 {
             throw new InvalidStateException(ErrorCode.JWT_INVALID_TOKEN);
         }
         return jwtTokenProvider.getPrincipal(jwtToken);
-    }
-
-    private String extract(String value, AuthorizationType type) {
-        String typeToLowerCase = type.toLowerCase();
-        int typeLength = typeToLowerCase.length();
-
-        if ((value.toLowerCase().startsWith(typeToLowerCase))) {
-            String authHeaderValue = value.substring(typeLength).trim();
-            int commaIndex = authHeaderValue.indexOf(',');
-            if (commaIndex > 0) {
-                authHeaderValue = authHeaderValue.substring(0, commaIndex);
-            }
-            return authHeaderValue;
-        }
-
-        return Strings.EMPTY;
     }
 }

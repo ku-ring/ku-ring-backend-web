@@ -21,11 +21,15 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
+import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extract;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_COMMENT_EDIT_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_COMMENT_SAVE_SUCCESS;
 
@@ -117,21 +121,5 @@ public class NoticeCommandApiV2 {
             throw new InvalidStateException(ErrorCode.JWT_INVALID_TOKEN);
         }
         return jwtTokenProvider.getPrincipal(jwtToken);
-    }
-
-    private String extract(String value, AuthorizationType type) {
-        String typeToLowerCase = type.toLowerCase();
-        int typeLength = typeToLowerCase.length();
-
-        if ((value.toLowerCase().startsWith(typeToLowerCase))) {
-            String authHeaderValue = value.substring(typeLength).trim();
-            int commaIndex = authHeaderValue.indexOf(',');
-            if (commaIndex > 0) {
-                authHeaderValue = authHeaderValue.substring(0, commaIndex);
-            }
-            return authHeaderValue;
-        }
-
-        return Strings.EMPTY;
     }
 }

@@ -32,4 +32,20 @@ public class AuthorizationExtractor {
 
         return Strings.EMPTY;
     }
+
+    public static String extract(String value, AuthorizationType type) {
+        String typeToLowerCase = type.toLowerCase();
+        int typeLength = typeToLowerCase.length();
+
+        if ((value.toLowerCase().startsWith(typeToLowerCase))) {
+            String authHeaderValue = value.substring(typeLength).trim();
+            int commaIndex = authHeaderValue.indexOf(',');
+            if (commaIndex > 0) {
+                authHeaderValue = authHeaderValue.substring(0, commaIndex);
+            }
+            return authHeaderValue;
+        }
+
+        return Strings.EMPTY;
+    }
 }
