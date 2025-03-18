@@ -10,7 +10,7 @@ import static com.kustacks.kuring.acceptance.EmailStep.인증_이메일_전송_�
 import static com.kustacks.kuring.acceptance.EmailStep.인증_이메일_전송_응답_확인;
 import static com.kustacks.kuring.acceptance.EmailStep.인증코드_인증_요청;
 import static com.kustacks.kuring.acceptance.EmailStep.인증코드_인증_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.회원가입_요청;
+import static com.kustacks.kuring.acceptance.UserStep.사용자_회원가입_요청;
 
 @DisplayName("인수 : 이메일")
 class EmailAcceptanceTest extends IntegrationTestSupport {
