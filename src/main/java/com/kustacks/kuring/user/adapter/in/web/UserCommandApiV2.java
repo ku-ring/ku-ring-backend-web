@@ -93,7 +93,7 @@ class UserCommandApiV2 {
             @RequestHeader(FCM_TOKEN_HEADER_KEY) String id
     ) {
         userCommandUseCase.saveBookmark(new UserBookmarkCommand(id, request.articleId()));
-        return ResponseEntity.ok().body(new BaseResponse<>(BOOKMAKR_SAVE_SUCCESS, null));
+        return ResponseEntity.ok().body(new BaseResponse<>(BOOKMARK_SAVE_SUCCESS, null));
     }
 
     @Operation(summary = "사용자 회원가입", description = "사용자가 회원가입합니다.")
