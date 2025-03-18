@@ -141,7 +141,7 @@ class UserCommandService implements UserCommandUseCase {
     }
 
     private void logoutAllLoginedUser(RootUser rootUser) {
-        userQueryPort.findByLoginedUserId(rootUser.getId())
+        userQueryPort.findByLoggedInUserId(rootUser.getId())
                 .forEach(User::logout);
     }
 
