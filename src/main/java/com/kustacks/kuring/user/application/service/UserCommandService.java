@@ -11,6 +11,7 @@ import com.kustacks.kuring.message.application.service.exception.FirebaseSubscri
 import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
+import com.kustacks.kuring.user.application.port.in.dto.UserPasswordModifyCommand;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
@@ -127,6 +128,13 @@ class UserCommandService implements UserCommandUseCase {
 
         String token = jwtTokenProvider.createUserToken(userLoginCommand.email());
         return new UserLoginResult(token);
+    }
+
+
+    @Override
+    public void changePassword(UserPasswordModifyCommand userPasswordModifyCommand) {
+        RootUser rootUser = findRootUserByEmailOrThrow(userPasswordModifyCommand.email());
+        rootUser.modifyPassword(passwordEncoder.encode(userPasswordModifyCommand.password()));
     }
 
     private void checkUserIsNotLoggedIn(User user) {
