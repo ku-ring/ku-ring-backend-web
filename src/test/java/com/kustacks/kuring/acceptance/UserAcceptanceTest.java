@@ -24,8 +24,12 @@ import static com.kustacks.kuring.acceptance.UserStep.북마크_생성_요청;
 import static com.kustacks.kuring.acceptance.UserStep.북마크_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.북마크_조회_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.북마크한_공지_조회_요청;
+import static com.kustacks.kuring.acceptance.UserStep.비밀번호_변경_요청;
+import static com.kustacks.kuring.acceptance.UserStep.비밀번호_변경_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.사용자_로그인_되어_있음;
 import static com.kustacks.kuring.acceptance.UserStep.사용자_카테고리_구독_목록_조회_요청;
 import static com.kustacks.kuring.acceptance.UserStep.사용자_학과_조회_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.액세스_토큰으로_비밀번호_변경_요청;
 import static com.kustacks.kuring.acceptance.UserStep.질문_횟수_응답_검증;
 import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_목록_조회_요청_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_요청;
@@ -353,5 +357,54 @@ class UserAcceptanceTest extends IntegrationTestSupport {
 
         // then
         실패_응답_확인(중복_회원가입_응답, HttpStatus.BAD_REQUEST);
+    }
+
+    @DisplayName("[v2] 사용자는 비밀번호를 변경하고 새로운 비밀번호로 로그인할 수 있다.")
+    @Test
+    void modify_password() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+
+        // when
+        var 비밀번호_초기화_응답 = 비밀번호_변경_요청(USER_EMAIL, "new_password");
+
+        // then
+        비밀번호_변경_응답_확인(비밀번호_초기화_응답);
+
+        // 변경된 비밀번호로 로그인이 가능한지 확인
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, "new_password");
+        로그인_응답_확인(로그인_응답);
+    }
+
+    @DisplayName("[v2] 사용자는 비밀번호를 변경하고 새로운 비밀번호로 로그인할 수 있다.")
+    @Test
+    void modify_password_with_access_token() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        // when
+        var 비밀번호_변경_응답 = 액세스_토큰으로_비밀번호_변경_요청(accessToken,"new_password");
+
+        // then
+        비밀번호_변경_응답_확인(비밀번호_변경_응답);
+
+        // 변경된 비밀번호로 재로그인이 가능한지 확인
+        로그아웃_요청(USER_FCM_TOKEN, accessToken);
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, "new_password");
+        로그인_응답_확인(로그인_응답);
+    }
+
+    @DisplayName("[v2] 존재하지 않는 이메일로 비밀번호 변경 시도시 실패한다")
+    @Test
+    void modify_password_with_wrong_email() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+
+        // when
+        var 비밀번호_초기화_응답 = 비밀번호_변경_요청("wrong-email@konkuk.ac.kr", "new_password");
+
+        // then
+        실패_응답_확인(비밀번호_초기화_응답, HttpStatus.NOT_FOUND);
     }
 }

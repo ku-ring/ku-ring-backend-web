@@ -50,4 +50,8 @@ public class RootUser implements Serializable {
     public void updateQuestionCount(int questionCount) {
         this.questionCount = questionCount;
     }
+
+    public void modifyPassword(String password) {
+        this.password = password;
+    }
 }
