@@ -191,11 +191,10 @@ public class UserStep {
         );
     }
 
-    public static ExtractableResponse<Response> 회원가입_요청(String token, String email, String password) {
+    public static ExtractableResponse<Response> 사용자_회원가입_요청(String token, String email, String password) {
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("User-Token", token)
-
                 .body(new UserSignupRequest(email, password))
                 .when().post("/api/v2/users/signup")
                 .then().log().all()
@@ -246,6 +245,25 @@ public class UserStep {
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("로그아웃에 성공했습니다.")
         );
     }
+
+    public static ExtractableResponse<Response> 회원_탈퇴_요청(String fcmToken, String jwtToken) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", fcmToken)
+                .header("Authorization", "Bearer " + jwtToken)
+                .when().delete("/api/v2/users/withdraw")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 회원_탈퇴_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("로그아웃에 성공했습니다.")  // 컨트롤러에서 USER_LOGOUT 메시지 사용
+        );
+    }
+
 
     public static String 사용자_로그인_되어_있음(String userToken, String loginId, String password) {
         ExtractableResponse<Response> response = 로그인_요청(userToken, loginId, password);
