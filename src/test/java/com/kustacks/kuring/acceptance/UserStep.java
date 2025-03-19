@@ -6,6 +6,7 @@ import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeReques
 import com.kustacks.kuring.user.adapter.in.web.dto.UserDepartmentsSubscribeRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserFeedbackRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserLoginRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserPasswordModifyRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserSignupRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
@@ -256,6 +257,14 @@ public class UserStep {
                 .then().log().all()
                 .extract();
     }
+    public static ExtractableResponse<Response> 비밀번호_변경_요청(String email, String newPassword) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(new UserPasswordModifyRequest(email, newPassword))
+                .when().patch("/api/v2/users/password")
+                .then().log().all()
+                .extract();
+    }
 
     public static void 사용자_정보_조회_응답_확인(ExtractableResponse<Response> response, String email) {
         assertAll(
@@ -263,6 +272,23 @@ public class UserStep {
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("회원정보 조회에 성공했습니다."),
                 () -> assertThat(response.jsonPath().getString("data.email")).isEqualTo(email)
+        );
+    }
+    public static ExtractableResponse<Response> 액세스_토큰으로_비밀번호_변경_요청(String jwtToken, String newPassword) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + jwtToken)
+                .body(new UserPasswordModifyRequest(null, newPassword))
+                .when().patch("/api/v2/users/password")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 비밀번호_변경_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("비밀번호 변경에 성공했습니다.")
         );
     }
 

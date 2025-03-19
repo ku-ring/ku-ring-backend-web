@@ -40,6 +40,7 @@ public enum ResponseCodeAndMessages {
     USER_LOGIN(HttpStatus.OK.value(), "로그인에 성공했습니다."),
     USER_LOGOUT(HttpStatus.OK.value(), "로그아웃에 성공했습니다."),
     USER_INFO_LOOKUP_SUCCESS(HttpStatus.OK.value(), "회원정보 조회에 성공했습니다."),
+    USER_PASSWORD_MODIFY(HttpStatus.OK.value(), "비밀번호 변경에 성공했습니다."),
 
     /* Alert */
     ALERT_SEARCH_SUCCESS(HttpStatus.OK.value(), "예약 알림 조회에 성공하였습니다"),
