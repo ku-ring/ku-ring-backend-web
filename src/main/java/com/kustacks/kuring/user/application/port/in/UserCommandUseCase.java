@@ -12,4 +12,5 @@ public interface UserCommandUseCase {
     void logout(UserLogoutCommand userLogoutCommand);
     UserLoginResult login(UserLoginCommand userLoginCommand);
     void withdraw(UserWithdrawCommand userWithdrawCommand);
+    void changePassword(UserPasswordModifyCommand userPasswordModifyCommand);
 }

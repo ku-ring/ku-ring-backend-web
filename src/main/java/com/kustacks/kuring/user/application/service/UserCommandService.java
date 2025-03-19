@@ -12,6 +12,7 @@ import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubsc
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.in.dto.UserWithdrawCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserPasswordModifyCommand;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
@@ -145,6 +146,12 @@ class UserCommandService implements UserCommandUseCase {
     private void logoutAllLoggedInUser(RootUser rootUser) {
         userQueryPort.findByLoggedInUserId(rootUser.getId())
                 .forEach(User::logout);
+    }
+
+    @Override
+    public void changePassword(UserPasswordModifyCommand userPasswordModifyCommand) {
+        RootUser rootUser = findRootUserByEmailOrThrow(userPasswordModifyCommand.email());
+        rootUser.modifyPassword(passwordEncoder.encode(userPasswordModifyCommand.password()));
     }
 
     private void checkUserIsNotLoggedIn(User user) {

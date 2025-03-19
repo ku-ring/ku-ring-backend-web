@@ -37,6 +37,7 @@ public class RootUser implements Serializable {
     @Column(nullable = true, length = 256)
     private String password;
 
+    @Getter(AccessLevel.PUBLIC)
     @Column(unique = true, length = 256)
     private String nickname;
 
@@ -62,5 +63,9 @@ public class RootUser implements Serializable {
         this.password = password;
         this.deleted = Boolean.FALSE;
         this.questionCount = ROOT_USER_MONTHLY_QUESTION_COUNT;
+    }
+
+    public void modifyPassword(String password) {
+        this.password = password;
     }
 }

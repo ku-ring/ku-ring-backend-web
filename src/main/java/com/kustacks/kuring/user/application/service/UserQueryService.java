@@ -12,9 +12,12 @@ import com.kustacks.kuring.user.application.port.in.dto.UserAIAskCountResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoryNameResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserDepartmentNameResult;
+import com.kustacks.kuring.user.application.port.in.dto.UserInfoResult;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.application.port.out.UserEventPort;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
+import com.kustacks.kuring.user.domain.RootUser;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +36,7 @@ class UserQueryService implements UserQueryUseCase {
 
     private final UserCommandPort userCommandPort;
     private final UserQueryPort userQueryPort;
+    private final RootUserQueryPort rootUserQueryPort;
     private final NoticeQueryPort noticeQueryPort;
     private final UserEventPort userEventPort;
     private final ServerProperties serverProperties;
@@ -62,6 +66,13 @@ class UserQueryService implements UserQueryUseCase {
         return new UserAIAskCountResult(user.getQuestionCount(), User.FCM_USER_MONTHLY_QUESTION_COUNT);
     }
 
+    @Override
+    public UserInfoResult lookupUserInfo(String email) {
+        RootUser rootUser = findRootUserByEmailOrThrow(email);
+        return new UserInfoResult(rootUser.getNickname(), rootUser.getEmail());
+    }
+
+
     private List<UserBookmarkResult> lookupAllBookmarkByIds(List<String> bookmarkIds) {
         return noticeQueryPort.findAllByBookmarkIds(bookmarkIds)
                 .stream()
@@ -82,6 +93,11 @@ class UserQueryService implements UserQueryUseCase {
         }
 
         return optionalUser.orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private RootUser findRootUserByEmailOrThrow(String email) {
+        return rootUserQueryPort.findRootUserByEmail(email)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ROOT_USER_NOT_FOUND));
     }
 
     private List<UserCategoryNameResult> convertCategoryNameDtoList(List<CategoryName> categoryNamesList) {

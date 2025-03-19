@@ -28,7 +28,7 @@ public enum ResponseCodeAndMessages {
     /* User */
     USER_REGISTER_SUCCESS(HttpStatus.OK.value(), "회원가입에 성공하였습니다"),
     USER_REGISTER_FAIL(HttpStatus.BAD_REQUEST.value(), "회원가입에 실패하였습니다"),
-    BOOKMAKR_SAVE_SUCCESS(HttpStatus.OK.value(), "북마크 저장에 성공하였습니다"),
+    BOOKMARK_SAVE_SUCCESS(HttpStatus.OK.value(), "북마크 저장에 성공하였습니다"),
     BOOKMARK_LOOKUP_SUCCESS(HttpStatus.OK.value(), "북마크 조회에 성공하였습니다"),
     FEEDBACK_SAVE_SUCCESS(HttpStatus.OK.value(), "피드백 저장에 성공하였습니다"),
     FEEDBACK_SEARCH_SUCCESS(HttpStatus.OK.value(), "피드백 조회에 성공하였습니다"),
@@ -40,6 +40,8 @@ public enum ResponseCodeAndMessages {
     USER_LOGIN(HttpStatus.OK.value(), "로그인에 성공했습니다."),
     USER_LOGOUT(HttpStatus.OK.value(), "로그아웃에 성공했습니다."),
     USER_WITHDRAW(HttpStatus.NO_CONTENT.value(), "회원탈퇴 되었습니다"),
+    USER_INFO_LOOKUP_SUCCESS(HttpStatus.OK.value(), "회원정보 조회에 성공했습니다."),
+    USER_PASSWORD_MODIFY(HttpStatus.OK.value(), "비밀번호 변경에 성공했습니다."),
 
     /* Alert */
     ALERT_SEARCH_SUCCESS(HttpStatus.OK.value(), "예약 알림 조회에 성공하였습니다"),

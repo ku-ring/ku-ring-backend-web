@@ -13,6 +13,7 @@ import com.kustacks.kuring.user.adapter.in.web.dto.UserDepartmentsSubscribeReque
 import com.kustacks.kuring.user.adapter.in.web.dto.UserFeedbackRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserLoginRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserLoginResponse;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserPasswordModifyRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserSignupRequest;
 import com.kustacks.kuring.user.application.port.in.dto.UserWithdrawCommand;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
@@ -23,6 +24,7 @@ import com.kustacks.kuring.user.application.port.in.dto.UserFeedbackCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserLoginCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserLoginResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserLogoutCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserPasswordModifyCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserSignupCommand;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -30,16 +32,25 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
+import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extractAuthorizationValue;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.BOOKMARK_SAVE_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_SUBSCRIBE_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_SUBSCRIBE_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.FEEDBACK_SAVE_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.USER_LOGIN;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.USER_LOGOUT;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.USER_PASSWORD_MODIFY;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.USER_SIGNUP;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.USER_WITHDRAW;
 
 @Tag(name = "User-Command", description = "사용자가 주체가 되는 정보 수정")
 @Slf4j
@@ -95,7 +106,7 @@ class UserCommandApiV2 {
             @RequestHeader(FCM_TOKEN_HEADER_KEY) String id
     ) {
         userCommandUseCase.saveBookmark(new UserBookmarkCommand(id, request.articleId()));
-        return ResponseEntity.ok().body(new BaseResponse<>(BOOKMAKR_SAVE_SUCCESS, null));
+        return ResponseEntity.ok().body(new BaseResponse<>(BOOKMARK_SAVE_SUCCESS, null));
     }
 
     @Operation(summary = "사용자 회원가입", description = "사용자가 회원가입합니다.")
@@ -130,7 +141,7 @@ class UserCommandApiV2 {
             @RequestHeader(FCM_TOKEN_HEADER_KEY) String id,
             @RequestHeader (AuthorizationExtractor.AUTHORIZATION) String bearerToken
     ) {
-        String jwtToken = extract(bearerToken, AuthorizationType.BEARER);
+        String jwtToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
         String email = validateJwtAndGetEmail(jwtToken);
 
         userCommandUseCase.logout(new UserLogoutCommand(id, email));
@@ -143,11 +154,29 @@ class UserCommandApiV2 {
     public ResponseEntity<BaseResponse<Void>> withdraw(
                         @RequestHeader (AuthorizationExtractor.AUTHORIZATION) String bearerToken
     ) {
-        String jwtToken = extract(bearerToken, AuthorizationType.BEARER);
+        String jwtToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
         String email = validateJwtAndGetEmail(jwtToken);
 
         userCommandUseCase.withdraw(new UserWithdrawCommand(email));
         return ResponseEntity.ok().body(new BaseResponse<>(USER_WITHDRAW, null));
+    }
+
+    @Operation(summary = "사용자 비밀번호 변경", description = "사용자가 비밀번호 변경합니다.")
+    @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
+    @PatchMapping(value = "/password")
+    public ResponseEntity<BaseResponse<Void>> modifyPassword(
+                @RequestBody UserPasswordModifyRequest request,
+                @RequestHeader (value = AuthorizationExtractor.AUTHORIZATION, required = false) String bearerToken
+    ) {
+        if (bearerToken == null) {
+            userCommandUseCase.changePassword(new UserPasswordModifyCommand(request.email(), request.password()));
+        }else{
+            String jwtToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
+            String email = validateJwtAndGetEmail(jwtToken);
+            userCommandUseCase.changePassword(new UserPasswordModifyCommand(email, request.password()));
+        }
+
+        return ResponseEntity.ok().body(new BaseResponse<>(USER_PASSWORD_MODIFY, null));
     }
 
     private String validateJwtAndGetEmail(String jwtToken) {
@@ -155,21 +184,5 @@ class UserCommandApiV2 {
             throw new InvalidStateException(ErrorCode.JWT_INVALID_TOKEN);
         }
         return jwtTokenProvider.getPrincipal(jwtToken);
-    }
-
-    private String extract(String value, AuthorizationType type) {
-        String typeToLowerCase = type.toLowerCase();
-        int typeLength = typeToLowerCase.length();
-
-        if ((value.toLowerCase().startsWith(typeToLowerCase))) {
-            String authHeaderValue = value.substring(typeLength).trim();
-            int commaIndex = authHeaderValue.indexOf(',');
-            if (commaIndex > 0) {
-                authHeaderValue = authHeaderValue.substring(0, commaIndex);
-            }
-            return authHeaderValue;
-        }
-
-        return Strings.EMPTY;
     }
 }

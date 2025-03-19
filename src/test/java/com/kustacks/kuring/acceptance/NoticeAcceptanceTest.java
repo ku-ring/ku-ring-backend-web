@@ -181,7 +181,7 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
         var response = 공지에_댓글_추가(id, "INVALID_ACCESS_TOKEN", "this is comment");
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
     /**
