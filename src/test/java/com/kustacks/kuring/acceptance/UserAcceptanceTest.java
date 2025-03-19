@@ -281,6 +281,26 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         회원가입_응답_확인(회원가입_응답);
     }
 
+    @DisplayName("[v2] 탈퇴한 사용자는 같은 이메일로 재가입할 수 있다")
+    @Test
+    void reactivate_withdrawn_user() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+
+        String jwtToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        var 회원_탈퇴_응답 = 회원_탈퇴_요청(USER_FCM_TOKEN, jwtToken);
+
+        // when
+        var 재가입_응답 = 사용자_회원가입_요청(USER_FCM_TOKEN, USER_EMAIL, "new_password");
+
+        // then
+        회원가입_응답_확인(재가입_응답);
+
+        // 재가입 후 로그인도 가능한지 확인
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, USER_EMAIL, "new_password");
+        로그인_응답_확인(로그인_응답);
+    }
+
     @DisplayName("[v2] 사용자는 로그인을 할 수 있다")
     @Test
     void login_success() {
@@ -357,6 +377,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         // then
         실패_응답_확인(중복_회원가입_응답, HttpStatus.BAD_REQUEST);
     }
+
     @DisplayName("[v2] 사용자는 회원 탈퇴를 할 수 있다")
     @Test
     void withdraw_user() {

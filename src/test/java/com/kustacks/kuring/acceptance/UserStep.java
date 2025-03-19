@@ -259,7 +259,7 @@ public class UserStep {
     public static void 회원_탈퇴_응답_확인(ExtractableResponse<Response> response) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
-                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(204),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("회원탈퇴 되었습니다")
         );
     }
