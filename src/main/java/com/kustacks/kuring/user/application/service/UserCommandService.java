@@ -111,8 +111,9 @@ class UserCommandService implements UserCommandUseCase {
                 passwordEncoder.encode(userSignupCommand.password()),
                 nickname
         );
-
-        checkDuplicateEmailAndSave(rootUser);
+        rootUserQueryPort.findDeletedRootUserByEmail(userSignupCommand.email())
+                .ifPresentOrElse(deletedRootUser -> deletedRootUser.reactive(rootUser.getPassword()),
+                        () -> checkDuplicateEmailAndSave(rootUser));
     }
 
     @Transactional
@@ -135,12 +136,13 @@ class UserCommandService implements UserCommandUseCase {
         RootUser rootUser = findRootUserByEmailOrThrow(userWithdrawCommand.email());
 
         //회원탈퇴 하기 전에 로그인되어 있는 모든 기기들 로그아웃 처리
-        logoutAllLoginedUser(rootUser);
+        logoutAllLoggedInUser(rootUser);
 
         rootUserCommandPort.deleteRootUser(rootUser);
+        log.info("[RootUserId : {}] 삭제 완료", rootUser.getId());
     }
 
-    private void logoutAllLoginedUser(RootUser rootUser) {
+    private void logoutAllLoggedInUser(RootUser rootUser) {
         userQueryPort.findByLoggedInUserId(rootUser.getId())
                 .forEach(User::logout);
     }
@@ -177,7 +179,7 @@ class UserCommandService implements UserCommandUseCase {
             fcmUserQuestionCount = 0;
         }
 
-        if(emailUserQuestionCount < 0) {
+        if (emailUserQuestionCount < 0) {
             emailUserQuestionCount = 0;
         }
 
@@ -189,7 +191,6 @@ class UserCommandService implements UserCommandUseCase {
         if (rootUserQueryPort.existRootUserByEmail(rootUser.getEmail())) {
             throw new InvalidStateException(ErrorCode.EMAIL_DUPLICATE);
         }
-
         rootUserCommandPort.saveRootUser(rootUser);
     }
 

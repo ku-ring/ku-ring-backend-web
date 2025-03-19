@@ -57,4 +57,10 @@ public class RootUser implements Serializable {
     public void updateQuestionCount(int questionCount) {
         this.questionCount = questionCount;
     }
+
+    public void reactive(String password) {
+        this.password = password;
+        this.deleted = Boolean.FALSE;
+        this.questionCount = ROOT_USER_MONTHLY_QUESTION_COUNT;
+    }
 }
