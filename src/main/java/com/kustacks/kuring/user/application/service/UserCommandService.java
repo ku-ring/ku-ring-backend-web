@@ -11,24 +11,9 @@ import com.kustacks.kuring.message.application.service.exception.FirebaseSubscri
 import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.user.application.port.in.dto.UserWithdrawCommand;
-import com.kustacks.kuring.user.application.port.in.dto.UserPasswordModifyCommand;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
-import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
-import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
-import com.kustacks.kuring.user.application.port.in.dto.UserDecreaseQuestionCountCommand;
-import com.kustacks.kuring.user.application.port.in.dto.UserDepartmentsSubscribeCommand;
-import com.kustacks.kuring.user.application.port.in.dto.UserFeedbackCommand;
-import com.kustacks.kuring.user.application.port.in.dto.UserLoginCommand;
-import com.kustacks.kuring.user.application.port.in.dto.UserLoginResult;
-import com.kustacks.kuring.user.application.port.in.dto.UserLogoutCommand;
-import com.kustacks.kuring.user.application.port.in.dto.UserSignupCommand;
-import com.kustacks.kuring.user.application.port.in.dto.UserSubscribeCompareResult;
-import com.kustacks.kuring.user.application.port.out.RootUserCommandPort;
-import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
-import com.kustacks.kuring.user.application.port.out.UserCommandPort;
-import com.kustacks.kuring.user.application.port.out.UserEventPort;
-import com.kustacks.kuring.user.application.port.out.UserQueryPort;
+import com.kustacks.kuring.user.application.port.in.dto.*;
+import com.kustacks.kuring.user.application.port.out.*;
 import com.kustacks.kuring.user.domain.RootUser;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -112,9 +97,18 @@ class UserCommandService implements UserCommandUseCase {
                 passwordEncoder.encode(userSignupCommand.password()),
                 nickname
         );
+
         rootUserQueryPort.findDeletedRootUserByEmail(userSignupCommand.email())
-                .ifPresentOrElse(deletedRootUser -> deletedRootUser.reactive(rootUser.getPassword()),
-                        () -> checkDuplicateEmailAndSave(rootUser));
+                .ifPresentOrElse(
+                        deletedRootUser -> {
+                            deletedRootUser.reactive(rootUser.getPassword());
+                            log.info("[RootUser name : {}] 재가입 완료", rootUser.getNickname());
+                        },
+                        () -> {
+                            checkDuplicateEmailAndSave(rootUser);
+                            log.info("[RootUser name : {}] 가입 완료", rootUser.getNickname());
+                        }
+                );
     }
 
     @Transactional
@@ -143,21 +137,10 @@ class UserCommandService implements UserCommandUseCase {
         log.info("[RootUserId : {}] 삭제 완료", rootUser.getId());
     }
 
-    private void logoutAllLoggedInUser(RootUser rootUser) {
-        userQueryPort.findByLoggedInUserId(rootUser.getId())
-                .forEach(User::logout);
-    }
-
     @Override
     public void changePassword(UserPasswordModifyCommand userPasswordModifyCommand) {
         RootUser rootUser = findRootUserByEmailOrThrow(userPasswordModifyCommand.email());
         rootUser.modifyPassword(passwordEncoder.encode(userPasswordModifyCommand.password()));
-    }
-
-    private void checkUserIsNotLoggedIn(User user) {
-        if (user.isLoggedIn()) {
-            throw new InvalidStateException(ErrorCode.USER_ALREADY_LOGIN);
-        }
     }
 
     @Override
@@ -169,6 +152,17 @@ class UserCommandService implements UserCommandUseCase {
 
         syncQuestionCount(rootUser, user);
         user.logout();
+    }
+
+    private void logoutAllLoggedInUser(RootUser rootUser) {
+        userQueryPort.findByLoggedInUserId(rootUser.getId())
+                .forEach(User::logout);
+    }
+
+    private void checkUserIsNotLoggedIn(User user) {
+        if (user.isLoggedIn()) {
+            throw new InvalidStateException(ErrorCode.USER_ALREADY_LOGIN);
+        }
     }
 
     private void checkUserMatchesRootUser(User user, RootUser rootUser) {
