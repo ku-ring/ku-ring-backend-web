@@ -6,6 +6,7 @@ import java.util.Optional;
 
 public interface RootUserQueryPort {
     Optional<RootUser> findRootUserByEmail(String email);
+    Optional<RootUser> findDeletedRootUserByEmail(String email);
 
     boolean existRootUserByEmail(String email);
 }

@@ -45,6 +45,11 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     }
 
     @Override
+    public Optional<RootUser> findDeletedRootUserByEmail(String email) {
+        return rootUserRepository.findDeletedRootUserByEmail(email);
+    }
+
+    @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }
