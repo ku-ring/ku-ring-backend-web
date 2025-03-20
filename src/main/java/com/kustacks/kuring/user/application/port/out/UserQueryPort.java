@@ -12,7 +12,8 @@ public interface UserQueryPort {
 
     List<User> findAll();
     List<User> findByPageRequest(Pageable pageable);
-
+    List<User> findByLoggedInUserId(Long id);
+    
     Long countUser();
 
     boolean existByNickname(String nickname);

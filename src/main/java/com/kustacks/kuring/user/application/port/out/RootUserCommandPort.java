@@ -6,4 +6,5 @@ public interface RootUserCommandPort {
     RootUser saveRootUser(RootUser rootUser);
 
     void resetAllRootUserQuestionCount();
+    void deleteRootUser(RootUser rootUser);
 }

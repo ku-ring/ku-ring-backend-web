@@ -45,6 +45,11 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     }
 
     @Override
+    public Optional<RootUser> findDeletedRootUserByEmail(String email) {
+        return rootUserRepository.findDeletedRootUserByEmail(email);
+    }
+
+    @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }
@@ -75,6 +80,11 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     }
 
     @Override
+    public List<User> findByLoggedInUserId(Long id) {
+        return userRepository.findByLoginUserId(id);
+    }
+
+    @Override
     public boolean existRootUserByEmail(String email) {
         return rootUserRepository.findByEmail(email).isPresent();
     }
@@ -92,5 +102,10 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     @Override
     public void resetAllRootUserQuestionCount() {
         rootUserRepository.resetAllRootUserQuestionCount(ROOT_USER_MONTHLY_QUESTION_COUNT);
+    }
+
+    @Override
+    public void deleteRootUser(RootUser rootUser) {
+        rootUserRepository.delete(rootUser);
     }
 }

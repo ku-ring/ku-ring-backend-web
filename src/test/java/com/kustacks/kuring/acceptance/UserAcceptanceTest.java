@@ -24,11 +24,11 @@ import static com.kustacks.kuring.acceptance.UserStep.북마크_생성_요청;
 import static com.kustacks.kuring.acceptance.UserStep.북마크_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.북마크_조회_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.북마크한_공지_조회_요청;
+import static com.kustacks.kuring.acceptance.UserStep.비밀번호_변경_요청;
+import static com.kustacks.kuring.acceptance.UserStep.비밀번호_변경_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.사용자_로그인_되어_있음;
 import static com.kustacks.kuring.acceptance.UserStep.사용자_정보_조회_요청;
 import static com.kustacks.kuring.acceptance.UserStep.사용자_정보_조회_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.비밀번호_변경_요청;
-import static com.kustacks.kuring.acceptance.UserStep.비밀번호_변경_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.사용자_카테고리_구독_목록_조회_요청;
 import static com.kustacks.kuring.acceptance.UserStep.사용자_학과_조회_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.액세스_토큰으로_비밀번호_변경_요청;
@@ -41,7 +41,9 @@ import static com.kustacks.kuring.acceptance.UserStep.피드백_요청_응답_�
 import static com.kustacks.kuring.acceptance.UserStep.학과_구독_요청;
 import static com.kustacks.kuring.acceptance.UserStep.학과_구독_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.회원_가입_요청;
-import static com.kustacks.kuring.acceptance.UserStep.회원가입_요청;
+import static com.kustacks.kuring.acceptance.UserStep.사용자_회원가입_요청;
+import static com.kustacks.kuring.acceptance.UserStep.회원_탈퇴_요청;
+import static com.kustacks.kuring.acceptance.UserStep.회원_탈퇴_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.회원가입_응답_확인;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -258,7 +260,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         인증_이메일_전송_요청(NEW_EMAIL);
         인증코드_인증_요청(NEW_EMAIL, "123456");
 
-        회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
+        사용자_회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
         String jwtToken = 로그인_응답.jsonPath().getString("data.accessToken");
@@ -278,7 +280,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
         // when
-        var 회원가입_응답 = 회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
+        var 회원가입_응답 = 사용자_회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         // then
         회원가입_응답_확인(회원가입_응답);
@@ -290,7 +292,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         // given
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
-        회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
+        사용자_회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         // when
         var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
@@ -305,7 +307,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         // given
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
-        회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
+        사용자_회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
         String jwtToken = 로그인_응답.jsonPath().getString("data.accessToken");
@@ -323,7 +325,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         // given
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
-        회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
+        사용자_회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         // when
         var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, NEW_EMAIL, "wrong_password");
@@ -352,14 +354,74 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
         // 첫번째 회원가입
-        회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
+        사용자_회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         // when 같은 이메일로 회원가입 요청
-        var 중복_회원가입_응답 = 회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
+        var 중복_회원가입_응답 = 사용자_회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
 
         // then
         실패_응답_확인(중복_회원가입_응답, HttpStatus.BAD_REQUEST);
     }
+
+    @DisplayName("[v2] 사용자는 회원 탈퇴를 할 수 있다")
+    @Test
+    void withdraw_user() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+        사용자_회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
+        String jwtToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
+
+        // when
+        var 회원_탈퇴_응답 = 회원_탈퇴_요청(USER_FCM_TOKEN, jwtToken);
+
+        // then
+        회원_탈퇴_응답_확인(회원_탈퇴_응답);
+
+        // 탈퇴 후 로그인 시도 시 실패 확인
+        var 로그인_응답 = 로그인_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
+        실패_응답_확인(로그인_응답, HttpStatus.NOT_FOUND);
+    }
+
+    @DisplayName("[v2] 여러 기기에 로그인한 사용자는 회원 탈퇴 시 모든 기기에서 로그아웃한다.")
+    @Test
+    void withdraw_user_and_logout_all_device() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+
+        회원_가입_요청("token1");
+        회원_가입_요청("token2");
+        회원_가입_요청("token3");
+        String jwtToken1 = 사용자_로그인_되어_있음("token1", USER_EMAIL, USER_PASSWORD);
+        String jwtToken2 = 사용자_로그인_되어_있음("token2", USER_EMAIL, USER_PASSWORD);
+        String jwtToken3 = 사용자_로그인_되어_있음("token3", USER_EMAIL, USER_PASSWORD);
+
+        //when
+        회원_탈퇴_요청(USER_FCM_TOKEN, jwtToken1);
+
+        //then
+        var 로그아웃_응답1 = 로그아웃_요청("token1", jwtToken1);
+        var 로그아웃_응답2 = 로그아웃_요청("token2", jwtToken2);
+        var 로그아웃_응답3 = 로그아웃_요청("token3", jwtToken3);
+        실패_응답_확인(로그아웃_응답1, HttpStatus.NOT_FOUND);
+        실패_응답_확인(로그아웃_응답2, HttpStatus.NOT_FOUND);
+        실패_응답_확인(로그아웃_응답3, HttpStatus.NOT_FOUND);
+    }
+
+
+    @DisplayName("[v2] 유효하지 않은 JWT 토큰으로 회원 탈퇴 시 실패한다")
+    @Test
+    void withdraw_user_with_invalid_token() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+        사용자_회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
+
+        // when
+        var 회원_탈퇴_응답 = 회원_탈퇴_요청(USER_FCM_TOKEN, "invalid_token");
+
+        // then
+        실패_응답_확인(회원_탈퇴_응답, HttpStatus.UNAUTHORIZED);
+    }
+
 
     @DisplayName("[v2] 사용자는 본인의 정보를 조회할 수 있다")
     @Test
