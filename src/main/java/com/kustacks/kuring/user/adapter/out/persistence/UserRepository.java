@@ -12,4 +12,6 @@ interface UserRepository extends JpaRepository<User, Long>, UserQueryRepository 
 
     @Query("SELECT u.fcmToken FROM User u")
     List<String> findAllFcmTokens();
+
+    List<User> findByLoginUserId(Long loginUserId);
 }

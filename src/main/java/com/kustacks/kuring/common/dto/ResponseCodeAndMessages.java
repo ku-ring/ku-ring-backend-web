@@ -39,6 +39,7 @@ public enum ResponseCodeAndMessages {
     USER_SIGNUP(HttpStatus.CREATED.value(), "사용자 계정 생성에 성공했습니다."),
     USER_LOGIN(HttpStatus.OK.value(), "로그인에 성공했습니다."),
     USER_LOGOUT(HttpStatus.OK.value(), "로그아웃에 성공했습니다."),
+    USER_WITHDRAW(HttpStatus.NO_CONTENT.value(), "회원탈퇴 되었습니다"),
     USER_INFO_LOOKUP_SUCCESS(HttpStatus.OK.value(), "회원정보 조회에 성공했습니다."),
     USER_PASSWORD_MODIFY(HttpStatus.OK.value(), "비밀번호 변경에 성공했습니다."),
 

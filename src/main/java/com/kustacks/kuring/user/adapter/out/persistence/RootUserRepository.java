@@ -12,6 +12,9 @@ interface RootUserRepository extends JpaRepository<RootUser, Long> {
     Optional<RootUser> findByEmail(String email);
     Optional<RootUser> findByNickname(String nickname);
 
+    @Query(value = "SELECT * FROM root_user WHERE email = :email AND deleted = true", nativeQuery = true)
+    Optional<RootUser> findDeletedRootUserByEmail(@Param("email") String email);
+
     @Modifying(clearAutomatically = true)
     @Query("UPDATE RootUser ru SET ru.questionCount = :monthlyQuestionCount")
     void resetAllRootUserQuestionCount(@Param("monthlyQuestionCount") int monthlyQuestionCount);
