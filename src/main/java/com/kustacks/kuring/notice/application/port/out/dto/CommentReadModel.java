@@ -11,6 +11,7 @@ public class CommentReadModel {
     private final Long id;
     private final Long parentId;
     private final Long userId;
+    private final String nickName;
     private final Long noticeId;
     private final String content;
     private final LocalDateTime destroyedAt;
@@ -18,11 +19,12 @@ public class CommentReadModel {
     private final LocalDateTime updatedAt;
 
     @QueryProjection
-    public CommentReadModel(Long id, Long parentId, Long userId, Long noticeId, String content,
+    public CommentReadModel(Long id, Long parentId, Long userId, String nickName, Long noticeId, String content,
                             LocalDateTime destroyedAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.parentId = parentId;
         this.userId = userId;
+        this.nickName = nickName;
         this.noticeId = noticeId;
         this.content = content;
         this.destroyedAt = destroyedAt;
