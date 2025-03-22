@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.kustacks.kuring.notice.domain.QComment.comment;
+import static com.kustacks.kuring.user.domain.QRootUser.rootUser;
 
 @RequiredArgsConstructor
 class CommentQueryRepositoryImpl implements CommentQueryRepository {
@@ -26,13 +27,15 @@ class CommentQueryRepositoryImpl implements CommentQueryRepository {
                                 comment.id,
                                 comment.parentId,
                                 comment.rootUserId,
+                                rootUser.nickname,
                                 comment.noticeId,
                                 comment.content.value,
                                 comment.destroyedAt,
                                 comment.createdAt,
                                 comment.updatedAt
                         )
-                ).from(comment)
+                ).from(comment).join(rootUser)
+                .on(comment.rootUserId.eq(rootUser.id))
                 .where(comment.id.eq(id))
                 .fetchOne();
 
@@ -46,13 +49,15 @@ class CommentQueryRepositoryImpl implements CommentQueryRepository {
                                 comment.id,
                                 comment.parentId,
                                 comment.rootUserId,
+                                rootUser.nickname,
                                 comment.noticeId,
                                 comment.content.value,
                                 comment.destroyedAt,
                                 comment.createdAt,
                                 comment.updatedAt
                         )
-                ).from(comment)
+                ).from(comment).join(rootUser)
+                .on(comment.rootUserId.eq(rootUser.id))
                 .where(comment.noticeId.eq(noticeId), comment.parentId.isNull(), cursorId(cursor))
                 .orderBy(comment.id.asc())
                 .limit(size)
@@ -66,13 +71,15 @@ class CommentQueryRepositoryImpl implements CommentQueryRepository {
                                 comment.id,
                                 comment.parentId,
                                 comment.rootUserId,
+                                rootUser.nickname,
                                 comment.noticeId,
                                 comment.content.value,
                                 comment.destroyedAt,
                                 comment.createdAt,
                                 comment.updatedAt
                         )
-                ).from(comment)
+                ).from(comment).join(rootUser)
+                .on(comment.rootUserId.eq(rootUser.id))
                 .where(
                         comment.noticeId.eq(noticeId),
                         comment.parentId.in(parentCommentIds)
