@@ -14,7 +14,6 @@ public interface UserQueryUseCase {
     List<UserBookmarkResult> lookupUserBookmarkedNotices(String userToken);
 
     UserAIAskCountResult lookupUserAIAskCountWithFcmToken(String userToken);
-
     UserAIAskCountResult lookupUserAIAskCountWithEmail(String email);
     UserInfoResult lookupUserInfo(String email);
 }

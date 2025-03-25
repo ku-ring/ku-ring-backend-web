@@ -123,7 +123,7 @@ class UserQueryApiV2 {
     @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
     @GetMapping("/user-me")
     public ResponseEntity<BaseResponse<UserInfoResponse>> lookupUserInfo(
-                        @RequestHeader (AuthorizationExtractor.AUTHORIZATION) String bearerToken
+            @RequestHeader(AuthorizationExtractor.AUTHORIZATION) String bearerToken
     ) {
         String jwtToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
         String email = validateJwtAndGetEmail(jwtToken);
