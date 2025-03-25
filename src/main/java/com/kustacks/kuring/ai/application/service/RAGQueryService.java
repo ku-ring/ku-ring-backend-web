@@ -43,6 +43,18 @@ public class RAGQueryService implements RAGQueryUseCase {
         }
     }
 
+    @Override
+    public Flux<String> askAiModelWithEmail(String question, String id, String email) {
+        try {
+            ragEventPort.rootUserDecreaseQuestionCountEvent(id, email);
+            Prompt completePrompt = buildCompletePrompt(question);
+            return ragChatModel.call(completePrompt);
+        } catch (InvalidStateException e) {
+            final String separator = "";
+            return Flux.fromArray(e.getErrorCode().getMessage().split(separator));
+        }
+    }
+
     @PostConstruct
     private void init() {
         this.promptTemplate = new PromptTemplate(ragPromptTemplate);
