@@ -12,8 +12,24 @@ import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubsc
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
-import com.kustacks.kuring.user.application.port.in.dto.*;
-import com.kustacks.kuring.user.application.port.out.*;
+import com.kustacks.kuring.user.application.port.in.dto.RootUserDecreaseQuestionCountCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserDecreaseQuestionCountCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserDepartmentsSubscribeCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserFeedbackCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserLoginCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserLoginResult;
+import com.kustacks.kuring.user.application.port.in.dto.UserLogoutCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserPasswordModifyCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserSignupCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserSubscribeCompareResult;
+import com.kustacks.kuring.user.application.port.in.dto.UserWithdrawCommand;
+import com.kustacks.kuring.user.application.port.out.RootUserCommandPort;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
+import com.kustacks.kuring.user.application.port.out.UserCommandPort;
+import com.kustacks.kuring.user.application.port.out.UserEventPort;
+import com.kustacks.kuring.user.application.port.out.UserQueryPort;
 import com.kustacks.kuring.user.domain.RootUser;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -90,6 +106,16 @@ class UserCommandService implements UserCommandUseCase {
     }
 
     @Override
+    public void decreaseQuestionCount(RootUserDecreaseQuestionCountCommand command) {
+        User findUser = findUserByToken(command.userId());
+        try {
+            checkUserLoginIdAndDecreaseCount(findUser, command.email());
+        } catch (IllegalStateException e) {
+            throw new InvalidStateException(ErrorCode.QUESTION_COUNT_NOT_ENOUGH);
+        }
+    }
+
+    @Override
     public void signupUser(UserSignupCommand userSignupCommand) {
         String nickname = createNickname();
         RootUser rootUser = new RootUser(
@@ -111,7 +137,6 @@ class UserCommandService implements UserCommandUseCase {
                 );
     }
 
-    @Transactional
     @Override
     public UserLoginResult login(UserLoginCommand userLoginCommand) {
         User user = findUserByToken(userLoginCommand.fcmToken());
@@ -154,6 +179,17 @@ class UserCommandService implements UserCommandUseCase {
         user.logout();
     }
 
+    private void checkUserLoginIdAndDecreaseCount(User user, String email) {
+        rootUserQueryPort.findRootUserByEmail(email).ifPresentOrElse(
+                rootuser -> {
+                    if (matchLoginUserId(user, rootuser)) {
+                        rootuser.decreaseQuestionCount();
+                    }
+                },
+                user::decreaseQuestionCount
+        );
+    }
+
     private void logoutAllLoggedInUser(RootUser rootUser) {
         userQueryPort.findByLoggedInUserId(rootUser.getId())
                 .forEach(User::logout);
@@ -166,9 +202,13 @@ class UserCommandService implements UserCommandUseCase {
     }
 
     private void checkUserMatchesRootUser(User user, RootUser rootUser) {
-        if (!user.matchLoginUserId(rootUser.getId())) {
+        if (!matchLoginUserId(user, rootUser)) {
             throw new InvalidStateException(ErrorCode.USER_MISMATCH_DEVICE);
         }
+    }
+
+    private boolean matchLoginUserId(User user, RootUser rootuser) {
+        return user.matchLoginUserId(rootuser.getId());
     }
 
     private void syncQuestionCount(RootUser rootUser, User tokenUser) {
