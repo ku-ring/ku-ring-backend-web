@@ -13,6 +13,8 @@ public interface UserQueryUseCase {
     List<UserDepartmentNameResult> lookupSubscribeDepartments(String userToken);
     List<UserBookmarkResult> lookupUserBookmarkedNotices(String userToken);
 
-    UserAIAskCountResult lookupUserAIAskCount(String userToken);
+    UserAIAskCountResult lookupUserAIAskCountWithFcmToken(String userToken);
+
+    UserAIAskCountResult lookupUserAIAskCountWithEmail(String email);
     UserInfoResult lookupUserInfo(String email);
 }
