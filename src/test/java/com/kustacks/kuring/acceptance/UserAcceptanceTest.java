@@ -20,6 +20,7 @@ import static com.kustacks.kuring.acceptance.UserStep.로그아웃_요청;
 import static com.kustacks.kuring.acceptance.UserStep.로그아웃_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.로그인_요청;
 import static com.kustacks.kuring.acceptance.UserStep.로그인_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.루트유저_남은_질문_횟수_조회;
 import static com.kustacks.kuring.acceptance.UserStep.북마크_생성_요청;
 import static com.kustacks.kuring.acceptance.UserStep.북마크_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.북마크_조회_응답_확인;
@@ -31,6 +32,7 @@ import static com.kustacks.kuring.acceptance.UserStep.사용자_정보_조회_�
 import static com.kustacks.kuring.acceptance.UserStep.사용자_정보_조회_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.사용자_카테고리_구독_목록_조회_요청;
 import static com.kustacks.kuring.acceptance.UserStep.사용자_학과_조회_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.사용자_회원가입_요청;
 import static com.kustacks.kuring.acceptance.UserStep.액세스_토큰으로_비밀번호_변경_요청;
 import static com.kustacks.kuring.acceptance.UserStep.질문_횟수_응답_검증;
 import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_목록_조회_요청_응답_확인;
@@ -41,7 +43,6 @@ import static com.kustacks.kuring.acceptance.UserStep.피드백_요청_응답_�
 import static com.kustacks.kuring.acceptance.UserStep.학과_구독_요청;
 import static com.kustacks.kuring.acceptance.UserStep.학과_구독_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.회원_가입_요청;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_회원가입_요청;
 import static com.kustacks.kuring.acceptance.UserStep.회원_탈퇴_요청;
 import static com.kustacks.kuring.acceptance.UserStep.회원_탈퇴_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.회원가입_응답_확인;
@@ -249,7 +250,21 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         var 질문_횟수_조회_응답 = 남은_질문_횟수_조회(USER_FCM_TOKEN);
 
         // then
-        질문_횟수_응답_검증(질문_횟수_조회_응답);
+        질문_횟수_응답_검증(질문_횟수_조회_응답, 2, 2);
+    }
+
+    @DisplayName("[v2] 로그인한 사용자는 로그인한 계정의 남은 질문 가능 횟수를 조회할 수 있다")
+    @Test
+    void lookup_ask_count_with_login() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        // when
+        var 루트유저_남은_질문_횟수_조회_응답 = 루트유저_남은_질문_횟수_조회(USER_FCM_TOKEN, accessToken);
+
+        // then
+        질문_횟수_응답_검증(루트유저_남은_질문_횟수_조회_응답, 5, 5);
     }
 
     @DisplayName("[v2] 사용자는 이메일 인증 후 회원가입, 로그인, 로그아웃을 차례로 할 수 있다.")
