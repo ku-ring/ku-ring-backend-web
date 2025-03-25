@@ -19,7 +19,6 @@ public interface UserCommandUseCase {
     void saveFeedback(UserFeedbackCommand command);
     void saveBookmark(UserBookmarkCommand command);
     void decreaseQuestionCount(UserDecreaseQuestionCountCommand command);
-
     void decreaseQuestionCount(RootUserDecreaseQuestionCountCommand command);
     void signupUser(UserSignupCommand userSignupCommand);
     void logout(UserLogoutCommand userLogoutCommand);
