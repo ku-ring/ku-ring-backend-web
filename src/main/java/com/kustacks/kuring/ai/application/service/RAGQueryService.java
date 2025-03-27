@@ -32,21 +32,9 @@ public class RAGQueryService implements RAGQueryUseCase {
     private PromptTemplate promptTemplate;
 
     @Override
-    public Flux<String> askAiModel(String question, String id) {
+    public Flux<String> askAiModel(String question, String id, String email) {
         try {
-            ragEventPort.userDecreaseQuestionCountEvent(id);
-            Prompt completePrompt = buildCompletePrompt(question);
-            return ragChatModel.call(completePrompt);
-        } catch (InvalidStateException e) {
-            final String separator = "";
-            return Flux.fromArray(e.getErrorCode().getMessage().split(separator));
-        }
-    }
-
-    @Override
-    public Flux<String> askAiModelWithEmail(String question, String id, String email) {
-        try {
-            ragEventPort.rootUserDecreaseQuestionCountEvent(id, email);
+            ragEventPort.userDecreaseQuestionCountEvent(id, email);
             Prompt completePrompt = buildCompletePrompt(question);
             return ragChatModel.call(completePrompt);
         } catch (InvalidStateException e) {
