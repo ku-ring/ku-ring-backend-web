@@ -12,7 +12,6 @@ import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubsc
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
-import com.kustacks.kuring.user.application.port.in.dto.RootUserDecreaseQuestionCountCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserDecreaseQuestionCountCommand;
@@ -97,17 +96,7 @@ class UserCommandService implements UserCommandUseCase {
     @Override
     public void decreaseQuestionCount(UserDecreaseQuestionCountCommand command) {
         User findUser = findUserByToken(command.userId());
-
-        try {
-            findUser.decreaseQuestionCount();
-        } catch (IllegalStateException e) {
-            throw new InvalidStateException(ErrorCode.QUESTION_COUNT_NOT_ENOUGH);
-        }
-    }
-
-    @Override
-    public void decreaseQuestionCount(RootUserDecreaseQuestionCountCommand command) {
-        User findUser = findUserByToken(command.userId());
+        
         try {
             checkUserLoginIdAndDecreaseCount(findUser, command.email());
         } catch (IllegalStateException e) {

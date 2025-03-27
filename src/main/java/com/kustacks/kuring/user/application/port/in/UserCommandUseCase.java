@@ -1,6 +1,5 @@
 package com.kustacks.kuring.user.application.port.in;
 
-import com.kustacks.kuring.user.application.port.in.dto.RootUserDecreaseQuestionCountCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserDecreaseQuestionCountCommand;
@@ -19,7 +18,6 @@ public interface UserCommandUseCase {
     void saveFeedback(UserFeedbackCommand command);
     void saveBookmark(UserBookmarkCommand command);
     void decreaseQuestionCount(UserDecreaseQuestionCountCommand command);
-    void decreaseQuestionCount(RootUserDecreaseQuestionCountCommand command);
     void signupUser(UserSignupCommand userSignupCommand);
     void logout(UserLogoutCommand userLogoutCommand);
     UserLoginResult login(UserLoginCommand userLoginCommand);
