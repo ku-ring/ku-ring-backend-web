@@ -40,13 +40,13 @@ public class RAGQueryApiV2 {
             @RequestHeader(FCM_TOKEN_HEADER_KEY) String id,
             @RequestHeader(value = AuthorizationExtractor.AUTHORIZATION, required = false) String bearerToken
     ) {
-        String email = null;
-        if (bearerToken != null) {
+        if (bearerToken == null) {
+            return ragQueryUseCase.askAiModel(question, id, null);
+        } else {
             String accessToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
-            email = validateJwtAndGetEmail(accessToken);
-
+            String email = validateJwtAndGetEmail(accessToken);
+            return ragQueryUseCase.askAiModel(question, id, email);
         }
-        return ragQueryUseCase.askAiModel(question, id, email);
     }
 
     private String validateJwtAndGetEmail(String jwtToken) {
