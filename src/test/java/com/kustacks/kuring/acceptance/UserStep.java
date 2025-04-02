@@ -182,13 +182,23 @@ public class UserStep {
                 .extract();
     }
 
-    public static void 질문_횟수_응답_검증(ExtractableResponse<Response> 질문_횟수_조회_응답) {
+    public static ExtractableResponse<Response> 루트유저_남은_질문_횟수_조회(String userToken, String accessToken) {
+        return RestAssured
+                .given().log().all()
+                .header("User-Token", userToken)
+                .header("Authorization", "Bearer " + accessToken)
+                .when().get("/api/v2/users/ask-counts")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 질문_횟수_응답_검증(ExtractableResponse<Response> 질문_횟수_조회_응답, int leftAskCount, int maxAskCount) {
         assertAll(
                 () -> assertThat(질문_횟수_조회_응답.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(질문_횟수_조회_응답.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(질문_횟수_조회_응답.jsonPath().getString("message")).isEqualTo("질문 가능 횟수 조회에 성공하였습니다"),
-                () -> assertThat(질문_횟수_조회_응답.jsonPath().getInt("data.leftAskCount")).isEqualTo(2),
-                () -> assertThat(질문_횟수_조회_응답.jsonPath().getInt("data.maxAskCount")).isEqualTo(2)
+                () -> assertThat(질문_횟수_조회_응답.jsonPath().getInt("data.leftAskCount")).isEqualTo(leftAskCount),
+                () -> assertThat(질문_횟수_조회_응답.jsonPath().getInt("data.maxAskCount")).isEqualTo(maxAskCount)
         );
     }
 

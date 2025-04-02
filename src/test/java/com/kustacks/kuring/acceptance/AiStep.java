@@ -1,8 +1,5 @@
 package com.kustacks.kuring.acceptance;
 
-import io.restassured.RestAssured;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.FluxExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -19,6 +16,17 @@ public class AiStep {
                 .get()
                 .uri("/api/v2/ai/messages?question={question}", question)
                 .header("User-Token", userToken)
+                .accept(MediaType.TEXT_EVENT_STREAM)
+                .exchange()
+                .returnResult(String.class);
+    }
+
+    public static FluxExchangeResult<String> 루트유저_사용자_질문_요청(WebTestClient client, String question, String userToken, String accessToken) {
+        return client
+                .get()
+                .uri("/api/v2/ai/messages?question={question}", question)
+                .header("User-Token", userToken)
+                .header("Authorization", "Bearer " + accessToken)
                 .accept(MediaType.TEXT_EVENT_STREAM)
                 .exchange()
                 .returnResult(String.class);

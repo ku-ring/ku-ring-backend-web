@@ -14,6 +14,7 @@ import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoryNameResponse;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserDepartmentNameResponse;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserInfoResponse;
 import com.kustacks.kuring.user.application.port.in.UserQueryUseCase;
+import com.kustacks.kuring.user.application.port.in.dto.UserAIAskCountResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -94,12 +95,25 @@ class UserQueryApiV2 {
 
     @Operation(summary = "사용자 질문 가능횟수 조회", description = "사용자의 남은 질문횟수와 가능한 질문 횟수를 조회합니다")
     @SecurityRequirement(name = FCM_TOKEN_HEADER_KEY)
+    @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
     @GetMapping("/ask-counts")
     public ResponseEntity<BaseResponse<UserAIAskCountResponse>> lookupUserAIAskCount(
-            @RequestHeader(FCM_TOKEN_HEADER_KEY) String userToken
+            @RequestHeader(FCM_TOKEN_HEADER_KEY) String userToken,
+            @RequestHeader(value = AuthorizationExtractor.AUTHORIZATION, required = false) String bearerToken
     ) {
+        Supplier<UserAIAskCountResult> lookUpQuery = null;
+
+        if (bearerToken == null) {
+            lookUpQuery = () -> userQueryUseCase.lookupUserAIAskCountWithFcmToken(userToken);
+        } else {
+            String accessToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
+            String email = validateJwtAndGetEmail(accessToken);
+
+            lookUpQuery = () -> userQueryUseCase.lookupUserAIAskCountWithEmail(email);
+        }
+
         return lookupAndConvertResponse(
-                () -> userQueryUseCase.lookupUserAIAskCount(userToken),
+                lookUpQuery,
                 UserAIAskCountResponse::from,
                 ASK_COUNT_LOOKUP_SUCCESS
         );
@@ -109,7 +123,7 @@ class UserQueryApiV2 {
     @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
     @GetMapping("/user-me")
     public ResponseEntity<BaseResponse<UserInfoResponse>> lookupUserInfo(
-                        @RequestHeader (AuthorizationExtractor.AUTHORIZATION) String bearerToken
+            @RequestHeader(AuthorizationExtractor.AUTHORIZATION) String bearerToken
     ) {
         String jwtToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
         String email = validateJwtAndGetEmail(jwtToken);
