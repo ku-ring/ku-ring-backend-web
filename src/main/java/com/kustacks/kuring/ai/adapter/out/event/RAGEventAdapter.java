@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class RAGEventAdapter implements RAGEventPort {
 
     @Override
-    public void userDecreaseQuestionCountEvent(String userId) {
-        Events.raise(new UserDecreaseQuestionCountEvent(userId));
+    public void userDecreaseQuestionCountEvent(String userId, String email) {
+        Events.raise(new UserDecreaseQuestionCountEvent(userId, email));
     }
 }

@@ -68,4 +68,17 @@ public class RootUser implements Serializable {
     public void modifyPassword(String password) {
         this.password = password;
     }
+
+    public int decreaseQuestionCount() {
+        if (!isEnoughQuestionCount()) {
+            throw new IllegalStateException("잔여 질문 카운트가 0입니다.");
+        }
+
+        this.questionCount -= 1;
+        return this.questionCount;
+    }
+
+    private boolean isEnoughQuestionCount() {
+        return this.questionCount > 0;
+    }
 }

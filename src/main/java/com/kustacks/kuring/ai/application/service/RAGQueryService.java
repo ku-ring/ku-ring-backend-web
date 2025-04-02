@@ -32,9 +32,9 @@ public class RAGQueryService implements RAGQueryUseCase {
     private PromptTemplate promptTemplate;
 
     @Override
-    public Flux<String> askAiModel(String question, String id) {
+    public Flux<String> askAiModel(String question, String id, String email) {
         try {
-            ragEventPort.userDecreaseQuestionCountEvent(id);
+            ragEventPort.userDecreaseQuestionCountEvent(id, email);
             Prompt completePrompt = buildCompletePrompt(question);
             return ragChatModel.call(completePrompt);
         } catch (InvalidStateException e) {

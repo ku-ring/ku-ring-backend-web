@@ -6,8 +6,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import static com.kustacks.kuring.acceptance.AiStep.루트유저_사용자_질문_요청;
 import static com.kustacks.kuring.acceptance.AiStep.모델_응답_확인;
 import static com.kustacks.kuring.acceptance.AiStep.사용자_질문_요청;
+import static com.kustacks.kuring.acceptance.UserStep.남은_질문_횟수_조회;
+import static com.kustacks.kuring.acceptance.UserStep.로그아웃_요청;
+import static com.kustacks.kuring.acceptance.UserStep.사용자_로그인_되어_있음;
+import static com.kustacks.kuring.acceptance.UserStep.질문_횟수_응답_검증;
 
 @DisplayName("인수 : 인공지능")
 class AiAcceptanceTest extends IntegrationTestSupport {
@@ -42,6 +47,58 @@ class AiAcceptanceTest extends IntegrationTestSupport {
                 "관", "장", "학", "/", "기", "금", "장", "학", "과", "관", "련", "된", "문", "의",
                 "는", "0", "2", "-", "4", "5", "0", "-", "3", "9", "6", "7", "로", "하", "시",
                 "면", "됩", "니", "다", ".");
+    }
+
+    @DisplayName("[v2] 로그인한 사용자가 궁금한 학교 정보를 물어볼 수 있다")
+    @Test
+    void ask_to_open_ai_with_login() {
+        // given
+        String question = "교내,외 장학금 및 학자금 대출 관련 전화번호들을 안내를 해줘";
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        // when
+        var 모델_응답 = 루트유저_사용자_질문_요청(client, question, USER_FCM_TOKEN, accessToken);
+
+        // then
+        모델_응답_확인(모델_응답, "학", "생", "복", "지", "처", "장", "학", "복", "지", "팀", "의",
+                "전", "화", "번", "호", "는", "0", "2", "-", "4", "5", "0", "-", "3", "2", "1",
+                "1", "~", "2", "이", "며", ",", "건", "국", "사", "랑", "/", "장", "학", "사", "정",
+                "관", "장", "학", "/", "기", "금", "장", "학", "과", "관", "련", "된", "문", "의",
+                "는", "0", "2", "-", "4", "5", "0", "-", "3", "9", "6", "7", "로", "하", "시",
+                "면", "됩", "니", "다", ".");
+    }
+
+
+    @DisplayName("[v2] 로그인 전에 질문한 횟수만큼 로그인 후 사용자 질문 횟수가 줄어든다.")
+    @Test
+    void ask_more_question_to_open_ai_when_login() {
+        // given
+        String question = "교내,외 장학금 및 학자금 대출 관련 전화번호들을 안내를 해줘";
+        사용자_질문_요청(client, question, USER_FCM_TOKEN); // 1회 요청
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        // when
+        var 루트유저_남은_질문_횟수_조회_응답 = UserStep.루트유저_남은_질문_횟수_조회(USER_FCM_TOKEN, accessToken);
+
+        // then - 추가 3번 정상응답, 마지막 1번은 질문 횟수 부족
+        질문_횟수_응답_검증(루트유저_남은_질문_횟수_조회_응답, 4, 5);
+    }
+
+    @DisplayName("[v2] 로그인 후 질문한 횟수만큼 로그아웃 후 사용자 질문 횟수가 줄어든다.")
+    @Test
+    void lookup_decreased_ask_count_when_ask_with_login_after_logout() {
+        // given
+        String question = "교내,외 장학금 및 학자금 대출 관련 전화번호들을 안내를 해줘";
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        루트유저_사용자_질문_요청(client, question, USER_FCM_TOKEN, accessToken); // 1회 요청
+        로그아웃_요청(USER_FCM_TOKEN, accessToken);
+
+        // when
+        var 남은_질문_횟수_조회_응답 = 남은_질문_횟수_조회(USER_FCM_TOKEN);
+
+        // then
+        질문_횟수_응답_검증(남은_질문_횟수_조회_응답, 1, 2);
     }
 
     /**

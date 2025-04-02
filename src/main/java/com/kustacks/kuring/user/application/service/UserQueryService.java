@@ -61,9 +61,15 @@ class UserQueryService implements UserQueryUseCase {
     }
 
     @Override
-    public UserAIAskCountResult lookupUserAIAskCount(String userToken) {
+    public UserAIAskCountResult lookupUserAIAskCountWithFcmToken(String userToken) {
         User user = findUserByToken(userToken);
         return new UserAIAskCountResult(user.getQuestionCount(), User.FCM_USER_MONTHLY_QUESTION_COUNT);
+    }
+
+    @Override
+    public UserAIAskCountResult lookupUserAIAskCountWithEmail(String email) {
+        RootUser rootUser = findRootUserByEmailOrThrow(email);
+        return new UserAIAskCountResult(rootUser.getQuestionCount(), RootUser.ROOT_USER_MONTHLY_QUESTION_COUNT);
     }
 
     @Override
