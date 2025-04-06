@@ -6,6 +6,9 @@ public enum ResponseCodeAndMessages {
 
     /* Notice */
     NOTICE_SEARCH_SUCCESS(HttpStatus.OK.value(), "공지 조회에 성공하였습니다"),
+    NOTICE_COMMENT_SAVE_SUCCESS(HttpStatus.OK.value(), "공지에 댓글 추가를 성공하였습니다"),
+    NOTICE_COMMENT_EDIT_SUCCESS(HttpStatus.OK.value(), "공지에 댓글 편집을 성공하였습니다"),
+    NOTICE_COMMENT_DELETE_SUCCESS(HttpStatus.OK.value(), "공지에 댓글 삭제를 성공하였습니다"),
 
     /* Category */
     CATEGORY_SEARCH_SUCCESS(HttpStatus.OK.value(), "지원하는 학교 공지 카테고리 조회에 성공하였습니다"),
@@ -33,8 +36,6 @@ public enum ResponseCodeAndMessages {
     FEEDBACK_SAVE_SUCCESS(HttpStatus.OK.value(), "피드백 저장에 성공하였습니다"),
     FEEDBACK_SEARCH_SUCCESS(HttpStatus.OK.value(), "피드백 조회에 성공하였습니다"),
     ASK_COUNT_LOOKUP_SUCCESS(HttpStatus.OK.value(), "질문 가능 횟수 조회에 성공하였습니다"),
-    NOTICE_COMMENT_SAVE_SUCCESS(HttpStatus.OK.value(), "공지에 댓글 추가를 성공하였습니다"),
-    NOTICE_COMMENT_EDIT_SUCCESS(HttpStatus.OK.value(), "공지에 댓글 편집을 성공하였습니다"),
 
     USER_SIGNUP(HttpStatus.CREATED.value(), "사용자 계정 생성에 성공했습니다."),
     USER_LOGIN(HttpStatus.OK.value(), "로그인에 성공했습니다."),
