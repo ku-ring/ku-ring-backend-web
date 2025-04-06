@@ -34,12 +34,13 @@ public class RAGQueryService implements RAGQueryUseCase {
     @Override
     public Flux<String> askAiModel(String question, String id, String email) {
         try {
-            ragEventPort.userDecreaseQuestionCountEvent(id, email);
             Prompt completePrompt = buildCompletePrompt(question);
             return ragChatModel.call(completePrompt);
         } catch (InvalidStateException e) {
             final String separator = "";
             return Flux.fromArray(e.getErrorCode().getMessage().split(separator));
+        } finally {
+            ragEventPort.askedQuestion(id, email);
         }
     }
 

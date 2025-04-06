@@ -1,6 +1,6 @@
 package com.kustacks.kuring.user.adapter.in.event;
 
-import com.kustacks.kuring.user.adapter.in.event.dto.UserDecreaseQuestionCountEvent;
+import com.kustacks.kuring.user.adapter.in.event.dto.UserAskedQuestionEvent;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +15,8 @@ public class UserCommandEventListener {
     private final UserCommandUseCase userCommandUseCase;
 
     @EventListener
-    public void decreaseUserQuestionCountEvent(
-            UserDecreaseQuestionCountEvent event
+    public void userAskedQuestionEventHandler(
+            UserAskedQuestionEvent event
     ) {
         userCommandUseCase.decreaseQuestionCount(event.toCommand());
     }

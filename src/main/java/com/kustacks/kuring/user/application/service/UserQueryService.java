@@ -1,6 +1,7 @@
 package com.kustacks.kuring.user.application.service;
 
 import com.kustacks.kuring.common.annotation.UseCase;
+import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.properties.ServerProperties;
@@ -8,11 +9,7 @@ import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.in.UserQueryUseCase;
-import com.kustacks.kuring.user.application.port.in.dto.UserAIAskCountResult;
-import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkResult;
-import com.kustacks.kuring.user.application.port.in.dto.UserCategoryNameResult;
-import com.kustacks.kuring.user.application.port.in.dto.UserDepartmentNameResult;
-import com.kustacks.kuring.user.application.port.in.dto.UserInfoResult;
+import com.kustacks.kuring.user.application.port.in.dto.*;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.application.port.out.UserEventPort;
@@ -78,6 +75,16 @@ class UserQueryService implements UserQueryUseCase {
         return new UserInfoResult(rootUser.getNickname(), rootUser.getEmail());
     }
 
+    @Override
+    public void checkUserAskAvailability(String userToken, String email) {
+        int leftQuestionCount = (email == null)
+                ? findUserByToken(userToken).getQuestionCount()
+                : findRootUserByEmailOrThrow(email).getQuestionCount();
+
+        if (leftQuestionCount <= 0) {
+            throw new InvalidStateException(ErrorCode.QUESTION_COUNT_NOT_ENOUGH);
+        }
+    }
 
     private List<UserBookmarkResult> lookupAllBookmarkByIds(List<String> bookmarkIds) {
         return noticeQueryPort.findAllByBookmarkIds(bookmarkIds)
