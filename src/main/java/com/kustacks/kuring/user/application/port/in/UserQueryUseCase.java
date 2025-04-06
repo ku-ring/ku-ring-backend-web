@@ -1,10 +1,6 @@
 package com.kustacks.kuring.user.application.port.in;
 
-import com.kustacks.kuring.user.application.port.in.dto.UserAIAskCountResult;
-import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkResult;
-import com.kustacks.kuring.user.application.port.in.dto.UserCategoryNameResult;
-import com.kustacks.kuring.user.application.port.in.dto.UserDepartmentNameResult;
-import com.kustacks.kuring.user.application.port.in.dto.UserInfoResult;
+import com.kustacks.kuring.user.application.port.in.dto.*;
 
 import java.util.List;
 
@@ -16,4 +12,6 @@ public interface UserQueryUseCase {
     UserAIAskCountResult lookupUserAIAskCountWithFcmToken(String userToken);
     UserAIAskCountResult lookupUserAIAskCountWithEmail(String email);
     UserInfoResult lookupUserInfo(String email);
+
+    void checkUserAskAvailability(String userToken, String email);
 }

@@ -1,5 +1,5 @@
 package com.kustacks.kuring.ai.application.port.out;
 
 public interface RAGEventPort {
-    void userDecreaseQuestionCountEvent(String userId, String email);
+    void askedQuestion(String userId, String email);
 }

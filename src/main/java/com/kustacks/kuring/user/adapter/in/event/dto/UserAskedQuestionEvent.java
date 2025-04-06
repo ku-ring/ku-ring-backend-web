@@ -2,7 +2,7 @@ package com.kustacks.kuring.user.adapter.in.event.dto;
 
 import com.kustacks.kuring.user.application.port.in.dto.UserDecreaseQuestionCountCommand;
 
-public record UserDecreaseQuestionCountEvent(
+public record UserAskedQuestionEvent(
         String userId,
         String email
 ) {

@@ -23,15 +23,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 
 import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extractAuthorizationValue;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_COMMENT_EDIT_SUCCESS;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_COMMENT_SAVE_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
 
 @Tag(name = "Notice-Command", description = "공지 가공")
 @Validated
@@ -113,7 +108,7 @@ public class NoticeCommandApiV2 {
 
         noticeCommentDeletingUseCase.process(command);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(new BaseResponse<>(NOTICE_COMMENT_DELETE_SUCCESS, null));
     }
 
     private String validateJwtAndGetEmail(String jwtToken) {
