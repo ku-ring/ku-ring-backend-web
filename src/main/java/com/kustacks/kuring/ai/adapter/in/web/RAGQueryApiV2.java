@@ -7,6 +7,7 @@ import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.user.application.port.in.UserQueryUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -30,6 +31,7 @@ public class RAGQueryApiV2 {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RAGQueryUseCase ragQueryUseCase;
+    private final UserQueryUseCase userQueryUseCase;
 
     @Operation(summary = "사용자 AI에 질문요청", description = "사용자가 궁금한 학교 정보를 AI에게 질문합니다.")
     @SecurityRequirement(name = FCM_TOKEN_HEADER_KEY)
@@ -40,12 +42,16 @@ public class RAGQueryApiV2 {
             @RequestHeader(FCM_TOKEN_HEADER_KEY) String id,
             @RequestHeader(value = AuthorizationExtractor.AUTHORIZATION, required = false) String bearerToken
     ) {
-        if (bearerToken == null) {
-            return ragQueryUseCase.askAiModel(question, id, null);
-        } else {
-            String accessToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
-            String email = validateJwtAndGetEmail(accessToken);
+        try {
+            String email = (bearerToken != null)
+                    ? validateJwtAndGetEmail(extractAuthorizationValue(bearerToken, AuthorizationType.BEARER))
+                    : null;
+
+            userQueryUseCase.checkUserAskAvailability(id, email);
+
             return ragQueryUseCase.askAiModel(question, id, email);
+        } catch (InvalidStateException e) {
+            return Flux.fromArray(e.getErrorCode().getMessage().split(""));
         }
     }
 
@@ -53,6 +59,7 @@ public class RAGQueryApiV2 {
         if (!jwtTokenProvider.validateToken(jwtToken)) {
             throw new InvalidStateException(ErrorCode.JWT_INVALID_TOKEN);
         }
+
         return jwtTokenProvider.getPrincipal(jwtToken);
     }
 }
