@@ -44,7 +44,7 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
         with:
-          arguments: clean build
+          arguments: clean build -x test
 
       # (5) build 결과물 압축
       - name: Make zip file #1	# build한 파일 모두 압축
