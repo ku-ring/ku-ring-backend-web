@@ -12,8 +12,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
-import static com.kustacks.kuring.acceptance.EmailStep.인증_이메일_전송_요청;
 import static com.kustacks.kuring.acceptance.EmailStep.인증코드_인증_요청;
+import static com.kustacks.kuring.acceptance.EmailStep.회원가입_인증코드_이메일_전송_요청;
 import static com.kustacks.kuring.acceptance.UserStep.구독한_학과_목록_조회_요청;
 import static com.kustacks.kuring.acceptance.UserStep.남은_질문_횟수_조회;
 import static com.kustacks.kuring.acceptance.UserStep.로그아웃_요청;
@@ -272,7 +272,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
     void verify_email_and_signup() {
         // given
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
-        인증_이메일_전송_요청(NEW_EMAIL);
+        회원가입_인증코드_이메일_전송_요청(NEW_EMAIL);
         인증코드_인증_요청(NEW_EMAIL, "123456");
 
         사용자_회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
