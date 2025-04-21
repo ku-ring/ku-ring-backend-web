@@ -8,36 +8,24 @@ public class RandomGenerator {
     private static Random random;
 
     public static String generateRandomNumber(int length) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(generateRandomSingleNumber(10));
+        }
+        return sb.toString();
+    }
+
+    public static int generateRandomSingleNumber(int bound) {
         try {
-            StringBuilder sb = new StringBuilder();
             setSecureRandomInstance();
-            for (int i = 0; i < length; i++) {
-                sb.append(generateRandomSingleNumber(10));
-            }
-            return sb.toString();
+            return random.nextInt(bound);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
     }
-
-    public static int generatePositiveNumber(int bound) {
-        try {
-            setSecureRandomInstance();
-            if (bound == 1) {
-                return 1;
-            }
-            return generateRandomSingleNumber(bound - 1) + 1;
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 
     private static void setSecureRandomInstance() throws NoSuchAlgorithmException {
         random = SecureRandom.getInstanceStrong();
     }
 
-    private static int generateRandomSingleNumber(int bound) {
-        return random.nextInt(bound);
-    }
 }

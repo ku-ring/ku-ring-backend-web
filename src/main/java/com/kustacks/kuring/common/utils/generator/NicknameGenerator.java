@@ -13,7 +13,7 @@ public class NicknameGenerator {
     }
 
     private static String pickRandomNicknamePrefix() {
-        int index = RandomGenerator.generatePositiveNumber(NICKNAME_PREFIXES.length);
+        int index = RandomGenerator.generateRandomSingleNumber(NICKNAME_PREFIXES.length);
         return NICKNAME_PREFIXES[index];
     }
 }
