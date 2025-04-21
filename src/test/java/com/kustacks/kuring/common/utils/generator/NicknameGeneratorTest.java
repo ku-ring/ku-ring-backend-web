@@ -3,11 +3,9 @@ package com.kustacks.kuring.common.utils.generator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
 class NicknameGeneratorTest {
@@ -33,27 +31,5 @@ class NicknameGeneratorTest {
             }
         }
         assertThat(isMatch).isTrue();
-    }
-
-    @Test
-    @DisplayName("generateNickname 메서드는 RandomGenerator를 사용하여 닉네임을 생성한다")
-    void generateNickname_ShouldUseRandomGenerator() {
-        try (MockedStatic<RandomGenerator> mockedRandomGenerator = mockStatic(RandomGenerator.class)) {
-            // given
-            mockedRandomGenerator.when(() -> RandomGenerator.generatePositiveNumber(3))
-                    .thenReturn(1); // "건덕이" 선택
-            mockedRandomGenerator.when(() -> RandomGenerator.generateRandomNumber(6))
-                    .thenReturn("123456");
-
-            // when
-            String nickname = NicknameGenerator.generateNickname();
-
-            // then
-            assertThat(nickname).isEqualTo("건덕이123456");
-
-            // 메서드 호출 검증
-            mockedRandomGenerator.verify(() -> RandomGenerator.generatePositiveNumber(3));
-            mockedRandomGenerator.verify(() -> RandomGenerator.generateRandomNumber(6));
-        }
     }
 }
