@@ -6,7 +6,6 @@ import java.util.Random;
 
 public class RandomGenerator {
     private static Random random;
-    private static final String[] NICKNAME_PREFIXES = {"쿠링이", "건덕이", "건구스"};
 
     public static String generateRandomNumber(int length) {
         try {
@@ -21,23 +20,21 @@ public class RandomGenerator {
         }
     }
 
-    public static String generateRandomNickname(int length) {
+    public static int generatePositiveNumber(int bound) {
         try {
             setSecureRandomInstance();
-            return pickRandomNicknamePrefix() + generateRandomNumber(length);
+            if (bound == 1) {
+                return 1;
+            }
+            return generateRandomSingleNumber(bound - 1) + 1;
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
     }
 
+
     private static void setSecureRandomInstance() throws NoSuchAlgorithmException {
         random = SecureRandom.getInstanceStrong();
-    }
-
-
-    private static String pickRandomNicknamePrefix() {
-        int i = generateRandomSingleNumber(NICKNAME_PREFIXES.length);
-        return NICKNAME_PREFIXES[i];
     }
 
     private static int generateRandomSingleNumber(int bound) {
