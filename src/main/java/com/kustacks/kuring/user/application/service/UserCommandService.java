@@ -6,7 +6,7 @@ import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.properties.ServerProperties;
-import com.kustacks.kuring.common.utils.generator.RandomGenerator;
+import com.kustacks.kuring.common.utils.generator.NicknameGenerator;
 import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.notice.domain.CategoryName;
@@ -227,7 +227,7 @@ class UserCommandService implements UserCommandUseCase {
     private String createNickname() {
         String nickname = "";
         do {
-            nickname = RandomGenerator.generateRandomNickname(6);
+            nickname = NicknameGenerator.generateNickname();
         } while (userQueryPort.existByNickname(nickname));
         return nickname;
     }
