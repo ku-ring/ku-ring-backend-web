@@ -1,5 +1,7 @@
 package com.kustacks.kuring.email.application.port.in;
 
 public interface EmailCommandUseCase {
-    void sendVerificationEmail(String email);
+    void sendSignupVerificationEmail(String email);
+
+    void sendPasswordResetVerificationEmail(String email);
 }
