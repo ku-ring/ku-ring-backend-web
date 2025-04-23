@@ -80,6 +80,11 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     }
 
     @Override
+    public List<String> findUsingNicknamesIn(List<String> candidateNicknames) {
+        return rootUserRepository.findExistNicknamesIn(candidateNicknames);
+    }
+
+    @Override
     public List<User> findByLoggedInUserId(Long id) {
         return userRepository.findByLoginUserId(id);
     }
