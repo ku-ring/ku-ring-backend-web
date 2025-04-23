@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.testcontainers.chromadb.ChromaDBContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
@@ -28,6 +29,7 @@ public class IntegrationTestSupport {
 
     static {
         chroma = new ChromaDBContainer(DockerImageName.parse("chromadb/chroma:latest"))
+                .waitingFor(Wait.forHttp("/api/v2/heartbeat"))
                 .withExposedPorts(8000);
         chroma.start();
     }
