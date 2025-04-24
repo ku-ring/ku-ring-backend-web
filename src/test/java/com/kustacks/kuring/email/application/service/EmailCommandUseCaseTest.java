@@ -45,7 +45,7 @@ class EmailCommandUseCaseTest {
         Mockito.when(rootUserQueryPort.existRootUserByEmail(Mockito.anyString())).thenReturn(false);
 
         //when
-        emailCommandService.sendVerificationEmail(email);
+        emailCommandService.sendSignupVerificationEmail(email);
 
         //then
         Mockito.verify(templateEnginePort, Mockito.times(1))

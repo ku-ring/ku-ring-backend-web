@@ -6,7 +6,7 @@ import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.properties.ServerProperties;
-import com.kustacks.kuring.common.utils.generator.RandomGenerator;
+import com.kustacks.kuring.common.utils.generator.NicknameGenerator;
 import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
 import com.kustacks.kuring.notice.domain.CategoryName;
@@ -36,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,7 +97,7 @@ class UserCommandService implements UserCommandUseCase {
     @Override
     public void decreaseQuestionCount(UserDecreaseQuestionCountCommand command) {
         User findUser = findUserByToken(command.userId());
-        
+
         try {
             checkUserLoginIdAndDecreaseCount(findUser, command.email());
         } catch (IllegalStateException e) {
@@ -225,11 +226,28 @@ class UserCommandService implements UserCommandUseCase {
     }
 
     private String createNickname() {
-        String nickname = "";
-        do {
-            nickname = RandomGenerator.generateRandomNickname(6);
-        } while (userQueryPort.existByNickname(nickname));
-        return nickname;
+        final int BATCH_SIZE = 5;
+
+        while (true) {
+            List<String> candidateNicknames = new ArrayList<>();
+            for (int i = 0; i < BATCH_SIZE; i++) {
+                candidateNicknames.add(NicknameGenerator.generateNickname());
+            }
+
+            List<String> usingNicknames = rootUserQueryPort.findUsingNicknamesIn(candidateNicknames);
+            List<String> availableNicknames = selectAvailableNicknames(candidateNicknames, usingNicknames);
+
+            // 사용 가능한 닉네임이 있으면 랜덤으로 하나 선택
+            if (!availableNicknames.isEmpty()) {
+                return availableNicknames.get(0);
+            }
+        }
+    }
+
+    private List<String> selectAvailableNicknames(List<String> candidateNicknames, List<String> usingNicknames) {
+        return candidateNicknames.stream()
+                .filter(candidateNickname -> !usingNicknames.contains(candidateNickname))
+                .toList();
     }
 
     private UserSubscribeCompareResult<CategoryName> editSubscribeCategoryList(

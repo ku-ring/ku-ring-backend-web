@@ -3,6 +3,7 @@ package com.kustacks.kuring.email.application.service;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.common.utils.generator.VerificationCodeGenerator;
 import com.kustacks.kuring.email.application.port.in.EmailCommandUseCase;
 import com.kustacks.kuring.email.application.port.out.EmailClientPort;
 import com.kustacks.kuring.email.application.port.out.TemplateEnginePort;
@@ -17,11 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 @Slf4j
 @UseCase
@@ -38,12 +36,11 @@ public class EmailCommandService implements EmailCommandUseCase {
     private static final String VERIFICATION_CODE_SUBJECT = "[쿠링] 이메일 인증 코드 발송";
 
     @Override
-    public void sendVerificationEmail(String email) {
+    public void sendSignupVerificationEmail(String email) {
         checkDuplicateEmail(email);
-        if (!email.endsWith(TO_EMIL_SUFFIX)) {
-            throw new EmailBusinessException(ErrorCode.EMAIL_INVALID_SUFFIX);
-        }
-        String code = createVerificationCode();
+        checkKonkukEmail(email);
+
+        String code = VerificationCodeGenerator.generateVerificationCode();
 
         String htmlTextWithCode = templateEnginePort.process(TEMPLATE_FILE, createVariables(code));
         MimeMessage mimeMessage = createMimeMessage(FROM_EMAIL, email, VERIFICATION_CODE_SUBJECT, htmlTextWithCode);
@@ -51,6 +48,24 @@ public class EmailCommandService implements EmailCommandUseCase {
         verificationCodeCommandPort.saveVerificationCode(new VerificationCode(email, code));
 
         emailClientPort.sendEmailAsync(mimeMessage);
+    }
+
+    @Override
+    public void sendPasswordResetVerificationEmail(String email) {
+        String code = VerificationCodeGenerator.generateVerificationCode();
+
+        String htmlTextWithCode = templateEnginePort.process(TEMPLATE_FILE, createVariables(code));
+        MimeMessage mimeMessage = createMimeMessage(FROM_EMAIL, email, VERIFICATION_CODE_SUBJECT, htmlTextWithCode);
+
+        verificationCodeCommandPort.saveVerificationCode(new VerificationCode(email, code));
+
+        emailClientPort.sendEmailAsync(mimeMessage);
+    }
+
+    private void checkKonkukEmail(String email) {
+        if (!email.endsWith(TO_EMIL_SUFFIX)) {
+            throw new EmailBusinessException(ErrorCode.EMAIL_INVALID_SUFFIX);
+        }
     }
 
     private void checkDuplicateEmail(String email) {
@@ -61,7 +76,7 @@ public class EmailCommandService implements EmailCommandUseCase {
 
     private MimeMessage createMimeMessage(String from, String to, String subject, String text) {
         try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(new MimeMessage(Session.getInstance(System.getProperties())),"utf-8");
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(new MimeMessage(Session.getInstance(System.getProperties())), "utf-8");
             mimeMessageHelper.setFrom(from);
             mimeMessageHelper.setTo(to);
             mimeMessageHelper.setSubject(subject);
@@ -76,19 +91,5 @@ public class EmailCommandService implements EmailCommandUseCase {
         Map<String, Object> variables = new HashMap<>();
         variables.put("code", code);
         return variables;
-    }
-
-    private String createVerificationCode() {
-        final int codeLength = 6;
-        try {
-            Random random = SecureRandom.getInstanceStrong();
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < codeLength; i++) {
-                builder.append(random.nextInt(10));
-            }
-            return builder.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new EmailBusinessException(ErrorCode.EMAIL_NO_SUCH_ALGORITHM);
-        }
     }
 }

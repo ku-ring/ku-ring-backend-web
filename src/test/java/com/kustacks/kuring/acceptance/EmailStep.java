@@ -13,16 +13,26 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class EmailStep {
 
-    public static ExtractableResponse<Response> 인증_이메일_전송_요청(String email) {
+    public static ExtractableResponse<Response> 회원가입_인증코드_이메일_전송_요청(String email) {
         return RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(new EmailVerificationRequest(email))
-                .when().post("/api/v2/verification-code")
+                .when().post("/api/v2/verification-code/signup")
                 .then().log().all()
                 .extract();
     }
 
+    public static ExtractableResponse<Response> 비밀번호초기화_인증코드_이메일_전송_요청(String email, String accessToken) {
+        return RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + accessToken)
+                .body(new EmailVerificationRequest(email))
+                .when().post("/api/v2/verification-code/password-reset")
+                .then().log().all()
+                .extract();
+    }
 
     public static void 인증_이메일_전송_응답_확인(ExtractableResponse<Response> response) {
         assertAll(

@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-interface RootUserRepository extends JpaRepository<RootUser, Long> {
+interface RootUserRepository extends JpaRepository<RootUser, Long>, RootUserQueryRepository {
     Optional<RootUser> findByEmail(String email);
     Optional<RootUser> findByNickname(String nickname);
 
