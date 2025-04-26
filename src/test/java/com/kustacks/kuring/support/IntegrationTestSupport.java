@@ -28,7 +28,7 @@ public class IntegrationTestSupport {
     protected static final ChromaDBContainer chroma;
 
     static {
-        chroma = new ChromaDBContainer(DockerImageName.parse("chromadb/chroma:latest"))
+        chroma = new ChromaDBContainer(DockerImageName.parse("chromadb/chroma:1.0.8.dev12"))
                 .waitingFor(Wait.forHttp("/api/v2/heartbeat"))
                 .withExposedPorts(8000);
         chroma.start();
