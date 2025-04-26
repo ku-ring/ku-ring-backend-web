@@ -54,7 +54,7 @@ class DepartmentNoticeUpdaterTest {
 
         // then
         Long count = noticeQueryPort.count();
-        assertThat(count).isEqualTo(3720);
+        assertThat(count).isEqualTo(3780);
     }
 
     private static List<ComplexNoticeFormatDto> createDepartmentNoticesFixture() {
