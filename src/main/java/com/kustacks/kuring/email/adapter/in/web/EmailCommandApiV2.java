@@ -44,12 +44,19 @@ public class EmailCommandApiV2 {
     @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
     @PostMapping("/password-reset")
     public ResponseEntity<BaseResponse<Void>> sendPasswordResetVerificationCode(
-            @RequestHeader(AuthorizationExtractor.AUTHORIZATION) String bearerToken
+            @RequestBody(required = false) EmailVerificationRequest request,
+            @RequestHeader(value = AuthorizationExtractor.AUTHORIZATION, required = false) String bearerToken
     ) {
-        String jwtToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
-        String email = validateJwtAndGetEmail(jwtToken);
+        if (bearerToken == null && request != null) {
+            emailCommandUseCase.sendPasswordResetVerificationEmail(request.email());
+        } else if (bearerToken != null) {
+            String jwtToken = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
+            String email = validateJwtAndGetEmail(jwtToken);
+            emailCommandUseCase.sendPasswordResetVerificationEmail(email);
+        } else {
+            throw new InvalidStateException(ErrorCode.API_BAD_REQUEST);
+        }
 
-        emailCommandUseCase.sendPasswordResetVerificationEmail(email);
         return ResponseEntity.ok().body(new BaseResponse<>(ResponseCodeAndMessages.EMAIL_SEND_SUCCESS, null));
     }
 
