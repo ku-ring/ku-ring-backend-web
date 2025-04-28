@@ -52,6 +52,9 @@ public class EmailCommandService implements EmailCommandUseCase {
 
     @Override
     public void sendPasswordResetVerificationEmail(String email) {
+        checkKonkukEmail(email);
+        checkSignedUpEmail(email);
+
         String code = VerificationCodeGenerator.generateVerificationCode();
 
         String htmlTextWithCode = templateEnginePort.process(TEMPLATE_FILE, createVariables(code));
@@ -65,6 +68,12 @@ public class EmailCommandService implements EmailCommandUseCase {
     private void checkKonkukEmail(String email) {
         if (!email.endsWith(TO_EMIL_SUFFIX)) {
             throw new EmailBusinessException(ErrorCode.EMAIL_INVALID_SUFFIX);
+        }
+    }
+
+    private void checkSignedUpEmail(String email) {
+        if (!rootUserQueryPort.existRootUserByEmail(email)) {
+            throw new InvalidStateException(ErrorCode.ROOT_USER_NOT_FOUND);
         }
     }
 
