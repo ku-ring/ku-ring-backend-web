@@ -34,6 +34,35 @@ public class EmailStep {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> 비밀번호초기화_인증코드_이메일_전송_요청_토큰만(String accessToken) {
+        return RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + accessToken)
+                .when().post("/api/v2/verification-code/password-reset")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 비밀번호초기화_인증코드_이메일_전송_요청_바디만(String email) {
+        return RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(new EmailVerificationRequest(email))
+                .when().post("/api/v2/verification-code/password-reset")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 비밀번호초기화_인증코드_이메일_전송_요청_둘다없음() {
+        return RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().post("/api/v2/verification-code/password-reset")
+                .then().log().all()
+                .extract();
+    }
+
     public static void 인증_이메일_전송_응답_확인(ExtractableResponse<Response> response) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
