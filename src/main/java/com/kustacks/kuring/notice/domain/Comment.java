@@ -45,10 +45,10 @@ public class Comment extends BaseTimeEntity {
         this.content = new Content(content);
     }
 
-    public Comment(Long parentId, Long rootUserId, Long noticeId, String content) {
-        this.parentId = parentId;
+    public Comment(Long rootUserId, Long noticeId, Long parentId, String content) {
         this.rootUserId = rootUserId;
         this.noticeId = noticeId;
+        this.parentId = parentId;
         this.content = new Content(content);
     }
 
