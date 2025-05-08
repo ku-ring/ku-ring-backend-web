@@ -11,12 +11,13 @@ public record CommentDetailResponse(
         String nickName,
         Long noticeId,
         String content,
+        boolean isMine,
         LocalDateTime destroyedAt,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
 
-    public static CommentDetailResponse of(CommentReadModel model) {
+    public static CommentDetailResponse of(CommentReadModel model, Long currentUserId) {
         return new CommentDetailResponse(
                 model.getId(),
                 model.getParentId(),
@@ -24,6 +25,7 @@ public record CommentDetailResponse(
                 model.getNickName(),
                 model.getNoticeId(),
                 model.getContent(),
+                currentUserId != null && currentUserId.equals(model.getUserId()),
                 model.getDestroyedAt(),
                 model.getCreatedAt(),
                 model.getUpdatedAt()

@@ -16,6 +16,8 @@ import com.kustacks.kuring.notice.application.port.out.dto.CommentReadModel;
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
+import com.kustacks.kuring.user.domain.RootUser;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,12 +36,18 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
     private static final String SPACE_REGEX = "[\\s+]";
     private final NoticeQueryPort noticeQueryPort;
     private final CommentQueryPort commentQueryPort;
+    private final RootUserQueryPort rootUserQueryPort;
     private final List<CategoryName> supportedCategoryNameList;
     private final List<DepartmentName> supportedDepartmentNameList;
 
-    public NoticeQueryService(NoticeQueryPort noticeQueryPort, CommentQueryPort commentQueryPort) {
+    public NoticeQueryService(
+            NoticeQueryPort noticeQueryPort,
+            CommentQueryPort commentQueryPort,
+            RootUserQueryPort rootUserQueryPort
+    ) {
         this.noticeQueryPort = noticeQueryPort;
         this.commentQueryPort = commentQueryPort;
+        this.rootUserQueryPort = rootUserQueryPort;
         this.supportedCategoryNameList = Arrays.asList(CategoryName.values());
         this.supportedDepartmentNameList = Arrays.asList(DepartmentName.values());
     }
@@ -73,7 +81,10 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
     }
 
     @Override
-    public CursorBasedList<CommentAndSubCommentsResult> findComments(Long noticeId, Cursor cursor, int size) {
+    public CursorBasedList<CommentAndSubCommentsResult> findComments(Long noticeId, Cursor cursor, int size, String email) {
+        Optional<RootUser> optionalRootUser = rootUserQueryPort.findRootUserByEmail(email);
+        Long currentUserId = optionalRootUser.map(RootUser::getId).orElse(null);
+
         return CursorBasedList.of(
                 Math.min(size, MAX_COMMENT_QUERY_SIZE),
                 it -> it.comment().id().toString(),
@@ -90,7 +101,7 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
                     // 부모 댓글을 Key로 하고, 그에 해당하는 자식 댓글 리스트를 값으로 가지는 Map 생성
                     Map<Long, List<CommentDetailResponse>> parentToSubCommentsMap = subComments.stream()
                             .filter(subComment -> subComment.getParentId() != null)
-                            .map(CommentDetailResponse::of)
+                            .map(subComment -> CommentDetailResponse.of(subComment, currentUserId))
                             .collect(Collectors.groupingBy(CommentDetailResponse::parentId));
 
                     // 부모 댓글과 자식 댓글을 조합하여 CommentAndSubCommentsResult 리스트 생성
@@ -104,7 +115,7 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
                                     return null;
                                 }
 
-                                return new CommentAndSubCommentsResult(CommentDetailResponse.of(parent), subCommentList);
+                                return new CommentAndSubCommentsResult(CommentDetailResponse.of(parent, currentUserId), subCommentList);
                             })
                             .filter(Objects::nonNull)
                             .toList();
