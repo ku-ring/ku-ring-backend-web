@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 
 import static com.kustacks.kuring.acceptance.CategoryStep.지원하는_카테고리_조회_요청;
 import static com.kustacks.kuring.acceptance.NoticeStep.*;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_로그인_되어_있음;
+import static com.kustacks.kuring.acceptance.UserStep.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -273,6 +273,38 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     }
 
     /**
+     * Given : 가입된 사용자가 작성한 댓글과 대댓글이 있다.
+     * When : 로그인 유저가 조회시
+     * Then : 성공적으로 조회하고, 그중 나의 댓글임을 확인할 수 있다.
+     */
+    @DisplayName("[v2] 로그인 한 사용자는 대글 조회시 자신의 댓글을 다른 댓글과 구별할 수 있다")
+    @Test
+    void get_cursor_based_look_up_by_login_user() {
+        // given
+        var 공지_조회_응답 = 공지사항_조회_요청("stu");
+        var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
+
+        사용자_회원가입_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD);
+        String bearerToken = 로그인_요청(USER_FCM_TOKEN, NEW_EMAIL, USER_PASSWORD).jsonPath().getString("data.accessToken");
+
+        공지에_댓글_추가(id, bearerToken, "this is login user comment");
+        공지에_댓글_추가(id, 1L, bearerToken, "this is child comment1");
+        공지에_댓글_추가(id, 1L, bearerToken, "this is child comment2");
+
+        // when
+        var response = 로그인_사용자_댓글_조회(bearerToken, id);
+
+        // then
+        assertAll(
+                () -> assertThat(response.jsonPath().getList("data.comments").size()).isEqualTo(1),
+                () -> assertThat(response.jsonPath().getList("data.comments[0].subComments").size()).isEqualTo(2),
+                () -> assertThat(response.jsonPath().getBoolean("data.comments[0].comment.isMine")).isTrue(),
+                () -> assertThat(response.jsonPath().getBoolean("data.comments[0].subComments[0].isMine")).isTrue(),
+                () -> assertThat(response.jsonPath().getBoolean("data.comments[0].subComments[1].isMine")).isTrue()
+        );
+    }
+
+    /**
      * Given : 사전에 저장된 공지와 댓글이 있다
      * When : 특정 대글을 수정하면
      * Then : 성공적으로 대댓글이 수정된다
@@ -353,7 +385,6 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
 
         // then
         assertThat(댓글_삭제_응답.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
-
     }
 
 }
