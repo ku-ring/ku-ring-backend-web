@@ -1,8 +1,13 @@
 package com.kustacks.kuring.notice.adapter.in.web;
 
+import com.kustacks.kuring.auth.authentication.AuthorizationExtractor;
+import com.kustacks.kuring.auth.authentication.AuthorizationType;
+import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.data.Cursor;
 import com.kustacks.kuring.common.dto.BaseResponse;
+import com.kustacks.kuring.common.exception.InvalidStateException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.notice.adapter.in.web.dto.*;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentReadingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeQueryUseCase;
@@ -19,10 +24,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 
+import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extractAuthorizationValue;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
 
 @Tag(name = "Notice-Query", description = "공지 정보 조회")
@@ -33,6 +41,7 @@ public class NoticeQueryApiV2 {
 
     private final NoticeCommentReadingUseCase noticeCommentReadingUseCase;
     private final NoticeQueryUseCase noticeQueryUseCase;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Operation(summary = "공지 조회", description = "일반 공지 조회와 학과별 공지 조회를 지원합니다")
     @GetMapping
@@ -90,12 +99,17 @@ public class NoticeQueryApiV2 {
             @Parameter(description = "공지 ID") @PathVariable(name = "id") Long id,
             @Parameter(description = "커서") @RequestParam(name = "cursor", required = false) String cursor,
             @Parameter(description = "단일 요청의 사이즈, 1 ~ 30까지 허용")
-            @RequestParam(name = "size", required = true, defaultValue = "10") @Min(1) @Max(30) Integer size
+            @RequestParam(name = "size", required = true, defaultValue = "10") @Min(1) @Max(30) Integer size,
+            @RequestHeader(value = AuthorizationExtractor.AUTHORIZATION, required = false) String bearerToken
     ) {
         var comments = noticeCommentReadingUseCase.findComments(
                 id,
                 Cursor.from(cursor),
-                size
+                size,
+                Optional.ofNullable(bearerToken)
+                        .map(token -> extractAuthorizationValue(token, AuthorizationType.BEARER))
+                        .map(this::validateJwtAndGetEmail)
+                        .orElse(null)
         );
 
         var response = new CommentListResponse(
@@ -105,5 +119,12 @@ public class NoticeQueryApiV2 {
         );
 
         return ResponseEntity.ok().body(new BaseResponse<>(NOTICE_SEARCH_SUCCESS, response));
+    }
+
+    private String validateJwtAndGetEmail(String jwtToken) {
+        if (!jwtTokenProvider.validateToken(jwtToken)) {
+            throw new InvalidStateException(ErrorCode.JWT_INVALID_TOKEN);
+        }
+        return jwtTokenProvider.getPrincipal(jwtToken);
     }
 }
