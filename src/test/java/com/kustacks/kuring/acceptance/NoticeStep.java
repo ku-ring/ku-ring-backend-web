@@ -146,6 +146,16 @@ public class NoticeStep {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> 로그인_사용자_댓글_조회(String bearerToken, long id) {
+        return RestAssured
+                .given().log().all()
+                .header("Authorization", "Bearer " + bearerToken)
+                .queryParam("size", 5)
+                .when().get("/api/v2/notices/{id}/comments", id)
+                .then().log().all()
+                .extract();
+    }
+
     public static void 댓글_대댓글_확인(ExtractableResponse<Response> response1, ExtractableResponse<Response> response2) {
         assertAll(
                 () -> assertThat(response1.jsonPath().getList("data.comments").size()).isEqualTo(2),

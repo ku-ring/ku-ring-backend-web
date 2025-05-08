@@ -72,7 +72,7 @@ class UserQueryService implements UserQueryUseCase {
     @Override
     public UserInfoResult lookupUserInfo(String email) {
         RootUser rootUser = findRootUserByEmailOrThrow(email);
-        return new UserInfoResult(rootUser.getNickname(), rootUser.getEmail());
+        return new UserInfoResult(rootUser.getId(), rootUser.getNickname(), rootUser.getEmail());
     }
 
     @Override
