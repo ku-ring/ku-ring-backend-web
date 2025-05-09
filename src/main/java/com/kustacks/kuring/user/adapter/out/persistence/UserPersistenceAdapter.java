@@ -24,7 +24,7 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     private final UserRepository userRepository;
     private final RootUserRepository rootUserRepository;
 
-      @Override
+    @Override
     public List<FeedbackDto> findAllFeedbackByPageRequest(Pageable pageable) {
         return userRepository.findAllFeedbackByPageRequest(pageable);
     }
@@ -36,16 +36,28 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
 
     @Override
     public Optional<User> findByToken(String token) {
+        if (token == null || token.isBlank()) {
+            return Optional.empty();
+        }
+
         return userRepository.findByFcmToken(token);
     }
 
     @Override
     public Optional<RootUser> findRootUserByEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return Optional.empty();
+        }
+
         return rootUserRepository.findByEmail(email);
     }
 
     @Override
     public Optional<RootUser> findDeletedRootUserByEmail(String email) {
+        if (email == null || email.isBlank()) {
+            return Optional.empty();
+        }
+
         return rootUserRepository.findDeletedRootUserByEmail(email);
     }
 
