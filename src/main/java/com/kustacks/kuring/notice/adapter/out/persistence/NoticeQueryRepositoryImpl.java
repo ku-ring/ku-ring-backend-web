@@ -83,6 +83,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
         return queryFactory
                 .select(new QNoticeSearchDto(
+                        notice.id,
                         notice.articleId,
                         postedDate,
                         notice.subject,
@@ -91,6 +92,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .from(notice)
                 .where(isContainSubject(keywords).or(isContainCategory(keywords)))
                 .orderBy(notice.noticeDateTime.postedDate.desc())
+                .limit(50)
                 .fetch();
     }
 
