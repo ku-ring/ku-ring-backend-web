@@ -132,11 +132,13 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
         return noticeQueryPort.findAllByKeywords(keywords)
                 .stream()
                 .map(dto -> new NoticeContentSearchResult(
+                        dto.getId(),
                         dto.getArticleId(),
                         dto.getPostedDate().split(SPACE)[DATE_INDEX],
                         dto.getSubject(),
                         dto.getCategoryName(),
-                        dto.getBaseUrl()
+                        dto.getBaseUrl(),
+                        dto.getCommentCount()
                 ))
                 .toList();
     }

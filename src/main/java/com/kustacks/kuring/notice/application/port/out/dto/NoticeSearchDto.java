@@ -9,6 +9,8 @@ import org.springframework.util.Assert;
 @Getter
 public class NoticeSearchDto {
 
+    private Long id;
+
     private String articleId;
 
     private String postedDate;
@@ -20,19 +22,25 @@ public class NoticeSearchDto {
 
     private String baseUrl;
 
+    private Long commentCount;
+
     @Builder
     @QueryProjection
-    public NoticeSearchDto(String articleId, String postedDate, String subject, String categoryName, String baseUrl) {
+    public NoticeSearchDto(Long id, String articleId, String postedDate, String subject, String categoryName, String baseUrl, Long commentCount) {
+        Assert.notNull(articleId, "Id must not be null");
         Assert.notNull(articleId, "articleId must not be null");
         Assert.notNull(postedDate, "postedDate must not be null");
         Assert.notNull(subject, "subject must not be null");
         Assert.notNull(categoryName, "categoryName must not be null");
         Assert.notNull(baseUrl, "baseUrl must not be null");
+        Assert.notNull(commentCount, "commentCount must not be null");
 
+        this.id = id;
         this.articleId = articleId;
         this.postedDate = postedDate;
         this.subject = subject;
         this.categoryName = categoryName;
         this.baseUrl = baseUrl;
+        this.commentCount = commentCount;
     }
 }

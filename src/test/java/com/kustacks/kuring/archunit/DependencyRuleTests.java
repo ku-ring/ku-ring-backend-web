@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
-@DisplayName("헥사고갈 아키텍처 검증")
+@DisplayName("헥사고날 아키텍처 검증")
 class DependencyRuleTests {
 
 	@DisplayName("User 아키텍처 검증")
