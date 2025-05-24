@@ -81,18 +81,25 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 ConstantImpl.create(DATE_TIME_TEMPLATE)
         );
 
+        JPQLQuery<Long> commentCount = select(comment.count())
+                .from(comment)
+                .where(comment.noticeId.eq(notice.id));
+
         return queryFactory
-                .select(new QNoticeSearchDto(
-                        notice.id,
-                        notice.articleId,
-                        postedDate,
-                        notice.subject,
-                        notice.categoryName.stringValue().toLowerCase(),
-                        notice.url.value))
-                .from(notice)
+                .select(
+                        new QNoticeSearchDto(
+                                notice.id,
+                                notice.articleId,
+                                postedDate,
+                                notice.subject,
+                                notice.categoryName.stringValue().toLowerCase(),
+                                notice.url.value,
+                                commentCount
+                        )
+                ).from(notice)
                 .where(isContainSubject(keywords).or(isContainCategory(keywords)))
                 .orderBy(notice.noticeDateTime.postedDate.desc())
-                .limit(50)
+                .limit(100)
                 .fetch();
     }
 

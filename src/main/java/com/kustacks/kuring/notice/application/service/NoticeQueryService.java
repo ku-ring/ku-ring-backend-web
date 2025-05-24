@@ -137,7 +137,8 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
                         dto.getPostedDate().split(SPACE)[DATE_INDEX],
                         dto.getSubject(),
                         dto.getCategoryName(),
-                        dto.getBaseUrl()
+                        dto.getBaseUrl(),
+                        dto.getCommentCount()
                 ))
                 .toList();
     }

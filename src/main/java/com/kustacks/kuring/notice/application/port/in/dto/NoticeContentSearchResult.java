@@ -6,6 +6,7 @@ public record NoticeContentSearchResult(
         String postedDate,
         String subject,
         String category,
-        String baseUrl
+        String baseUrl,
+        Long commentCount
 ) {
 }
