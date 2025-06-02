@@ -2,8 +2,7 @@ package com.kustacks.kuring.report.adapter.in.web;
 
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.dto.BaseResponse;
-import com.kustacks.kuring.common.exception.BusinessException;
-import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.common.dto.ErrorResponse;
 import com.kustacks.kuring.report.adapter.in.web.dto.ReportRequest;
 import com.kustacks.kuring.report.application.port.in.ReportCommandUseCase;
 import com.kustacks.kuring.report.application.port.in.ReportCommandUseCase.ReportCommentCommand;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.REPORT_COMMENT_SUCCESS;
+import static com.kustacks.kuring.common.exception.code.ErrorCode.REPORT_INVALID_TARGET_TYPE;
 import static com.kustacks.kuring.report.domain.ReportTargetType.COMMENT;
 
 @Tag(name = "Report-Command", description = "신고 기능")
@@ -32,7 +32,7 @@ public class ReportCommandApiV2 {
 
     @Operation(summary = "신고하기", description = "특정 항목을 신고합니다.")
     @PostMapping
-    public ResponseEntity<BaseResponse<Void>> report(
+    public ResponseEntity report(
             @RequestHeader(FCM_TOKEN_HEADER_KEY) String userToken,
             @RequestBody ReportRequest request
     ) {
@@ -48,6 +48,7 @@ public class ReportCommandApiV2 {
             return ResponseEntity.status(REPORT_COMMENT_SUCCESS.getCode())
                     .body(new BaseResponse<>(REPORT_COMMENT_SUCCESS, null));
         }
-        throw new BusinessException(ErrorCode.REPORT_INVALID_TARGET_TYPE);
+        return ResponseEntity.status(REPORT_INVALID_TARGET_TYPE.getHttpStatus())
+                .body(new ErrorResponse(REPORT_INVALID_TARGET_TYPE));
     }
 }
