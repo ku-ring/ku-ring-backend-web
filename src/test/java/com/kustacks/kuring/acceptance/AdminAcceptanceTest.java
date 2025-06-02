@@ -18,7 +18,13 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static com.kustacks.kuring.acceptance.AdminStep.*;
+import static com.kustacks.kuring.acceptance.AdminStep.사용자_피드백_조회_요청;
+import static com.kustacks.kuring.acceptance.AdminStep.신고_목록_조회_요청;
+import static com.kustacks.kuring.acceptance.AdminStep.신고_목록_조회_확인;
+import static com.kustacks.kuring.acceptance.AdminStep.알림_예약;
+import static com.kustacks.kuring.acceptance.AdminStep.예약_알림_삭제;
+import static com.kustacks.kuring.acceptance.AdminStep.예약_알림_조회;
+import static com.kustacks.kuring.acceptance.AdminStep.피드백_조회_확인;
 import static com.kustacks.kuring.acceptance.AuthStep.로그인_되어_있음;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -57,6 +63,25 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
 
         // then
         피드백_조회_확인(사용자_피드백);
+    }
+
+    /**
+     * given : 사전에 등록된 어드민가 피드백들이 이다
+     * when : 어드민이 피드백 조회시
+     * then : 성공적으로 조회된다
+     */
+    @DisplayName("[v2] 신고 목록 조회")
+    @Test
+    void role_root_admin_search_reports() {
+        댓글_작성_및_신고();
+        // given
+        String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
+
+        // when
+        var 신고_목록 = 신고_목록_조회_요청(accessToken);
+
+        // then
+        신고_목록_조회_확인(신고_목록);
     }
 
     /**
@@ -309,5 +334,17 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("인증에 실패하였습니다"),
                 () -> assertThat(response.jsonPath().getString("data")).isNull()
         );
+    }
+
+    private void 댓글_작성_및_신고() {
+        String userAccessToken = UserStep.사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        NoticeStep.공지에_댓글_추가(1L, userAccessToken, "댓글 내용 1");
+        NoticeStep.공지에_댓글_추가(1L, userAccessToken, "댓글 내용 2");
+        NoticeStep.공지에_댓글_추가(1L, userAccessToken, "댓글 내용 3");
+
+        ReportStep.신고_요청(USER_FCM_TOKEN, 1L, "comment", "댓글 신고 내용 1");
+        ReportStep.신고_요청(USER_FCM_TOKEN, 2L, "comment", "댓글 신고 내용 2");
+        ReportStep.신고_요청(USER_FCM_TOKEN, 3L, "comment", "댓글 신고 내용 3");
     }
 }
