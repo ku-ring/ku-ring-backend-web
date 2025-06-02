@@ -21,12 +21,31 @@ public class AdminStep {
         );
     }
 
+    public static void 신고_목록_조회_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("신고 목록 조회에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getList("data")).hasSize(3)
+        );
+    }
+
     public static ExtractableResponse<Response> 사용자_피드백_조회_요청(String accessToken) {
         return RestAssured
                 .given().log().all()
                 .header("Authorization", "Bearer " + accessToken)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .when().get("/api/v2/admin/feedbacks?page=0&size=10")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 신고_목록_조회_요청(String accessToken) {
+        return RestAssured
+                .given().log().all()
+                .header("Authorization", "Bearer " + accessToken)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .when().get("/api/v2/admin/reports?page=0&size=10")
                 .then().log().all()
                 .extract();
     }
