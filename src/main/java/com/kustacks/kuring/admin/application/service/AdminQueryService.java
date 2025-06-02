@@ -4,7 +4,9 @@ import com.kustacks.kuring.admin.adapter.in.web.dto.AdminAlertResponse;
 import com.kustacks.kuring.admin.application.port.in.AdminQueryUseCase;
 import com.kustacks.kuring.admin.application.port.out.AdminAlertQueryPort;
 import com.kustacks.kuring.admin.application.port.out.AdminUserFeedbackPort;
+import com.kustacks.kuring.admin.application.port.out.AdminUserReportPort;
 import com.kustacks.kuring.common.annotation.UseCase;
+import com.kustacks.kuring.report.application.port.in.dto.AdminReportsResult;
 import com.kustacks.kuring.user.application.port.in.dto.AdminFeedbacksResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ public class AdminQueryService implements AdminQueryUseCase {
 
     private final AdminUserFeedbackPort adminUserFeedbackPort;
     private final AdminAlertQueryPort adminAlertQueryPort;
+    private final AdminUserReportPort adminUserReportPort;
 
     @Transactional(readOnly = true)
     @Override
@@ -47,6 +50,23 @@ public class AdminQueryService implements AdminQueryUseCase {
                         alert.getContent(),
                         alert.getStatus(),
                         alert.getAlertTime()
+                ))
+                .toList();
+    }
+
+    @Override
+    public List<AdminReportsResult> lookupReports(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
+        return adminUserReportPort.findAllReportByPageRequest(pageRequest)
+                .stream()
+                .map(report -> AdminReportsResult.of(
+                        report.getId(),
+                        report.getTargetId(),
+                        report.getUserId(),
+                        report.getTargetType(),
+                        report.getContent(),
+                        report.getCreatedAt(),
+                        report.getUpdatedAt()
                 ))
                 .toList();
     }
