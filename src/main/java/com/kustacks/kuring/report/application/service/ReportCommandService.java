@@ -7,8 +7,6 @@ import com.kustacks.kuring.notice.application.port.out.CommentQueryPort;
 import com.kustacks.kuring.notice.domain.Comment;
 import com.kustacks.kuring.report.application.port.in.ReportCommandUseCase;
 import com.kustacks.kuring.report.application.port.out.ReportCommandPort;
-import com.kustacks.kuring.report.application.port.out.ReportQueryPort;
-import com.kustacks.kuring.report.application.service.exception.ReportBusinessException;
 import com.kustacks.kuring.report.domain.Report;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
 import com.kustacks.kuring.user.domain.User;
@@ -21,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 class ReportCommandService implements ReportCommandUseCase {
 
     private final ReportCommandPort reportCommandPort;
-    private final ReportQueryPort reportQueryPort;
     private final UserQueryPort userQueryPort;
     private final CommentQueryPort commentQueryPort;
 
@@ -29,15 +26,7 @@ class ReportCommandService implements ReportCommandUseCase {
     public void process(ReportCommentCommand command) {
         User reporter = findUserByTokenOrThrow(command.userToken());
         findCommentByIdOrThrow(command.targetId());
-        reportQueryPort.findByReporterAndTargetIdAndType(reporter, command.targetId(), command.targetType())
-                .ifPresentOrElse(
-                        report -> {
-                            throw new ReportBusinessException(ErrorCode.REPORT_COMMENT_DUPLICATE);
-                        },
-                        () -> {
-                            reportCommandPort.save(new Report(command.targetId(), command.content(), reporter, command.targetType()));
-                        }
-                );
+        reportCommandPort.save(new Report(command.targetId(), command.content(), reporter, command.targetType()));
     }
 
     private Comment findCommentByIdOrThrow(Long commentId) {
