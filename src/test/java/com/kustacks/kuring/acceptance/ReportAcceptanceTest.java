@@ -12,7 +12,7 @@ import static com.kustacks.kuring.acceptance.ReportStep.신고_요청_응답_확
 import static com.kustacks.kuring.acceptance.UserStep.사용자_로그인_되어_있음;
 
 @DisplayName("인수 : 신고")
-public class ReportAcceptanceTest extends IntegrationTestSupport {
+class ReportAcceptanceTest extends IntegrationTestSupport {
 
     @BeforeEach
     void 댓글_작성_되어_있음() {
