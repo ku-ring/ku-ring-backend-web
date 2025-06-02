@@ -92,6 +92,8 @@ public enum ErrorCode {
     EMAIL_INVALID_TEMPLATE(HttpStatus.BAD_REQUEST, "잘못된 이메일 발송 양식입니다."),
     EMAIL_DUPLICATE(HttpStatus.BAD_REQUEST, "중복된 사용자 이메일입니다."),
 
+    REPORT_COMMENT_DUPLICATE(HttpStatus.BAD_REQUEST, "이미 신고된 댓글입니다."),
+    REPORT_INVALID_TARGET_TYPE(HttpStatus.NOT_FOUND, "잘못된 신고 타입입니다."),
     // AI 관련
     AI_SIMILAR_DOCUMENTS_NOT_FOUND(HttpStatus.NOT_FOUND, "죄송합니다, 해당 내용은 2024년도 6월 이후에 작성된 공지 내용에서 확인할 수 없는 내용입니다."),
 
