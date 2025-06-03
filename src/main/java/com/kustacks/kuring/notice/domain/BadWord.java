@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BadWord extends BaseTimeEntity {
@@ -15,7 +16,6 @@ public class BadWord extends BaseTimeEntity {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Getter
     @Column(name = "word", nullable = false, length = 128)
     private String word;
 
