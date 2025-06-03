@@ -21,6 +21,12 @@ spring:
         format_sql: true
     defer-datasource-initialization: true
     open-in-view: false
+  sql:
+    init:
+      mode: always
+      platform: mariadb
+      encoding: UTF-8
+      data-locations: classpath:data.sql
   thymeleaf:
     cache: true
     enabled: true

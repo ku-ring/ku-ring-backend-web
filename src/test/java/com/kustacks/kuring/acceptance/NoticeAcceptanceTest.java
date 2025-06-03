@@ -387,4 +387,24 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
         assertThat(댓글_삭제_응답.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
+    @DisplayName("[v2] 금칙어가 포함된 댓글을 작성할 수 없다.")
+    @Test
+    void comment_validation_test() {
+        // given
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        var 공지_조회_응답 = 공지사항_조회_요청("stu");
+        var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
+
+        // when
+        var response1 = 공지에_댓글_추가(id, accessToken, "욕설 병신이포함된 댓글입니다.");
+        var response2 = 공지에_댓글_추가(id, accessToken, "욕설 병신 이포함된 댓글입니다.");
+        var response3 = 공지에_댓글_추가(id, accessToken, "정상 댓글입니다.");
+
+        // then
+        assertAll(
+                () -> assertThat(response1.statusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value()),
+                () -> assertThat(response2.statusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value()),
+                () -> assertThat(response3.statusCode()).isEqualTo(HttpStatus.OK.value())
+        );
+    }
 }
