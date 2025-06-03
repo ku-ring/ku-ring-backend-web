@@ -78,6 +78,7 @@ public enum ErrorCode {
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글을 찾을 수 없습니다."),
+    COMMENT_BAD_WORD_CONTAINS(HttpStatus.UNPROCESSABLE_ENTITY, "금지어가 포함되어 있습니다."),
 
     ROOT_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "계정을 찾을 수 없습니다."),
     ROOT_USER_MISMATCH_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 틀렸습니다."),
