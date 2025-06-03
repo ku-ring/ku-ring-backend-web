@@ -1,13 +1,10 @@
 package com.kustacks.kuring.common.exception.handler;
 
 import com.kustacks.kuring.common.dto.ErrorResponse;
-import com.kustacks.kuring.common.exception.AdminException;
-import com.kustacks.kuring.common.exception.InternalLogicException;
-import com.kustacks.kuring.common.exception.InvalidStateException;
-import com.kustacks.kuring.common.exception.NoPermissionException;
-import com.kustacks.kuring.common.exception.NotFoundException;
+import com.kustacks.kuring.common.exception.*;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -15,8 +12,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import jakarta.validation.ConstraintViolationException;
 
 @Slf4j
 @RestControllerAdvice
@@ -88,5 +83,11 @@ public class CommonExceptionHandler {
     @ExceptionHandler
     public void InternalLogicExceptionHandler(InternalLogicException e) {
         log.warn("[InternalLogicException] {}", e.getErrorCode().getMessage(), e);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> BadWordExceptionHandler(BadWordContainsException e) {
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+                .body(new ErrorResponse(e.getErrorCode()));
     }
 }
