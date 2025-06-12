@@ -91,6 +91,9 @@ dependencies {
     // Firebase
     implementation 'com.google.firebase:firebase-admin:9.3.0'
 
+    // comment validation
+    implementation 'org.ahocorasick:ahocorasick:0.6.3'
+
     // RestDocs
     asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
