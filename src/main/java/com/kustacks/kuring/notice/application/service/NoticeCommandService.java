@@ -5,6 +5,7 @@ import com.kustacks.kuring.common.exception.BadWordContainsException;
 import com.kustacks.kuring.common.exception.NoPermissionException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.notice.application.port.in.BadWordLoadUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentDeletingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentEditingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentWritingUseCase;
@@ -36,7 +37,8 @@ import java.util.Objects;
 public class NoticeCommandService implements
         NoticeCommentWritingUseCase,
         NoticeCommentEditingUseCase,
-        NoticeCommentDeletingUseCase {
+        NoticeCommentDeletingUseCase,
+        BadWordLoadUseCase {
     private static final String COMMENT_REGEX = "[^가-힣a-zA-Z0-9]";
     private final NoticeQueryPort noticeQueryPort;
     private final CommentCommandPort commentCommandPort;
@@ -48,18 +50,7 @@ public class NoticeCommandService implements
 
     @PostConstruct
     public void badWordInit() {
-        List<BadWord> activeBadWords = badWordQueryPort.findAllByActive();
-        if (!activeBadWords.isEmpty()) {
-            Trie.TrieBuilder builder = Trie.builder().ignoreCase();
-
-            for (BadWord badWord : activeBadWords) {
-                builder.addKeyword(badWord.getWord());
-            }
-
-            badWordTrie = builder.build();
-        }
-
-        log.info("금칙어 로드 완료 - 총 {} 개", activeBadWords.size());
+        loadBadWords();
     }
 
     @Override
@@ -129,6 +120,22 @@ public class NoticeCommandService implements
         commentCommandPort.delete(findComment);
 
         log.info("delete notice-comment, user{}, notice{}, comment{}", rootUser.getId(), findNotice.getId(), findComment.getId());
+    }
+
+    @Override
+    public void loadBadWords() {
+        List<BadWord> activeBadWords = badWordQueryPort.findAllByActive();
+        if (!activeBadWords.isEmpty()) {
+            Trie.TrieBuilder builder = Trie.builder().ignoreCase();
+
+            for (BadWord badWord : activeBadWords) {
+                builder.addKeyword(badWord.getWord());
+            }
+
+            badWordTrie = builder.build();
+        }
+
+        log.info("금칙어 로드 완료 - 총 {} 개", activeBadWords.size());
     }
 
     private void validateText(String content) {
