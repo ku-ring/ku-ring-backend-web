@@ -18,6 +18,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+import static com.kustacks.kuring.acceptance.AdminStep.금칙어_로드_요청;
 import static com.kustacks.kuring.acceptance.AdminStep.사용자_피드백_조회_요청;
 import static com.kustacks.kuring.acceptance.AdminStep.신고_목록_조회_요청;
 import static com.kustacks.kuring.acceptance.AdminStep.신고_목록_조회_확인;
@@ -218,6 +219,19 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("예약 알림 조회에 성공하였습니다"),
                 () -> assertThat(response.jsonPath().getString("data[0].status")).isEqualTo("CANCELED")
         );
+    }
+
+    @DisplayName("[v2] Admin은 금칙어 수동 로드할 수 있다.")
+    @Test
+    void admin_can_load_bad_words() {
+        // given
+        String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
+
+        // when
+        var 금칙어_로드_응답 = 금칙어_로드_요청(accessToken);
+
+        // then
+        AdminStep.금칙어_로드_응답_확인(금칙어_로드_응답);
     }
 
     /**
