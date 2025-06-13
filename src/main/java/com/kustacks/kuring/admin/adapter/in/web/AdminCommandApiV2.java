@@ -15,7 +15,7 @@ import com.kustacks.kuring.auth.secured.Secured;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.common.dto.ResponseCodeAndMessages;
 import com.kustacks.kuring.common.utils.converter.StringToDateTimeConverter;
-import com.kustacks.kuring.notice.application.port.in.BadWordLoadUseCase;
+import com.kustacks.kuring.notice.application.port.in.BadWordInitProcessor;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -49,7 +49,7 @@ import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_TEST_
 public class AdminCommandApiV2 {
 
     private final AdminCommandUseCase adminCommandUseCase;
-    private final BadWordLoadUseCase badWordLoadUseCase;
+    private final BadWordInitProcessor badWordinitProcessor;
 
     @Operation(summary = "테스트 공지 전송", description = "테스트 공지를 전송합니다, 실제 운영시 사용하지 않습니다")
     @SecurityRequirement(name = "JWT")
@@ -118,8 +118,8 @@ public class AdminCommandApiV2 {
     @SecurityRequirement(name = "JWT")
     @Secured(AdminRole.ROLE_ROOT)
     @PostMapping("/badwords/reload")
-    public ResponseEntity<BaseResponse<String>> reloadBadwords() {
-        badWordLoadUseCase.loadBadWords();
+    public ResponseEntity<BaseResponse<String>> refreshBadWords() {
+        badWordinitProcessor.process();
 
         return ResponseEntity.ok().body(new BaseResponse<>(ResponseCodeAndMessages.ADMIN_LOAD_BAD_WORDS, null));
     }

@@ -5,7 +5,7 @@ import com.kustacks.kuring.common.exception.BadWordContainsException;
 import com.kustacks.kuring.common.exception.NoPermissionException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.notice.application.port.in.BadWordLoadUseCase;
+import com.kustacks.kuring.notice.application.port.in.BadWordInitProcessor;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentDeletingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentEditingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentWritingUseCase;
@@ -38,7 +38,7 @@ public class NoticeCommandService implements
         NoticeCommentWritingUseCase,
         NoticeCommentEditingUseCase,
         NoticeCommentDeletingUseCase,
-        BadWordLoadUseCase {
+        BadWordInitProcessor {
     private static final String COMMENT_REGEX = "[^가-힣a-zA-Z0-9]";
     private final NoticeQueryPort noticeQueryPort;
     private final CommentCommandPort commentCommandPort;
@@ -50,7 +50,7 @@ public class NoticeCommandService implements
 
     @PostConstruct
     public void badWordInit() {
-        loadBadWords();
+        process();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class NoticeCommandService implements
     }
 
     @Override
-    public void loadBadWords() {
+    public void process() {
         List<BadWord> activeBadWords = badWordQueryPort.findAllByActive();
         if (!activeBadWords.isEmpty()) {
             Trie.TrieBuilder builder = Trie.builder().ignoreCase();
