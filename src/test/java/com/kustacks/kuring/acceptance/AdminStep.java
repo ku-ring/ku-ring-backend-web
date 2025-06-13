@@ -95,7 +95,7 @@ public class AdminStep {
                 .given().log().all()
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when().post("/api/v2/admin/badwords/fetch")
+                .when().post("/api/v2/admin/badwords/reload")
                 .then().log().all()
                 .extract();
     }
