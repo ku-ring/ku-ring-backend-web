@@ -396,15 +396,17 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
         var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
 
         // when
-        var response1 = 공지에_댓글_추가(id, accessToken, "욕설 병신이포함된 댓글입니다.");
+        var response1 = 공지에_댓글_추가(id, accessToken, "욕설 ㅂㅅ 이포함된 댓글입니다.");
         var response2 = 공지에_댓글_추가(id, accessToken, "욕설 병신 이포함된 댓글입니다.");
-        var response3 = 공지에_댓글_추가(id, accessToken, "정상 댓글입니다.");
+        var response3 = 공지에_댓글_추가(id, accessToken, "욕설 병신이포함된 댓글입니다.");
+        var response4 = 공지에_댓글_추가(id, accessToken, "정상 댓글입니다.");
 
         // then
         assertAll(
                 () -> assertThat(response1.statusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value()),
                 () -> assertThat(response2.statusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value()),
-                () -> assertThat(response3.statusCode()).isEqualTo(HttpStatus.OK.value())
+                () -> assertThat(response3.statusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value()),
+                () -> assertThat(response4.statusCode()).isEqualTo(HttpStatus.OK.value())
         );
     }
 }
