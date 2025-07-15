@@ -133,7 +133,7 @@ public class AdminCommandApiV2 {
     public ResponseEntity<BaseResponse<String>> refreshWhitelistWords() {
         whitelistWordInitProcessor.initWhitelistWords();
 
-        return ResponseEntity.ok().body(new BaseResponse<>(ResponseCodeAndMessages.ADMIN_LOAD_BAD_WORDS, null));
+        return ResponseEntity.ok().body(new BaseResponse<>(ResponseCodeAndMessages.ADMIN_LOAD_WHITELIST_WORDS, null));
     }
 
     @Hidden
