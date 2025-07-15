@@ -1,7 +1,15 @@
 package com.kustacks.kuring.notice.domain;
 
+import com.kustacks.kuring.common.domain.Activatable;
 import com.kustacks.kuring.common.domain.BaseTimeEntity;
-import jakarta.persistence.*;
+import com.kustacks.kuring.common.domain.WordHolder;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BadWord extends BaseTimeEntity {
+public class BadWord extends BaseTimeEntity implements WordHolder, Activatable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,10 +44,12 @@ public class BadWord extends BaseTimeEntity {
         this.isActive = isActive != null ? isActive : true;
     }
 
+    @Override
     public void activate() {
         this.isActive = true;
     }
 
+    @Override
     public void deactivate() {
         this.isActive = false;
     }
