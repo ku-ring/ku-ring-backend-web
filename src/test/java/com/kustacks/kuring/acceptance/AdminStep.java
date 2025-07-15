@@ -39,6 +39,15 @@ public class AdminStep {
         );
     }
 
+    public static void 허용_단어_로드_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("허용 단어 로드에 성공했습니다."),
+                () -> assertThat(response.jsonPath().getList("data")).isNull()
+        );
+    }
+
     public static ExtractableResponse<Response> 사용자_피드백_조회_요청(String accessToken) {
         return RestAssured
                 .given().log().all()
@@ -96,6 +105,16 @@ public class AdminStep {
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when().post("/api/v2/admin/badwords/reload")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 허용_단어_로드_요청(String accessToken) {
+        return RestAssured
+                .given().log().all()
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().post("/api/v2/admin/whitelist-words/reload")
                 .then().log().all()
                 .extract();
     }

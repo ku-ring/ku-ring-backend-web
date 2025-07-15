@@ -26,6 +26,7 @@ import static com.kustacks.kuring.acceptance.AdminStep.알림_예약;
 import static com.kustacks.kuring.acceptance.AdminStep.예약_알림_삭제;
 import static com.kustacks.kuring.acceptance.AdminStep.예약_알림_조회;
 import static com.kustacks.kuring.acceptance.AdminStep.피드백_조회_확인;
+import static com.kustacks.kuring.acceptance.AdminStep.허용_단어_로드_요청;
 import static com.kustacks.kuring.acceptance.AuthStep.로그인_되어_있음;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -232,6 +233,19 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
 
         // then
         AdminStep.금칙어_로드_응답_확인(금칙어_로드_응답);
+    }
+
+    @DisplayName("[v2] Admin은 허용 단어 수동 로드할 수 있다.")
+    @Test
+    void admin_can_load_whitelist_words() {
+        // given
+        String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
+
+        // when
+        var 허용_단어_로드_응답 = 허용_단어_로드_요청(accessToken);
+
+        // then
+        AdminStep.허용_단어_로드_응답_확인(허용_단어_로드_응답);
     }
 
     /**
