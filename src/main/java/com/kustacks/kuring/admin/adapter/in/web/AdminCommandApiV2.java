@@ -16,6 +16,7 @@ import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.common.dto.ResponseCodeAndMessages;
 import com.kustacks.kuring.common.utils.converter.StringToDateTimeConverter;
 import com.kustacks.kuring.common.utils.validator.BadWordInitProcessor;
+import com.kustacks.kuring.common.utils.validator.WhitelistWordInitProcessor;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,10 +27,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_EMBEDDING_NOTICE_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_REAL_NOTICE_CREATE_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_TEST_NOTICE_CREATE_SUCCESS;
 
 @Tag(name = "Admin-Command", description = "관리자가 주체가 되는 정보 수정")
 @Validated
@@ -40,6 +51,7 @@ public class AdminCommandApiV2 {
 
     private final AdminCommandUseCase adminCommandUseCase;
     private final BadWordInitProcessor badWordinitProcessor;
+    private final WhitelistWordInitProcessor whitelistWordInitProcessor;
 
     @Operation(summary = "테스트 공지 전송", description = "테스트 공지를 전송합니다, 실제 운영시 사용하지 않습니다")
     @SecurityRequirement(name = "JWT")
@@ -109,9 +121,19 @@ public class AdminCommandApiV2 {
     @Secured(AdminRole.ROLE_ROOT)
     @PostMapping("/badwords/reload")
     public ResponseEntity<BaseResponse<String>> refreshBadWords() {
-        badWordinitProcessor.process();
+        badWordinitProcessor.initBadWords();
 
         return ResponseEntity.ok().body(new BaseResponse<>(ResponseCodeAndMessages.ADMIN_LOAD_BAD_WORDS, null));
+    }
+
+    @Operation(summary = "허용 단어 로드", description = "어드민은 DB에 있는 허용단어를 수동으로 로드할 수 있다.")
+    @SecurityRequirement(name = "JWT")
+    @Secured(AdminRole.ROLE_ROOT)
+    @PostMapping("/whitelist-words/reload")
+    public ResponseEntity<BaseResponse<String>> refreshWhitelistWords() {
+        whitelistWordInitProcessor.initWhitelistWords();
+
+        return ResponseEntity.ok().body(new BaseResponse<>(ResponseCodeAndMessages.ADMIN_LOAD_WHITELIST_WORDS, null));
     }
 
     @Hidden

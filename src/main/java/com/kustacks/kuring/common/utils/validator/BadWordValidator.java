@@ -1,9 +1,12 @@
 package com.kustacks.kuring.common.utils.validator;
 
+import com.kustacks.kuring.common.domain.WordHolder;
 import com.kustacks.kuring.common.exception.BadWordContainsException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.notice.application.port.out.BadWordsQueryPort;
+import com.kustacks.kuring.notice.application.port.out.WhiteWordQueryPort;
 import com.kustacks.kuring.notice.domain.BadWord;
+import com.kustacks.kuring.notice.domain.WhiteWord;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ahocorasick.trie.Emit;
@@ -17,33 +20,36 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BadWordValidator implements BadWordInitProcessor, BadWordChecker {
+public class BadWordValidator implements BadWordInitProcessor, WhitelistWordInitProcessor, BadWordChecker {
 
     private static final String COMMENT_REGEX = "[^가-힣a-zA-Z0-9]";
 
     private Trie badWordTrie;
+    private Trie whitelistWordTrie;
 
     private final BadWordsQueryPort badWordQueryPort;
+    private final WhiteWordQueryPort whiteWordQueryPort;
 
     @PostConstruct
-    public void badWordInit() {
-        this.process();
+    public void wordsInit() {
+        this.initBadWords();
+        this.initWhitelistWords();
     }
 
     @Override
-    public void process() {
+    public void initBadWords() {
         List<BadWord> activeBadWords = badWordQueryPort.findAllByActive();
-        if (!activeBadWords.isEmpty()) {
-            Trie.TrieBuilder builder = Trie.builder().ignoreCase();
-
-            for (BadWord badWord : activeBadWords) {
-                builder.addKeyword(badWord.getWord());
-            }
-
-            badWordTrie = builder.build();
-        }
+        badWordTrie = buildWordTrie(activeBadWords);
 
         log.info("금칙어 로드 완료 - 총 {} 개", activeBadWords.size());
+    }
+
+    @Override
+    public void initWhitelistWords() {
+        List<WhiteWord> activeWhiteWords = whiteWordQueryPort.findAllByActive();
+        whitelistWordTrie = buildWordTrie(activeWhiteWords);
+
+        log.info("허용 단어 로드 완료 - 총 {} 개", activeWhiteWords.size());
     }
 
     @Override
@@ -51,20 +57,66 @@ public class BadWordValidator implements BadWordInitProcessor, BadWordChecker {
         validateText(content);
     }
 
-    private void validateText(String content) {
-        if (badWordTrie != null) {
-            // 원본 텍스트에서 금칙어 검사
-            Collection<Emit> originalMatches = badWordTrie.parseText(content);
-            if (!originalMatches.isEmpty()) {
-                throw new BadWordContainsException(ErrorCode.COMMENT_BAD_WORD_CONTAINS);
-            }
+    private <T extends WordHolder> Trie buildWordTrie(List<T> words) {
+        Trie.TrieBuilder builder = Trie.builder().ignoreCase();
 
-            // 특수문자 제거 및 소문자 변환 후 금칙어 검사
-            String normalizedContent = content.replaceAll(COMMENT_REGEX, "").toLowerCase();
-            Collection<Emit> normalizedMatches = badWordTrie.parseText(normalizedContent);
-            if (!normalizedMatches.isEmpty()) {
-                throw new BadWordContainsException(ErrorCode.COMMENT_BAD_WORD_CONTAINS);
+        for (T word : words) {
+            builder.addKeyword(word.getWord());
+        }
+
+        return builder.build();
+    }
+
+    private void validateText(String content) {
+        validateOriginText(content);
+        validateNormalizedText(content);
+    }
+
+    private void validateOriginText(String content) {
+        validateBadWordExcludeWhitelist(content);
+    }
+
+    private void validateNormalizedText(String content) {
+        String normalizedContent = content.replaceAll(COMMENT_REGEX, "").toLowerCase();
+        validateBadWordExcludeWhitelist(normalizedContent);
+    }
+
+    private void validateBadWordExcludeWhitelist(String content) {
+        if (badWordTrie == null) {
+            log.warn("금칙어 Trie가 초기화되지 않았습니다.");
+            return;
+        }
+        
+        Collection<Emit> badWordMatches = badWordTrie.parseText(content);
+        if (badWordMatches.isEmpty()) {
+            return;
+        }
+
+        if (whitelistWordTrie == null) {
+            log.warn("화이트리스트 Trie가 초기화되지 않았습니다.");
+            return;
+        }
+
+        Collection<Emit> whitelistWordMatches = whitelistWordTrie.parseText(content);
+        if (isNotAllowText(whitelistWordMatches, badWordMatches)) {
+            throw new BadWordContainsException(ErrorCode.COMMENT_BAD_WORD_CONTAINS);
+        }
+    }
+
+    //금칙어 목록이 모두 화이트리스트 통과한 단어라면 정상 / 하나라도 통관 못하면 예외발생
+    private boolean isNotAllowText(Collection<Emit> whitelistWordMatches, Collection<Emit> badWordMatches) {
+        return !badWordMatches.stream()
+                .allMatch(emit -> isAnyWhitelistWord(emit, whitelistWordMatches));
+    }
+
+    //정상 단어 시작위치 <= 문제 단어 시작 위치 && 정상 단어 종료 위치 >= 문제 단어 종료 위치
+    // ex. 고르곤졸라피자 -> 금칙어 졸라(3,4) 검출 -> 허용 고르곤졸라(0,6) 검출 -> 위치 비교
+    private boolean isAnyWhitelistWord(Emit badWord, Collection<Emit> whitelist) {
+        for (Emit white : whitelist) {
+            if (white.getStart() <= badWord.getStart() && white.getEnd() >= badWord.getEnd()) {
+                return true;
             }
         }
+        return false;
     }
 }
