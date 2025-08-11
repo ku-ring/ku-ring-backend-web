@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class WhitelistWord extends BaseTimeEntity implements WordHolder, Activatable {
+public class WhiteWord extends BaseTimeEntity implements WordHolder, Activatable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class WhitelistWord extends BaseTimeEntity implements WordHolder, Activat
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    public WhitelistWord(String word, String description, Boolean isActive) {
+    public WhiteWord(String word, String description, Boolean isActive) {
         this.word = word;
         this.description = description;
         this.isActive = isActive != null ? isActive : true;

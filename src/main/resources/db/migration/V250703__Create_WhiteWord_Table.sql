@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `whitelist_word`
+CREATE TABLE IF NOT EXISTS `white_word`
 (
     id          BIGINT       NOT NULL AUTO_INCREMENT,
     word        VARCHAR(128) NOT NULL,

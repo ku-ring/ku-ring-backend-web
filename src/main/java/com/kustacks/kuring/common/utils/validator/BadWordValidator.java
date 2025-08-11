@@ -4,9 +4,9 @@ import com.kustacks.kuring.common.domain.WordHolder;
 import com.kustacks.kuring.common.exception.BadWordContainsException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.notice.application.port.out.BadWordsQueryPort;
-import com.kustacks.kuring.notice.application.port.out.WhiteListQueryPort;
+import com.kustacks.kuring.notice.application.port.out.WhiteWordQueryPort;
 import com.kustacks.kuring.notice.domain.BadWord;
-import com.kustacks.kuring.notice.domain.WhitelistWord;
+import com.kustacks.kuring.notice.domain.WhiteWord;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ahocorasick.trie.Emit;
@@ -28,7 +28,7 @@ public class BadWordValidator implements BadWordInitProcessor, WhitelistWordInit
     private Trie whitelistWordTrie;
 
     private final BadWordsQueryPort badWordQueryPort;
-    private final WhiteListQueryPort whiteListQueryPort;
+    private final WhiteWordQueryPort whiteWordQueryPort;
 
     @PostConstruct
     public void wordsInit() {
@@ -46,10 +46,10 @@ public class BadWordValidator implements BadWordInitProcessor, WhitelistWordInit
 
     @Override
     public void initWhitelistWords() {
-        List<WhitelistWord> activeWhitelistWords = whiteListQueryPort.findAllByActive();
-        whitelistWordTrie = buildWordTrie(activeWhitelistWords);
+        List<WhiteWord> activeWhiteWords = whiteWordQueryPort.findAllByActive();
+        whitelistWordTrie = buildWordTrie(activeWhiteWords);
 
-        log.info("허용 단어 로드 완료 - 총 {} 개", activeWhitelistWords.size());
+        log.info("허용 단어 로드 완료 - 총 {} 개", activeWhiteWords.size());
     }
 
     @Override
@@ -73,15 +73,15 @@ public class BadWordValidator implements BadWordInitProcessor, WhitelistWordInit
     }
 
     private void validateOriginText(String content) {
-        checkBadWordExcludeWhitelist(content);
+        validateBadWordExcludeWhitelist(content);
     }
 
     private void validateNormalizedText(String content) {
         String normalizedContent = content.replaceAll(COMMENT_REGEX, "").toLowerCase();
-        checkBadWordExcludeWhitelist(normalizedContent);
+        validateBadWordExcludeWhitelist(normalizedContent);
     }
 
-    private void checkBadWordExcludeWhitelist(String content) {
+    private void validateBadWordExcludeWhitelist(String content) {
         if (badWordTrie == null) {
             log.warn("금칙어 Trie가 초기화되지 않았습니다.");
             return;

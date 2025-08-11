@@ -215,10 +215,10 @@ public class DatabaseConfigurator implements InitializingBean {
     }
 
     private void initWhitelistWords() {
-        WhitelistWord whitelistWord1 = new WhitelistWord("시발점", "욕설", true);
-        WhitelistWord whitelistWord2 = new WhitelistWord("시발자동차", "욕설", true);
+        WhiteWord whiteWord1 = new WhiteWord("시발점", "욕설", true);
+        WhiteWord whiteWord2 = new WhiteWord("시발자동차", "욕설", true);
 
-        whitelistWordRepository.saveAll(List.of(whitelistWord1, whitelistWord2));
+        whitelistWordRepository.saveAll(List.of(whiteWord1, whiteWord2));
     }
 
 
