@@ -3,11 +3,7 @@ package com.kustacks.kuring.notice.domain;
 import com.kustacks.kuring.common.domain.Activatable;
 import com.kustacks.kuring.common.domain.BaseTimeEntity;
 import com.kustacks.kuring.common.domain.WordHolder;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +26,12 @@ public class WhitelistWord extends BaseTimeEntity implements WordHolder, Activat
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
+
+    public WhitelistWord(String word, String description, Boolean isActive) {
+        this.word = word;
+        this.description = description;
+        this.isActive = isActive != null ? isActive : true;
+    }
 
     public void activate() {
         this.isActive = true;

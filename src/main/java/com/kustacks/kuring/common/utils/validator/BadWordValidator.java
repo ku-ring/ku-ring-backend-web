@@ -82,8 +82,18 @@ public class BadWordValidator implements BadWordInitProcessor, WhitelistWordInit
     }
 
     private void checkBadWordExcludeWhitelist(String content) {
+        if (badWordTrie == null) {
+            log.warn("금칙어 Trie가 초기화되지 않았습니다.");
+            return;
+        }
+        
         Collection<Emit> badWordMatches = badWordTrie.parseText(content);
         if (badWordMatches.isEmpty()) {
+            return;
+        }
+
+        if (whitelistWordTrie == null) {
+            log.warn("화이트리스트 Trie가 초기화되지 않았습니다.");
             return;
         }
 

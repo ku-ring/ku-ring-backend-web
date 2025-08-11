@@ -5,11 +5,10 @@ import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.domain.AdminRole;
 import com.kustacks.kuring.email.adapter.out.persistence.VerificationCodeRepository;
 import com.kustacks.kuring.email.domain.VerificationCode;
+import com.kustacks.kuring.notice.adapter.out.persistence.BadWordRepository;
 import com.kustacks.kuring.notice.adapter.out.persistence.NoticePersistenceAdapter;
-import com.kustacks.kuring.notice.domain.CategoryName;
-import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.notice.domain.DepartmentNotice;
-import com.kustacks.kuring.notice.domain.Notice;
+import com.kustacks.kuring.notice.adapter.out.persistence.WhitelistWordRepository;
+import com.kustacks.kuring.notice.domain.*;
 import com.kustacks.kuring.staff.adapter.out.persistence.StaffRepository;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
@@ -52,12 +51,15 @@ public class DatabaseConfigurator implements InitializingBean {
     private final DataSource dataSource;
     private final JdbcTemplate jdbcTemplate;
     private final PasswordEncoder passwordEncoder;
+    private final BadWordRepository badWordRepository;
+    private final WhitelistWordRepository whitelistWordRepository;
 
     private List<String> tableNames;
 
     public DatabaseConfigurator(NoticePersistenceAdapter noticePersistenceAdapter, UserPersistenceAdapter userPersistenceAdapter,
                                 StaffRepository staffRepository, AdminRepository adminRepository, VerificationCodeRepository verificationCodeRepository,
-                                DataSource dataSource, JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
+                                DataSource dataSource, JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder,
+                                BadWordRepository badWordRepository, WhitelistWordRepository whitelistWordRepository) {
         this.noticePersistenceAdapter = noticePersistenceAdapter;
         this.userPersistenceAdapter = userPersistenceAdapter;
         this.staffRepository = staffRepository;
@@ -66,6 +68,8 @@ public class DatabaseConfigurator implements InitializingBean {
         this.dataSource = dataSource;
         this.jdbcTemplate = jdbcTemplate;
         this.passwordEncoder = passwordEncoder;
+        this.badWordRepository = badWordRepository;
+        this.whitelistWordRepository = whitelistWordRepository;
     }
 
     @Override
@@ -105,6 +109,8 @@ public class DatabaseConfigurator implements InitializingBean {
         initStaff();
         initNotice();
         initVerificationCode();
+        initBadWords();
+        initWhitelistWords();
 
         log.info("[DatabaseConfigurator] init complete");
     }
@@ -196,7 +202,23 @@ public class DatabaseConfigurator implements InitializingBean {
     }
 
     private void initVerificationCode() {
-        verificationCodeRepository.save(new VerificationCode(ROOT_USER_EMAIL, "123456"));
+        VerificationCode verificationCode = new VerificationCode(ROOT_USER_EMAIL, "123456");
+        verificationCodeRepository.save(verificationCode);
+    }
+
+    private void initBadWords() {
+        BadWord badWord1 = new BadWord("병신", BadWordCategory.PROFANITY, "욕설", true);
+        BadWord badWord2 = new BadWord("ㅂㅅ", BadWordCategory.PROFANITY, "욕설", true);
+        BadWord badWord3 = new BadWord("시발", BadWordCategory.PROFANITY, "욕설", true);
+
+        badWordRepository.saveAll(List.of(badWord1, badWord2, badWord3));
+    }
+
+    private void initWhitelistWords() {
+        WhitelistWord whitelistWord1 = new WhitelistWord("시발점", "욕설", true);
+        WhitelistWord whitelistWord2 = new WhitelistWord("시발자동차", "욕설", true);
+
+        whitelistWordRepository.saveAll(List.of(whitelistWord1, whitelistWord2));
     }
 
 
