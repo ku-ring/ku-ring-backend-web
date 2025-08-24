@@ -88,6 +88,9 @@ dependencies {
     // Jsoup
     implementation 'org.jsoup:jsoup:1.14.3'
 
+    // iCal4j
+    implementation 'org.mnode.ical4j:ical4j:4.1.1'
+
     // Firebase
     implementation 'com.google.firebase:firebase-admin:9.3.0'
 
