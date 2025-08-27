@@ -34,9 +34,4 @@ public class AcademicEventPersistenceAdapter implements AcademicEventQueryPort, 
                 .stream()
                 .collect(Collectors.toMap(AcademicEvent::getEventUid, Function.identity()));
     }
-
-    @Override
-    public void deleteAll(List<Long> oldEventIds) {
-        academicEventRepository.deleteAllById(oldEventIds);
-    }
 }

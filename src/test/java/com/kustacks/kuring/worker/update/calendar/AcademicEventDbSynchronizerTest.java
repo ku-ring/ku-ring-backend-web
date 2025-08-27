@@ -120,7 +120,6 @@ class AcademicEventDbSynchronizerTest {
                         events.stream().anyMatch(e -> "UID001".equals(e.getEventUid())) &&
                         events.stream().anyMatch(e -> "UID002".equals(e.getEventUid()))
         ));
-        verify(academicEventCommandPort, never()).deleteAll(anyList());
     }
 
     @Test
@@ -167,7 +166,6 @@ class AcademicEventDbSynchronizerTest {
                 events.size() == 1 && events.get(0).getEventUid().equals("UID001")
         ));
         verify(academicEventCommandPort, never()).updateAll(anyList());
-        verify(academicEventCommandPort, never()).deleteAll(anyList());
     }
 
     @Test
@@ -187,7 +185,6 @@ class AcademicEventDbSynchronizerTest {
         // then
         verify(academicEventCommandPort, never()).saveAll(anyList());
         verify(academicEventCommandPort, never()).updateAll(anyList());
-        verify(academicEventCommandPort, never()).deleteAll(anyList());
     }
 
     @Test
@@ -202,6 +199,5 @@ class AcademicEventDbSynchronizerTest {
         // then
         verify(academicEventCommandPort, times(1)).saveAll(anyList());
         verify(academicEventCommandPort, never()).updateAll(anyList());
-        verify(academicEventCommandPort, never()).deleteAll(anyList());
     }
 }

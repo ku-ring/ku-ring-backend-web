@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface AcademicEventRepository extends JpaRepository<AcademicEvent, Long>, AcademicEventQueryRepository {
+public interface AcademicEventRepository extends JpaRepository<AcademicEvent, Long> {
 
     @Query("SELECT a FROM academic_event a WHERE a.eventUid IN :eventUids")
     List<AcademicEvent> findAllByEventUids(@Param("eventUids") List<String> eventUids);
