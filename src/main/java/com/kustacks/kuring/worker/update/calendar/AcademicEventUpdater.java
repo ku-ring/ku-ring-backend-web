@@ -25,6 +25,7 @@ public class AcademicEventUpdater {
     @Value("${calendar.academic-ics-url}")
     private String calendarUrl;
 
+    //매월 1일 00시 00분 업데이트 진행
     @Scheduled(cron = "0 0 0 1 * *", zone = "Asia/Seoul")
     public void update() {
         log.info("******** 학사일정 업데이트 시작 ********");
