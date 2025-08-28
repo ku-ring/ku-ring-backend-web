@@ -40,7 +40,7 @@ class IcsParserTest {
         List<IcsEvent> events = result.events();
 
         // then
-        // 전체 학사일정은 199개
+        // 전체 학사일정은 198개
         assertThat(events.size()).isEqualTo(198);
 
         // OPAQUE 22개
