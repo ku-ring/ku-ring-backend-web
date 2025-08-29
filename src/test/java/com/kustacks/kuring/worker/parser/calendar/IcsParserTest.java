@@ -41,7 +41,7 @@ class IcsParserTest {
 
         // then
         // 전체 학사일정은 198개
-        assertThat(events.size()).isEqualTo(198);
+        assertThat(events).hasSize(198);
 
         // OPAQUE 22개
         long opaqueCount = events.stream()
