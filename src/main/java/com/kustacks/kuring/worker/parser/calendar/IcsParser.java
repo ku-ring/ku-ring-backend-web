@@ -76,7 +76,7 @@ public class IcsParser {
         return componentList.getAll().stream()
                 .filter(component -> Component.VEVENT.equals(component.getName()))
                 .map(this::buildIcsEvent)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private IcsEvent buildIcsEvent(Component vEvent) {
