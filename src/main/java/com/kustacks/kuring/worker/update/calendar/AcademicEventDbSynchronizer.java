@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -29,11 +28,10 @@ public class AcademicEventDbSynchronizer {
         log.info("학사일정 DB 동기화 시작. 총 {} 개 이벤트", result.events().size());
 
         // 1. 모든 이벤트 엔티티 변환
-        List<AcademicEvent> newEvents = AcademicEventConverter.convertAndValidateEvents(result.events());
+        List<AcademicEvent> newEvents = AcademicEventConverter.convertToAcademicEvents(result.events());
 
         // 2. 겹치는 이벤트 조회
         List<String> newEventUids = collectEventUids(newEvents);
-
         Map<String, AcademicEvent> existingEvents = academicEventQueryPort.findAllInEventUidsAsMap(newEventUids);
 
         // 3. 신규, 업데이트 목록 분류 및 도메인 로직 적용
@@ -58,7 +56,7 @@ public class AcademicEventDbSynchronizer {
     private List<String> collectEventUids(List<AcademicEvent> validEvents) {
         return validEvents.stream()
                 .map(AcademicEvent::getEventUid)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private EventUpdateResult classifyEvents(List<AcademicEvent> newEvents, Map<String, AcademicEvent> existingEvents) {
@@ -76,7 +74,7 @@ public class AcademicEventDbSynchronizer {
                 existingEvent.update(newEvent);
                 eventsToUpdate.add(existingEvent);
             }
-            // sequence가 같거나 낮은 경우는 무시
+            //sequence가 같거나 낮은 경우는 무시
         }
 
         return new EventUpdateResult(eventsToSave, eventsToUpdate);
