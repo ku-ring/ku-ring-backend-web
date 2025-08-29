@@ -12,12 +12,12 @@ import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.CalendarComponent;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-@org.springframework.stereotype.Component
+@Service
 public class IcsParser {
 
     public IcsCalendarResult parse(Calendar calendar) {
