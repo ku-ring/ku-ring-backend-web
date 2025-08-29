@@ -8,17 +8,16 @@ import com.kustacks.kuring.worker.parser.calendar.dto.IcsEvent;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.kustacks.kuring.calendar.domain.Transparent.OPAQUE;
 
 public class AcademicEventConverter {
 
-    public static List<AcademicEvent> convertAndValidateEvents(List<IcsEvent> icsEvents) {
+    public static List<AcademicEvent> convertToAcademicEvents(List<IcsEvent> icsEvents) {
         return icsEvents.stream()
                 .map(AcademicEventConverter::convertToAcademicEvent)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public static AcademicEvent convertToAcademicEvent(IcsEvent icsEvent) {
