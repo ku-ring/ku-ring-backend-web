@@ -4,6 +4,7 @@ import com.kustacks.kuring.calendar.domain.AcademicEvent;
 import com.kustacks.kuring.calendar.domain.Transparent;
 import com.kustacks.kuring.common.utils.converter.StringToDateTimeConverter;
 import com.kustacks.kuring.worker.parser.calendar.dto.IcsEvent;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Objects;
 
 import static com.kustacks.kuring.calendar.domain.Transparent.OPAQUE;
 
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class AcademicEventConverter {
 
     public static List<AcademicEvent> convertToAcademicEvents(List<IcsEvent> icsEvents) {
