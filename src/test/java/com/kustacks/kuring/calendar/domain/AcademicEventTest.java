@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("도메인 : AcademicEvent")
 class AcademicEventTest {
@@ -42,24 +43,23 @@ class AcademicEventTest {
         AcademicEvent event = createAcademicEvent();
 
         // then
-        assertThat(event.getEventUid()).isEqualTo(uid);
-        assertThat(event.getSummary()).isEqualTo(summary);
-        assertThat(event.getDescription()).isEqualTo(description);
-        assertThat(event.getCategory()).isEqualTo(category);
-        assertThat(event.getTransparent()).isEqualTo(transparent);
-        assertThat(event.getSequence()).isEqualTo(sequence);
-        assertThat(event.getNotifyEnabled()).isTrue();
-        assertThat(event.getStartTime()).isEqualTo(startTime);
-        assertThat(event.getEndTime()).isEqualTo(endTime);
+        assertAll(
+                () -> assertThat(event.getEventUid()).isEqualTo(uid),
+                () -> assertThat(event.getSummary()).isEqualTo(summary),
+                () -> assertThat(event.getDescription()).isEqualTo(description),
+                () -> assertThat(event.getCategory()).isEqualTo(category),
+                () -> assertThat(event.getTransparent()).isEqualTo(transparent),
+                () -> assertThat(event.getSequence()).isEqualTo(sequence),
+                () -> assertThat(event.getNotifyEnabled()).isTrue(),
+                () -> assertThat(event.getStartTime()).isEqualTo(startTime),
+                () -> assertThat(event.getEndTime()).isEqualTo(endTime)
+        );
     }
 
     @DisplayName("도메인 업데이트 메서드 테스트")
     @Test
     void domain_update_method_test() {
-        // given
-        LocalDateTime startTime = LocalDateTime.of(2025, 3, 1, 9, 0);
-        LocalDateTime endTime = LocalDateTime.of(2025, 3, 1, 18, 0);
-
+        //given
         AcademicEvent existingEvent = AcademicEvent.builder()
                 .eventUid("test-uid")
                 .summary("기존 제목")
@@ -102,9 +102,6 @@ class AcademicEventTest {
     @Test
     void should_update_test() {
         // given
-        LocalDateTime startTime = LocalDateTime.of(2025, 3, 1, 9, 0);
-        LocalDateTime endTime = LocalDateTime.of(2025, 3, 1, 18, 0);
-
         AcademicEvent existingEvent = AcademicEvent.builder()
                 .eventUid("test-uid")
                 .summary("기존 이벤트")
