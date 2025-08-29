@@ -71,7 +71,7 @@ class IcsScraperTest {
         assertAll(
                 () -> assertThat(firstEvent.getUid()).isNotNull(),
                 () -> assertThat(firstEvent.getSummary()).isNotNull(),
-                () -> assertThat(firstEvent.getStartDate()).isNotNull(),
+                () -> assertThat(firstEvent.getDateTimeStart()).isNotNull(),
                 () -> assertThat(firstEvent.getEndDate()).isNotNull()
         );
     }
