@@ -117,7 +117,7 @@ public class IcsParser {
     }
 
     private String getPropertyValue(PropertyList propertyList, String propertyName) {
-        Property property = propertyList.getProperty(propertyName)
+        Property property = propertyList.getFirst(propertyName)
                 .orElse(null);
         if (Objects.nonNull(property)) {
             return property.getValue();
