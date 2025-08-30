@@ -1,11 +1,10 @@
-package com.kustacks.kuring.config;
+package com.kustacks.kuring.config.featureflag;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kustacks.kuring.config.env.KuringPropertyRestClient;
 import com.kustacks.kuring.config.env.RemotePropertyResolver;
-import com.kustacks.kuring.config.featureflag.RemoteFeatureFlags;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -19,19 +18,10 @@ import software.amazon.awssdk.services.appconfigdata.AppConfigDataClient;
 @Slf4j
 @Configuration
 @EnableScheduling
+@RequiredArgsConstructor
 public class FeatureFlagConfig {
 
-    @Value("${aws.appconfig.application}")
-    private String applicationName;
-
-    @Value("${aws.appconfig.environment}")
-    private String environmentName;
-
-    @Value("${aws.appconfig.profile}")
-    private String profileName;
-
-    @Value("${aws.appconfig.region}")
-    private String region;
+    private final FeatureFlagProperties properties;
 
     /**
      * AWS AppConfig 데이터 클라이언트 Bean을 생성합니다. (AWS SDK V2)
@@ -41,7 +31,7 @@ public class FeatureFlagConfig {
     @Bean
     public AppConfigDataClient appConfigDataClient() {
         return AppConfigDataClient.builder()
-                .region(Region.of(region))
+                .region(Region.of(properties.region()))
                 .build();
     }
 
@@ -58,9 +48,9 @@ public class FeatureFlagConfig {
         return new KuringPropertyRestClient(
                 appConfigDataClient,
                 objectMapper,
-                applicationName,
-                environmentName,
-                profileName
+                properties.application(),
+                properties.environment(),
+                properties.profile()
         );
     }
 

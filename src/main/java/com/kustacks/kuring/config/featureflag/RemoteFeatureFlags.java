@@ -12,8 +12,8 @@ import java.util.Map;
 public class RemoteFeatureFlags implements FeatureFlags, InitializingBean {
 
     private final RemotePropertyResolver remotePropertyResolver;
-    private Map<String, Boolean> properties = new HashMap<>();
 
+    private Map<String, Boolean> properties = new HashMap<>();
 
     public RemoteFeatureFlags(RemotePropertyResolver remotePropertyResolver) {
         this.remotePropertyResolver = remotePropertyResolver;
@@ -35,7 +35,7 @@ public class RemoteFeatureFlags implements FeatureFlags, InitializingBean {
 
     @Override
     public boolean isDisabled(Feature feature) {
-        return !isEnabled(feature);
+        return !this.isEnabled(feature);
     }
 
     /**
