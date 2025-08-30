@@ -1,5 +1,6 @@
 package com.kustacks.kuring.common.env;
 
+import com.kustacks.kuring.common.featureflag.KuringFeatures;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
@@ -16,12 +17,10 @@ public class MockKuringPropertyRestClient implements RemotePropertyResolver {
     }
 
     private void initializeMockProperties() {
-        mockProperties.put("update_notice_embedding", Map.of("enabled", true));
-        mockProperties.put("update_department_notice", Map.of("enabled", true));
-        mockProperties.put("update_kuis_homepage_notice", Map.of("enabled", true));
-        mockProperties.put("update_kuis_notice", Map.of("enabled", true));
-        mockProperties.put("update_user", Map.of("enabled", true));
-        mockProperties.put("update_staff", Map.of("enabled", true));
+        for (KuringFeatures feature : KuringFeatures.values()) {
+            String featureKey = feature.getFeature().value();
+            mockProperties.put(featureKey, Map.of("enabled", true));
+        }
     }
 
     @Override
