@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.appconfigdata.AppConfigDataClient;
 
@@ -15,7 +14,6 @@ import software.amazon.awssdk.services.appconfigdata.AppConfigDataClient;
  */
 @Slf4j
 @Configuration
-@EnableScheduling
 @RequiredArgsConstructor
 public class FeatureFlagConfig {
 
