@@ -1,5 +1,7 @@
 package com.kustacks.kuring.worker.update.notice;
 
+import com.kustacks.kuring.config.featureflag.FeatureFlags;
+import com.kustacks.kuring.config.featureflag.KuringFeatures;
 import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
 import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
@@ -36,41 +38,46 @@ public class KuisHomepageNoticeUpdater {
     private final List<KuisHomepageNoticeInfo> kuisNoticeInfoList;
     private final NoticeCommandPort noticeCommandPort;
     private final NoticeQueryPort noticeQueryPort;
+    private final FeatureFlags featureFlags;
 
     /*
     학사, 장학, 취창업, 국제, 학생, 산학, 일반, 도서관 공지 갱신
     */
     @Scheduled(cron = "0 0/10 7-19 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 7:00 ~ 오후 7:55분 사이에 10분마다 업데이트 된다.
     public void update() {
-        log.info("========== KUIS Hompage 공지 업데이트 시작 ==========");
+        if (featureFlags.isEnabled(KuringFeatures.UPDATE_KUIS_HOMEPAGE_NOTICE.getFeature())) {
+            log.info("========== KUIS Hompage 공지 업데이트 시작 ==========");
 
-        updateLibrary(); // library는 Kuis공지가 아니라 별도로 먼저 수행한다
+            updateLibrary(); // library는 Kuis공지가 아니라 별도로 먼저 수행한다
 
-        for (KuisHomepageNoticeInfo kuisNoticeInfo : kuisNoticeInfoList) {
-            CompletableFuture
-                    .supplyAsync(
-                            () -> updateKuisNoticeAsync(kuisNoticeInfo, KuisHomepageNoticeInfo::scrapLatestPageHtml),
-                            noticeUpdaterThreadTaskExecutor
-                    ).thenApply(
-                            scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName())
-                    ).thenAccept(
-                            notificationService::sendNotifications
-                    );
+            for (KuisHomepageNoticeInfo kuisNoticeInfo : kuisNoticeInfoList) {
+                CompletableFuture
+                        .supplyAsync(
+                                () -> updateKuisNoticeAsync(kuisNoticeInfo, KuisHomepageNoticeInfo::scrapLatestPageHtml),
+                                noticeUpdaterThreadTaskExecutor
+                        ).thenApply(
+                                scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName())
+                        ).thenAccept(
+                                notificationService::sendNotifications
+                        );
+            }
         }
     }
 
     @Scheduled(cron = "0 0 22 * * *", zone = "Asia/Seoul") // 전체 업데이트는 매일 오후 10시에 한다.
     public void updateAll() {
-        log.info("******** KUIS Hompage 전체 공지 업데이트 시작 ********");
+        if (featureFlags.isEnabled(KuringFeatures.UPDATE_KUIS_HOMEPAGE_NOTICE.getFeature())) {
+            log.info("******** KUIS Hompage 전체 공지 업데이트 시작 ********");
 
-        for (KuisHomepageNoticeInfo kuisNoticeInfo : kuisNoticeInfoList) {
-            CompletableFuture
-                    .supplyAsync(
-                            () -> updateKuisNoticeAsync(kuisNoticeInfo, KuisHomepageNoticeInfo::scrapAllPageHtml),
-                            noticeUpdaterThreadTaskExecutor
-                    ).thenAccept(
-                            scrapResults -> compareAllAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName())
-                    );
+            for (KuisHomepageNoticeInfo kuisNoticeInfo : kuisNoticeInfoList) {
+                CompletableFuture
+                        .supplyAsync(
+                                () -> updateKuisNoticeAsync(kuisNoticeInfo, KuisHomepageNoticeInfo::scrapAllPageHtml),
+                                noticeUpdaterThreadTaskExecutor
+                        ).thenAccept(
+                                scrapResults -> compareAllAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName())
+                        );
+            }
         }
     }
 

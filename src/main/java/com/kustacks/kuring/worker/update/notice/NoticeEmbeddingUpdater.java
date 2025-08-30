@@ -1,6 +1,8 @@
 package com.kustacks.kuring.worker.update.notice;
 
 import com.kustacks.kuring.ai.application.port.out.CommandVectorStorePort;
+import com.kustacks.kuring.config.featureflag.FeatureFlags;
+import com.kustacks.kuring.config.featureflag.KuringFeatures;
 import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;
@@ -29,24 +31,28 @@ public class NoticeEmbeddingUpdater {
     private final CommandVectorStorePort commandVectorStorePort;
     private final NoticeCommandPort noticeCommandPort;
     private final NoticeQueryPort noticeQueryPort;
+    private final FeatureFlags featureFlags;
 
     /*
     학사, 장학, 취창업, 국제, 학생, 산학, 일반, 공지 embedding
     */
     @Scheduled(cron = "0 5/20 7-19 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 7:05 ~ 오후 7:55분 사이에 20분마다 업데이트 된다.
     public void update() {
-        log.info("========== KUIS Hompage Embedding 시작 ==========");
+        if (featureFlags.isEnabled(KuringFeatures.UPDATE_NOTICE_EMBEDDING.getFeature())) {
 
-        for (KuisHomepageNoticeInfo kuisNoticeInfo : kuisNoticeInfoList) {
-            CompletableFuture
-                    .supplyAsync(
-                            () -> lookupNotYetEmbeddingNotice(kuisNoticeInfo),
-                            noticeUpdaterThreadTaskExecutor
-                    ).thenApply(
-                            scrapResults -> scrapNoticeText(scrapResults, kuisNoticeInfo)
-                    ).thenAccept(
-                            scrapResults -> embeddingNotice(scrapResults, kuisNoticeInfo.getCategoryName())
-                    );
+            log.info("========== KUIS Hompage Embedding 시작 ==========");
+
+            for (KuisHomepageNoticeInfo kuisNoticeInfo : kuisNoticeInfoList) {
+                CompletableFuture
+                        .supplyAsync(
+                                () -> lookupNotYetEmbeddingNotice(kuisNoticeInfo),
+                                noticeUpdaterThreadTaskExecutor
+                        ).thenApply(
+                                scrapResults -> scrapNoticeText(scrapResults, kuisNoticeInfo)
+                        ).thenAccept(
+                                scrapResults -> embeddingNotice(scrapResults, kuisNoticeInfo.getCategoryName())
+                        );
+            }
         }
     }
 
