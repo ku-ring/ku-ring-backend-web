@@ -1,7 +1,5 @@
 package com.kustacks.kuring.config.featureflag;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.config.env.KuringPropertyRestClient;
 import com.kustacks.kuring.config.env.RemotePropertyResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,25 +31,6 @@ public class FeatureFlagConfig {
         return AppConfigDataClient.builder()
                 .region(Region.of(properties.region()))
                 .build();
-    }
-
-    /**
-     * AppConfigFeatureFlagService Bean을 생성합니다.
-     * 이 서비스는 기능 플래그의 상태를 조회하고 갱신하는 역할을 합니다.
-     *
-     * @param appConfigDataClient AppConfigDataClient (AWS SDK V2)
-     * @param objectMapper        ObjectMapper
-     * @return AppConfigFeatureFlagService 인스턴스
-     */
-    @Bean
-    public RemotePropertyResolver kuringPropertyRestClient(AppConfigDataClient appConfigDataClient, ObjectMapper objectMapper) {
-        return new KuringPropertyRestClient(
-                appConfigDataClient,
-                objectMapper,
-                properties.application(),
-                properties.environment(),
-                properties.profile()
-        );
     }
 
     @Bean
