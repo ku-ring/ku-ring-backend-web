@@ -1,8 +1,8 @@
 package com.kustacks.kuring.worker.update.staff;
 
 import com.kustacks.kuring.common.exception.InternalLogicException;
-import com.kustacks.kuring.config.featureflag.FeatureFlags;
-import com.kustacks.kuring.config.featureflag.KuringFeatures;
+import com.kustacks.kuring.common.featureflag.FeatureFlags;
+import com.kustacks.kuring.common.featureflag.KuringFeatures;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.update.staff.dto.StaffDto;

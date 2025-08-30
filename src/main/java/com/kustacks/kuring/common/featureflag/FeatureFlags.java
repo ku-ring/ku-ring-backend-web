@@ -1,4 +1,4 @@
-package com.kustacks.kuring.config.featureflag;
+package com.kustacks.kuring.common.featureflag;
 
 import java.util.function.Supplier;
 

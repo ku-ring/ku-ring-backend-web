@@ -1,7 +1,10 @@
-package com.kustacks.kuring.config.env;
+package com.kustacks.kuring.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kustacks.kuring.config.featureflag.FeatureFlagProperties;
+import com.kustacks.kuring.common.env.KuringPropertyRestClient;
+import com.kustacks.kuring.common.env.MockKuringPropertyRestClient;
+import com.kustacks.kuring.common.env.RemotePropertyResolver;
+import com.kustacks.kuring.common.featureflag.FeatureFlagProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

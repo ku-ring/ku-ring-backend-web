@@ -1,6 +1,8 @@
-package com.kustacks.kuring.config.featureflag;
+package com.kustacks.kuring.config;
 
-import com.kustacks.kuring.config.env.RemotePropertyResolver;
+import com.kustacks.kuring.common.env.RemotePropertyResolver;
+import com.kustacks.kuring.common.featureflag.FeatureFlagProperties;
+import com.kustacks.kuring.common.featureflag.RemoteFeatureFlags;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;

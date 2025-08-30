@@ -1,4 +1,4 @@
-package com.kustacks.kuring.config.env;
+package com.kustacks.kuring.common.env;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

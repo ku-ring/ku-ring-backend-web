@@ -1,6 +1,6 @@
-package com.kustacks.kuring.config.featureflag;
+package com.kustacks.kuring.common.featureflag;
 
-import com.kustacks.kuring.config.env.RemotePropertyResolver;
+import com.kustacks.kuring.common.env.RemotePropertyResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.annotation.Scheduled;

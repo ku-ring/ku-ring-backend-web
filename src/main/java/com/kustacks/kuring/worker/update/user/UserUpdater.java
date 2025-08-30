@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.update.user;
 
-import com.kustacks.kuring.config.featureflag.FeatureFlags;
-import com.kustacks.kuring.config.featureflag.KuringFeatures;
+import com.kustacks.kuring.common.featureflag.FeatureFlags;
+import com.kustacks.kuring.common.featureflag.KuringFeatures;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.message.application.service.exception.FirebaseInvalidTokenException;
 import com.kustacks.kuring.user.application.port.out.RootUserCommandPort;

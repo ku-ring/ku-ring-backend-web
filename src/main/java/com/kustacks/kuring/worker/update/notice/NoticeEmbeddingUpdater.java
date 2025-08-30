@@ -1,8 +1,8 @@
 package com.kustacks.kuring.worker.update.notice;
 
 import com.kustacks.kuring.ai.application.port.out.CommandVectorStorePort;
-import com.kustacks.kuring.config.featureflag.FeatureFlags;
-import com.kustacks.kuring.config.featureflag.KuringFeatures;
+import com.kustacks.kuring.common.featureflag.FeatureFlags;
+import com.kustacks.kuring.common.featureflag.KuringFeatures;
 import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;

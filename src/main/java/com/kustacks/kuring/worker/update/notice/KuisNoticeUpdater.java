@@ -1,7 +1,7 @@
 package com.kustacks.kuring.worker.update.notice;
 
-import com.kustacks.kuring.config.featureflag.FeatureFlags;
-import com.kustacks.kuring.config.featureflag.KuringFeatures;
+import com.kustacks.kuring.common.featureflag.FeatureFlags;
+import com.kustacks.kuring.common.featureflag.KuringFeatures;
 import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
 import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;

@@ -1,5 +1,6 @@
 package com.kustacks.kuring.config.env;
 
+import com.kustacks.kuring.common.env.MockKuringPropertyRestClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

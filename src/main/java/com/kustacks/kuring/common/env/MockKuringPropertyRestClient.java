@@ -1,4 +1,4 @@
-package com.kustacks.kuring.config.env;
+package com.kustacks.kuring.common.env;
 
 import lombok.extern.slf4j.Slf4j;
 
