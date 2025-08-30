@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.appconfigdata.AppConfigDataClient;
 import software.amazon.awssdk.services.appconfigdata.model.GetLatestConfigurationRequest;
 import software.amazon.awssdk.services.appconfigdata.model.GetLatestConfigurationResponse;
@@ -24,7 +25,7 @@ public class KuringPropertyRestClient implements RemotePropertyResolver {
     private final String environmentName;
     private final String profileName;
 
-    private String configurationToken;
+    private volatile String configurationToken;
 
     public KuringPropertyRestClient(
             AppConfigDataClient appConfigDataClient,
@@ -102,7 +103,7 @@ public class KuringPropertyRestClient implements RemotePropertyResolver {
         }
     }
 
-    private Map<String, Object> fetchLatestConfigAsMap() {
+    private synchronized Map<String, Object> fetchLatestConfigAsMap() {
         try {
             if (this.configurationToken == null) {
                 sessionInit();
@@ -127,6 +128,9 @@ public class KuringPropertyRestClient implements RemotePropertyResolver {
 
             return objectMapper.readValue(content, new TypeReference<Map<String, Object>>() {
             });
+        } catch (SdkException e) {
+            log.error("AppConfigData call failed.", e);
+            return null;
         } catch (IOException e) {
             log.error("Failed to fetch/parse configuration from AppConfig.", e);
             return null;

@@ -45,12 +45,15 @@ public class KuisNoticeUpdater {
             updateLibrary(); // library는 Kuis공지가 아니라 별도로 먼저 수행한다
 
             for (KuisNoticeInfo kuisNoticeInfo : kuisNoticeInfoList) {
-                if (kuisNoticeInfo.getCategoryName() == CategoryName.EMPLOYMENT) {
                     CompletableFuture
-                            .supplyAsync(() -> updateKuisNoticeAsync(kuisNoticeInfo, KuisNoticeInfo::scrapLatestPageHtml), noticeUpdaterThreadTaskExecutor)
-                            .thenApply(scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName()))
-                            .thenAccept(notificationService::sendNotifications);
-                }
+                            .supplyAsync(
+                                    () -> updateKuisNoticeAsync(kuisNoticeInfo, KuisNoticeInfo::scrapLatestPageHtml),
+                                    noticeUpdaterThreadTaskExecutor
+                            ).thenApply(
+                                    scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName())
+                            ).thenAccept(
+                                    notificationService::sendNotifications
+                            );
             }
         }
     }
