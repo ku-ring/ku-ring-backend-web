@@ -18,7 +18,7 @@ public class UserUpdater {
     private final RootUserCommandPort rootUserCommandPort;
     private final FeatureFlags featureFlags;
 
-    @Scheduled(cron = "0 59 23 L * ?") // 매달 마지막날 23:59에 실행
+    @Scheduled(cron = "0 59 23 L * ?", zone = "Asia/Seoul") // 매달 마지막날 23:59에 실행
     public void questionCountReset() {
         if (featureFlags.isEnabled(KuringFeatures.UPDATE_USER.getFeature())) {
             log.info("========== RAG 질문 토큰 초기화 시작 ==========");

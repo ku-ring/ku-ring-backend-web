@@ -53,7 +53,10 @@ public class KuisNoticeUpdater {
                                     scrapResults -> compareLatestAndUpdateDB(scrapResults, kuisNoticeInfo.getCategoryName())
                             ).thenAccept(
                                     notificationService::sendNotifications
-                            );
+                            ).exceptionally(ex -> {
+                                log.error("KUIS notice update failed for category={}", kuisNoticeInfo.getCategoryName(), ex);
+                                return null;
+                            });
             }
         }
     }

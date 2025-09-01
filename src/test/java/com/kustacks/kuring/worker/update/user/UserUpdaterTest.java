@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.update.user;
 
 import com.kustacks.kuring.common.featureflag.FeatureFlags;
+import com.kustacks.kuring.common.featureflag.KuringFeatures;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import com.kustacks.kuring.user.domain.RootUser;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 class UserUpdaterTest extends IntegrationTestSupport {
@@ -73,17 +75,21 @@ class UserUpdaterTest extends IntegrationTestSupport {
     }
 
     @Transactional
-    @DisplayName("피쳐플레그가 false면 사용자 질문 카운트 리셋이 실행되지 않는다")
+    @DisplayName("피쳐플레그가 false면 루트 사용자 질문 카운트 리셋이 실행되지 않는다")
     @Test
     void rootUserQuestionCountCantReset() {
         // given
-        when(featureFlags.isEnabled(any())).thenReturn(false);
+        when(featureFlags.isEnabled(eq(KuringFeatures.UPDATE_USER.getFeature()))).thenReturn(false);
+        RootUser savedRootUser = userPersistenceAdapter.findRootUserByEmail(USER_EMAIL).get();
+        savedRootUser.updateQuestionCount(0);
+        em.flush();
+        em.clear();
 
         // when
         userUpdater.questionCountReset(); // 질문 카운트 리셋 메서드 호출
 
         // then
         RootUser findRootUser = userPersistenceAdapter.findRootUserByEmail(USER_EMAIL).get();
-        assertThat(findRootUser.getQuestionCount()).isEqualTo(RootUser.ROOT_USER_MONTHLY_QUESTION_COUNT);
+        assertThat(findRootUser.getQuestionCount()).isEqualTo(0);
     }
 }
