@@ -28,6 +28,7 @@ public enum ResponseCodeAndMessages {
     ADMIN_REAL_NOTICE_CREATE_SUCCESS(HttpStatus.OK.value(), "실제 공지 생성에 성공하였습니다"),
     ADMIN_EMBEDDING_NOTICE_SUCCESS(HttpStatus.OK.value(), "데이터 임베딩에 생성에 성공하였습니다"),
     ADMIN_LOAD_BAD_WORDS(HttpStatus.OK.value(), "금칙어 로드에 성공했습니다."),
+    ADMIN_LOAD_WHITELIST_WORDS(HttpStatus.OK.value(), "허용 단어 로드에 성공했습니다."),
 
     /* User */
     USER_REGISTER_SUCCESS(HttpStatus.OK.value(), "회원가입에 성공하였습니다"),

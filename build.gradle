@@ -64,6 +64,11 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
+    // Feature Flag by AWS AppConfig
+    implementation(platform("software.amazon.awssdk:bom:2.27.21"))
+    implementation 'software.amazon.awssdk:appconfig'
+    implementation 'software.amazon.awssdk:appconfigdata'
+
     // password encoder
     implementation 'org.springframework.security:spring-security-crypto:5.7.5'
 
@@ -87,6 +92,9 @@ dependencies {
 
     // Jsoup
     implementation 'org.jsoup:jsoup:1.14.3'
+
+    // iCal4j
+    implementation 'org.mnode.ical4j:ical4j:4.1.1'
 
     // Firebase
     implementation 'com.google.firebase:firebase-admin:9.3.0'

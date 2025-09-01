@@ -7,8 +7,25 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import static com.kustacks.kuring.acceptance.CategoryStep.지원하는_카테고리_조회_요청;
-import static com.kustacks.kuring.acceptance.NoticeStep.*;
-import static com.kustacks.kuring.acceptance.UserStep.*;
+import static com.kustacks.kuring.acceptance.NoticeStep.공지_조회_요청;
+import static com.kustacks.kuring.acceptance.NoticeStep.공지_조회_응답_확인;
+import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_댓글수_응답_확인;
+import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청;
+import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청_실패_응답_확인;
+import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청_응답_확인;
+import static com.kustacks.kuring.acceptance.NoticeStep.공지에_댓글_수정;
+import static com.kustacks.kuring.acceptance.NoticeStep.공지에_댓글_추가;
+import static com.kustacks.kuring.acceptance.NoticeStep.공지의_댓글_조회;
+import static com.kustacks.kuring.acceptance.NoticeStep.댓글_대댓글_확인;
+import static com.kustacks.kuring.acceptance.NoticeStep.댓글_삭제;
+import static com.kustacks.kuring.acceptance.NoticeStep.댓글_확인;
+import static com.kustacks.kuring.acceptance.NoticeStep.로그인_사용자_댓글_조회;
+import static com.kustacks.kuring.acceptance.NoticeStep.페이지_번호와_함께_공지사항_조회_요청;
+import static com.kustacks.kuring.acceptance.NoticeStep.페이지_번호와_함께_학교_공지사항_조회_요청;
+import static com.kustacks.kuring.acceptance.NoticeStep.학교_공지_조회_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.로그인_요청;
+import static com.kustacks.kuring.acceptance.UserStep.사용자_로그인_되어_있음;
+import static com.kustacks.kuring.acceptance.UserStep.사용자_회원가입_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -407,6 +424,47 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
                 () -> assertThat(response2.statusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value()),
                 () -> assertThat(response3.statusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value()),
                 () -> assertThat(response4.statusCode()).isEqualTo(HttpStatus.OK.value())
+        );
+    }
+
+
+    @DisplayName("[v2] 화이트리스트에 포함된 단어가 있으면 금칙어가 포함되어도 댓글 작성이 가능하다.")
+    @Test
+    void comment_whitelist_allows_badword() {
+        // given
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        var 공지_조회_응답 = 공지사항_조회_요청("stu");
+        var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
+
+        var response1 = 공지에_댓글_추가(id, accessToken, "금칙어 우회 가능한 시발자동차 가 포함된 댓글입니다.");
+        var response2 = 공지에_댓글_추가(id, accessToken, "금칙어 우회 가능한 시발자동차가포함된 댓글입니다.");
+        var response3 = 공지에_댓글_추가(id, accessToken, "금칙어 우회 가능한 시발점 이 포함된 댓글입니다.");
+        var response4 = 공지에_댓글_추가(id, accessToken, "금칙어 우회 가능한 시발점이포함된 댓글입니다.");
+
+        // then
+        assertAll(
+                () -> assertThat(response1.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response2.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response3.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response4.statusCode()).isEqualTo(HttpStatus.OK.value())
+        );
+    }
+
+    @DisplayName("[v2] 포함된 여러 금칙어 중 하나라도 화이트리스트에 없는 경우 댓글 작성이 불가하다.")
+    @Test
+    void comment_multiple_whitelist_words_test() {
+        // given
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+        var 공지_조회_응답 = 공지사항_조회_요청("stu");
+        var id = 공지_조회_응답.jsonPath().getLong("data[0].id");
+
+        var response1 = 공지에_댓글_추가(id, accessToken, "금칙어 우회 불가능한 시발자동차 시발 가 포함된 댓글입니다.");
+        var response2 = 공지에_댓글_추가(id, accessToken, "금칙어 우회 불가능한 시발점시발가포함된 댓글입니다.");
+
+        // then
+        assertAll(
+                () -> assertThat(response1.statusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value()),
+                () -> assertThat(response2.statusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value())
         );
     }
 }

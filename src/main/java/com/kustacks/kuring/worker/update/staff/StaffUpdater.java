@@ -1,6 +1,8 @@
 package com.kustacks.kuring.worker.update.staff;
 
 import com.kustacks.kuring.common.exception.InternalLogicException;
+import com.kustacks.kuring.common.featureflag.FeatureFlags;
+import com.kustacks.kuring.common.featureflag.KuringFeatures;
 import com.kustacks.kuring.worker.scrap.StaffScraper;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.update.staff.dto.StaffDto;
@@ -24,15 +26,18 @@ public class StaffUpdater {
     private final StaffDataSynchronizer staffDataSynchronizer;
     private final StaffScraper staffScraper;
     private final List<DeptInfo> deptInfos;
+    private final FeatureFlags featureFlags;
     
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
     public void update() {
-        log.info("========== 교직원 업데이트 시작 ==========");
+        if (featureFlags.isEnabled(KuringFeatures.UPDATE_STAFF.getFeature())) {
+            log.info("========== 교직원 업데이트 시작 ==========");
 
-        StaffScrapResults scrapResults = scrapAllDepartmentsStaffs();
-        staffDataSynchronizer.compareAndUpdateDb(scrapResults);
+            StaffScrapResults scrapResults = scrapAllDepartmentsStaffs();
+            staffDataSynchronizer.compareAndUpdateDb(scrapResults);
 
-        log.info("========== 교직원 업데이트 종료 ==========");
+            log.info("========== 교직원 업데이트 종료 ==========");
+        }
     }
 
     private StaffScrapResults scrapAllDepartmentsStaffs() {

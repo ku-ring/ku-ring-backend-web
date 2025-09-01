@@ -1,6 +1,7 @@
 package com.kustacks.kuring.support;
 
 
+import com.kustacks.kuring.common.utils.validator.BadWordValidator;
 import com.kustacks.kuring.message.application.service.FirebaseSubscribeService;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,10 +44,14 @@ public class IntegrationTestSupport {
     @Autowired
     private DatabaseConfigurator databaseConfigurator;
 
+    @Autowired
+    private BadWordValidator badWordValidator;
+
     @BeforeEach
     public void setUp() {
         RestAssured.port = port;
         databaseConfigurator.clear();
         databaseConfigurator.loadData();
+        badWordValidator.wordsInit();
     }
 }
