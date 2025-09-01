@@ -67,6 +67,12 @@ security:
       admin-expire-length: 3600000
       user-expire-length: 604800000
 
+aws:
+  appconfig:
+    application: test-application
+    environment: test-environment
+    profile: test-profile
+    region: test-region
 
 notice:
   kuis:

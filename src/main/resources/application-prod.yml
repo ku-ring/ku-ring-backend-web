@@ -87,6 +87,12 @@ security:
       admin-expire-length: ${JWT_ADMIN_EXPIRE_LENGTH}
       user-expire-length: ${JWT_USER_EXPIRE_LENGTH}
 
+aws:
+  appconfig:
+    application: ${AWS_APPCONFIG_APPLICATION}
+    environment: ${AWS_APPCONFIG_ENVIRONMENT}
+    profile: ${AWS_APPCONFIG_PROFILE}
+    region: ${AWS_APPCONFIG_REGION}
 
 notice:
   kuis:
