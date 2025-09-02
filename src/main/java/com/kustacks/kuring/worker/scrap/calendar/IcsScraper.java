@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.calendar;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
@@ -11,6 +12,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+@Slf4j
 @Component
 public class IcsScraper {
 
@@ -23,7 +25,7 @@ public class IcsScraper {
         try {
             url = new URL(ACADEMIC_CALENDAR_OUTLOOK_ICS_URL);
         } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+            log.error("잘못된 URL 설정: {}", ACADEMIC_CALENDAR_OUTLOOK_ICS_URL, e);
         }
     }
 
