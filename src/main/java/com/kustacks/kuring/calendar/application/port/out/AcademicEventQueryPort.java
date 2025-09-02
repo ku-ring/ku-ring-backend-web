@@ -8,4 +8,6 @@ import java.util.Map;
 public interface AcademicEventQueryPort {
 
     Map<String, AcademicEvent> findAllInEventUidsAsMap(List<String> eventUids);
+
+    List<AcademicEvent> findAllByEventUids(List<String> eventUids);
 }

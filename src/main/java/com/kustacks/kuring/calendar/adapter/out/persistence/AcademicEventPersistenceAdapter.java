@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @PersistenceAdapter
@@ -30,8 +29,14 @@ public class AcademicEventPersistenceAdapter implements AcademicEventQueryPort, 
 
     @Override
     public Map<String, AcademicEvent> findAllInEventUidsAsMap(List<String> eventUids) {
-        return academicEventRepository.findAllByEventUids(eventUids)
+        return findAllByEventUids(eventUids)
                 .stream()
-                .collect(Collectors.toMap(AcademicEvent::getEventUid, Function.identity()));
+                .collect(Collectors.toMap(AcademicEvent::getEventUid,
+                        academicEventReadModel -> academicEventReadModel));
+    }
+
+    @Override
+    public List<AcademicEvent> findAllByEventUids(List<String> eventUids) {
+        return academicEventRepository.findAllByEventUids(eventUids);
     }
 }
