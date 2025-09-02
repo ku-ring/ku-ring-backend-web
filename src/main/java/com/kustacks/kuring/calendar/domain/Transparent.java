@@ -6,6 +6,7 @@ public enum Transparent {
     ;
 
     public static Transparent valueOfString(String transp) {
+        if (transp == null) return null;
         transp = transp.trim().toUpperCase();
 
         return switch (transp) {
