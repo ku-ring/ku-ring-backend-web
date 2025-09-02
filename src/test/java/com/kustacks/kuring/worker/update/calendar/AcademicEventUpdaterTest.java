@@ -18,7 +18,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -40,10 +39,7 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
     private final String ORIGINAL_CALENDAR_FILE = "src/test/resources/calendar/academic-calendar-origin.ics";
     private final String UPDATED_CALENDAR_FILE = "src/test/resources/calendar/academic-calendar-updated.ics";
 
-    private final List<String> originEventUids = List.of("040000008200E00074C5B7101A82E0080000000033C0B88EDFBAD9010000000000000000100000006ECC99F08500CA4096B671977C2912F7", // 하계방학
-            "040000008200E00074C5B7101A82E0080000000014125995CCA1DA01000000000000000010000000FA658BFA03493F4A9597C68E4BF868BF"); //폐강교과목 공지
-
-    private final List<String> updatedEventUids = List.of("040000008200E00074C5B7101A82E0080000000033C0B88EDFBAD9010000000000000000100000006ECC99F08500CA4096B671977C2912F7", // 하계방학
+    private final List<String> testEventUids = List.of("040000008200E00074C5B7101A82E0080000000033C0B88EDFBAD9010000000000000000100000006ECC99F08500CA4096B671977C2912F7", // 하계방학
             "040000008200E00074C5B7101A82E0080000000014125995CCA1DA01000000000000000010000000FA658BFA03493F4A9597C68E4BF868BF", //폐강교과목 공지(수정됨)
             "140000008200E00074C5B7101A82E00800000000C1545CD275FFDB01000000000000000010000000A6974AF4EE07FD42979F2F3DA1D208DC"); //김한주 생일(새로 추가됨)
 
@@ -70,18 +66,26 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
         assertDoesNotThrow(() -> academicEventUpdater.update());
 
         // then - DB에 저장된 데이터 검증
-        Map<String, AcademicEvent> savedEvents = academicEventQueryPort.findAllInEventUidsAsMap(originEventUids);
-        assertThat(savedEvents).hasSize(2);
+        List<AcademicEvent> allEvents = academicEventQueryPort.findAll();
+        assertThat(allEvents).hasSize(198);
+
+        AcademicEvent event1 = allEvents.stream()
+                .filter(event -> event.getEventUid().equals(testEventUids.get(0)))
+                .findFirst()
+                .get();
+
+        AcademicEvent event2 = allEvents.stream()
+                .filter(event -> event.getEventUid().equals(testEventUids.get(1)))
+                .findFirst()
+                .get();
 
         // 하계방학 이벤트 검증
-        AcademicEvent startEvent = savedEvents.get(updatedEventUids.get(0));
-        assertEventFields(startEvent, "하계방학", 0, Transparent.TRANSPARENT, false,
+        assertEventFields(event1, "하계방학", 0, Transparent.TRANSPARENT, false,
                 LocalDateTime.of(2024, 6, 22, 0, 0),
                 LocalDateTime.of(2024, 9, 2, 0, 0));
 
         // 폐강교과목 공지 이벤트 검증
-        AcademicEvent endEvent = savedEvents.get(updatedEventUids.get(1));
-        assertEventFields(endEvent, "폐강교과목 공지(1차)(9:00~)", 0, Transparent.TRANSPARENT, false,
+        assertEventFields(event2, "폐강교과목 공지(1차)(9:00~)", 0, Transparent.TRANSPARENT, false,
                 LocalDateTime.of(2024, 9, 2, 0, 0),
                 LocalDateTime.of(2024, 9, 3, 0, 0));
     }
@@ -98,26 +102,37 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
         mockingScrapCalendar(updatedCalendar);
         assertDoesNotThrow(() -> academicEventUpdater.update());
 
-        // then - 업데이트 후 데이터 검증
-        Map<String, AcademicEvent> updatedEvents = academicEventQueryPort.findAllInEventUidsAsMap(updatedEventUids);
-        assertThat(updatedEvents).hasSize(3); // 기존 2개 + 신규 1개
+        // then - DB에 저장된 데이터 검증
+        List<AcademicEvent> allEvents = academicEventQueryPort.findAll();
+        assertThat(allEvents).hasSize(199);
+
+        AcademicEvent event1 = allEvents.stream()
+                .filter(event -> event.getEventUid().equals(testEventUids.get(0)))
+                .findFirst()
+                .get();
+
+        AcademicEvent event2 = allEvents.stream()
+                .filter(event -> event.getEventUid().equals(testEventUids.get(1)))
+                .findFirst()
+                .get();
+
+        AcademicEvent event3 = allEvents.stream()
+                .filter(event -> event.getEventUid().equals(testEventUids.get(2)))
+                .findFirst()
+                .get();
 
         // 하계방학 이벤트 검증
-        AcademicEvent startEvent = updatedEvents.get(updatedEventUids.get(0));
-        assertEventFields(startEvent, "하계방학", 0, Transparent.TRANSPARENT, false,
+        assertEventFields(event1, "하계방학", 0, Transparent.TRANSPARENT, false,
                 LocalDateTime.of(2024, 6, 22, 0, 0),
                 LocalDateTime.of(2024, 9, 2, 0, 0));
 
         // 폐강교과목 공지 이벤트 검증
-        AcademicEvent endEvent = updatedEvents.get(updatedEventUids.get(1));
-        assertThat(endEvent).isNotNull();
-        assertEventFields(endEvent, "폐강교과목 공지(1차)(9:00~)", 1, Transparent.OPAQUE, true,
+        assertEventFields(event2, "폐강교과목 공지(1차)(9:00~)", 1, Transparent.OPAQUE, true,
                 LocalDateTime.of(2024, 9, 3, 0, 0),
                 LocalDateTime.of(2024, 9, 4, 0, 0));
 
         // 신규 공지 이벤트 검증
-        AcademicEvent newEvent = updatedEvents.get(updatedEventUids.get(2));
-        assertEventFields(newEvent, "김한주가넣은가짜학사일정", 0, Transparent.OPAQUE, true,
+        assertEventFields(event3, "김한주가넣은가짜학사일정", 0, Transparent.OPAQUE, true,
                 LocalDateTime.of(2028, 2, 29, 0, 0),
                 LocalDateTime.of(2028, 2, 29, 0, 0));
     }
