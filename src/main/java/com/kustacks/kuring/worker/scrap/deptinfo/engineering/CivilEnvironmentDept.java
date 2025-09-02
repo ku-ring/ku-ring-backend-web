@@ -25,8 +25,8 @@ public class CivilEnvironmentDept extends EngineeringCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(10022);
-        this.staffScrapInfo = new StaffScrapInfo(CIVIL_ENV.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(CIVIL_ENV.getHostPrefix(), 401);
+        this.staffScrapInfo = new StaffScrapInfo(CIVIL_ENV.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(CIVIL_ENV.getUrlPrefix(), 401);
         this.departmentName = CIVIL_ENV;
     }
 }

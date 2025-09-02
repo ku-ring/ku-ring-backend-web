@@ -25,8 +25,8 @@ public class PhilosophyDept extends LiberalArtCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(4061);
-        this.staffScrapInfo = new StaffScrapInfo(PHILOSOPHY.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(PHILOSOPHY.getHostPrefix(), 356);
+        this.staffScrapInfo = new StaffScrapInfo(PHILOSOPHY.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(PHILOSOPHY.getUrlPrefix(), 356);
         this.departmentName = PHILOSOPHY;
     }
 }

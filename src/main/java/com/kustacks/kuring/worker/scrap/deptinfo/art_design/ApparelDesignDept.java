@@ -25,8 +25,8 @@ public class ApparelDesignDept extends ArtDesignCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(11194);
-        this.staffScrapInfo = new StaffScrapInfo(APPAREL_DESIGN.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(APPAREL_DESIGN.getHostPrefix(), 956);
+        this.staffScrapInfo = new StaffScrapInfo(APPAREL_DESIGN.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(APPAREL_DESIGN.getUrlPrefix(), 956);
         this.departmentName = APPAREL_DESIGN;
     }
 }

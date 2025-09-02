@@ -25,8 +25,8 @@ public class MathematicsEducationDept extends EducationCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(11345);
-        this.staffScrapInfo = new StaffScrapInfo(MATH_EDU.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(MATH_EDU.getHostPrefix(), 499);
+        this.staffScrapInfo = new StaffScrapInfo(MATH_EDU.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(MATH_EDU.getUrlPrefix(), 499);
         this.departmentName = MATH_EDU;
     }
 }

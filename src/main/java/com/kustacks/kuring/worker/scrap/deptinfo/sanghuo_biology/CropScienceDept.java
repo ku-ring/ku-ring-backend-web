@@ -25,8 +25,8 @@ public class CropScienceDept extends SanghuoBiologyCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(10939);
-        this.staffScrapInfo = new StaffScrapInfo(CROP_SCIENCE.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(CROP_SCIENCE.getHostPrefix(), 471);
+        this.staffScrapInfo = new StaffScrapInfo(CROP_SCIENCE.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(CROP_SCIENCE.getUrlPrefix(), 471);
         this.departmentName = CROP_SCIENCE;
     }
 }

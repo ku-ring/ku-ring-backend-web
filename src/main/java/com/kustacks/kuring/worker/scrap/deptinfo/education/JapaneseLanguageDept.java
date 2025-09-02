@@ -25,8 +25,8 @@ public class JapaneseLanguageDept extends EducationCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(11318);
-        this.staffScrapInfo = new StaffScrapInfo(JAPANESE_EDU.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(JAPANESE_EDU.getHostPrefix(), 497);
+        this.staffScrapInfo = new StaffScrapInfo(JAPANESE_EDU.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(JAPANESE_EDU.getUrlPrefix(), 497);
         this.departmentName = JAPANESE_EDU;
     }
 }

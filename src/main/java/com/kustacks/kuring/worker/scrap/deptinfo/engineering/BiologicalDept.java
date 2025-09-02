@@ -25,8 +25,8 @@ public class BiologicalDept extends EngineeringCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(10097);
-        this.staffScrapInfo = new StaffScrapInfo(BIOLOGICAL.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(BIOLOGICAL.getHostPrefix(), 790);
+        this.staffScrapInfo = new StaffScrapInfo(BIOLOGICAL.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(BIOLOGICAL.getUrlPrefix(), 790);
         this.departmentName = BIOLOGICAL;
     }
 }

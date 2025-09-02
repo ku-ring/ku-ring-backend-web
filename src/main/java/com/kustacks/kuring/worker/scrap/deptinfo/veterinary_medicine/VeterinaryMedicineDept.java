@@ -24,8 +24,8 @@ public class VeterinaryMedicineDept extends VeterinaryMedicineCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
         List<Integer> siteIds = List.of(11135);
-        this.staffScrapInfo = new StaffScrapInfo(VET_MEDICINE.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(VET_MEDICINE.getHostPrefix(), 948);
+        this.staffScrapInfo = new StaffScrapInfo(VET_MEDICINE.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(VET_MEDICINE.getUrlPrefix(), 948);
         this.departmentName = VET_MEDICINE;
     }
 }

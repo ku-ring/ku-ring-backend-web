@@ -25,8 +25,8 @@ public class CosmeticsDept extends KuIntegratedScienceCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(15931);
-        this.staffScrapInfo = new StaffScrapInfo(COSMETICS.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(COSMETICS.getHostPrefix(), 457);
+        this.staffScrapInfo = new StaffScrapInfo(COSMETICS.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(COSMETICS.getUrlPrefix(), 457);
         this.departmentName = COSMETICS;
     }
 }

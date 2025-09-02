@@ -25,8 +25,8 @@ public class EnglishEducationDept extends EducationCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(11425);
-        this.staffScrapInfo = new StaffScrapInfo(ENGLISH_EDU.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(ENGLISH_EDU.getHostPrefix(), 505);
+        this.staffScrapInfo = new StaffScrapInfo(ENGLISH_EDU.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(ENGLISH_EDU.getUrlPrefix(), 505);
         this.departmentName = ENGLISH_EDU;
     }
 }

@@ -25,8 +25,8 @@ public class ChineseDept extends LiberalArtCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(4001);
-        this.staffScrapInfo = new StaffScrapInfo(CHINESE.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(CHINESE.getHostPrefix(), 353);
+        this.staffScrapInfo = new StaffScrapInfo(CHINESE.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(CHINESE.getUrlPrefix(), 353);
         this.departmentName = CHINESE;
     }
 }

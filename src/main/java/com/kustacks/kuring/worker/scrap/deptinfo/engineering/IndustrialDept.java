@@ -25,8 +25,8 @@ public class IndustrialDept extends EngineeringCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(9988);
-        this.staffScrapInfo = new StaffScrapInfo(INDUSTRIAL.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(INDUSTRIAL.getHostPrefix(), 413);
+        this.staffScrapInfo = new StaffScrapInfo(INDUSTRIAL.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(INDUSTRIAL.getUrlPrefix(), 413);
         this.departmentName = INDUSTRIAL;
     }
 }

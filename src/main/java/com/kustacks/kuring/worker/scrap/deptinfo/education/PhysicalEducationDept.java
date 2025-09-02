@@ -25,8 +25,8 @@ public class PhysicalEducationDept extends EducationCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(11371);
-        this.staffScrapInfo = new StaffScrapInfo(PHY_EDU.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(PHY_EDU.getHostPrefix(), 501);
+        this.staffScrapInfo = new StaffScrapInfo(PHY_EDU.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(PHY_EDU.getUrlPrefix(), 501);
         this.departmentName = PHY_EDU;
     }
 }

@@ -25,8 +25,8 @@ public class GeologyDept extends LiberalArtCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(11509);
-        this.staffScrapInfo = new StaffScrapInfo(GEOLOGY.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(GEOLOGY.getHostPrefix(), 373);
+        this.staffScrapInfo = new StaffScrapInfo(GEOLOGY.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(GEOLOGY.getUrlPrefix(), 373);
         this.departmentName = GEOLOGY;
     }
 }

@@ -25,8 +25,8 @@ public class PoliticalScienceDept extends SocialSciencesCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(10199);
-        this.staffScrapInfo = new StaffScrapInfo(POLITICS.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(POLITICS.getHostPrefix(), 803);
+        this.staffScrapInfo = new StaffScrapInfo(POLITICS.getUrlPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(POLITICS.getUrlPrefix(), 803);
         this.departmentName = POLITICS;
     }
 }

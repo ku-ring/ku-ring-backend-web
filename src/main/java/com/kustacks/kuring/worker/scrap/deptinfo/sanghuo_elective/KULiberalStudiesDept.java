@@ -25,7 +25,7 @@ public class KULiberalStudiesDept extends SanghuoCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         this.staffScrapInfo = new StaffScrapInfo(null, Collections.emptyList());
-        this.noticeScrapInfo = new NoticeScrapInfo(LIBERAL_STUDIES.getHostPrefix(), 5876);
+        this.noticeScrapInfo = new NoticeScrapInfo(LIBERAL_STUDIES.getUrlPrefix(), 5876);
         this.departmentName = LIBERAL_STUDIES;
     }
 }
