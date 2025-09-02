@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -22,15 +21,12 @@ public class AcademicEventUpdater {
     private final IcsParser icsParser;
     private final AcademicEventDbSynchronizer academicEventDbSynchronizer;
 
-    @Value("${calendar.academic-ics-url}")
-    private String calendarUrl;
-
     //매월 1일 00시 00분 업데이트 진행
     @Scheduled(cron = "0 0 0 1 * *", zone = "Asia/Seoul")
     public void update() {
         log.info("******** 학사일정 업데이트 시작 ********");
         try {
-            Calendar iCalendar = icsScraper.scrapICalendar(calendarUrl);
+            Calendar iCalendar = icsScraper.scrapAcademicCalendar();
             IcsCalendarResult result = icsParser.parse(iCalendar);
             academicEventDbSynchronizer.compareAndUpdateDb(result);
         } catch (IOException e) {

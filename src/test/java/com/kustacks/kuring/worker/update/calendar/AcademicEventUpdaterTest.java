@@ -23,7 +23,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @DisplayName("AcademicEventUpdater 통합 테스트")
@@ -131,7 +130,7 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
     }
 
     private void mockingScrapCalendar(Calendar originalCalendar) throws IOException, ParserException {
-        when(icsScraper.scrapICalendar(anyString())).thenReturn(originalCalendar);
+        when(icsScraper.scrapAcademicCalendar()).thenReturn(originalCalendar);
     }
 
     private void assertEventFields(AcademicEvent academicEvent, String summary, Integer sequence, Transparent transparent,
