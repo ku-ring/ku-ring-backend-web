@@ -4,6 +4,7 @@ import com.kustacks.kuring.calendar.application.port.out.AcademicEventQueryPort;
 import com.kustacks.kuring.calendar.domain.AcademicEvent;
 import com.kustacks.kuring.calendar.domain.Transparent;
 import com.kustacks.kuring.support.IntegrationTestSupport;
+import com.kustacks.kuring.worker.parser.calendar.IcsParser;
 import com.kustacks.kuring.worker.scrap.calendar.IcsScraper;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
@@ -22,6 +23,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @DisplayName("AcademicEventUpdater 통합 테스트")
@@ -35,6 +37,9 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
 
     @MockBean
     private IcsScraper icsScraper;
+
+    @Autowired
+    private IcsParser icsParser;
 
     private final String ORIGINAL_CALENDAR_FILE = "src/test/resources/calendar/academic-calendar-origin.ics";
     private final String UPDATED_CALENDAR_FILE = "src/test/resources/calendar/academic-calendar-updated.ics";
@@ -137,6 +142,20 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
                 LocalDateTime.of(2028, 2, 29, 0, 0));
     }
 
+    @Test
+    @DisplayName("ICS 스크랩 중 IOException 발생 시 정상적으로 처리된다")
+    void should_handle_io_exception_gracefully() throws IOException, ParserException {
+        // given - IOException 발생하도록 Mock 설정
+        doThrow(new IOException("네트워크 연결 실패")).when(icsScraper).scrapAcademicCalendar();
+
+        // when & then - 예외가 발생해도 정상 종료되어야 함
+        assertDoesNotThrow(() -> academicEventUpdater.update());
+
+        // DB에는 변경사항이 없어야 함
+        List<AcademicEvent> allEvents = academicEventQueryPort.findAll();
+        assertThat(allEvents).isEmpty();
+    }
+
     private Calendar loadCalendarFromFile(String filePath) throws IOException, ParserException {
         CalendarBuilder builder = new CalendarBuilder();
         try (FileInputStream inputStream = new FileInputStream(filePath)) {
@@ -146,6 +165,7 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
 
     private void mockingScrapCalendar(Calendar originalCalendar) throws IOException, ParserException {
         when(icsScraper.scrapAcademicCalendar()).thenReturn(originalCalendar);
+        // IcsParser 모킹은 실제 파서를 사용 (정상 테스트에서는 실제 파싱 결과 필요)
     }
 
     private void assertEventFields(AcademicEvent academicEvent, String summary, Integer sequence, Transparent transparent,
