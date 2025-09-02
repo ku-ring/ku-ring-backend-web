@@ -14,7 +14,7 @@ import java.net.URL;
 @Component
 public class IcsScraper {
 
-    private final String ACADEMIC_CALENDAR_OUTLOOK_ICS_URL = "https://outlook.office365.com/owa/calendar/0a5e22263dff43609142c77a5ad9b947%40konkuk.ac.kr/3131b7dad7b44597a670d9fb9ed777e28600923425300845442/calendar.ics";
+    private static final String ACADEMIC_CALENDAR_OUTLOOK_ICS_URL = "https://outlook.office365.com/owa/calendar/0a5e22263dff43609142c77a5ad9b947%40konkuk.ac.kr/3131b7dad7b44597a670d9fb9ed777e28600923425300845442/calendar.ics";
 
     private URL url;
 
