@@ -57,7 +57,7 @@ public class AcademicEvent extends BaseTimeEntity {
     private LocalDateTime endTime; // 종료일시
 
     @Builder
-    public AcademicEvent(String eventUid, String summary, String description, String category,
+    private AcademicEvent(String eventUid, String summary, String description, String category,
                          Transparent transparent, Integer sequence, Boolean notifyEnabled,
                          LocalDateTime startTime, LocalDateTime endTime) {
         this.eventUid = eventUid;
