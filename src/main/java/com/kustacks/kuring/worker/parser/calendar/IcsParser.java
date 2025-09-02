@@ -8,10 +8,11 @@ import com.kustacks.kuring.worker.parser.calendar.dto.TimeZoneDetail;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.ComponentList;
-import net.fortuna.ical4j.model.Parameter;
 import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.CalendarComponent;
+import net.fortuna.ical4j.model.component.Observance;
+import net.fortuna.ical4j.model.component.VTimeZone;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,21 +48,26 @@ public class IcsParser {
                 .orElse(null);
     }
 
-    private IcsTimeZone buildIcsTimeZone(Component vTimeZone) {
-        String tzid = getPropertyValue(vTimeZone, Property.TZID);
+    private IcsTimeZone buildIcsTimeZone(Component timeZone) {
+        String tzid = getPropertyValue(timeZone, Property.TZID);
 
-        TimeZoneDetail standard = vTimeZone.getProperty("STANDARD")
-                .map(this::buildTimeZoneDetail)
-                .orElse(null);
-
-        TimeZoneDetail daylight = vTimeZone.getProperty("DAYLIGHT")
-                .map(this::buildTimeZoneDetail)
-                .orElse(null);
-
-        return new IcsTimeZone(tzid, standard, daylight);
+        if (timeZone instanceof net.fortuna.ical4j.model.component.VTimeZone vTimeZone) {
+            TimeZoneDetail standard = parseTimezoneDetail(vTimeZone, Observance.STANDARD);
+            TimeZoneDetail daylight = parseTimezoneDetail(vTimeZone, Observance.DAYLIGHT);
+            return new IcsTimeZone(tzid, standard, daylight);
+        }
+        return null;
     }
 
-    private TimeZoneDetail buildTimeZoneDetail(Property tzProperty) {
+    private TimeZoneDetail parseTimezoneDetail(VTimeZone vtz, String daylight) {
+        return vtz.getObservances().stream()
+                .filter(observance -> daylight.equals(observance.getName()))
+                .findFirst()
+                .map(this::buildTimeZoneDetail)
+                .orElse(null);
+    }
+
+    private TimeZoneDetail buildTimeZoneDetail(Component tzProperty) {
         if (Objects.isNull(tzProperty)) {
             return null;
         }
@@ -101,16 +107,6 @@ public class IcsParser {
                 .orElse(null);
         if (Objects.nonNull(property)) {
             return property.getValue();
-        } else {
-            return null;
-        }
-    }
-
-    private String getPropertyValue(Property property, String propertyName) {
-        Parameter parameter = property.getParameter(propertyName)
-                .orElse(null);
-        if (Objects.nonNull(parameter)) {
-            return parameter.getValue();
         } else {
             return null;
         }
