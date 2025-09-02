@@ -21,7 +21,7 @@ public class ComputerScienceGraduateDept extends EngineeringCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        this.noticeScrapInfo = new NoticeScrapInfo(COMPUTER_GRADUATE.getHostPrefix(), 411);
+        this.noticeScrapInfo = new NoticeScrapInfo(COMPUTER_GRADUATE.getUrlPrefix(), 411);
         this.departmentName = COMPUTER_GRADUATE;
     }
 }
