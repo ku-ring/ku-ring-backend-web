@@ -60,7 +60,7 @@ public class AcademicEventConverter {
     }
 
     private static Integer convertToSequence(String sequence) {
-        if (Objects.isNull(sequence)) {
+        if (sequence == null || sequence.isBlank()) {
             return 0;
         }
 
