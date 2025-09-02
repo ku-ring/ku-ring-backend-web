@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.scrap.graduatedeptinfo.engineering;
+package com.kustacks.kuring.worker.scrap.graduatedeptinfo;
 
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.support.IntegrationTestSupport;
@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-class ComputerScienceGraduateDeptTest extends IntegrationTestSupport {
+class GraduateDeptInfoTest extends IntegrationTestSupport {
     @MockBean
     private NormalJsoupClient normalJsoupClient;
 
@@ -39,7 +39,7 @@ class ComputerScienceGraduateDeptTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("컴퓨터공학부 대학원 공지를 스크래핑한다.")
-    void scrapLatestPage() throws IOException {
+    void computer_scrapLatestPage() throws IOException {
         // given
         Document doc = Jsoup.parse(
                 getClass().getClassLoader().getResourceAsStream("notice/graduate-cse-notice.html"),

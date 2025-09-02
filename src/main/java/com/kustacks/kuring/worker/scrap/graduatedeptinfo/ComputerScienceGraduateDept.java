@@ -1,4 +1,4 @@
-package com.kustacks.kuring.worker.scrap.graduatedeptinfo.engineering;
+package com.kustacks.kuring.worker.scrap.graduatedeptinfo;
 
 import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
