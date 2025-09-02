@@ -1,11 +1,11 @@
 package com.kustacks.kuring.calendar.adapter.out.persistence;
 
 import com.kustacks.kuring.calendar.domain.AcademicEvent;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
