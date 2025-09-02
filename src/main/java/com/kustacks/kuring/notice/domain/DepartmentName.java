@@ -88,8 +88,12 @@ public enum DepartmentName {
 
     ELE_EDU_CENTER("elective_education_center", "sgedu", "교양교육센터"),
     VOLUNTEER("volunteer_center", "kuvolunteer", "사회봉사센터"),
-    LIBERAL_STUDIES("liberal_studies", "kusls", "KU자유전공학부");
+    LIBERAL_STUDIES("liberal_studies", "kusls", "KU자유전공학부"),
 
+    // 석사
+    COMPUTER_GRADUATE("computer_science_graduate", "cse", "컴퓨터공학부(석사)"),
+
+    ;
     private static final Map<String, String> NAME_MAP;
     private static final Map<String, String> HOST_PREFIX_MAP;
     private static final Map<String, String> KOR_NAME_MAP;
