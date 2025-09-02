@@ -28,6 +28,11 @@ public class AcademicEventPersistenceAdapter implements AcademicEventQueryPort, 
     }
 
     @Override
+    public List<AcademicEvent> findAll() {
+        return academicEventRepository.findAll();
+    }
+
+    @Override
     public Map<String, AcademicEvent> findAllInEventUidsAsMap(List<String> eventUids) {
         return findAllByEventUids(eventUids)
                 .stream()

@@ -7,6 +7,8 @@ import java.util.Map;
 
 public interface AcademicEventQueryPort {
 
+    List<AcademicEvent> findAll();
+
     Map<String, AcademicEvent> findAllInEventUidsAsMap(List<String> eventUids);
 
     List<AcademicEvent> findAllByEventUids(List<String> eventUids);
