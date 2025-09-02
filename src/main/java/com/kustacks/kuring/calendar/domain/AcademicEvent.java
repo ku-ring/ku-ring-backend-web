@@ -1,7 +1,6 @@
 package com.kustacks.kuring.calendar.domain;
 
 import com.kustacks.kuring.common.domain.BaseTimeEntity;
-import io.jsonwebtoken.lang.Assert;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
