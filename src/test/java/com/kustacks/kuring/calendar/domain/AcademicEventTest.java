@@ -98,58 +98,18 @@ class AcademicEventTest {
         assertThat(existingEvent.getEndTime()).isEqualTo(endTime.plusHours(1));
     }
 
-    @DisplayName("업데이트 필요 여부 판단 테스트")
-    @Test
-    void should_update_test() {
-        // given
-        AcademicEvent existingEvent = AcademicEvent.builder()
-                .eventUid("test-uid")
-                .summary("기존 이벤트")
-                .sequence(1)
-                .transparent(Transparent.OPAQUE)
-                .notifyEnabled(true)
-                .startTime(startTime)
-                .endTime(endTime)
-                .build();
-
-        AcademicEvent higherSequenceEvent = AcademicEvent.builder()
-                .eventUid("test-uid")
-                .summary("더 높은 sequence 이벤트")
-                .sequence(2)
-                .transparent(Transparent.OPAQUE)
-                .notifyEnabled(true)
-                .startTime(startTime)
-                .endTime(endTime)
-                .build();
-
-        AcademicEvent sameSequenceEvent = AcademicEvent.builder()
-                .eventUid("test-uid")
-                .summary("같은 sequence 이벤트")
-                .sequence(1)
-                .transparent(Transparent.OPAQUE)
-                .notifyEnabled(true)
-                .startTime(startTime)
-                .endTime(endTime)
-                .build();
-
-        AcademicEvent differentUidEvent = AcademicEvent.builder()
-                .eventUid("different-uid")
-                .summary("다른 UID 이벤트")
-                .sequence(2)
-                .transparent(Transparent.OPAQUE)
-                .notifyEnabled(true)
-                .startTime(startTime)
-                .endTime(endTime)
-                .build();
-
-        // when & then
-        assertThat(existingEvent.shouldUpdate(higherSequenceEvent)).isTrue();
-        assertThat(existingEvent.shouldUpdate(sameSequenceEvent)).isFalse();
-        assertThat(existingEvent.shouldUpdate(differentUidEvent)).isFalse();
-        assertThat(existingEvent.shouldUpdate(null)).isFalse();
-    }
 
     private AcademicEvent createAcademicEvent() {
-        return new AcademicEvent(uid, summary, description, category, transparent, sequence, notifyEnabled, startTime, endTime);
+        return AcademicEvent.builder()
+                .eventUid(uid)
+                .summary(summary)
+                .description(description)
+                .category(category)
+                .transparent(transparent)
+                .sequence(sequence)
+                .notifyEnabled(notifyEnabled)
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
     }
 }

@@ -109,11 +109,4 @@ public class AcademicEvent extends BaseTimeEntity {
         this.startTime = newEvent.startTime;
         this.endTime = newEvent.endTime;
     }
-
-    public boolean shouldUpdate(AcademicEvent newEvent) {
-        return newEvent != null &&
-                newEvent.eventUid.equals(this.eventUid) &&
-                newEvent.sequence > this.sequence;
-    }
-
 }

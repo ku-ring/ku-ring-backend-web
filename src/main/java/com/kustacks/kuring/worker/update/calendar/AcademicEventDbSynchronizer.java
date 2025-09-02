@@ -69,7 +69,7 @@ public class AcademicEventDbSynchronizer {
             if (Objects.isNull(existingEvent)) {
                 //신규 이벤트
                 eventsToSave.add(newEvent);
-            } else if (existingEvent.shouldUpdate(newEvent)) {
+            } else if (shouldEventUpdate(newEvent, existingEvent)) {
                 //업데이트해야할 이벤트
                 existingEvent.update(newEvent);
                 eventsToUpdate.add(existingEvent);
@@ -78,5 +78,10 @@ public class AcademicEventDbSynchronizer {
         }
 
         return new EventUpdateResult(eventsToSave, eventsToUpdate);
+    }
+
+    private boolean shouldEventUpdate(AcademicEvent newEvent, AcademicEvent existingEvent) {
+        return newEvent.getSequence() > existingEvent.getSequence()
+                && Objects.equals(newEvent.getEventUid(), existingEvent.getEventUid());
     }
 }
