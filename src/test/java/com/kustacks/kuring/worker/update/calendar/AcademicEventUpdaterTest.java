@@ -3,8 +3,8 @@ package com.kustacks.kuring.worker.update.calendar;
 import com.kustacks.kuring.calendar.application.port.out.AcademicEventQueryPort;
 import com.kustacks.kuring.calendar.domain.AcademicEvent;
 import com.kustacks.kuring.calendar.domain.Transparent;
+import com.kustacks.kuring.common.featureflag.FeatureFlags;
 import com.kustacks.kuring.support.IntegrationTestSupport;
-import com.kustacks.kuring.worker.parser.calendar.IcsParser;
 import com.kustacks.kuring.worker.scrap.calendar.IcsScraper;
 import net.fortuna.ical4j.data.CalendarBuilder;
 import net.fortuna.ical4j.data.ParserException;
@@ -23,6 +23,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -38,8 +39,8 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
     @MockBean
     private IcsScraper icsScraper;
 
-    @Autowired
-    private IcsParser icsParser;
+    @MockBean
+    private FeatureFlags featureFlags;
 
     private final String ORIGINAL_CALENDAR_FILE = "src/test/resources/calendar/academic-calendar-origin.ics";
     private final String UPDATED_CALENDAR_FILE = "src/test/resources/calendar/academic-calendar-updated.ics";
@@ -59,6 +60,7 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
         } catch (IOException | ParserException e) {
             throw new RuntimeException(e);
         }
+        when(featureFlags.isEnabled(any())).thenReturn(true);
     }
 
     @Test
