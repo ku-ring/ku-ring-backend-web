@@ -1,5 +1,7 @@
 package com.kustacks.kuring.worker.update.calendar;
 
+import com.kustacks.kuring.common.featureflag.FeatureFlags;
+import com.kustacks.kuring.common.featureflag.KuringFeatures;
 import com.kustacks.kuring.worker.parser.calendar.IcsParser;
 import com.kustacks.kuring.worker.parser.calendar.dto.IcsCalendarResult;
 import com.kustacks.kuring.worker.scrap.calendar.IcsScraper;
@@ -20,20 +22,23 @@ public class AcademicEventUpdater {
     private final IcsScraper icsScraper;
     private final IcsParser icsParser;
     private final AcademicEventDbSynchronizer academicEventDbSynchronizer;
+    private final FeatureFlags featureFlags;
 
     //매월 1일 00시 00분 업데이트 진행
     @Scheduled(cron = "0 0 0 1 * *", zone = "Asia/Seoul")
     public void update() {
-        log.info("******** 학사일정 업데이트 시작 ********");
-        try {
-            Calendar iCalendar = icsScraper.scrapAcademicCalendar();
-            IcsCalendarResult result = icsParser.parse(iCalendar);
-            academicEventDbSynchronizer.compareAndUpdateDb(result);
-        } catch (IOException e) {
-            log.error("학교 Outlook 캘린더 연결에 실패하였습니다.");
-        } catch (ParserException e) {
-            log.error("ICS 파싱에 실패하였습니다.");
+        if (featureFlags.isEnabled(KuringFeatures.UPDATE_ACADEMIC_EVENT.getFeature())) {
+            log.info("******** 학사일정 업데이트 시작 ********");
+            try {
+                Calendar iCalendar = icsScraper.scrapAcademicCalendar();
+                IcsCalendarResult result = icsParser.parse(iCalendar);
+                academicEventDbSynchronizer.compareAndUpdateDb(result);
+            } catch (IOException e) {
+                log.error("학교 Outlook 캘린더 연결에 실패하였습니다.");
+            } catch (ParserException e) {
+                log.error("ICS 파싱에 실패하였습니다.");
+            }
+            log.info("******** 학사일정 업데이트 완료 ********");
         }
-        log.info("******** 학사일정 업데이트 완료 ********");
     }
 }
