@@ -9,10 +9,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Entity(name = "academic_event")
@@ -52,4 +55,58 @@ public class AcademicEvent extends BaseTimeEntity {
 
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime; // 종료일시
+
+    @Builder
+    private AcademicEvent(String eventUid, String summary, String description, String category,
+                         Transparent transparent, Integer sequence, Boolean notifyEnabled,
+                         LocalDateTime startTime, LocalDateTime endTime) {
+        this.eventUid = eventUid;
+        this.summary = summary;
+        this.description = description;
+        this.category = category;
+        this.transparent = transparent;
+        this.sequence = sequence;
+        this.notifyEnabled = notifyEnabled;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public static AcademicEvent from(String uid, String summary, String description, String category,
+                                     Transparent transparent, Integer sequence, Boolean notifyEnabled,
+                                     LocalDateTime startTime, LocalDateTime endTime) {
+        Assert.notNull(uid, "UID must not be null");
+        Assert.notNull(summary, "Summary must not be null");
+        Assert.notNull(category, "Category must not be null");
+        Assert.notNull(transparent, "Transparent must not be null");
+        Assert.notNull(sequence, "Sequence must not be null");
+        Assert.notNull(startTime, "Start time must not be null");
+        Assert.notNull(endTime, "End time must not be null");
+
+        return AcademicEvent.builder()
+                .eventUid(uid)
+                .summary(summary)
+                .description(description)
+                .category(category)
+                .transparent(transparent)
+                .sequence(sequence)
+                .notifyEnabled(notifyEnabled)
+                .startTime(startTime)
+                .endTime(endTime)
+                .build();
+    }
+
+    public void update(AcademicEvent newEvent) {
+        Assert.notNull(newEvent, "New event must not be null");
+        Assert.isTrue(Objects.equals(this.eventUid, newEvent.eventUid), "Event UID must be the same");
+        Assert.isTrue(newEvent.sequence >= this.sequence, "New sequence must be greater than or equal to current sequence");
+
+        this.summary = newEvent.summary;
+        this.description = newEvent.description;
+        this.category = newEvent.category;
+        this.transparent = newEvent.transparent;
+        this.sequence = newEvent.sequence;
+        this.notifyEnabled = newEvent.notifyEnabled;
+        this.startTime = newEvent.startTime;
+        this.endTime = newEvent.endTime;
+    }
 }
