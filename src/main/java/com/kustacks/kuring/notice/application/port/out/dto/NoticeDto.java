@@ -27,12 +27,14 @@ public class NoticeDto {
 
     private Boolean important;
 
+    private Boolean isGrad;
+
     private Long commentCount;
 
     @QueryProjection
     public NoticeDto(
             Long id, String articleId, String postedDate, String url, String subject,
-            String category, Boolean important, Long commentCount
+            String category, Boolean important,  Boolean isGrad, Long commentCount
     ) {
         Assert.notNull(id, "id must not be null");
         Assert.notNull(articleId, "articleId must not be null");
@@ -41,6 +43,7 @@ public class NoticeDto {
         Assert.notNull(subject, "subject must not be null");
         Assert.notNull(category, "category must not be null");
         Assert.notNull(important, "important must not be null");
+        Assert.notNull(isGrad, "is_grad must not be null");
 
         this.id = id;
         this.articleId = articleId;
@@ -49,6 +52,7 @@ public class NoticeDto {
         this.subject = subject;
         this.category = category;
         this.important = important;
+        this.isGrad = isGrad;
         this.commentCount = commentCount;
     }
 }

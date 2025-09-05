@@ -10,6 +10,7 @@ public record NoticeRangeLookupResponse(
         String subject,
         String category,
         Boolean important,
+        Boolean isGrad,
         Long commentCount
 ){
     public static NoticeRangeLookupResponse from(NoticeRangeLookupResult result) {
@@ -21,6 +22,7 @@ public record NoticeRangeLookupResponse(
                 result.subject(),
                 result.category(),
                 result.important(),
+                result.isGrad(),
                 result.commentCount()
         );
     }

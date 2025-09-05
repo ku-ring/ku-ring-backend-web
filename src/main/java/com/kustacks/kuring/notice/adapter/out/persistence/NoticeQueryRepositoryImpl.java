@@ -62,6 +62,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                                 notice.subject,
                                 notice.categoryName.stringValue().toLowerCase(),
                                 notice.important,
+                                Expressions.constant(false),
                                 commentCount
                         )
                 ).from(notice)
@@ -125,6 +126,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                                 notice.subject,
                                 notice.categoryName.stringValue().toLowerCase(),
                                 notice.important,
+                                Expressions.constant(false),
                                 commentCount
                         )
                 ).from(notice)
@@ -156,6 +158,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                                 notice.subject,
                                 notice.categoryName.stringValue().toLowerCase(),
                                 notice.important,
+                                Expressions.constant(false),
                                 commentCount
                         )
                 ).from(notice)
@@ -260,6 +263,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                                 departmentNotice.subject,
                                 departmentNotice.categoryName.stringValue().toLowerCase(),
                                 departmentNotice.important,
+                                departmentNotice.isGrad,
                                 commentCount
                         )
                 )
@@ -292,6 +296,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                                 departmentNotice.subject,
                                 departmentNotice.categoryName.stringValue().toLowerCase(),
                                 departmentNotice.important,
+                                departmentNotice.isGrad,
                                 commentCount
                         )
                 )
