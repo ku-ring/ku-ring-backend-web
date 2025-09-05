@@ -1,3 +1,7 @@
 spring:
   profiles:
     active: dev
+  config:
+    import:
+      - optional:classpath:config/environments/common.yml
+      - optional:classpath:config/environments/${spring.profiles.active}.yml

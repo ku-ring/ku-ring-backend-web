@@ -11,7 +11,7 @@ spring:
       - classpath:config/infrastructure/security.yml
       
       # Application
-      - classpath:config/application/business-domains.yml
+      - classpath:config/application/service-settings.yml
       
       # Integrations
       - classpath:config/integrations/ai.yml
