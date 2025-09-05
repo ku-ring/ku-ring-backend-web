@@ -1,10 +1,3 @@
-security:
-  jwt:
-    token:
-      secret-key: ${JWT_SECRET_KEY}
-      admin-expire-length: ${JWT_ADMIN_EXPIRE_LENGTH}
-      user-expire-length: ${JWT_USER_EXPIRE_LENGTH}
-
 notice:
   kuis:
     request-url: https://kuis.konkuk.ac.kr/CmmnOneStop/find.do
