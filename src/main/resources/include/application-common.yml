@@ -1,0 +1,18 @@
+server:
+  deploy:
+    environment: ${DEPLOY_ENV}
+  port: ${PORT:8080}
+
+spring:
+  profiles:
+    include:
+      - include/db
+      - include/ai
+      - include/aws
+      - include/mail
+      - include/management
+      - include/properties
+      - include/swagger
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
