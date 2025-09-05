@@ -1,0 +1,11 @@
+logging:
+  level:
+    org:
+      apache:
+        coyote:
+          http11: trace
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
