@@ -1,0 +1,26 @@
+server:
+  deploy:
+    environment: ${DEPLOY_ENV}
+  port: ${PORT:8080}
+
+spring:
+  config:
+    import:
+      # Infrastructure
+      - classpath:config/infrastructure/database.yml
+      - classpath:config/infrastructure/security.yml
+      
+      # Application
+      - classpath:config/application/business-domains.yml
+      
+      # Integrations
+      - classpath:config/integrations/ai.yml
+      - classpath:config/integrations/aws.yml
+      - classpath:config/integrations/mail.yml
+      
+      # Tools
+      - classpath:config/tools/documentation.yml
+      - classpath:config/tools/management.yml
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
