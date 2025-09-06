@@ -6,6 +6,7 @@ import com.kustacks.kuring.worker.dto.ComplexNoticeFormatDto;
 import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
+import com.kustacks.kuring.worker.scrap.deptinfo.engineering.ComputerScienceDept;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -31,7 +32,7 @@ class GraduateDeptInfoTest extends IntegrationTestSupport {
     private DepartmentNoticeScraperTemplate scraperTemplate;
 
     @Autowired
-    private ComputerScienceGraduateDept graduateDept;
+    private ComputerScienceDept computerScienceDept;
 
     @Autowired
     private LatestPageNoticeApiClient latestPageNoticeApiClient;
@@ -48,13 +49,15 @@ class GraduateDeptInfoTest extends IntegrationTestSupport {
 
         when(normalJsoupClient.get(anyString(), anyInt())).thenReturn(doc);
 
+        computerScienceDept.setIsGrad(true);
+
         // when
         List<ComplexNoticeFormatDto> results =
-                scraperTemplate.scrap(graduateDept, latestPageNoticeApiClient::request);
+                scraperTemplate.scrap(computerScienceDept, latestPageNoticeApiClient::request);
 
         // then
         assertThat(results).isNotEmpty();
-        assertThat(graduateDept.getDepartmentName()).isEqualTo(DepartmentName.COMPUTER);
+        assertThat(computerScienceDept.getDepartmentName()).isEqualTo(DepartmentName.COMPUTER);
 
         ComplexNoticeFormatDto dto = results.get(0);
 
