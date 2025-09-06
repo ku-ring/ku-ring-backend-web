@@ -62,6 +62,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                                 notice.subject,
                                 notice.categoryName.stringValue().toLowerCase(),
                                 notice.important,
+                                Expressions.constant(false),
                                 commentCount
                         )
                 ).from(notice)
@@ -125,6 +126,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                                 notice.subject,
                                 notice.categoryName.stringValue().toLowerCase(),
                                 notice.important,
+                                Expressions.constant(false),
                                 commentCount
                         )
                 ).from(notice)
@@ -156,6 +158,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                                 notice.subject,
                                 notice.categoryName.stringValue().toLowerCase(),
                                 notice.important,
+                                Expressions.constant(false),
                                 commentCount
                         )
                 ).from(notice)
@@ -216,31 +219,33 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentName) {
+    public List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentName, Boolean isGrad) {
         return queryFactory
                 .select(departmentNotice.articleId.castToNum(Integer.class))
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName)
-                        .and(departmentNotice.important.eq(true)))
+                        .and(departmentNotice.important.eq(true))
+                        .and(departmentNotice.isGrad.eq(isGrad)))
                 .orderBy(departmentNotice.articleId.castToNum(Integer.class).asc())
                 .fetch();
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentName) {
+    public List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentName, Boolean isGrad) {
         return queryFactory
                 .select(departmentNotice.articleId.castToNum(Integer.class))
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName)
-                        .and(departmentNotice.important.eq(false)))
+                        .and(departmentNotice.important.eq(false))
+                        .and(departmentNotice.isGrad.eq(isGrad)))
                 .orderBy(departmentNotice.articleId.castToNum(Integer.class).asc())
                 .fetch();
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName) {
+    public List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName, Boolean isGrad) {
         StringTemplate postedDate = Expressions.stringTemplate(
                 DATE_FORMAT_TEMPLATE,
                 departmentNotice.noticeDateTime.postedDate,
@@ -260,19 +265,21 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                                 departmentNotice.subject,
                                 departmentNotice.categoryName.stringValue().toLowerCase(),
                                 departmentNotice.important,
+                                departmentNotice.isGrad,
                                 commentCount
                         )
                 )
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName)
-                        .and(departmentNotice.important.isTrue()))
+                        .and(departmentNotice.important.isTrue())
+                        .and(departmentNotice.isGrad.eq(isGrad)))
                 .orderBy(departmentNotice.noticeDateTime.postedDate.desc())
                 .fetch();
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Pageable pageable) {
+    public List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Boolean isGrad, Pageable pageable) {
         StringTemplate postedDate = Expressions.stringTemplate(
                 DATE_FORMAT_TEMPLATE,
                 departmentNotice.noticeDateTime.postedDate,
@@ -292,12 +299,14 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                                 departmentNotice.subject,
                                 departmentNotice.categoryName.stringValue().toLowerCase(),
                                 departmentNotice.important,
+                                departmentNotice.isGrad,
                                 commentCount
                         )
                 )
                 .from(departmentNotice)
                 .where(departmentNotice.departmentName.eq(departmentName)
-                        .and(departmentNotice.important.isFalse()))
+                        .and(departmentNotice.important.isFalse())
+                        .and(departmentNotice.isGrad.eq(isGrad)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(departmentNotice.noticeDateTime.postedDate.desc())

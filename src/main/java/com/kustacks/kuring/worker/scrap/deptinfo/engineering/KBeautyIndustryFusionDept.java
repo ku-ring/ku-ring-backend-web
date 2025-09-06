@@ -13,7 +13,7 @@ import static com.kustacks.kuring.notice.domain.DepartmentName.KBEAUTY;
 
 @RegisterDepartmentMap(key = KBEAUTY)
 public class KBeautyIndustryFusionDept extends EngineeringCollege {
-    
+
     public KBeautyIndustryFusionDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,

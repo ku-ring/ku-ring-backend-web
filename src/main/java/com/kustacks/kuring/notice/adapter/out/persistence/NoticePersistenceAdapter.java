@@ -80,13 +80,13 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
     }
 
     @Override
-    public List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName) {
-        return this.noticeRepository.findImportantNoticesByDepartment(departmentName);
+    public List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName, Boolean isGrad) {
+        return this.noticeRepository.findImportantNoticesByDepartment(departmentName, isGrad);
     }
 
     @Override
-    public List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Pageable pageable) {
-        return this.noticeRepository.findNormalNoticesByDepartmentWithOffset(departmentName, pageable);
+    public List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Boolean isGrad, Pageable pageable) {
+        return this.noticeRepository.findNormalNoticesByDepartmentWithOffset(departmentName, isGrad, pageable);
     }
 
     @Override
@@ -100,13 +100,13 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
     }
 
     @Override
-    public List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentNameEnum) {
-        return this.noticeRepository.findImportantArticleIdsByDepartment(departmentNameEnum);
+    public List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentNameEnum, Boolean isGrad) {
+        return this.noticeRepository.findImportantArticleIdsByDepartment(departmentNameEnum, isGrad);
     }
 
     @Override
-    public List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentNameEnum) {
-        return this.noticeRepository.findNormalArticleIdsByDepartment(departmentNameEnum);
+    public List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentNameEnum, Boolean isGrad) {
+        return this.noticeRepository.findNormalArticleIdsByDepartment(departmentNameEnum, isGrad);
     }
 
     @Override

@@ -28,5 +28,6 @@ public class ComputerScienceDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(COMPUTER.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(COMPUTER.getHostPrefix(), 775);
         this.departmentName = COMPUTER;
+        this.noticeGraduationInfo = new NoticeScrapInfo(COMPUTER.getHostPrefix(), 411);
     }
 }

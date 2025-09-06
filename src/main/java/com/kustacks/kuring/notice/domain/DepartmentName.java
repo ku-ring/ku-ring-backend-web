@@ -88,15 +88,16 @@ public enum DepartmentName {
 
     ELE_EDU_CENTER("elective_education_center", "sgedu", "교양교육센터"),
     VOLUNTEER("volunteer_center", "kuvolunteer", "사회봉사센터"),
-    LIBERAL_STUDIES("liberal_studies", "kusls", "KU자유전공학부");
+    LIBERAL_STUDIES("liberal_studies", "kusls", "KU자유전공학부"),
 
+    ;
     private static final Map<String, String> NAME_MAP;
     private static final Map<String, String> HOST_PREFIX_MAP;
     private static final Map<String, String> KOR_NAME_MAP;
 
     static {
         NAME_MAP = Collections.unmodifiableMap(Arrays.stream(DepartmentName.values())
-                        .collect(Collectors.toMap(DepartmentName::getName, DepartmentName::name)));
+                .collect(Collectors.toMap(DepartmentName::getName, DepartmentName::name)));
 
         HOST_PREFIX_MAP = Collections.unmodifiableMap(Arrays.stream(DepartmentName.values())
                 .collect(Collectors.toMap(DepartmentName::getHostPrefix, DepartmentName::name)));

@@ -7,7 +7,6 @@ import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
 
-import java.util.Collections;
 import java.util.List;
 
 import static com.kustacks.kuring.notice.domain.DepartmentName.COMM_DESIGN;
