@@ -1,7 +1,4 @@
 spring:
-  config:
-    import:
-      - classpath:config/tools/logging.yml    # 기존 "logging" include와 동일
   jpa:
     show-sql: true
 
@@ -11,3 +8,15 @@ security:
       secret-key: localtestsecretkey
       admin-expire-length: 3600000
       user-expire-length: 604800000
+
+logging:
+  level:
+    org:
+      apache:
+        coyote:
+          http11: trace
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
