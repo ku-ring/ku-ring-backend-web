@@ -1,11 +1,11 @@
 package com.kustacks.kuring.worker.scrap.deptinfo;
 
 import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
-import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.parser.notice.NoticeHtmlParserTemplate;
 import com.kustacks.kuring.worker.parser.notice.RowsDto;
+import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
+import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import lombok.Getter;
 import org.jsoup.nodes.Document;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -23,6 +23,8 @@ public class DeptInfo {
     protected DepartmentName departmentName;
     protected String collegeName;
     protected boolean isGrad;
+    protected NoticeScrapInfo noticeGraduationInfo;
+
 
     public List<ScrapingResultDto> scrapLatestPageHtml() {
         return noticeApiClient.request(this);
@@ -53,21 +55,26 @@ public class DeptInfo {
     }
 
     public String createRequestUrl(int page, int row) {
+        NoticeScrapInfo targetNoticeScrapInfo = isGrad ? noticeGraduationInfo : noticeScrapInfo;
+
         return UriComponentsBuilder
                 .fromUriString(latestPageNoticeProperties.listUrl())
                 .queryParam("page", page)
                 .queryParam("row", row)
                 .buildAndExpand(
-                        noticeScrapInfo.getSiteName(),
-                        noticeScrapInfo.getSiteName(),
-                        noticeScrapInfo.getSiteId()
+                        targetNoticeScrapInfo.getSiteName(),
+                        targetNoticeScrapInfo.getSiteName(),
+                        targetNoticeScrapInfo.getSiteId()
                 ).toUriString();
     }
 
+
     public String createViewUrl() {
+        NoticeScrapInfo targetNoticeScrapInfo = isGrad ? noticeGraduationInfo : noticeScrapInfo;
+
         return latestPageNoticeProperties.viewUrl()
-                .replaceAll("\\{department\\}", noticeScrapInfo.getSiteName())
-                .replace("{siteId}", String.valueOf(noticeScrapInfo.getSiteId()));
+                .replaceAll("\\{department\\}", targetNoticeScrapInfo.getSiteName())
+                .replace("{siteId}", String.valueOf(targetNoticeScrapInfo.getSiteId()));
     }
 
     public boolean isSupportStaffScrap() {
@@ -77,6 +84,10 @@ public class DeptInfo {
     @Override
     public String toString() {
         return departmentName.getName();
+    }
+
+    public void setIsGrad(boolean isGrad) {
+        this.isGrad = isGrad;
     }
 }
 
