@@ -6,7 +6,6 @@ import com.kustacks.kuring.worker.dto.ComplexNoticeFormatDto;
 import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
-
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -55,7 +54,7 @@ class GraduateDeptInfoTest extends IntegrationTestSupport {
 
         // then
         assertThat(results).isNotEmpty();
-        assertThat(graduateDept.getDepartmentName()).isEqualTo(DepartmentName.COMPUTER_GRADUATE);
+        assertThat(graduateDept.getDepartmentName()).isEqualTo(DepartmentName.COMPUTER);
 
         ComplexNoticeFormatDto dto = results.get(0);
 

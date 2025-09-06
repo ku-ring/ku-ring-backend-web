@@ -25,7 +25,7 @@ public class BusinessAdministrationDept extends BusinessCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(10513);
-        this.staffScrapInfo = new StaffScrapInfo(BUIS_ADMIN.getUrlPrefix(), siteIds);
+        this.staffScrapInfo = new StaffScrapInfo(BUIS_ADMIN.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo("kbs", 437);
         this.departmentName = BUIS_ADMIN;
     }

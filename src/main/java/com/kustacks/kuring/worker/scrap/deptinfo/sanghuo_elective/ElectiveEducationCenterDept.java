@@ -25,8 +25,8 @@ public class ElectiveEducationCenterDept extends SanghuoCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(11471);
-        this.staffScrapInfo = new StaffScrapInfo(ELE_EDU_CENTER.getUrlPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(ELE_EDU_CENTER.getUrlPrefix(), 509);
+        this.staffScrapInfo = new StaffScrapInfo(ELE_EDU_CENTER.getHostPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(ELE_EDU_CENTER.getHostPrefix(), 509);
         this.departmentName = ELE_EDU_CENTER;
     }
 }

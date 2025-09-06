@@ -25,8 +25,8 @@ public class MechanicalAerospaceDept extends EngineeringCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(9904);
-        this.staffScrapInfo = new StaffScrapInfo(MECH_AERO.getUrlPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(MECH_AERO.getUrlPrefix(), 405);
+        this.staffScrapInfo = new StaffScrapInfo(MECH_AERO.getHostPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(MECH_AERO.getHostPrefix(), 405);
         this.departmentName = MECH_AERO;
     }
 }

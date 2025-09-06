@@ -13,7 +13,7 @@ import static com.kustacks.kuring.notice.domain.DepartmentName.KBEAUTY;
 
 @RegisterDepartmentMap(key = KBEAUTY)
 public class KBeautyIndustryFusionDept extends EngineeringCollege {
-    
+
     public KBeautyIndustryFusionDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
@@ -25,8 +25,8 @@ public class KBeautyIndustryFusionDept extends EngineeringCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(10142);
-        this.staffScrapInfo = new StaffScrapInfo(KBEAUTY.getUrlPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(KBEAUTY.getUrlPrefix(), 419);
+        this.staffScrapInfo = new StaffScrapInfo(KBEAUTY.getHostPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(KBEAUTY.getHostPrefix(), 419);
         this.departmentName = KBEAUTY;
     }
 }

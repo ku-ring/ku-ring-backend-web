@@ -25,8 +25,8 @@ public class AdvancedIndustrialFusionDept extends EngineeringCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(10085);
-        this.staffScrapInfo = new StaffScrapInfo(ADV_INDUSTRIAL.getUrlPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(ADV_INDUSTRIAL.getUrlPrefix(), 415);
+        this.staffScrapInfo = new StaffScrapInfo(ADV_INDUSTRIAL.getHostPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(ADV_INDUSTRIAL.getHostPrefix(), 415);
         this.departmentName = ADV_INDUSTRIAL;
     }
 }

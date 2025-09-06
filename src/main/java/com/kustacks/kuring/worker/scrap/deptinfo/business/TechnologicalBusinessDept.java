@@ -25,8 +25,8 @@ public class TechnologicalBusinessDept extends BusinessCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(10540);
-        this.staffScrapInfo = new StaffScrapInfo(TECH_BUSI.getUrlPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(TECH_BUSI.getUrlPrefix(), 445);
+        this.staffScrapInfo = new StaffScrapInfo(TECH_BUSI.getHostPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(TECH_BUSI.getHostPrefix(), 445);
         this.departmentName = TECH_BUSI;
     }
 }

@@ -26,8 +26,8 @@ public class BiologicalSciencesDept extends SanghuoBiologyCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(10880);
-        this.staffScrapInfo = new StaffScrapInfo(BIO_SCIENCE.getUrlPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(BIO_SCIENCE.getUrlPrefix(), 909);
+        this.staffScrapInfo = new StaffScrapInfo(BIO_SCIENCE.getHostPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(BIO_SCIENCE.getHostPrefix(), 909);
         this.departmentName = BIO_SCIENCE;
     }
 }

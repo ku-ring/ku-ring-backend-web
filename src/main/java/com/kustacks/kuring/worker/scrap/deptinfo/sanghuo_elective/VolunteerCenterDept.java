@@ -26,8 +26,8 @@ public class VolunteerCenterDept extends SanghuoCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = Collections.emptyList();
-        this.staffScrapInfo = new StaffScrapInfo(null,siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(VOLUNTEER.getUrlPrefix(), 523);
+        this.staffScrapInfo = new StaffScrapInfo(null, siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(VOLUNTEER.getHostPrefix(), 523);
         this.departmentName = VOLUNTEER;
     }
 }

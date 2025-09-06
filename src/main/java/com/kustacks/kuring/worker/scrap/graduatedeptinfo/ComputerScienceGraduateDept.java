@@ -7,9 +7,9 @@ import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
 import com.kustacks.kuring.worker.scrap.deptinfo.RegisterDepartmentMap;
 import com.kustacks.kuring.worker.scrap.deptinfo.engineering.EngineeringCollege;
 
-import static com.kustacks.kuring.notice.domain.DepartmentName.COMPUTER_GRADUATE;
+import static com.kustacks.kuring.notice.domain.DepartmentName.COMPUTER;
 
-@RegisterDepartmentMap(key = COMPUTER_GRADUATE)
+@RegisterDepartmentMap(key = COMPUTER)
 public class ComputerScienceGraduateDept extends EngineeringCollege {
     public ComputerScienceGraduateDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
@@ -21,7 +21,7 @@ public class ComputerScienceGraduateDept extends EngineeringCollege {
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        this.noticeScrapInfo = new NoticeScrapInfo(COMPUTER_GRADUATE.getUrlPrefix(), 411);
-        this.departmentName = COMPUTER_GRADUATE;
+        this.noticeScrapInfo = new NoticeScrapInfo(COMPUTER.getHostPrefix(), 411);
+        this.departmentName = COMPUTER;
     }
 }

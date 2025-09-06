@@ -25,8 +25,8 @@ public class EconomicsDept extends SocialSciencesCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(10216);
-        this.staffScrapInfo = new StaffScrapInfo(ECONOMICS.getUrlPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(ECONOMICS.getUrlPrefix(), 423);
+        this.staffScrapInfo = new StaffScrapInfo(ECONOMICS.getHostPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(ECONOMICS.getHostPrefix(), 423);
         this.departmentName = ECONOMICS;
     }
 }

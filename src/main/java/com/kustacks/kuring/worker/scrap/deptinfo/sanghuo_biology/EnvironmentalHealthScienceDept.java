@@ -25,8 +25,8 @@ public class EnvironmentalHealthScienceDept extends SanghuoBiologyCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(11062);
-        this.staffScrapInfo = new StaffScrapInfo(ENV_HEALTH_SCIENCE.getUrlPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(ENV_HEALTH_SCIENCE.getUrlPrefix(), 477);
+        this.staffScrapInfo = new StaffScrapInfo(ENV_HEALTH_SCIENCE.getHostPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(ENV_HEALTH_SCIENCE.getHostPrefix(), 477);
         this.departmentName = ENV_HEALTH_SCIENCE;
     }
 }

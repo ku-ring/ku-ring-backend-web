@@ -25,8 +25,8 @@ public class EnglishDept extends LiberalArtCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(3901);
-        this.staffScrapInfo = new StaffScrapInfo(ENGLISH.getUrlPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(ENGLISH.getUrlPrefix(), 347);
+        this.staffScrapInfo = new StaffScrapInfo(ENGLISH.getHostPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(ENGLISH.getHostPrefix(), 347);
         this.departmentName = ENGLISH;
     }
 }

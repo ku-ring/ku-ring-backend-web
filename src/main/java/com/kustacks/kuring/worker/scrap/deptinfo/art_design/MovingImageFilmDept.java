@@ -25,8 +25,8 @@ public class MovingImageFilmDept extends ArtDesignCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(11276);
-        this.staffScrapInfo = new StaffScrapInfo(MOV_IMAGE.getUrlPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(MOV_IMAGE.getUrlPrefix(), 491);
+        this.staffScrapInfo = new StaffScrapInfo(MOV_IMAGE.getHostPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(MOV_IMAGE.getHostPrefix(), 491);
         this.departmentName = MOV_IMAGE;
     }
 }

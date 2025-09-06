@@ -25,8 +25,8 @@ public class BioMedicalScienceDept extends KuIntegratedScienceCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(10784);
-        this.staffScrapInfo = new StaffScrapInfo(BIO_MEDICAL.getUrlPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(BIO_MEDICAL.getUrlPrefix(), 880);
+        this.staffScrapInfo = new StaffScrapInfo(BIO_MEDICAL.getHostPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(BIO_MEDICAL.getHostPrefix(), 880);
         this.departmentName = BIO_MEDICAL;
     }
 }

@@ -25,8 +25,8 @@ public class KoreanDept extends LiberalArtCollege {
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
         List<Integer> siteIds = List.of(3827);
-        this.staffScrapInfo = new StaffScrapInfo(KOREAN.getUrlPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(KOREAN.getUrlPrefix(), 334);
+        this.staffScrapInfo = new StaffScrapInfo(KOREAN.getHostPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(KOREAN.getHostPrefix(), 334);
         this.departmentName = KOREAN;
     }
 }
