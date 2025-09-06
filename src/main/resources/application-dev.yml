@@ -60,6 +60,13 @@ spring:
           starttls:
             enable: true # TLS
 
+aws:
+  appconfig:
+    application: ${AWS_APPCONFIG_APPLICATION}
+    environment: ${AWS_APPCONFIG_ENVIRONMENT}
+    profile: ${AWS_APPCONFIG_PROFILE}
+    region: ${AWS_APPCONFIG_REGION}
+
 springdoc:
   swagger-ui:
     # 각 API의 그룹 표시 순서

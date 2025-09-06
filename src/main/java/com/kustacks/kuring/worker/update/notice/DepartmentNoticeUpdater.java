@@ -1,6 +1,8 @@
 package com.kustacks.kuring.worker.update.notice;
 
 
+import com.kustacks.kuring.common.featureflag.FeatureFlags;
+import com.kustacks.kuring.common.featureflag.KuringFeatures;
 import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
 import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
@@ -37,6 +39,7 @@ public class DepartmentNoticeUpdater {
     private final ThreadPoolTaskExecutor noticeUpdaterThreadTaskExecutor;
     private final FirebaseNotificationService notificationService;
     private final NoticeUpdateSupport noticeUpdateSupport;
+    private final FeatureFlags featureFlags;
 
     @Scheduled(cron = "0 15/20 7-19 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 7:15 ~ 오후 7:55분 사이에 20분마다 업데이트 된다.
     public void update() {
@@ -69,12 +72,13 @@ public class DepartmentNoticeUpdater {
 
     @Scheduled(cron = "0 0 23 * * 5", zone = "Asia/Seoul") // 전체 업데이트는 매주 금요일 오후 11시에 한다.
     public void updateAll() {
-        log.info("******** 학과별 전체 공지 업데이트 시작 ********");
+        if (featureFlags.isEnabled(KuringFeatures.UPDATE_DEPARTMENT_NOTICE.getFeature())) {
+            log.info("******** 학과별 전체 공지 업데이트 시작 ********");
 
-        for (DeptInfo deptInfo : deptInfoList) {
-            if (deptInfo.isSameDepartment(REAL_ESTATE)) {
-                continue;
-            }
+            for (DeptInfo deptInfo : deptInfoList) {
+                if (deptInfo.isSameDepartment(REAL_ESTATE)) {
+                    continue;
+                }
 
             deptInfo.setIsGrad(false);
             CompletableFuture
@@ -85,6 +89,7 @@ public class DepartmentNoticeUpdater {
             CompletableFuture
                     .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
+            }
 
         }
     }

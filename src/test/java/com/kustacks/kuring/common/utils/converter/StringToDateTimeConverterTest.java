@@ -44,7 +44,9 @@ class StringToDateTimeConverterTest {
                 Arguments.of("2023-04-03 00:00:12", LocalDateTime.of(2023, 4, 3, 0, 0, 12)),
                 Arguments.of("2024-08-03T20:01:27.454996", LocalDateTime.of(2024, 8, 3, 20, 1, 27)),
                 Arguments.of("2024-08-04T21:57:23.1166969", LocalDateTime.of(2024, 8, 4, 21, 57, 23)),
-                Arguments.of("2024-08-04T21:57:23.116696917", LocalDateTime.of(2024, 8, 4, 21, 57, 23))
+                Arguments.of("2024-08-04T21:57:23.116696917", LocalDateTime.of(2024, 8, 4, 21, 57, 23)),
+                Arguments.of("20250420T090000", LocalDateTime.of(2025, 4, 20, 9, 0, 0)),
+                Arguments.of("20250301", LocalDateTime.of(2025, 3, 1, 0, 0, 0))
         );
     }
 }
