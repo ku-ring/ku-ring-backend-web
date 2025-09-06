@@ -1,0 +1,29 @@
+server:
+  tomcat:
+    mbeanregistry:
+      enabled: true
+
+spring:
+  ai:
+    openai:
+      api-key: "temp_ai_api_key"
+      chat:
+        options:
+          model: gpt-3.5-turbo
+          temperature: 0.0
+          maxTokens: 300
+      embedding:
+        options:
+          model: text-embedding-3-small
+
+logging:
+  level:
+    org:
+      apache:
+        coyote:
+          http11: trace
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true

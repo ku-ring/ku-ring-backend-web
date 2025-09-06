@@ -1,0 +1,22 @@
+spring:
+  jpa:
+    show-sql: true
+
+security:
+  jwt:
+    token:
+      secret-key: localtestsecretkey
+      admin-expire-length: 3600000
+      user-expire-length: 604800000
+
+logging:
+  level:
+    org:
+      apache:
+        coyote:
+          http11: trace
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
