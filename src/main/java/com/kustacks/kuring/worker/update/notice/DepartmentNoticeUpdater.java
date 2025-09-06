@@ -6,10 +6,10 @@ import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
-import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
-import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.dto.ComplexNoticeFormatDto;
 import com.kustacks.kuring.worker.dto.ScrapingResultDto;
+import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
+import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.update.notice.dto.DepartmentNoticeScrapResult;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +43,18 @@ public class DepartmentNoticeUpdater {
         log.info("******** 학과별 최신 공지 업데이트 시작 ********");
 
         for (DeptInfo deptInfo : deptInfoList) {
+            deptInfo.setIsGrad(false);
+            CompletableFuture
+                    .supplyAsync(
+                            () -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml),
+                            noticeUpdaterThreadTaskExecutor
+                    ).thenApply(
+                            scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName())
+                    ).thenAccept(
+                            notificationService::sendNotifications
+                    );
+
+            deptInfo.setIsGrad(true);
             CompletableFuture
                     .supplyAsync(
                             () -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml),
@@ -64,9 +76,16 @@ public class DepartmentNoticeUpdater {
                 continue;
             }
 
+            deptInfo.setIsGrad(false);
             CompletableFuture
                     .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
                     .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
+
+            deptInfo.setIsGrad(true);
+            CompletableFuture
+                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
+                    .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
+
         }
     }
 

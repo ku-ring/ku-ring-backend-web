@@ -117,7 +117,7 @@ public class DatabaseConfigurator implements InitializingBean {
 
     private void setCharsetAllTable() {
         for (String tableName : tableNames) {
-            jdbcTemplate.execute("ALTER TABLE " + tableName +" CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            jdbcTemplate.execute("ALTER TABLE " + tableName + " CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
         }
     }
 
@@ -240,21 +240,21 @@ public class DatabaseConfigurator implements InitializingBean {
     private List<DepartmentNotice> buildImportantDepartmentNotice(int cnt, DepartmentName departmentName, CategoryName categoryName, boolean important, boolean isGrad) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new DepartmentNotice("depart_import_article_" + i, "2023-04-03 00:00:1"+i, "2023-04-03 00:00:1"+i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName, isGrad))
+                .map(i -> new DepartmentNotice((isGrad ? "grad_depart_import_article_" : "depart_import_article_") + i, "2023-04-03 00:00:1" + i, "2023-04-03 00:00:1" + i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName, isGrad))
                 .toList();
     }
 
     private List<DepartmentNotice> buildNormalDepartmentNotice(int cnt, DepartmentName departmentName, CategoryName categoryName, boolean important, boolean isGrad) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new DepartmentNotice("depart_normal_article_" + i, "2023-04-03 00:00:1"+i, "2023-04-03 00:00:1"+i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName, isGrad))
+                .map(i -> new DepartmentNotice((isGrad ? "grad_depart_normal_article_" : "depart_normal_article_") + i, "2023-04-03 00:00:1" + i, "2023-04-03 00:00:1" + i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName, isGrad))
                 .toList();
     }
 
     private static List<Notice> buildNotices(int cnt, CategoryName categoryName) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new Notice("article_" + i, "2023-04-03 00:00:1"+i, "2023-04-03 00:00:1"+i, "subject_" + i, categoryName, false, "https://www.example.com"))
+                .map(i -> new Notice("article_" + i, "2023-04-03 00:00:1" + i, "2023-04-03 00:00:1" + i, "subject_" + i, categoryName, false, "https://www.example.com"))
                 .toList();
     }
 
