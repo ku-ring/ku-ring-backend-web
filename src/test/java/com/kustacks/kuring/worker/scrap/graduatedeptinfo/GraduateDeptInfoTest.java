@@ -2,6 +2,7 @@ package com.kustacks.kuring.worker.scrap.graduatedeptinfo;
 
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.support.IntegrationTestSupport;
+import com.kustacks.kuring.support.TestFileLoader;
 import com.kustacks.kuring.worker.dto.ComplexNoticeFormatDto;
 import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
@@ -25,6 +26,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 class GraduateDeptInfoTest extends IntegrationTestSupport {
+
     @MockBean
     private NormalJsoupClient normalJsoupClient;
 
@@ -41,11 +43,8 @@ class GraduateDeptInfoTest extends IntegrationTestSupport {
     @DisplayName("컴퓨터공학부 대학원 공지를 스크래핑한다.")
     void computer_scrapLatestPage() throws IOException {
         // given
-        Document doc = Jsoup.parse(
-                getClass().getClassLoader().getResourceAsStream("notice/graduate-cse-notice.html"),
-                "UTF-8",
-                ""
-        );
+        String html = TestFileLoader.loadHtmlFile("src/test/resources/notice/graduate-cse-notice.html");
+        Document doc = Jsoup.parse(html);
 
         when(normalJsoupClient.get(anyString(), anyInt())).thenReturn(doc);
 
