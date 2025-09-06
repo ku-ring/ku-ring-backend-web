@@ -2,6 +2,7 @@ package com.kustacks.kuring.notice.domain;
 
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.Column;
@@ -12,6 +13,7 @@ import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class DepartmentNotice extends Notice {
 
     @Column(name = "department_name")

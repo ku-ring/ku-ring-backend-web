@@ -22,6 +22,7 @@ public class DeptInfo {
     protected StaffScrapInfo staffScrapInfo;
     protected DepartmentName departmentName;
     protected String collegeName;
+    protected boolean isGrad;
 
     public List<ScrapingResultDto> scrapLatestPageHtml() {
         return noticeApiClient.request(this);

@@ -72,7 +72,7 @@ class NoticeUpdateSupportTest {
 
         // when
         List<DepartmentNotice> results = noticeUpdateSupport
-                .filteringSoonSaveDepartmentNotices(originNotices, List.of(1, 2, 4), DepartmentName.ECONOMICS, false);
+                .filteringSoonSaveDepartmentNotices(originNotices, List.of(1, 2, 4), DepartmentName.ECONOMICS, false, false);
 
         // then
         assertThat(results).hasSize(2)

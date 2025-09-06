@@ -53,13 +53,14 @@ public class NoticeUpdateSupport {
             List<CommonNoticeFormatDto> scrapResults,
             List<Integer> savedArticleIds,
             DepartmentName departmentNameEnum,
-            boolean important
+            boolean important,
+            boolean isGrad
     ) {
         List<DepartmentNotice> newNotices = new LinkedList<>(); // 뒤에 추가만 계속 하기 때문에 arrayList가 아닌 Linked List 사용 O(1)
         for (CommonNoticeFormatDto notice : scrapResults) {
             try {
                 if (Collections.binarySearch(savedArticleIds, Integer.valueOf(notice.getArticleId())) < 0) { // 정렬되어있다, 이진탐색으로 O(logN)안에 수행
-                    DepartmentNotice newDepartmentNotice = convert(notice, departmentNameEnum, important);
+                    DepartmentNotice newDepartmentNotice = convert(notice, departmentNameEnum, important, isGrad);
                     newNotices.add(newDepartmentNotice);
                 }
             } catch (IncorrectResultSizeDataAccessException e) {
@@ -118,7 +119,7 @@ public class NoticeUpdateSupport {
                 dto.getFullUrl());
     }
 
-    private DepartmentNotice convert(CommonNoticeFormatDto dto, DepartmentName departmentNameEnum, boolean important) {
+    private DepartmentNotice convert(CommonNoticeFormatDto dto, DepartmentName departmentNameEnum, boolean important, boolean isGrad) {
         return DepartmentNotice.builder()
                 .articleId(dto.getArticleId())
                 .postedDate(dto.getPostedDate())
@@ -128,6 +129,7 @@ public class NoticeUpdateSupport {
                 .important(important)
                 .categoryName(CategoryName.DEPARTMENT)
                 .departmentName(departmentNameEnum)
+                .isGrad(isGrad)
                 .build();
     }
 }

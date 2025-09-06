@@ -10,6 +10,7 @@ import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.dto.ComplexNoticeFormatDto;
 import com.kustacks.kuring.worker.dto.ScrapingResultDto;
+import com.kustacks.kuring.worker.update.notice.dto.DepartmentNoticeScrapResult;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,63 +70,74 @@ public class DepartmentNoticeUpdater {
         }
     }
 
-    private List<ComplexNoticeFormatDto> updateDepartmentAsync(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) {
-        return scrapperTemplate.scrap(deptInfo, decisionMaker);
+    private List<DepartmentNoticeScrapResult> updateDepartmentAsync(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) {
+        List<ComplexNoticeFormatDto> results = scrapperTemplate.scrap(deptInfo, decisionMaker);
+        boolean isGrad = deptInfo.isGrad();
+
+        return results.stream()
+                .map(r -> new DepartmentNoticeScrapResult(r, isGrad))
+                .toList();
     }
 
-    private List<DepartmentNotice> compareLatestAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, String departmentName) {
+    private List<DepartmentNotice> compareLatestAndUpdateDB(List<DepartmentNoticeScrapResult> scrapResults, String departmentName) {
         DepartmentName departmentNameEnum = DepartmentName.fromKor(departmentName);
 
         List<DepartmentNotice> newNoticeList = new ArrayList<>();
-        for (ComplexNoticeFormatDto scrapResult : scrapResults) {
+        for (DepartmentNoticeScrapResult scrapResult : scrapResults) {
+            boolean isGrad = scrapResult.isGrad();
+            ComplexNoticeFormatDto formatDto = scrapResult.getComplexNoticeFormatDto();
+
             // DB에서 모든 중요 공지를 가져와서
-            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum);
+            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum, isGrad);
 
             // db와 싱크를 맞춘다
-            List<DepartmentNotice> newImportantNotices = saveNewNotices(scrapResult.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true);
+            List<DepartmentNotice> newImportantNotices = saveNewNotices(formatDto.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true, isGrad);
             newNoticeList.addAll(newImportantNotices);
 
             // DB에서 모든 일반 공지 id를 가져와서
-            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum);
+            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum, isGrad);
 
             // db와 싱크를 맞춘다
-            List<DepartmentNotice> newNormalNotices = saveNewNotices(scrapResult.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false);
+            List<DepartmentNotice> newNormalNotices = saveNewNotices(formatDto.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false, isGrad);
             newNoticeList.addAll(newNormalNotices);
         }
 
         return newNoticeList;
     }
 
-    private List<DepartmentNotice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
-        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important);
+    private List<DepartmentNotice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important, boolean isGrad) {
+        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important, isGrad);
         noticeCommandPort.saveAllDepartmentNotices(newNotices);
         return newNotices;
     }
 
-    private void compareAllAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, String departmentName) {
+    private void compareAllAndUpdateDB(List<DepartmentNoticeScrapResult> scrapResults, String departmentName) {
         if (scrapResults.isEmpty()) {
             return;
         }
 
         DepartmentName departmentNameEnum = DepartmentName.fromKor(departmentName);
 
-        for (ComplexNoticeFormatDto scrapResult : scrapResults) {
+        for (DepartmentNoticeScrapResult scrapResult : scrapResults) {
+            boolean isGrad = scrapResult.isGrad();
+            ComplexNoticeFormatDto formatDto = scrapResult.getComplexNoticeFormatDto();
+
             // DB에서 최신 중요 공지를 가져와서
-            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum);
+            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum, isGrad);
 
             // db와 싱크를 맞춘다
-            synchronizationWithDb(scrapResult.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true);
+            synchronizationWithDb(formatDto.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true, isGrad);
 
             // DB에서 모든 일반 공지의 id를 가져와서
-            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum);
+            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum, isGrad);
 
             // db와 싱크를 맞춘다
-            synchronizationWithDb(scrapResult.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false);
+            synchronizationWithDb(formatDto.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false, isGrad);
         }
     }
 
-    private void synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important) {
-        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important);
+    private void synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important, boolean isGrad) {
+        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important, isGrad);
 
         List<Integer> latestNoticeIds = noticeUpdateSupport.extractDepartmentNoticeIds(scrapResults);
 
