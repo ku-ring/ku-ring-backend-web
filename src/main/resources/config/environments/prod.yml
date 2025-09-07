@@ -1,0 +1,9 @@
+server:
+  tomcat:
+    mbeanregistry:
+      enabled: true
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: false
