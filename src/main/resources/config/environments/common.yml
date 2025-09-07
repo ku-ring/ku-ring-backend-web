@@ -1,6 +1,7 @@
 server:
   deploy:
     environment: ${DEPLOY_ENV}
+  port: ${PORT:8080}
 
 spring:
   jpa:
@@ -13,7 +14,7 @@ spring:
           batch_size: 100
         format_sql: true
     defer-datasource-initialization: false
-    show-sql: true
+    show-sql: false
     open-in-view: false
   datasource:
     hikari:
@@ -30,9 +31,7 @@ spring:
     url: jdbc:${DB_URL}
     user: ${DB_USER}
     password: ${DB_PASSWORD}
-  jackson:
-    serialization:
-      FAIL_ON_EMPTY_BEANS: false
+
   ai:
     openai:
       api-key: ${AI_API_KEY}
@@ -50,17 +49,45 @@ spring:
           key-token: ${CHROMA_API_KEY}
         store:
           collection-name: ${CHROMA_COLLECTION_NAME}
+
   mail:
-    host: ${MAIL_SMTP_HOST} # smtp 주소
-    port: 587 # STMP 서버 포트
-    username: ${MAIL_ADDRESS} # 이메일 보내는 용도의 계정
-    password: ${MAIL_PASSWORD} # 비밀번호
+    host: ${MAIL_SMTP_HOST}
+    port: 587
+    username: ${MAIL_ADDRESS}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
-            enable: true # TLS
+            enable: true
+  
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+security:
+  jwt:
+    token:
+      secret-key: ${JWT_SECRET_KEY}
+      admin-expire-length: ${JWT_ADMIN_EXPIRE_LENGTH}
+      user-expire-length: ${JWT_USER_EXPIRE_LENGTH}
+
+aws:
+  appconfig:
+    application: ${AWS_APPCONFIG_APPLICATION}
+    environment: ${AWS_APPCONFIG_ENVIRONMENT}
+    profile: ${AWS_APPCONFIG_PROFILE}
+    region: ${AWS_APPCONFIG_REGION}
 
 springdoc:
   swagger-ui:
@@ -100,42 +127,6 @@ springdoc:
   # 해당 패턴에 매칭되는 controller만 swagger-ui에 노출한다.
   paths-to-match:
     - /api/v2/**
-
-logging:
-  level:
-    org:
-      apache:
-        coyote:
-          http11: trace
-
-decorator:
-  datasource:
-    p6spy:
-      enable-logging: true
-
-management:
-  endpoint:
-    health:
-      show-details: always
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
-security:
-  jwt:
-    token:
-      secret-key: localtestsecretkey
-      admin-expire-length: 3600000
-      user-expire-length: 604800000
-
-aws:
-  appconfig:
-    application: ${AWS_APPCONFIG_APPLICATION}
-    environment: ${AWS_APPCONFIG_ENVIRONMENT}
-    profile: ${AWS_APPCONFIG_PROFILE}
-    region: ${AWS_APPCONFIG_REGION}
-
 
 notice:
   kuis:

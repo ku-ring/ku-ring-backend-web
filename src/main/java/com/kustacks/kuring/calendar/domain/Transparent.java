@@ -4,4 +4,15 @@ public enum Transparent {
     OPAQUE, //바쁨(중요일정)
     TRANSPARENT //바쁘지 않음(미중요일정)
     ;
+
+    public static Transparent valueOfString(String transp) {
+        if (transp == null) return null;
+        transp = transp.trim().toUpperCase();
+
+        return switch (transp) {
+            case "TRANSPARENT" -> TRANSPARENT;
+            case "OPAQUE" -> OPAQUE;
+            default -> null;
+        };
+    }
 }
