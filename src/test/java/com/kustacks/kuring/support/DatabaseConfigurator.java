@@ -237,17 +237,17 @@ public class DatabaseConfigurator implements InitializingBean {
     }
 
 
-    private List<DepartmentNotice> buildImportantDepartmentNotice(int cnt, DepartmentName departmentName, CategoryName categoryName, boolean important, boolean isGrad) {
+    private List<DepartmentNotice> buildImportantDepartmentNotice(int cnt, DepartmentName departmentName, CategoryName categoryName, boolean important, boolean graduate) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new DepartmentNotice((isGrad ? "grad_depart_import_article_" : "depart_import_article_") + i, "2023-04-03 00:00:1" + i, "2023-04-03 00:00:1" + i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName, isGrad))
+                .map(i -> new DepartmentNotice((graduate ? "grad_depart_import_article_" : "depart_import_article_") + i, "2023-04-03 00:00:1" + i, "2023-04-03 00:00:1" + i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName, graduate))
                 .toList();
     }
 
-    private List<DepartmentNotice> buildNormalDepartmentNotice(int cnt, DepartmentName departmentName, CategoryName categoryName, boolean important, boolean isGrad) {
+    private List<DepartmentNotice> buildNormalDepartmentNotice(int cnt, DepartmentName departmentName, CategoryName categoryName, boolean important, boolean graduate) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(cnt)
-                .map(i -> new DepartmentNotice((isGrad ? "grad_depart_normal_article_" : "depart_normal_article_") + i, "2023-04-03 00:00:1" + i, "2023-04-03 00:00:1" + i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName, isGrad))
+                .map(i -> new DepartmentNotice((graduate ? "grad_depart_normal_article_" : "depart_normal_article_") + i, "2023-04-03 00:00:1" + i, "2023-04-03 00:00:1" + i, "subject_" + i, categoryName, important, "https://www.example.com", departmentName, graduate))
                 .toList();
     }
 

@@ -8,5 +8,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class DepartmentNoticeScrapResult {
     private ComplexNoticeFormatDto complexNoticeFormatDto;
-    private boolean isGrad;
+    private boolean graduate;
 }

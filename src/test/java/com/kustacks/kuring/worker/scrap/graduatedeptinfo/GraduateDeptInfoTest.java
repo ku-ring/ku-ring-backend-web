@@ -48,7 +48,7 @@ class GraduateDeptInfoTest extends IntegrationTestSupport {
 
         when(normalJsoupClient.get(anyString(), anyInt())).thenReturn(doc);
 
-        computerScienceDept.setIsGrad(true);
+        computerScienceDept.setgraduate(true);
 
         // when
         List<ComplexNoticeFormatDto> results =

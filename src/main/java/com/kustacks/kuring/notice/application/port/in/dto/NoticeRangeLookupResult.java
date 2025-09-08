@@ -8,7 +8,7 @@ public record NoticeRangeLookupResult(
         String subject,
         String category,
         Boolean important,
-        Boolean isGrad,
+        Boolean graduate,
         Long commentCount
-){
+) {
 }

@@ -22,7 +22,7 @@ public class DeptInfo {
     protected StaffScrapInfo staffScrapInfo;
     protected DepartmentName departmentName;
     protected String collegeName;
-    protected boolean isGrad;
+    protected boolean graduate;
     protected NoticeScrapInfo noticeGraduationInfo;
 
 
@@ -55,7 +55,7 @@ public class DeptInfo {
     }
 
     public String createRequestUrl(int page, int row) {
-        NoticeScrapInfo targetNoticeScrapInfo = isGrad ? noticeGraduationInfo : noticeScrapInfo;
+        NoticeScrapInfo targetNoticeScrapInfo = graduate ? noticeGraduationInfo : noticeScrapInfo;
 
         return UriComponentsBuilder
                 .fromUriString(latestPageNoticeProperties.listUrl())
@@ -70,7 +70,7 @@ public class DeptInfo {
 
 
     public String createViewUrl() {
-        NoticeScrapInfo targetNoticeScrapInfo = isGrad ? noticeGraduationInfo : noticeScrapInfo;
+        NoticeScrapInfo targetNoticeScrapInfo = graduate ? noticeGraduationInfo : noticeScrapInfo;
 
         return latestPageNoticeProperties.viewUrl()
                 .replaceAll("\\{department\\}", targetNoticeScrapInfo.getSiteName())
@@ -86,8 +86,8 @@ public class DeptInfo {
         return departmentName.getName();
     }
 
-    public void setIsGrad(boolean isGrad) {
-        this.isGrad = isGrad;
+    public void setgraduate(boolean graduate) {
+        this.graduate = graduate;
     }
 }
 

@@ -46,7 +46,7 @@ public class DepartmentNoticeUpdater {
         log.info("******** 학과별 최신 공지 업데이트 시작 ********");
 
         for (DeptInfo deptInfo : deptInfoList) {
-            deptInfo.setIsGrad(false);
+            deptInfo.setgraduate(false);
             CompletableFuture
                     .supplyAsync(
                             () -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml),
@@ -57,7 +57,7 @@ public class DepartmentNoticeUpdater {
                             notificationService::sendNotifications
                     );
 
-            deptInfo.setIsGrad(true);
+            deptInfo.setgraduate(true);
             CompletableFuture
                     .supplyAsync(
                             () -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml),
@@ -80,15 +80,15 @@ public class DepartmentNoticeUpdater {
                     continue;
                 }
 
-            deptInfo.setIsGrad(false);
-            CompletableFuture
-                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
-                    .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
+                deptInfo.setgraduate(false);
+                CompletableFuture
+                        .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
+                        .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
 
-            deptInfo.setIsGrad(true);
-            CompletableFuture
-                    .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
-                    .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
+                deptInfo.setgraduate(true);
+                CompletableFuture
+                        .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
+                        .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
             }
 
         }
@@ -96,10 +96,10 @@ public class DepartmentNoticeUpdater {
 
     private List<DepartmentNoticeScrapResult> updateDepartmentAsync(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) {
         List<ComplexNoticeFormatDto> results = scrapperTemplate.scrap(deptInfo, decisionMaker);
-        boolean isGrad = deptInfo.isGrad();
+        boolean graduate = deptInfo.isGraduate();
 
         return results.stream()
-                .map(r -> new DepartmentNoticeScrapResult(r, isGrad))
+                .map(r -> new DepartmentNoticeScrapResult(r, graduate))
                 .toList();
     }
 
@@ -108,29 +108,29 @@ public class DepartmentNoticeUpdater {
 
         List<DepartmentNotice> newNoticeList = new ArrayList<>();
         for (DepartmentNoticeScrapResult scrapResult : scrapResults) {
-            boolean isGrad = scrapResult.isGrad();
+            boolean graduate = scrapResult.isGraduate();
             ComplexNoticeFormatDto formatDto = scrapResult.getComplexNoticeFormatDto();
 
             // DB에서 모든 중요 공지를 가져와서
-            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum, isGrad);
+            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum, graduate);
 
             // db와 싱크를 맞춘다
-            List<DepartmentNotice> newImportantNotices = saveNewNotices(formatDto.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true, isGrad);
+            List<DepartmentNotice> newImportantNotices = saveNewNotices(formatDto.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true, graduate);
             newNoticeList.addAll(newImportantNotices);
 
             // DB에서 모든 일반 공지 id를 가져와서
-            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum, isGrad);
+            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum, graduate);
 
             // db와 싱크를 맞춘다
-            List<DepartmentNotice> newNormalNotices = saveNewNotices(formatDto.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false, isGrad);
+            List<DepartmentNotice> newNormalNotices = saveNewNotices(formatDto.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false, graduate);
             newNoticeList.addAll(newNormalNotices);
         }
 
         return newNoticeList;
     }
 
-    private List<DepartmentNotice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important, boolean isGrad) {
-        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important, isGrad);
+    private List<DepartmentNotice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important, boolean graduate) {
+        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important, graduate);
         noticeCommandPort.saveAllDepartmentNotices(newNotices);
         return newNotices;
     }
@@ -143,25 +143,25 @@ public class DepartmentNoticeUpdater {
         DepartmentName departmentNameEnum = DepartmentName.fromKor(departmentName);
 
         for (DepartmentNoticeScrapResult scrapResult : scrapResults) {
-            boolean isGrad = scrapResult.isGrad();
+            boolean graduate = scrapResult.isGraduate();
             ComplexNoticeFormatDto formatDto = scrapResult.getComplexNoticeFormatDto();
 
             // DB에서 최신 중요 공지를 가져와서
-            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum, isGrad);
+            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum, graduate);
 
             // db와 싱크를 맞춘다
-            synchronizationWithDb(formatDto.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true, isGrad);
+            synchronizationWithDb(formatDto.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true, graduate);
 
             // DB에서 모든 일반 공지의 id를 가져와서
-            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum, isGrad);
+            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum, graduate);
 
             // db와 싱크를 맞춘다
-            synchronizationWithDb(formatDto.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false, isGrad);
+            synchronizationWithDb(formatDto.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false, graduate);
         }
     }
 
-    private void synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important, boolean isGrad) {
-        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important, isGrad);
+    private void synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important, boolean graduate) {
+        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important, graduate);
 
         List<Integer> latestNoticeIds = noticeUpdateSupport.extractDepartmentNoticeIds(scrapResults);
 

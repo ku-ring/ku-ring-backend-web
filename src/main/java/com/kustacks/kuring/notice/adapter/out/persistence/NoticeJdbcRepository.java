@@ -34,7 +34,7 @@ class NoticeJdbcRepository {
                         ps.setString(6, notice.getSubject());
                         ps.setString(7, notice.getUpdatedDate());
                         ps.setString(8, notice.getUrl());
-                        ps.setInt(9,0);
+                        ps.setInt(9, 0);
                     }
 
                     @Override
@@ -62,7 +62,7 @@ class NoticeJdbcRepository {
                         ps.setString(7, departmentNotice.getUpdatedDate());
                         ps.setString(8, departmentNotice.getUrl());
                         ps.setString(9, DepartmentName.fromName(departmentNotice.getDepartmentName()).name());
-                        ps.setInt(10, departmentNotice.getIsGrad() ? 1 : 0);
+                        ps.setBoolean(10, departmentNotice.getGraduate());
                         ps.setString(11, "DepartmentNotice");
                     }
 
@@ -71,6 +71,7 @@ class NoticeJdbcRepository {
                         return departmentNotices.size();
                     }
                 }
-        );}
+        );
+    }
 
 }
