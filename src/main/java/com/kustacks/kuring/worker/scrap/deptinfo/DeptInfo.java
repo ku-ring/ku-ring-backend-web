@@ -86,8 +86,12 @@ public class DeptInfo {
         return departmentName.getName();
     }
 
-    public void setgraduate(boolean graduate) {
-        this.graduate = graduate;
+    public void markAsGraduateNotice() {
+        this.graduate = true;
+    }
+
+    public void markAsUndergraduateNotice() {
+        this.graduate = false;
     }
 }
 

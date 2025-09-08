@@ -46,7 +46,7 @@ public class DepartmentNoticeUpdater {
         log.info("******** 학과별 최신 공지 업데이트 시작 ********");
 
         for (DeptInfo deptInfo : deptInfoList) {
-            deptInfo.setgraduate(false);
+            deptInfo.markAsUndergraduateNotice();
             CompletableFuture
                     .supplyAsync(
                             () -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml),
@@ -57,7 +57,7 @@ public class DepartmentNoticeUpdater {
                             notificationService::sendNotifications
                     );
 
-            deptInfo.setgraduate(true);
+            deptInfo.markAsGraduateNotice();
             CompletableFuture
                     .supplyAsync(
                             () -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml),
@@ -80,12 +80,12 @@ public class DepartmentNoticeUpdater {
                     continue;
                 }
 
-                deptInfo.setgraduate(false);
+                deptInfo.markAsUndergraduateNotice();
                 CompletableFuture
                         .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
                         .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
 
-                deptInfo.setgraduate(true);
+                deptInfo.markAsGraduateNotice();
                 CompletableFuture
                         .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
                         .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));

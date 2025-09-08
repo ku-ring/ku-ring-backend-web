@@ -230,7 +230,7 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
                 dto.getSubject(),
                 dto.getCategory(),
                 dto.getImportant(),
-                dto.getgraduate(),
+                dto.getGraduate(),
                 dto.getCommentCount()
         );
     }
