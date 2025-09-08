@@ -11,7 +11,6 @@ import com.kustacks.kuring.worker.dto.ComplexNoticeFormatDto;
 import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
-import com.kustacks.kuring.worker.update.notice.dto.DepartmentNoticeScrapResult;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,10 +44,9 @@ public class DepartmentGraduationNoticeUpdater {
         log.info("******** 학과별 (대학원) 최신 공지 업데이트 시작 ********");
 
         for (DeptInfo deptInfo : deptInfoList) {
-            deptInfo.markAsGraduateNotice();
             CompletableFuture
                     .supplyAsync(
-                            () -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml),
+                            () -> updateDepartmentAsync(deptInfo, DeptInfo::scrapGraduateLatestPageHtml),
                             noticeUpdaterThreadTaskExecutor
                     ).thenApply(
                             scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName())
@@ -58,7 +56,7 @@ public class DepartmentGraduationNoticeUpdater {
         }
     }
 
-    @Scheduled(cron = "0 0 23 * * 5", zone = "Asia/Seoul") // 전체 업데이트는 매주 금요일 오후 11시에 한다.
+    @Scheduled(cron = "0 0 1 * * 6", zone = "Asia/Seoul") // 전체 업데이트는 매주 토요일 오전 1시에 한다.
     public void updateAll() {
         if (featureFlags.isEnabled(KuringFeatures.UPDATE_DEPARTMENT_NOTICE.getFeature())) {
             log.info("******** 학과별 (대학원) 전체 공지 업데이트 시작 ********");
@@ -68,44 +66,36 @@ public class DepartmentGraduationNoticeUpdater {
                     continue;
                 }
 
-                deptInfo.markAsGraduateNotice();
                 CompletableFuture
-                        .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
+                        .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapGraduateAllPageHtml), noticeUpdaterThreadTaskExecutor)
                         .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
             }
 
         }
     }
 
-    private List<DepartmentNoticeScrapResult> updateDepartmentAsync(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) {
-        List<ComplexNoticeFormatDto> results = scrapperTemplate.scrap(deptInfo, decisionMaker);
-        boolean graduate = deptInfo.isGraduate();
-
-        return results.stream()
-                .map(r -> new DepartmentNoticeScrapResult(r, graduate))
-                .toList();
+    private List<ComplexNoticeFormatDto> updateDepartmentAsync(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) {
+        return scrapperTemplate.scrap(deptInfo, decisionMaker);
     }
 
-    private List<DepartmentNotice> compareLatestAndUpdateDB(List<DepartmentNoticeScrapResult> scrapResults, String departmentName) {
+    private List<DepartmentNotice> compareLatestAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, String departmentName) {
         DepartmentName departmentNameEnum = DepartmentName.fromKor(departmentName);
 
         List<DepartmentNotice> newNoticeList = new ArrayList<>();
-        for (DepartmentNoticeScrapResult scrapResult : scrapResults) {
-            boolean graduate = scrapResult.isGraduate();
-            ComplexNoticeFormatDto formatDto = scrapResult.getComplexNoticeFormatDto();
+        for (ComplexNoticeFormatDto scrapResult : scrapResults) {
 
             // DB에서 모든 중요 공지를 가져와서
-            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum, graduate);
+            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum, true);
 
             // db와 싱크를 맞춘다
-            List<DepartmentNotice> newImportantNotices = saveNewNotices(formatDto.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true, graduate);
+            List<DepartmentNotice> newImportantNotices = saveNewNotices(scrapResult.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true, true);
             newNoticeList.addAll(newImportantNotices);
 
             // DB에서 모든 일반 공지 id를 가져와서
-            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum, graduate);
+            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum, true);
 
             // db와 싱크를 맞춘다
-            List<DepartmentNotice> newNormalNotices = saveNewNotices(formatDto.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false, graduate);
+            List<DepartmentNotice> newNormalNotices = saveNewNotices(scrapResult.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false, true);
             newNoticeList.addAll(newNormalNotices);
         }
 
@@ -118,28 +108,26 @@ public class DepartmentGraduationNoticeUpdater {
         return newNotices;
     }
 
-    private void compareAllAndUpdateDB(List<DepartmentNoticeScrapResult> scrapResults, String departmentName) {
+    private void compareAllAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, String departmentName) {
         if (scrapResults.isEmpty()) {
             return;
         }
 
         DepartmentName departmentNameEnum = DepartmentName.fromKor(departmentName);
 
-        for (DepartmentNoticeScrapResult scrapResult : scrapResults) {
-            boolean graduate = scrapResult.isGraduate();
-            ComplexNoticeFormatDto formatDto = scrapResult.getComplexNoticeFormatDto();
+        for (ComplexNoticeFormatDto scrapResult : scrapResults) {
 
             // DB에서 최신 중요 공지를 가져와서
-            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum, graduate);
+            List<Integer> savedImportantArticleIds = noticeQueryPort.findImportantArticleIdsByDepartment(departmentNameEnum, true);
 
             // db와 싱크를 맞춘다
-            synchronizationWithDb(formatDto.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true, graduate);
+            synchronizationWithDb(scrapResult.getImportantNoticeList(), savedImportantArticleIds, departmentNameEnum, true, true);
 
             // DB에서 모든 일반 공지의 id를 가져와서
-            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum, graduate);
+            List<Integer> savedNormalArticleIds = noticeQueryPort.findNormalArticleIdsByDepartment(departmentNameEnum, true);
 
             // db와 싱크를 맞춘다
-            synchronizationWithDb(formatDto.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false, graduate);
+            synchronizationWithDb(scrapResult.getNormalNoticeList(), savedNormalArticleIds, departmentNameEnum, false, true);
         }
     }
 
