@@ -6,6 +6,7 @@ import com.kustacks.kuring.support.TestFileLoader;
 import com.kustacks.kuring.worker.dto.ComplexNoticeFormatDto;
 import com.kustacks.kuring.worker.scrap.DepartmentNoticeScraperTemplate;
 import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.deptinfo.engineering.ComputerScienceDept;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
@@ -38,6 +39,8 @@ class GraduateDeptInfoTest extends IntegrationTestSupport {
 
     @Autowired
     private LatestPageNoticeApiClient latestPageNoticeApiClient;
+    @Autowired
+    private LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient;
 
     @Test
     @DisplayName("컴퓨터공학부 대학원 공지를 스크래핑한다.")
@@ -48,11 +51,9 @@ class GraduateDeptInfoTest extends IntegrationTestSupport {
 
         when(normalJsoupClient.get(anyString(), anyInt())).thenReturn(doc);
 
-        computerScienceDept.markAsGraduateNotice();
-
         // when
         List<ComplexNoticeFormatDto> results =
-                scraperTemplate.scrap(computerScienceDept, latestPageNoticeApiClient::request);
+                scraperTemplate.scrap(computerScienceDept, latestPageGraduateNoticeApiClient::request);
 
         // then
         assertThat(results).isNotEmpty();
