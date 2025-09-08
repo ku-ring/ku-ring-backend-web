@@ -21,7 +21,7 @@ class NoticeJdbcRepository {
 
     @Transactional
     public void saveAllCategoryNotices(List<Notice> notices) {
-        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, is_grad, dtype) values (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Notice')",
+        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, graduate, dtype) values (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Notice')",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -47,7 +47,7 @@ class NoticeJdbcRepository {
     @Transactional
     public void saveAllDepartmentNotices(List<DepartmentNotice> departmentNotices) {
         jdbcTemplate.batchUpdate(
-                "INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, department_name, is_grad, dtype) " +
+                "INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, department_name, graduate, dtype) " +
                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 new BatchPreparedStatementSetter() {
                     @Override

@@ -49,7 +49,7 @@ public class NoticeQueryApiV2 {
             @Parameter(description = "공지 타입") @RequestParam(name = "type") String type,
             @Parameter(description = "학과는 hostPrefix 로 전달") @RequestParam(name = "department", required = false) String department,
             @Parameter(description = "중요도") @RequestParam(name = "important", defaultValue = "false") Boolean important,
-            @Parameter(description = "대학원 여부") @RequestParam(name = "is_grad", defaultValue = "false") Boolean graduate,
+            @Parameter(description = "대학원 여부") @RequestParam(name = "graduate", defaultValue = "false") Boolean graduate,
             @Parameter(description = "페이지") @RequestParam(name = "page") @Min(0) int page,
             @Parameter(description = "단일 페이지의 사이즈, 1 ~ 30까지 허용") @RequestParam(name = "size") @Min(1) @Max(30) int size
     ) {
