@@ -17,7 +17,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResultDto, DeptInfo> {
+public class LatestPageGraduateNoticeApiClient implements NoticeApiClient<ScrapingResultDto, DeptInfo> {
 
     private static final int START_PAGE_NUM = 1; // page는 인자가 1부터 시작
     private static final int ROW_NUMBERS_PER_PAGE = 20;
@@ -26,7 +26,7 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private final NormalJsoupClient jsoupClient;
 
-    public LatestPageNoticeApiClient(NormalJsoupClient normalJsoupClient) {
+    public LatestPageGraduateNoticeApiClient(NormalJsoupClient normalJsoupClient) {
         this.jsoupClient = normalJsoupClient;
     }
 
@@ -77,12 +77,12 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
     }
 
     private String buildUrlForTotalNoticeCount(DeptInfo deptInfo) {
-        return deptInfo.createUndergraduateRequestUrl(1, 1);
+        return deptInfo.createGraduateRequestUrl(1, 1);
     }
 
     private ScrapingResultDto getScrapingResultDto(DeptInfo deptInfo, int rowSize, int timeout) throws IOException {
-        String requestUrl = deptInfo.createUndergraduateRequestUrl(START_PAGE_NUM, rowSize);
-        String viewUrl = deptInfo.createUndergraduateViewUrl();
+        String requestUrl = deptInfo.createGraduateRequestUrl(START_PAGE_NUM, rowSize);
+        String viewUrl = deptInfo.createGraduateViewUrl();
 
         StopWatch stopWatch = new StopWatch(deptInfo.getDeptName() + "Request");
         stopWatch.start();
