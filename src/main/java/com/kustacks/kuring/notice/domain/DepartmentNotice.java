@@ -13,13 +13,13 @@ import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
 public class DepartmentNotice extends Notice {
 
     @Column(name = "department_name")
     @Enumerated(EnumType.STRING)
     private DepartmentName departmentName;
 
+    @Getter
     @Column(name = "graduate")
     private Boolean graduate;
 
