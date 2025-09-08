@@ -1,6 +1,5 @@
 package com.kustacks.kuring.worker.update.notice;
 
-
 import com.kustacks.kuring.common.featureflag.FeatureFlags;
 import com.kustacks.kuring.common.featureflag.KuringFeatures;
 import com.kustacks.kuring.message.application.service.FirebaseNotificationService;
@@ -30,7 +29,7 @@ import static com.kustacks.kuring.notice.domain.DepartmentName.REAL_ESTATE;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DepartmentNoticeUpdater {
+public class DepartmentGraduationNoticeUpdater {
 
     private final List<DeptInfo> deptInfoList;
     private final DepartmentNoticeScraperTemplate scrapperTemplate;
@@ -43,10 +42,10 @@ public class DepartmentNoticeUpdater {
 
     @Scheduled(cron = "0 15/20 7-19 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 7:15 ~ 오후 7:55분 사이에 20분마다 업데이트 된다.
     public void update() {
-        log.info("******** 학과별 최신 공지 업데이트 시작 ********");
+        log.info("******** 학과별 (대학원) 최신 공지 업데이트 시작 ********");
 
         for (DeptInfo deptInfo : deptInfoList) {
-            deptInfo.markAsUndergraduateNotice();
+            deptInfo.markAsGraduateNotice();
             CompletableFuture
                     .supplyAsync(
                             () -> updateDepartmentAsync(deptInfo, DeptInfo::scrapLatestPageHtml),
@@ -56,25 +55,23 @@ public class DepartmentNoticeUpdater {
                     ).thenAccept(
                             notificationService::sendNotifications
                     );
-
         }
     }
 
     @Scheduled(cron = "0 0 23 * * 5", zone = "Asia/Seoul") // 전체 업데이트는 매주 금요일 오후 11시에 한다.
     public void updateAll() {
         if (featureFlags.isEnabled(KuringFeatures.UPDATE_DEPARTMENT_NOTICE.getFeature())) {
-            log.info("******** 학과별 전체 공지 업데이트 시작 ********");
+            log.info("******** 학과별 (대학원) 전체 공지 업데이트 시작 ********");
 
             for (DeptInfo deptInfo : deptInfoList) {
                 if (deptInfo.isSameDepartment(REAL_ESTATE)) {
                     continue;
                 }
 
-                deptInfo.markAsUndergraduateNotice();
+                deptInfo.markAsGraduateNotice();
                 CompletableFuture
                         .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapAllPageHtml), noticeUpdaterThreadTaskExecutor)
                         .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
-                
             }
 
         }
