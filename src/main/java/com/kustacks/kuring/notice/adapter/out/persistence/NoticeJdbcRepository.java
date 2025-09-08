@@ -70,8 +70,7 @@ class NoticeJdbcRepository {
                     public int getBatchSize() {
                         return departmentNotices.size();
                     }
-                }
-        );
+                });
     }
 
 }
