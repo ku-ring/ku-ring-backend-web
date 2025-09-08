@@ -1,0 +1,2 @@
+ALTER TABLE notice
+    ADD COLUMN graduate BOOLEAN NULL;
