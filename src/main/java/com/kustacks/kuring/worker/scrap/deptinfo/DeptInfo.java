@@ -4,6 +4,7 @@ import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.worker.parser.notice.NoticeHtmlParserTemplate;
 import com.kustacks.kuring.worker.parser.notice.RowsDto;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.NoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import lombok.Getter;
@@ -22,8 +23,8 @@ public class DeptInfo {
     protected StaffScrapInfo staffScrapInfo;
     protected DepartmentName departmentName;
     protected String collegeName;
-    protected boolean graduate;
     protected NoticeScrapInfo noticeGraduationInfo;
+    protected LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient;
 
 
     public List<ScrapingResultDto> scrapLatestPageHtml() {
@@ -33,6 +34,15 @@ public class DeptInfo {
     public List<ScrapingResultDto> scrapAllPageHtml() {
         return noticeApiClient.requestAll(this);
     }
+
+    public List<ScrapingResultDto> scrapGraduateLatestPageHtml() {
+        return latestPageGraduateNoticeApiClient.request(this);
+    }
+
+    public List<ScrapingResultDto> scrapGraduateAllPageHtml() {
+        return latestPageGraduateNoticeApiClient.requestAll(this);
+    }
+
 
     public RowsDto parse(Document document) {
         return htmlParser.parse(document);
@@ -54,27 +64,40 @@ public class DeptInfo {
         return this.staffScrapInfo.getSiteName();
     }
 
-    public String createRequestUrl(int page, int row) {
-        NoticeScrapInfo targetNoticeScrapInfo = graduate ? noticeGraduationInfo : noticeScrapInfo;
-
+    public String createUndergraduateRequestUrl(int page, int row) {
         return UriComponentsBuilder
                 .fromUriString(latestPageNoticeProperties.listUrl())
                 .queryParam("page", page)
                 .queryParam("row", row)
                 .buildAndExpand(
-                        targetNoticeScrapInfo.getSiteName(),
-                        targetNoticeScrapInfo.getSiteName(),
-                        targetNoticeScrapInfo.getSiteId()
+                        noticeScrapInfo.getSiteName(),
+                        noticeScrapInfo.getSiteName(),
+                        noticeScrapInfo.getSiteId()
                 ).toUriString();
     }
 
-
-    public String createViewUrl() {
-        NoticeScrapInfo targetNoticeScrapInfo = graduate ? noticeGraduationInfo : noticeScrapInfo;
-
+    public String createUndergraduateViewUrl() {
         return latestPageNoticeProperties.viewUrl()
-                .replaceAll("\\{department\\}", targetNoticeScrapInfo.getSiteName())
-                .replace("{siteId}", String.valueOf(targetNoticeScrapInfo.getSiteId()));
+                .replaceAll("\\{department\\}", noticeScrapInfo.getSiteName())
+                .replace("{siteId}", String.valueOf(noticeScrapInfo.getSiteId()));
+    }
+
+    public String createGraduateRequestUrl(int page, int row) {
+        return UriComponentsBuilder
+                .fromUriString(latestPageNoticeProperties.listUrl())
+                .queryParam("page", page)
+                .queryParam("row", row)
+                .buildAndExpand(
+                        noticeGraduationInfo.getSiteName(),
+                        noticeGraduationInfo.getSiteName(),
+                        noticeGraduationInfo.getSiteId()
+                ).toUriString();
+    }
+
+    public String createGraduateViewUrl() {
+        return latestPageNoticeProperties.viewUrl()
+                .replaceAll("\\{department\\}", noticeGraduationInfo.getSiteName())
+                .replace("{siteId}", String.valueOf(noticeGraduationInfo.getSiteId()));
     }
 
     public boolean isSupportStaffScrap() {
@@ -86,12 +109,5 @@ public class DeptInfo {
         return departmentName.getName();
     }
 
-    public void markAsGraduateNotice() {
-        this.graduate = true;
-    }
-
-    public void markAsUndergraduateNotice() {
-        this.graduate = false;
-    }
 }
 
