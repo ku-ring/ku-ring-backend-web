@@ -1,7 +1,12 @@
 package com.kustacks.kuring.common.exception.handler;
 
 import com.kustacks.kuring.common.dto.ErrorResponse;
-import com.kustacks.kuring.common.exception.*;
+import com.kustacks.kuring.common.exception.AdminException;
+import com.kustacks.kuring.common.exception.BadWordContainsException;
+import com.kustacks.kuring.common.exception.InternalLogicException;
+import com.kustacks.kuring.common.exception.InvalidStateException;
+import com.kustacks.kuring.common.exception.NoPermissionException;
+import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
 import jakarta.validation.ConstraintViolationException;
@@ -12,10 +17,18 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @Slf4j
 @RestControllerAdvice
 public class CommonExceptionHandler {
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> MethodArgumentTypeMismatchExceptionHandler(MethodArgumentTypeMismatchException exception) {
+        log.warn("[MethodArgumentTypeMismatchException] {}", exception.getMessage());
+        return ResponseEntity.status(ErrorCode.API_INVALID_PARAM.getHttpStatus())
+                .body(new ErrorResponse(ErrorCode.API_INVALID_PARAM));
+    }
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception) {
