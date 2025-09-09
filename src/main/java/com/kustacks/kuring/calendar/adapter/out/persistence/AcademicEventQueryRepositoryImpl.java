@@ -77,7 +77,7 @@ class AcademicEventQueryRepositoryImpl implements AcademicEventQueryRepository {
             return academicEvent.startTime.lt(endDate.plusDays(1L).atStartOfDay());
         }
         if (endDate == null) {
-            return academicEvent.startTime.goe(startDate.atStartOfDay());
+            return academicEvent.endTime.goe(startDate.atStartOfDay());
         }
         return academicEvent.startTime.lt(endDate.plusDays(1L).atStartOfDay())
                 .and(academicEvent.endTime.goe(startDate.atStartOfDay()));

@@ -122,8 +122,8 @@ public class AcademicEventStep {
         LocalDate eventEndDate = parseEventDateTime((String) eventMap.get("endTime"));
 
         assertAll(
-                () -> assertThat(eventStartDate).isAfterOrEqualTo(queryStartDate),
-                () -> assertThat(eventEndDate).isBeforeOrEqualTo(queryEndDate)
+                () -> assertThat(eventStartDate).isBeforeOrEqualTo(queryEndDate),
+                () -> assertThat(eventEndDate).isAfterOrEqualTo(queryStartDate)
         );
     }
 
