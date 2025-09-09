@@ -34,7 +34,7 @@ public enum DepartmentName {
     ELEC_ELEC("electrical_electronics", "ee", "전자전기공학부"),
     CHEMI_DIV("chemical_division", "chemeng", "화학공학부"),
     COMPUTER("computer_science", "cse", "컴퓨터공학부"),
-    INDUSTRIAL("industrial", "kies", "신산업공학과"),
+    INDUSTRIAL("industrial", "kies", "산업공학과"),
     ADV_INDUSTRIAL("advanced_industrial", "aif", "신산업융합학과"),
     BIOLOGICAL("biological", "microbio", "생물공학과"),
     KBEAUTY("kbeauty_industry_fusion", "kbeauty", "K뷰티산업융합학과"),
