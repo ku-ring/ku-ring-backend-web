@@ -32,7 +32,7 @@ public class AcademicEventDbSynchronizer {
 
         // 2. 겹치는 이벤트 조회
         List<String> newEventUids = collectEventUids(newEvents);
-        Map<String, AcademicEvent> existingEvents = academicEventQueryPort.findAllInEventUidsAsMap(newEventUids);
+        Map<String, AcademicEvent> existingEvents = academicEventQueryPort.findEventsInEventUidsAsMap(newEventUids);
 
         // 3. 신규, 업데이트 목록 분류 및 도메인 로직 적용
         EventUpdateResult eventUpdateResult = classifyEvents(newEvents, existingEvents);
