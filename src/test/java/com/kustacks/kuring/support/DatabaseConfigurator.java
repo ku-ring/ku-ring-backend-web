@@ -3,12 +3,21 @@ package com.kustacks.kuring.support;
 import com.kustacks.kuring.admin.adapter.out.persistence.AdminRepository;
 import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.domain.AdminRole;
+import com.kustacks.kuring.calendar.adapter.out.persistence.AcademicEventRepository;
+import com.kustacks.kuring.calendar.domain.AcademicEvent;
+import com.kustacks.kuring.calendar.domain.Transparent;
 import com.kustacks.kuring.email.adapter.out.persistence.VerificationCodeRepository;
 import com.kustacks.kuring.email.domain.VerificationCode;
 import com.kustacks.kuring.notice.adapter.out.persistence.BadWordRepository;
 import com.kustacks.kuring.notice.adapter.out.persistence.NoticePersistenceAdapter;
 import com.kustacks.kuring.notice.adapter.out.persistence.WhitelistWordRepository;
-import com.kustacks.kuring.notice.domain.*;
+import com.kustacks.kuring.notice.domain.BadWord;
+import com.kustacks.kuring.notice.domain.BadWordCategory;
+import com.kustacks.kuring.notice.domain.CategoryName;
+import com.kustacks.kuring.notice.domain.DepartmentName;
+import com.kustacks.kuring.notice.domain.DepartmentNotice;
+import com.kustacks.kuring.notice.domain.Notice;
+import com.kustacks.kuring.notice.domain.WhiteWord;
 import com.kustacks.kuring.staff.adapter.out.persistence.StaffRepository;
 import com.kustacks.kuring.staff.domain.Staff;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
@@ -26,8 +35,10 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Component
@@ -48,6 +59,7 @@ public class DatabaseConfigurator implements InitializingBean {
     private final StaffRepository staffRepository;
     private final AdminRepository adminRepository;
     private final VerificationCodeRepository verificationCodeRepository;
+    private final AcademicEventRepository academicEventRepository;
     private final DataSource dataSource;
     private final JdbcTemplate jdbcTemplate;
     private final PasswordEncoder passwordEncoder;
@@ -58,13 +70,14 @@ public class DatabaseConfigurator implements InitializingBean {
 
     public DatabaseConfigurator(NoticePersistenceAdapter noticePersistenceAdapter, UserPersistenceAdapter userPersistenceAdapter,
                                 StaffRepository staffRepository, AdminRepository adminRepository, VerificationCodeRepository verificationCodeRepository,
-                                DataSource dataSource, JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder,
+                                AcademicEventRepository academicEventRepository, DataSource dataSource, JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder,
                                 BadWordRepository badWordRepository, WhitelistWordRepository whitelistWordRepository) {
         this.noticePersistenceAdapter = noticePersistenceAdapter;
         this.userPersistenceAdapter = userPersistenceAdapter;
         this.staffRepository = staffRepository;
         this.adminRepository = adminRepository;
         this.verificationCodeRepository = verificationCodeRepository;
+        this.academicEventRepository = academicEventRepository;
         this.dataSource = dataSource;
         this.jdbcTemplate = jdbcTemplate;
         this.passwordEncoder = passwordEncoder;
@@ -108,6 +121,7 @@ public class DatabaseConfigurator implements InitializingBean {
         initFeedback();
         initStaff();
         initNotice();
+        initAcademicEvents();
         initVerificationCode();
         initBadWords();
         initWhitelistWords();
@@ -256,5 +270,38 @@ public class DatabaseConfigurator implements InitializingBean {
                         .college("이과대학")
                         .build()
                 ).toList();
+    }
+
+    private void initAcademicEvents() {
+        List<AcademicEvent> academicEvents = buildAcademicEvents();
+        academicEventRepository.saveAll(academicEvents);
+    }
+
+    private List<AcademicEvent> buildAcademicEvents() {
+        String[][] eventData = {
+                {"2월 말 행사", "2월 28일 종료되는 행사", "ACADEMIC", "TRANSPARENT", "2025-02-28T10:00", "2025-02-28T11:00"},
+                {"3월 1일 개강", "3월 1일 정확히 시작하는 개강", "ACADEMIC", "TRANSPARENT", "2025-03-01T09:00", "2025-03-01T10:00"},
+                {"3월 15일 중간 행사", "3월 중순 행사", "EVENT", "OPAQUE", "2025-03-15T14:00", "2025-03-15T15:00"},
+                {"3월 31일 마감", "3월 마지막 날 정확히 끝나는 행사", "DEADLINE", "OPAQUE", "2025-03-31T23:00", "2025-03-31T23:59"},
+                {"4월 1일 마지막 행사", "4월 1일 마지막", "ACADEMIC", "TRANSPARENT", "2025-04-01T00:00", "2025-04-01T01:00"}
+        };
+
+        return Stream.iterate(0, i -> i + 1)
+                .limit(eventData.length)
+                .map(i -> {
+                    String[] data = eventData[i];
+                    return AcademicEvent.builder()
+                            .eventUid(UUID.randomUUID().toString())
+                            .summary(data[0])
+                            .description(data[1])
+                            .category(data[2])
+                            .transparent(Transparent.valueOf(data[3]))
+                            .sequence(1)
+                            .notifyEnabled(true)
+                            .startTime(LocalDateTime.parse(data[4]))
+                            .endTime(LocalDateTime.parse(data[5]))
+                            .build();
+                })
+                .toList();
     }
 }

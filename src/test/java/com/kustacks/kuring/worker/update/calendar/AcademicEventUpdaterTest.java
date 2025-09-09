@@ -72,9 +72,9 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
         // when - 업데이트 실행
         assertDoesNotThrow(() -> academicEventUpdater.update());
 
-        // then - DB에 저장된 데이터 검증
+        // then - DB에 저장된 데이터 검증(기존 5건 + 신규 198건)
         List<AcademicEvent> allEvents = academicEventQueryPort.findAll();
-        assertThat(allEvents).hasSize(198);
+        assertThat(allEvents).hasSize(203);
 
         AcademicEvent event1 = allEvents.stream()
                 .filter(event -> event.getEventUid().equals(testEventUids.get(0)))
@@ -109,9 +109,9 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
         mockingScrapCalendar(updatedCalendar);
         assertDoesNotThrow(() -> academicEventUpdater.update());
 
-        // then - DB에 저장된 데이터 검증
+        // then - DB에 저장된 데이터 검증(기존 5건 + 신규 199건)
         List<AcademicEvent> allEvents = academicEventQueryPort.findAll();
-        assertThat(allEvents).hasSize(199);
+        assertThat(allEvents).hasSize(204);
 
         AcademicEvent event1 = allEvents.stream()
                 .filter(event -> event.getEventUid().equals(testEventUids.get(0)))
@@ -155,7 +155,7 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
 
         // DB에는 변경사항이 없어야 함
         List<AcademicEvent> allEvents = academicEventQueryPort.findAll();
-        assertThat(allEvents).isEmpty();
+        assertThat(allEvents).hasSize(5);
     }
 
     private Calendar loadCalendarFromFile(String filePath) throws IOException, ParserException {
