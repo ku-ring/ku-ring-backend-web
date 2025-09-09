@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -166,52 +168,37 @@ class AcademicEventQueryServiceTest {
         verify(academicEventQueryPort).findEventsBetweenDate(futureStartDate, futureEndDate);
     }
 
-    @DisplayName("경계값 테스트 - 정확히 시작일에 시작하는 이벤트")
-    @Test
-    void get_academic_events_boundary_test_start_date() {
+    @DisplayName("경계값 테스트 - 정확한 날짜 일치")
+    @ParameterizedTest(name = "{0}")
+    @CsvSource({
+            "'정확히 시작일에 시작', 2025-03-01, 2025-03-01, 2, '2025년 1학기 개강'",
+            "'정확히 종료일에 종료', 2025-06-20, 2025-06-20, 1, '기말고사 기간'"
+    })
+    void get_academic_events_boundary_test_exact_date_match(String scenario, LocalDate queryStartDate, LocalDate queryEndDate, int expectedSize, String expectedSummary) {
         // given
-        LocalDate startDate = LocalDate.of(2025, 3, 1);
-        AcademicEventLookupCommand command = new AcademicEventLookupCommand(startDate, startDate);
-
-        when(academicEventQueryPort.findEventsBetweenDate(startDate, startDate)).thenReturn(mockReadModels);
+        AcademicEventLookupCommand command = new AcademicEventLookupCommand(queryStartDate, queryEndDate);
+        List<AcademicEventReadModel> mockData = expectedSize == 1 ? List.of(mockReadModels.get(1)) : mockReadModels;
+        when(academicEventQueryPort.findEventsBetweenDate(queryStartDate, queryEndDate)).thenReturn(mockData);
 
         // when
         List<AcademicEventResult> results = academicEventQueryService.getAcademicEventsByDateRange(command);
 
         // then
-        assertThat(results).hasSize(2);
-        assertThat(results.get(0).summary()).isEqualTo("2025년 1학기 개강");
-
-        verify(academicEventQueryPort).findEventsBetweenDate(startDate, startDate);
+        assertThat(results).hasSize(expectedSize);
+        assertThat(results.get(0).summary()).isEqualTo(expectedSummary);
+        verify(academicEventQueryPort).findEventsBetweenDate(queryStartDate, queryEndDate);
     }
 
-    @DisplayName("경계값 테스트 - 정확히 종료일에 종료하는 이벤트")
-    @Test
-    void get_academic_events_boundary_test_end_date() {
+    @DisplayName("경계값 테스트 - 다양한 기간 겹침 시나리오")
+    @ParameterizedTest(name = "{0}")
+    @CsvSource({
+            "'요청 시작일 = 이벤트 종료일', 2025-06-20, 2025-06-30",
+            "'요청 종료일 = 이벤트 시작일', 2025-06-10, 2025-06-15",
+            "'이벤트가 요청 기간을 완전 포함', 2025-06-17, 2025-06-19"
+    })
+    void get_academic_events_boundary_test_various_overlap_scenarios(String scenario, LocalDate requestStartDate, LocalDate requestEndDate) {
         // given
-        LocalDate endDate = LocalDate.of(2025, 6, 20);
-        AcademicEventLookupCommand command = new AcademicEventLookupCommand(endDate, endDate);
-
-        when(academicEventQueryPort.findEventsBetweenDate(endDate, endDate)).thenReturn(List.of(mockReadModels.get(1)));
-
-        // when
-        List<AcademicEventResult> results = academicEventQueryService.getAcademicEventsByDateRange(command);
-
-        // then
-        assertThat(results).hasSize(1);
-        assertThat(results.get(0).summary()).isEqualTo("기말고사 기간");
-
-        verify(academicEventQueryPort).findEventsBetweenDate(endDate, endDate);
-    }
-
-    @DisplayName("경계값 테스트 - 요청 기간의 시작일과 이벤트 종료일이 겹치는 경우")
-    @Test
-    void get_academic_events_boundary_test_request_start_equals_event_end() {
-        // given
-        LocalDate requestStartDate = LocalDate.of(2025, 6, 20);
-        LocalDate requestEndDate = LocalDate.of(2025, 6, 30);
         AcademicEventLookupCommand command = new AcademicEventLookupCommand(requestStartDate, requestEndDate);
-
         when(academicEventQueryPort.findEventsBetweenDate(requestStartDate, requestEndDate)).thenReturn(List.of(mockReadModels.get(1)));
 
         // when
@@ -220,47 +207,6 @@ class AcademicEventQueryServiceTest {
         // then
         assertThat(results).hasSize(1);
         assertThat(results.get(0).summary()).isEqualTo("기말고사 기간");
-
-        verify(academicEventQueryPort).findEventsBetweenDate(requestStartDate, requestEndDate);
-    }
-
-    @DisplayName("경계값 테스트 - 요청 기간의 종료일과 이벤트 시작일이 겹치는 경우")
-    @Test
-    void get_academic_events_boundary_test_request_end_equals_event_start() {
-        // given
-        LocalDate requestStartDate = LocalDate.of(2025, 6, 10);
-        LocalDate requestEndDate = LocalDate.of(2025, 6, 15);
-        AcademicEventLookupCommand command = new AcademicEventLookupCommand(requestStartDate, requestEndDate);
-
-        when(academicEventQueryPort.findEventsBetweenDate(requestStartDate, requestEndDate)).thenReturn(List.of(mockReadModels.get(1)));
-
-        // when
-        List<AcademicEventResult> results = academicEventQueryService.getAcademicEventsByDateRange(command);
-
-        // then
-        assertThat(results).hasSize(1);
-        assertThat(results.get(0).summary()).isEqualTo("기말고사 기간");
-
-        verify(academicEventQueryPort).findEventsBetweenDate(requestStartDate, requestEndDate);
-    }
-
-    @DisplayName("경계값 테스트 - 이벤트가 요청 기간을 완전히 포함하는 경우")
-    @Test
-    void get_academic_events_boundary_test_event_contains_request() {
-        // given
-        LocalDate requestStartDate = LocalDate.of(2025, 6, 17);
-        LocalDate requestEndDate = LocalDate.of(2025, 6, 19);
-        AcademicEventLookupCommand command = new AcademicEventLookupCommand(requestStartDate, requestEndDate);
-
-        when(academicEventQueryPort.findEventsBetweenDate(requestStartDate, requestEndDate)).thenReturn(List.of(mockReadModels.get(1)));
-
-        // when
-        List<AcademicEventResult> results = academicEventQueryService.getAcademicEventsByDateRange(command);
-
-        // then
-        assertThat(results).hasSize(1);
-        assertThat(results.get(0).summary()).isEqualTo("기말고사 기간");
-
         verify(academicEventQueryPort).findEventsBetweenDate(requestStartDate, requestEndDate);
     }
 }
