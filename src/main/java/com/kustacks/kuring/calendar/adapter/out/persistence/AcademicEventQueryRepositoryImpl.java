@@ -22,6 +22,9 @@ class AcademicEventQueryRepositoryImpl implements AcademicEventQueryRepository {
     @Override
     @Transactional(readOnly = true)
     public List<AcademicEvent> findByEventUids(List<String> eventUids) {
+        if (eventUids == null || eventUids.isEmpty()) {
+            return List.of();
+        }
         return queryFactory
                 .select(academicEvent)
                 .from(academicEvent)
