@@ -163,7 +163,7 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
 
         if (command.isImportant()) {
             return noticeQueryPort
-                    .findImportantNoticesByDepartment(departmentName, command.graduate())
+                    .findImportantNoticesByDepartment(departmentName, command.graduated())
                     .stream()
                     .map(NoticeQueryService::convertPortResult)
                     .toList();
@@ -172,7 +172,7 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
         return noticeQueryPort
                 .findNormalNoticesByDepartmentWithOffset(
                         departmentName,
-                        command.graduate(),
+                        command.graduated(),
                         PageRequest.of(command.page(), command.size())
                 ).stream()
                 .map(NoticeQueryService::convertPortResult)
@@ -230,7 +230,7 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
                 dto.getSubject(),
                 dto.getCategory(),
                 dto.getImportant(),
-                dto.getGraduate(),
+                dto.getgraduated(),
                 dto.getCommentCount()
         );
     }

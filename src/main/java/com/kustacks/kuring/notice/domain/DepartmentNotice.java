@@ -20,16 +20,16 @@ public class DepartmentNotice extends Notice {
     private DepartmentName departmentName;
 
     @Getter
-    @Column(name = "graduate")
-    private Boolean graduate;
+    @Column(name = "graduated")
+    private Boolean graduated;
 
     @Builder
     public DepartmentNotice(String articleId, String postedDate, String updatedDate,
                             String subject, CategoryName categoryName, Boolean important,
-                            String fullUrl, DepartmentName departmentName, Boolean graduate) {
+                            String fullUrl, DepartmentName departmentName, Boolean graduated) {
         super(articleId, postedDate, updatedDate, subject, categoryName, important, fullUrl);
         this.departmentName = departmentName;
-        this.graduate = graduate;
+        this.graduated = graduated;
     }
 
     public String getDepartmentName() {

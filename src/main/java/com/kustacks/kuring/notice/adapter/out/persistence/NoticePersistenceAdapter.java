@@ -80,13 +80,13 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
     }
 
     @Override
-    public List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName, Boolean graduate) {
-        return this.noticeRepository.findImportantNoticesByDepartment(departmentName, graduate);
+    public List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName, Boolean graduated) {
+        return this.noticeRepository.findImportantNoticesByDepartment(departmentName, graduated);
     }
 
     @Override
-    public List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Boolean graduate, Pageable pageable) {
-        return this.noticeRepository.findNormalNoticesByDepartmentWithOffset(departmentName, graduate, pageable);
+    public List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Boolean graduated, Pageable pageable) {
+        return this.noticeRepository.findNormalNoticesByDepartmentWithOffset(departmentName, graduated, pageable);
     }
 
     @Override
@@ -100,13 +100,13 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
     }
 
     @Override
-    public List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentNameEnum, Boolean graduate) {
-        return this.noticeRepository.findImportantArticleIdsByDepartment(departmentNameEnum, graduate);
+    public List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentNameEnum, Boolean graduated) {
+        return this.noticeRepository.findImportantArticleIdsByDepartment(departmentNameEnum, graduated);
     }
 
     @Override
-    public List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentNameEnum, Boolean graduate) {
-        return this.noticeRepository.findNormalArticleIdsByDepartment(departmentNameEnum, graduate);
+    public List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentNameEnum, Boolean graduated) {
+        return this.noticeRepository.findNormalArticleIdsByDepartment(departmentNameEnum, graduated);
     }
 
     @Override
