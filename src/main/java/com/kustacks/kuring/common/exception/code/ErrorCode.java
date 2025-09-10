@@ -98,6 +98,8 @@ public enum ErrorCode {
     // AI 관련
     AI_SIMILAR_DOCUMENTS_NOT_FOUND(HttpStatus.NOT_FOUND, "죄송합니다, 해당 내용은 2024년도 6월 이후에 작성된 공지 내용에서 확인할 수 없는 내용입니다."),
 
+    ACADEMIC_EVENT_INVALID_RANGE(HttpStatus.BAD_REQUEST, "시작일, 종료일 설정이 잘못되었습니다."),
+
     /**
      * ErrorCodes about DomainLogicException
      */

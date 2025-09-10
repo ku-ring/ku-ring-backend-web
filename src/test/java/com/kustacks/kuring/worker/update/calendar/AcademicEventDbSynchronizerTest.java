@@ -109,7 +109,7 @@ class AcademicEventDbSynchronizerTest {
     @DisplayName("새로운 이벤트들이 정상적으로 저장된다")
     void should_save_new_events_successfully() {
         // given
-        when(academicEventQueryPort.findAllInEventUidsAsMap(anyList())).thenReturn(Map.of());
+        when(academicEventQueryPort.findEventsInEventUidsAsMap(anyList())).thenReturn(Map.of());
 
         // when
         academicEventDbSynchronizer.compareAndUpdateDb(testCalendarResult);
@@ -126,7 +126,7 @@ class AcademicEventDbSynchronizerTest {
     @DisplayName("기존 이벤트가 업데이트되면 해당 값을 업데이트 한다.")
     void should_update_existing_events_by_deleting_old_and_saving_new() {
         // given
-        when(academicEventQueryPort.findAllInEventUidsAsMap(anyList())).thenReturn(existingEventsMap);
+        when(academicEventQueryPort.findEventsInEventUidsAsMap(anyList())).thenReturn(existingEventsMap);
 
         // when
         academicEventDbSynchronizer.compareAndUpdateDb(testCalendarResult);
@@ -156,7 +156,7 @@ class AcademicEventDbSynchronizerTest {
                 .build();
 
         Map<String, AcademicEvent> highSequenceMap = Map.of("UID002", higherSequenceEvent);
-        when(academicEventQueryPort.findAllInEventUidsAsMap(anyList())).thenReturn(highSequenceMap);
+        when(academicEventQueryPort.findEventsInEventUidsAsMap(anyList())).thenReturn(highSequenceMap);
 
         // when
         academicEventDbSynchronizer.compareAndUpdateDb(testCalendarResult);
@@ -177,7 +177,7 @@ class AcademicEventDbSynchronizerTest {
                 null,
                 List.of()
         );
-        when(academicEventQueryPort.findAllInEventUidsAsMap(anyList())).thenReturn(Map.of());
+        when(academicEventQueryPort.findEventsInEventUidsAsMap(anyList())).thenReturn(Map.of());
 
         // when
         academicEventDbSynchronizer.compareAndUpdateDb(emptyResult);
@@ -191,7 +191,7 @@ class AcademicEventDbSynchronizerTest {
     @DisplayName("DB 조회 결과가 비어있어도 정상 처리된다")
     void should_handle_empty_existing_events() {
         // given
-        when(academicEventQueryPort.findAllInEventUidsAsMap(anyList())).thenReturn(Map.of());
+        when(academicEventQueryPort.findEventsInEventUidsAsMap(anyList())).thenReturn(Map.of());
 
         // when
         academicEventDbSynchronizer.compareAndUpdateDb(testCalendarResult);
