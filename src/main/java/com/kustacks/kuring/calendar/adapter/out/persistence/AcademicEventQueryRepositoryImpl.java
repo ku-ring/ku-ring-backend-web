@@ -32,26 +32,13 @@ class AcademicEventQueryRepositoryImpl implements AcademicEventQueryRepository {
         return queryFactorySelectingReadModel()
                 .fetch();
     }
-
     @Override
-    public List<AcademicEventReadModel> findEventsAfter(LocalDate startDate) {
+    public List<AcademicEventReadModel> findEventsByDate(LocalDate startDate, LocalDate endDate) {
         return queryFactorySelectingReadModel()
-                .where(buildBooleanExpressionByDates(startDate, null))
-                .fetch();
-    }
-
-
-    @Override
-    public List<AcademicEventReadModel> findEventsBefore(LocalDate endDate) {
-        return queryFactorySelectingReadModel()
-                .where(buildBooleanExpressionByDates(null, endDate))
-                .fetch();
-    }
-
-    @Override
-    public List<AcademicEventReadModel> findEventsBetweenDate(LocalDate startDate, LocalDate endDate) {
-        return queryFactorySelectingReadModel()
-                .where(buildBooleanExpressionByDates(startDate, endDate))
+                .where(
+                        isEndTimeGoe(startDate),
+                        isStartTimeLt(endDate)
+                )
                 .fetch();
     }
 
@@ -72,14 +59,11 @@ class AcademicEventQueryRepositoryImpl implements AcademicEventQueryRepository {
                 .from(academicEvent);
     }
 
-    private BooleanExpression buildBooleanExpressionByDates(LocalDate startDate, LocalDate endDate) {
-        if (startDate == null) {
-            return academicEvent.startTime.lt(endDate.plusDays(1L).atStartOfDay());
-        }
-        if (endDate == null) {
-            return academicEvent.endTime.goe(startDate.atStartOfDay());
-        }
-        return academicEvent.startTime.lt(endDate.plusDays(1L).atStartOfDay())
-                .and(academicEvent.endTime.goe(startDate.atStartOfDay()));
+    private BooleanExpression isEndTimeGoe(LocalDate startDate) {
+        return startDate != null ? academicEvent.endTime.goe(startDate.atStartOfDay()) : null;
+    }
+
+    private BooleanExpression isStartTimeLt(LocalDate endDate) {
+        return endDate != null ? academicEvent.startTime.lt(endDate.plusDays(1L).atStartOfDay()) : null;
     }
 }

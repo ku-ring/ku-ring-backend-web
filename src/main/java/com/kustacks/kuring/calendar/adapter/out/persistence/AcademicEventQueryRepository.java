@@ -12,9 +12,5 @@ interface AcademicEventQueryRepository {
 
     List<AcademicEventReadModel> findAllEventReadModels();
 
-    List<AcademicEventReadModel> findEventsAfter(LocalDate startDate);
-
-    List<AcademicEventReadModel> findEventsBefore(LocalDate endDate);
-
-    List<AcademicEventReadModel> findEventsBetweenDate(LocalDate startDate, LocalDate endDate);
+    List<AcademicEventReadModel> findEventsByDate(LocalDate startDate, LocalDate endDate);
 }
