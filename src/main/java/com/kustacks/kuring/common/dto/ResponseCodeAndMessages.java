@@ -56,6 +56,9 @@ public enum ResponseCodeAndMessages {
     REPORT_SEARCH_SUCCESS(HttpStatus.OK.value(), "신고 목록 조회에 성공하였습니다"),
     REPORT_COMMENT_SUCCESS(HttpStatus.CREATED.value(), "댓글 신고에 성공했습니다"),
 
+    /* Academic Events */
+    ACADEMIC_EVENT_SEARCH_SUCCESS(HttpStatus.OK.value(), "학사일정 조회에 성공했습니다."),
+
     /**
      * ErrorCodes about auth
      */
