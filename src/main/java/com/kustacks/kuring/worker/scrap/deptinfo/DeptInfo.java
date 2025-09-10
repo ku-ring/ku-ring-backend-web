@@ -104,6 +104,10 @@ public class DeptInfo {
         return !this.staffScrapInfo.getSiteIds().isEmpty();
     }
 
+    public boolean isSupportGraduateScrap() {
+        return this.noticeGraduationInfo != null;
+    }
+
     @Override
     public String toString() {
         return departmentName.getName();

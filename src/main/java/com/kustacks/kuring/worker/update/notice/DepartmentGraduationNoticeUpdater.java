@@ -43,7 +43,11 @@ public class DepartmentGraduationNoticeUpdater {
     public void update() {
         log.info("******** 학과별 (대학원) 최신 공지 업데이트 시작 ********");
 
-        for (DeptInfo deptInfo : deptInfoList) {
+        List<DeptInfo> graduateDeptInfoList = deptInfoList.stream()
+                .filter(DeptInfo::isSupportGraduateScrap)
+                .toList();
+
+        for (DeptInfo deptInfo : graduateDeptInfoList) {
             CompletableFuture
                     .supplyAsync(
                             () -> updateDepartmentAsync(deptInfo, DeptInfo::scrapGraduateLatestPageHtml),
@@ -61,7 +65,11 @@ public class DepartmentGraduationNoticeUpdater {
         if (featureFlags.isEnabled(KuringFeatures.UPDATE_DEPARTMENT_NOTICE.getFeature())) {
             log.info("******** 학과별 (대학원) 전체 공지 업데이트 시작 ********");
 
-            for (DeptInfo deptInfo : deptInfoList) {
+            List<DeptInfo> graduateDeptInfoList = deptInfoList.stream()
+                    .filter(DeptInfo::isSupportGraduateScrap)
+                    .toList();
+
+            for (DeptInfo deptInfo : graduateDeptInfoList) {
                 if (deptInfo.isSameDepartment(REAL_ESTATE)) {
                     continue;
                 }
