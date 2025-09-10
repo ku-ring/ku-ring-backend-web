@@ -2,7 +2,7 @@ package com.kustacks.kuring.common.exception.handler;
 
 import com.kustacks.kuring.common.dto.ErrorResponse;
 import com.kustacks.kuring.common.exception.AdminException;
-import com.kustacks.kuring.common.exception.BadWordContainsException;
+import com.kustacks.kuring.common.exception.BusinessException;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.NoPermissionException;
@@ -94,13 +94,14 @@ public class CommonExceptionHandler {
     }
 
     @ExceptionHandler
-    public void InternalLogicExceptionHandler(InternalLogicException e) {
-        log.warn("[InternalLogicException] {}", e.getErrorCode().getMessage(), e);
+    public ResponseEntity<ErrorResponse> BusinessExceptionHandler(BusinessException exception) {
+        log.warn("{} {}", exception.getClass().getName(), exception.getErrorCode().getMessage());
+        return ResponseEntity.status(exception.getErrorCode().getHttpStatus())
+                .body(new ErrorResponse(exception.getErrorCode()));
     }
 
     @ExceptionHandler
-    public ResponseEntity<ErrorResponse> BadWordExceptionHandler(BadWordContainsException e) {
-        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-                .body(new ErrorResponse(e.getErrorCode()));
+    public void InternalLogicExceptionHandler(InternalLogicException e) {
+        log.warn("[InternalLogicException] {}", e.getErrorCode().getMessage(), e);
     }
 }
