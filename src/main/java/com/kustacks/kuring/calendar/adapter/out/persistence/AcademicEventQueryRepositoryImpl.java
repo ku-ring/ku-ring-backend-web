@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,6 +20,7 @@ class AcademicEventQueryRepositoryImpl implements AcademicEventQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
+    @Transactional(readOnly = true)
     public List<AcademicEvent> findByEventUids(List<String> eventUids) {
         return queryFactory
                 .select(academicEvent)
@@ -28,11 +30,13 @@ class AcademicEventQueryRepositoryImpl implements AcademicEventQueryRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<AcademicEventReadModel> findAllEventReadModels() {
         return queryFactorySelectingReadModel()
                 .fetch();
     }
     @Override
+    @Transactional(readOnly = true)
     public List<AcademicEventReadModel> findEventsByDate(LocalDate startDate, LocalDate endDate) {
         return queryFactorySelectingReadModel()
                 .where(
