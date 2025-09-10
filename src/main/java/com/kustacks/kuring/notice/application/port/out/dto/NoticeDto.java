@@ -43,7 +43,6 @@ public class NoticeDto {
         Assert.notNull(subject, "subject must not be null");
         Assert.notNull(category, "category must not be null");
         Assert.notNull(important, "important must not be null");
-        Assert.notNull(graduated, "graduated must not be null");
 
         this.id = id;
         this.articleId = articleId;

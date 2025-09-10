@@ -62,7 +62,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                                 notice.subject,
                                 notice.categoryName.stringValue().toLowerCase(),
                                 notice.important,
-                                Expressions.constant(false),
+                                Expressions.nullExpression(),
                                 commentCount
                         )
                 ).from(notice)
@@ -126,7 +126,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                                 notice.subject,
                                 notice.categoryName.stringValue().toLowerCase(),
                                 notice.important,
-                                Expressions.constant(false),
+                                Expressions.nullExpression(),
                                 commentCount
                         )
                 ).from(notice)
@@ -158,7 +158,7 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                                 notice.subject,
                                 notice.categoryName.stringValue().toLowerCase(),
                                 notice.important,
-                                Expressions.constant(false),
+                                Expressions.nullExpression(),
                                 commentCount
                         )
                 ).from(notice)
