@@ -28,6 +28,6 @@ public class EnglishEducationDept extends EducationCollege {
         this.staffScrapInfo = new StaffScrapInfo(ENGLISH_EDU.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(ENGLISH_EDU.getHostPrefix(), 505);
         this.departmentName = ENGLISH_EDU;
-        this.noticeScrapInfo = new NoticeScrapInfo(ENGLISH_EDU.getHostPrefix(), 990);
+        this.noticeGraduationInfo = new NoticeScrapInfo(ENGLISH_EDU.getHostPrefix(), 990);
     }
 }
