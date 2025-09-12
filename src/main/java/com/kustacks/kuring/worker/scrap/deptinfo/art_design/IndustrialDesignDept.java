@@ -28,5 +28,6 @@ public class IndustrialDesignDept extends ArtDesignCollege {
         this.staffScrapInfo = new StaffScrapInfo(IND_DESIGN.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(IND_DESIGN.getHostPrefix(), 4017);
         this.departmentName = IND_DESIGN;
+        this.noticeGraduationInfo = new NoticeScrapInfo(IND_DESIGN.getHostPrefix(), 5683);
     }
 }

@@ -28,5 +28,6 @@ public class PublicAdministrationDept extends SocialSciencesCollege {
         this.staffScrapInfo = new StaffScrapInfo("kupa", siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(ADMINISTRATION.getHostPrefix(), 855);
         this.departmentName = ADMINISTRATION;
+        this.noticeGraduationInfo = new NoticeScrapInfo(ADMINISTRATION.getHostPrefix(), 427);
     }
 }

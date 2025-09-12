@@ -28,5 +28,6 @@ public class ArchitectureDept extends ArchitectureCollege {
         this.staffScrapInfo = new StaffScrapInfo(ARCHITECTURE.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(ARCHITECTURE.getHostPrefix(), 397);
         this.departmentName = ARCHITECTURE;
+        this.noticeGraduationInfo = new NoticeScrapInfo(ARCHITECTURE.getHostPrefix(), 748);
     }
 }

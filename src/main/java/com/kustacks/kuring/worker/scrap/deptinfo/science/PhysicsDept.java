@@ -27,5 +27,6 @@ public class PhysicsDept extends ScienceCollege {
         this.staffScrapInfo = new StaffScrapInfo(PHYSICS.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(PHYSICS.getHostPrefix(), 393);
         this.departmentName = PHYSICS;
+        this.noticeGraduationInfo = new NoticeScrapInfo(PHYSICS.getHostPrefix(), 735);
     }
 }

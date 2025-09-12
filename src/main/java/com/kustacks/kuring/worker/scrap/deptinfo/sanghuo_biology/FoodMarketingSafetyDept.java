@@ -28,5 +28,6 @@ public class FoodMarketingSafetyDept extends SanghuoBiologyCollege {
         this.staffScrapInfo = new StaffScrapInfo(FOOD_MARKETING.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(FOOD_MARKETING.getHostPrefix(), 929);
         this.departmentName = FOOD_MARKETING;
+        this.noticeGraduationInfo = new NoticeScrapInfo(FOOD_MARKETING.getHostPrefix(), 475);
     }
 }

@@ -29,5 +29,6 @@ public class LivingDesignDept extends ArtDesignCollege {
         this.staffScrapInfo = new StaffScrapInfo(LIVING_DESIGN.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(LIVING_DESIGN.getHostPrefix(), 962);
         this.departmentName = LIVING_DESIGN;
+        this.noticeGraduationInfo = new NoticeScrapInfo(LIVING_DESIGN.getHostPrefix(), 487);
     }
 }

@@ -26,5 +26,6 @@ public class RealEstateDept extends RealEstateCollege {
         this.staffScrapInfo = new StaffScrapInfo("kure", siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(REAL_ESTATE.getHostPrefix(), 1563);
         this.departmentName = REAL_ESTATE;
+        this.noticeGraduationInfo = new NoticeScrapInfo(REAL_ESTATE.getHostPrefix(), 1565);
     }
 }
