@@ -62,7 +62,7 @@ public class AdminQueryService implements AdminQueryUseCase {
                 .map(report -> AdminReportsResult.of(
                         report.getId(),
                         report.getTargetId(),
-                        report.getUserId(),
+                        report.getReporterId(),
                         report.getTargetType(),
                         report.getContent(),
                         report.getCreatedAt(),

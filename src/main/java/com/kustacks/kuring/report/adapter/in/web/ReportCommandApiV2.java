@@ -37,6 +37,7 @@ public class ReportCommandApiV2 {
             @RequestBody ReportRequest request
     ) {
         ReportTargetType targetType = ReportTargetType.fromString(request.reportType());
+
         if (targetType.match(COMMENT)) {
             var command = new ReportCommentCommand(
                     request.targetId(),
@@ -48,6 +49,7 @@ public class ReportCommandApiV2 {
             return ResponseEntity.status(REPORT_COMMENT_SUCCESS.getCode())
                     .body(new BaseResponse<>(REPORT_COMMENT_SUCCESS, null));
         }
+
         return ResponseEntity.status(REPORT_INVALID_TARGET_TYPE.getHttpStatus())
                 .body(new ErrorResponse(REPORT_INVALID_TARGET_TYPE));
     }

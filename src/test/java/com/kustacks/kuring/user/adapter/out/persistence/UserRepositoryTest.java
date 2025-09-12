@@ -43,7 +43,7 @@ class UserRepositoryTest extends IntegrationTestSupport {
 
         // then
         assertThat(feedbackDtos).hasSize(3)
-                .extracting("contents", "userId")
+                .extracting("contents", "reporterId")
                 .containsExactlyInAnyOrder(
                         tuple("content1", userId),
                         tuple("content2", userId),
