@@ -9,6 +9,7 @@ import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
@@ -39,11 +40,12 @@ class UserRepositoryTest extends IntegrationTestSupport {
         Long userId = savedUser.getId();
 
         // when
-        List<FeedbackDto> feedbackDtos = userPersistenceAdapter.findAllFeedbackByPageRequest(PageRequest.of(0, 3));
+        List<FeedbackDto> feedbackDtos = userPersistenceAdapter.findAllFeedbackByPageRequest(PageRequest.of(0, 3))
+                .stream().toList();
 
         // then
         assertThat(feedbackDtos).hasSize(3)
-                .extracting("contents", "reporterId")
+                .extracting("contents", "userId")
                 .containsExactlyInAnyOrder(
                         tuple("content1", userId),
                         tuple("content2", userId),
@@ -61,7 +63,7 @@ class UserRepositoryTest extends IntegrationTestSupport {
         userPersistenceAdapter.deleteAll(List.of(savedUser));
 
         // then
-        List<FeedbackDto> feedbackDtos = userPersistenceAdapter.findAllFeedbackByPageRequest(PageRequest.of(0, 10));
+        Page<FeedbackDto> feedbackDtos = userPersistenceAdapter.findAllFeedbackByPageRequest(PageRequest.of(0, 10));
         assertThat(feedbackDtos).hasSize(5);
     }
 

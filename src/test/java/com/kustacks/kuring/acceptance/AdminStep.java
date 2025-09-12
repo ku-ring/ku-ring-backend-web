@@ -17,7 +17,7 @@ public class AdminStep {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("피드백 조회에 성공하였습니다"),
-                () -> assertThat(response.jsonPath().getList("data")).hasSize(5)
+                () -> assertThat(response.jsonPath().getList("data.feedbacks")).hasSize(5)
         );
     }
 
@@ -26,7 +26,7 @@ public class AdminStep {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("신고 목록 조회에 성공하였습니다"),
-                () -> assertThat(response.jsonPath().getList("data")).hasSize(3)
+                () -> assertThat(response.jsonPath().getList("data.reports")).hasSize(3)
         );
     }
 

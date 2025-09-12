@@ -18,15 +18,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static com.kustacks.kuring.acceptance.AdminStep.금칙어_로드_요청;
-import static com.kustacks.kuring.acceptance.AdminStep.사용자_피드백_조회_요청;
-import static com.kustacks.kuring.acceptance.AdminStep.신고_목록_조회_요청;
-import static com.kustacks.kuring.acceptance.AdminStep.신고_목록_조회_확인;
-import static com.kustacks.kuring.acceptance.AdminStep.알림_예약;
-import static com.kustacks.kuring.acceptance.AdminStep.예약_알림_삭제;
-import static com.kustacks.kuring.acceptance.AdminStep.예약_알림_조회;
-import static com.kustacks.kuring.acceptance.AdminStep.피드백_조회_확인;
-import static com.kustacks.kuring.acceptance.AdminStep.허용_단어_로드_요청;
+import static com.kustacks.kuring.acceptance.AdminStep.*;
 import static com.kustacks.kuring.acceptance.AuthStep.로그인_되어_있음;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -206,7 +198,7 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
         // given
         String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
         알림_예약(accessToken, alertCreateCommand);
-        int alertId = 예약_알림_조회(accessToken).jsonPath().getInt("data[0].id");
+        int alertId = 예약_알림_조회(accessToken).jsonPath().getInt("data.alerts[0].id");
 
         // when
         var 예약_알림_삭제_응답 = 예약_알림_삭제(accessToken, alertId);
@@ -218,7 +210,7 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("예약 알림 조회에 성공하였습니다"),
-                () -> assertThat(response.jsonPath().getString("data[0].status")).isEqualTo("CANCELED")
+                () -> assertThat(response.jsonPath().getString("data.alerts[0].status")).isEqualTo("CANCELED")
         );
     }
 
