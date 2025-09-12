@@ -41,20 +41,21 @@ public class NoticeStep {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 페이지_번호와_함께_학교_공지사항_조회_요청(String category, String hostPrefix, Boolean important, int page) {
+    public static ExtractableResponse<Response> 페이지_번호와_함께_학과_공지사항_조회_요청(String category, String hostPrefix, Boolean important, Boolean graduated, int page) {
         return RestAssured
                 .given().log().all()
                 .pathParam("type", category)
                 .pathParam("department", hostPrefix)
                 .pathParam("important", important)
+                .pathParam("graduated", graduated)
                 .pathParam("page", String.valueOf(page))
                 .pathParam("size", "10")
-                .when().get("/api/v2/notices?type={type}&department={department}&important={important}&page={page}&size={size}")
+                .when().get("/api/v2/notices?type={type}&department={department}&important={important}&graduated={graduated}&page={page}&size={size}")
                 .then().log().all()
                 .extract();
     }
 
-    public static void 학교_공지_조회_응답_확인(ExtractableResponse<Response> response, Boolean important) {
+    public static void 학과_공지_조회_응답_확인(ExtractableResponse<Response> response, Boolean important, Boolean graduated) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
@@ -64,7 +65,8 @@ public class NoticeStep {
                 () -> assertThat(response.jsonPath().getString("data[0].url")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getString("data[0].subject")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getString("data[0].category")).isEqualTo("department"),
-                () -> assertThat(response.jsonPath().getBoolean("data[0].important")).isEqualTo(important)
+                () -> assertThat(response.jsonPath().getBoolean("data[0].important")).isEqualTo(important),
+                () -> assertThat(response.jsonPath().getBoolean("data[0].graduated")).isEqualTo(graduated)
         );
     }
 

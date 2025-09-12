@@ -28,5 +28,6 @@ public class EnergyDept extends KuIntegratedScienceCollege {
         this.staffScrapInfo = new StaffScrapInfo(ENERGY.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(ENERGY.getHostPrefix(), 451);
         this.departmentName = ENERGY;
+        this.noticeGraduationInfo = new NoticeScrapInfo(ENERGY.getHostPrefix(), 848);
     }
 }

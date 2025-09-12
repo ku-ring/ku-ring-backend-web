@@ -28,5 +28,6 @@ public class CultureContentDept extends LiberalArtCollege {
         this.staffScrapInfo = new StaffScrapInfo(CULTURE_CONT.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(CULTURE_CONT.getHostPrefix(), 661);
         this.departmentName = CULTURE_CONT;
+        this.noticeGraduationInfo = new NoticeScrapInfo(CULTURE_CONT.getHostPrefix(), 379);
     }
 }

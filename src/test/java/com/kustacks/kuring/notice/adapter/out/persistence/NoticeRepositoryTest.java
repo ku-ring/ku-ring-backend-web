@@ -64,9 +64,9 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
         noticeCommandPort.saveAllCategoryNotices(List.of(notice1, notice2));
 
         DepartmentNotice departmentNotice1 = new DepartmentNotice("3", "2024-01-22 17:27:05", "2023-04-03 17:27:05",
-                "departmentNotice1", CategoryName.DEPARTMENT, false, "https://www.example.com", DepartmentName.ADMINISTRATION);
+                "departmentNotice1", CategoryName.DEPARTMENT, false, "https://www.example.com", DepartmentName.ADMINISTRATION, false);
         DepartmentNotice departmentNotice2 = new DepartmentNotice("4", "2024-01-24 17:27:05", "2023-04-03 17:27:05",
-                "departmentNotice2", CategoryName.DEPARTMENT, false, "https://www.example.com", DepartmentName.ADMINISTRATION);
+                "departmentNotice2", CategoryName.DEPARTMENT, false, "https://www.example.com", DepartmentName.ADMINISTRATION, true);
         noticeCommandPort.saveAllDepartmentNotices(List.of(departmentNotice1, departmentNotice2));
 
         User user = new User("user_token");

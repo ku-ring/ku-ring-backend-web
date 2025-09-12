@@ -6,26 +6,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+
 import static com.kustacks.kuring.acceptance.CategoryStep.지원하는_카테고리_조회_요청;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지_조회_요청;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지_조회_응답_확인;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_댓글수_응답_확인;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청_실패_응답_확인;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지사항_조회_요청_응답_확인;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지에_댓글_수정;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지에_댓글_추가;
-import static com.kustacks.kuring.acceptance.NoticeStep.공지의_댓글_조회;
-import static com.kustacks.kuring.acceptance.NoticeStep.댓글_대댓글_확인;
-import static com.kustacks.kuring.acceptance.NoticeStep.댓글_삭제;
-import static com.kustacks.kuring.acceptance.NoticeStep.댓글_확인;
-import static com.kustacks.kuring.acceptance.NoticeStep.로그인_사용자_댓글_조회;
-import static com.kustacks.kuring.acceptance.NoticeStep.페이지_번호와_함께_공지사항_조회_요청;
-import static com.kustacks.kuring.acceptance.NoticeStep.페이지_번호와_함께_학교_공지사항_조회_요청;
-import static com.kustacks.kuring.acceptance.NoticeStep.학교_공지_조회_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.로그인_요청;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_로그인_되어_있음;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_회원가입_요청;
+import static com.kustacks.kuring.acceptance.NoticeStep.*;
+import static com.kustacks.kuring.acceptance.UserStep.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -81,10 +66,13 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     @Test
     void look_up_notice_v2() {
         // when
-        var 공지사항_조회_요청_응답 = 페이지_번호와_함께_학교_공지사항_조회_요청("stu", "", Boolean.FALSE, 0);
+        var 공지사항_조회_요청_응답 = 공지사항_조회_요청("stu");
 
         // then
         공지사항_조회_요청_응답_확인(공지사항_조회_요청_응답, "student");
+
+        List<Boolean> graduatedList = 공지사항_조회_요청_응답.jsonPath().getList("data.graduated", Boolean.class);
+        graduatedList.forEach(value -> assertThat(value).isNull());
     }
 
     /**
@@ -96,10 +84,10 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     @Test
     void look_up_department_important_notice_v2() {
         // when
-        var 학과_공지_조회_응답 = 페이지_번호와_함께_학교_공지사항_조회_요청("dep", DepartmentName.COMPUTER.getHostPrefix(), Boolean.TRUE, 0);
+        var 학과_공지_조회_응답 = 페이지_번호와_함께_학과_공지사항_조회_요청("dep", DepartmentName.COMPUTER.getHostPrefix(), Boolean.TRUE, Boolean.FALSE, 0);
 
         // then
-        학교_공지_조회_응답_확인(학과_공지_조회_응답, Boolean.TRUE);
+        학과_공지_조회_응답_확인(학과_공지_조회_응답, Boolean.TRUE, Boolean.FALSE);
     }
 
     /**
@@ -111,10 +99,10 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     @Test
     void look_up_department_normal_notice_v2() {
         // when
-        var 학과_공지_조회_응답 = 페이지_번호와_함께_학교_공지사항_조회_요청("dep", DepartmentName.COMPUTER.getHostPrefix(), Boolean.FALSE, 0);
+        var 학과_공지_조회_응답 = 페이지_번호와_함께_학과_공지사항_조회_요청("dep", DepartmentName.COMPUTER.getHostPrefix(), Boolean.FALSE, Boolean.FALSE, 0);
 
         // then
-        학교_공지_조회_응답_확인(학과_공지_조회_응답, Boolean.FALSE);
+        학과_공지_조회_응답_확인(학과_공지_조회_응답, Boolean.FALSE, Boolean.FALSE);
     }
 
     /**

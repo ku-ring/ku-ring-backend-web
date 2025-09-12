@@ -28,5 +28,6 @@ public class EnglishDept extends LiberalArtCollege {
         this.staffScrapInfo = new StaffScrapInfo(ENGLISH.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(ENGLISH.getHostPrefix(), 347);
         this.departmentName = ENGLISH;
+        this.noticeGraduationInfo = new NoticeScrapInfo(ENGLISH.getHostPrefix(), 350);
     }
 }

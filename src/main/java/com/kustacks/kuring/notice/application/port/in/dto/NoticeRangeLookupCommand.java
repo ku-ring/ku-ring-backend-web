@@ -4,6 +4,7 @@ public record NoticeRangeLookupCommand(
         String type,
         String department,
         Boolean important,
+        Boolean graduated,
         int page,
         int size
 ) {

@@ -1,13 +1,14 @@
 package com.kustacks.kuring.notice.domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.util.Objects;
 
 @Entity
@@ -18,20 +19,26 @@ public class DepartmentNotice extends Notice {
     @Enumerated(EnumType.STRING)
     private DepartmentName departmentName;
 
+    @Getter
+    @Column(name = "graduated")
+    private Boolean graduated;
+
     @Builder
     public DepartmentNotice(String articleId, String postedDate, String updatedDate,
                             String subject, CategoryName categoryName, Boolean important,
-                            String fullUrl, DepartmentName departmentName)
-    {
+                            String fullUrl, DepartmentName departmentName, Boolean graduated) {
         super(articleId, postedDate, updatedDate, subject, categoryName, important, fullUrl);
         this.departmentName = departmentName;
+        this.graduated = graduated;
     }
 
     public String getDepartmentName() {
         return departmentName.getName();
     }
 
-    public String getDepartmentKorName() { return departmentName.getKorName(); }
+    public String getDepartmentKorName() {
+        return departmentName.getKorName();
+    }
 
     @Override
     public boolean equals(Object o) {

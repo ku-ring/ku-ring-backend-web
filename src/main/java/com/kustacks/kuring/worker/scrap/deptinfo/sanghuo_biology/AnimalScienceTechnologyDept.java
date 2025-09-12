@@ -28,5 +28,6 @@ public class AnimalScienceTechnologyDept extends SanghuoBiologyCollege {
         this.staffScrapInfo = new StaffScrapInfo(ANIMAL_SCIENCE.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(ANIMAL_SCIENCE.getHostPrefix(), 914);
         this.departmentName = ANIMAL_SCIENCE;
+        this.noticeGraduationInfo = new NoticeScrapInfo(ANIMAL_SCIENCE.getHostPrefix(), 469);
     }
 }

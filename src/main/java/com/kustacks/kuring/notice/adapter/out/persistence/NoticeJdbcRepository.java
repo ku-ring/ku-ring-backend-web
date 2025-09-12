@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 
 @Repository
@@ -21,7 +22,7 @@ class NoticeJdbcRepository {
 
     @Transactional
     public void saveAllCategoryNotices(List<Notice> notices) {
-        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, dtype) values (?, ?, ?, ?, ?, ?, ?, ?, 'Notice')",
+        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, graduated, dtype) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -34,6 +35,8 @@ class NoticeJdbcRepository {
                         ps.setString(6, notice.getSubject());
                         ps.setString(7, notice.getUpdatedDate());
                         ps.setString(8, notice.getUrl());
+                        ps.setNull(9, Types.BOOLEAN);
+                        ps.setString(10, "Notice");
                     }
 
                     @Override
@@ -45,7 +48,9 @@ class NoticeJdbcRepository {
 
     @Transactional
     public void saveAllDepartmentNotices(List<DepartmentNotice> departmentNotices) {
-        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, department_name, dtype) values (?, ?, ?, ?, ?, ?, ?, ?, ?, 'DepartmentNotice')",
+        jdbcTemplate.batchUpdate(
+                "INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, department_name, graduated, dtype) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -59,6 +64,8 @@ class NoticeJdbcRepository {
                         ps.setString(7, departmentNotice.getUpdatedDate());
                         ps.setString(8, departmentNotice.getUrl());
                         ps.setString(9, DepartmentName.fromName(departmentNotice.getDepartmentName()).name());
+                        ps.setBoolean(10, departmentNotice.getGraduated());
+                        ps.setString(11, "DepartmentNotice");
                     }
 
                     @Override
@@ -67,4 +74,5 @@ class NoticeJdbcRepository {
                     }
                 });
     }
+
 }

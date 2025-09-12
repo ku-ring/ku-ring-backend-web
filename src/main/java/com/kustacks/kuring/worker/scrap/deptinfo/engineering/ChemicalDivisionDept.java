@@ -13,7 +13,7 @@ import static com.kustacks.kuring.notice.domain.DepartmentName.CHEMI_DIV;
 
 @RegisterDepartmentMap(key = CHEMI_DIV)
 public class ChemicalDivisionDept extends EngineeringCollege {
-    
+
     public ChemicalDivisionDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
@@ -28,5 +28,6 @@ public class ChemicalDivisionDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(CHEMI_DIV.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(CHEMI_DIV.getHostPrefix(), 409);
         this.departmentName = CHEMI_DIV;
+        this.noticeGraduationInfo = new NoticeScrapInfo(CHEMI_DIV.getHostPrefix(), 769);
     }
 }
