@@ -66,7 +66,7 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     @Test
     void look_up_notice_v2() {
         // when
-        var 공지사항_조회_요청_응답 = 페이지_번호와_함께_학교_공지사항_조회_요청("stu", "", Boolean.FALSE, 0);
+        var 공지사항_조회_요청_응답 = 공지사항_조회_요청("stu");
 
         // then
         공지사항_조회_요청_응답_확인(공지사항_조회_요청_응답, "student");
@@ -84,10 +84,10 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     @Test
     void look_up_department_important_notice_v2() {
         // when
-        var 학과_공지_조회_응답 = 페이지_번호와_함께_학교_공지사항_조회_요청("dep", DepartmentName.COMPUTER.getHostPrefix(), Boolean.TRUE, 0);
+        var 학과_공지_조회_응답 = 페이지_번호와_함께_학과_공지사항_조회_요청("dep", DepartmentName.COMPUTER.getHostPrefix(), Boolean.TRUE, Boolean.FALSE, 0);
 
         // then
-        학교_공지_조회_응답_확인(학과_공지_조회_응답, Boolean.TRUE);
+        학과_공지_조회_응답_확인(학과_공지_조회_응답, Boolean.TRUE, Boolean.FALSE);
     }
 
     /**
@@ -99,10 +99,10 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
     @Test
     void look_up_department_normal_notice_v2() {
         // when
-        var 학과_공지_조회_응답 = 페이지_번호와_함께_학교_공지사항_조회_요청("dep", DepartmentName.COMPUTER.getHostPrefix(), Boolean.FALSE, 0);
+        var 학과_공지_조회_응답 = 페이지_번호와_함께_학과_공지사항_조회_요청("dep", DepartmentName.COMPUTER.getHostPrefix(), Boolean.FALSE, Boolean.FALSE, 0);
 
         // then
-        학교_공지_조회_응답_확인(학과_공지_조회_응답, Boolean.FALSE);
+        학과_공지_조회_응답_확인(학과_공지_조회_응답, Boolean.FALSE, Boolean.FALSE);
     }
 
     /**
