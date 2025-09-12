@@ -10,14 +10,15 @@ import com.kustacks.kuring.auth.interceptor.BearerTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.FirebaseTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.UserRegisterNonChainingFilter;
 import com.kustacks.kuring.auth.token.JwtTokenProvider;
-import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.common.properties.ServerProperties;
+import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -33,6 +34,16 @@ public class AuthConfig implements WebMvcConfigurer {
     private final ServerProperties serverProperties;
     private final FirebaseWithUserUseCase firebaseService;
     private final UserPersistenceAdapter userPersistenceAdapter;
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/api/v2/**")
+                .allowedOrigins("https://www.ku-ring.com", "https://ku-ring.com", "http://localhost:5173")
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true) // 쿠키 인증 요청 허용
+                .maxAge(3600); // pre-flight 요청의 캐시 시간(초)
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -84,4 +95,5 @@ public class AuthConfig implements WebMvcConfigurer {
     AuthenticationFailureHandler userRegisterFailureHandler() {
         return new UserRegisterFailureHandler(objectMapper);
     }
+
 }
