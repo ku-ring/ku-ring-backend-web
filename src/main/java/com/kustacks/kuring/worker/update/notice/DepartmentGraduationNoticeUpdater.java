@@ -43,9 +43,7 @@ public class DepartmentGraduationNoticeUpdater {
     public void update() {
         log.info("******** 학과별 (대학원) 최신 공지 업데이트 시작 ********");
 
-        List<DeptInfo> graduateDeptInfoList = deptInfoList.stream()
-                .filter(DeptInfo::isSupportGraduateScrap)
-                .toList();
+        List<DeptInfo> graduateDeptInfoList = getGraduateDeptInfoList();
 
         for (DeptInfo deptInfo : graduateDeptInfoList) {
             CompletableFuture
@@ -65,9 +63,7 @@ public class DepartmentGraduationNoticeUpdater {
         if (featureFlags.isEnabled(KuringFeatures.UPDATE_DEPARTMENT_NOTICE.getFeature())) {
             log.info("******** 학과별 (대학원) 전체 공지 업데이트 시작 ********");
 
-            List<DeptInfo> graduateDeptInfoList = deptInfoList.stream()
-                    .filter(DeptInfo::isSupportGraduateScrap)
-                    .toList();
+            List<DeptInfo> graduateDeptInfoList = getGraduateDeptInfoList();
 
             for (DeptInfo deptInfo : graduateDeptInfoList) {
                 if (deptInfo.isSameDepartment(REAL_ESTATE)) {
@@ -80,6 +76,12 @@ public class DepartmentGraduationNoticeUpdater {
             }
 
         }
+    }
+
+    private List<DeptInfo> getGraduateDeptInfoList() {
+        return deptInfoList.stream()
+                .filter(DeptInfo::isSupportGraduateScrap)
+                .toList();
     }
 
     private List<ComplexNoticeFormatDto> updateDepartmentAsync(DeptInfo deptInfo, Function<DeptInfo, List<ScrapingResultDto>> decisionMaker) {
