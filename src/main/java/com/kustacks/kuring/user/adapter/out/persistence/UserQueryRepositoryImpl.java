@@ -5,7 +5,9 @@ import com.kustacks.kuring.user.application.port.out.dto.QFeedbackDto;
 import com.kustacks.kuring.user.domain.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -20,14 +22,19 @@ class UserQueryRepositoryImpl implements UserQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<FeedbackDto> findAllFeedbackByPageRequest(Pageable pageable) {
-        return queryFactory.select(new QFeedbackDto(feedback.content, feedback.user.id, feedback.createdAt))
+    public Page<FeedbackDto> findAllFeedbackByPageRequest(Pageable pageable) {
+        var query = queryFactory.select(new QFeedbackDto(feedback.content, feedback.user.id, feedback.createdAt))
                 .from(feedback)
                 .orderBy(feedback.createdAt.desc())
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+                .limit(pageable.getPageSize());
+
+        var countQuery = queryFactory.select(feedback.count())
+                .from(feedback);
+
+        return PageableExecutionUtils.getPage(query.fetch(), pageable, countQuery::fetchOne);
     }
+
 
     @Override
     public List<User> findByPageRequest(Pageable pageable) {
