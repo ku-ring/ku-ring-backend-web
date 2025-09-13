@@ -28,5 +28,6 @@ public class ElectricalElectronicsDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(ELEC_ELEC.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(ELEC_ELEC.getHostPrefix(), 407);
         this.departmentName = ELEC_ELEC;
+        this.noticeGraduationInfo = new NoticeScrapInfo(ELEC_ELEC.getHostPrefix(), 767);
     }
 }

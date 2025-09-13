@@ -28,5 +28,6 @@ public class PoliticalScienceDept extends SocialSciencesCollege {
         this.staffScrapInfo = new StaffScrapInfo(POLITICS.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(POLITICS.getHostPrefix(), 803);
         this.departmentName = POLITICS;
+        this.noticeGraduationInfo = new NoticeScrapInfo(POLITICS.getHostPrefix(), 421);
     }
 }

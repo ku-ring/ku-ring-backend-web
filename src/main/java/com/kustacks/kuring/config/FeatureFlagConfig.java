@@ -1,8 +1,7 @@
 package com.kustacks.kuring.config;
 
-import com.kustacks.kuring.common.env.RemotePropertyResolver;
 import com.kustacks.kuring.common.featureflag.FeatureFlagProperties;
-import com.kustacks.kuring.common.featureflag.RemoteFeatureFlags;
+import com.kustacks.kuring.common.featureflag.FeatureFlags;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -32,9 +31,14 @@ public class FeatureFlagConfig {
                 .region(Region.of(properties.region()))
                 .build();
     }
+//
+//    @Bean
+//    public RemoteFeatureFlags remoteFeatureFlags(RemotePropertyResolver remotePropertyResolver) {
+//        return new RemoteFeatureFlags(remotePropertyResolver);
+//    }
 
     @Bean
-    public RemoteFeatureFlags remoteFeatureFlags(RemotePropertyResolver remotePropertyResolver) {
-        return new RemoteFeatureFlags(remotePropertyResolver);
+    public FeatureFlags featureFlags() {
+        return new FeatureFlags.AlwaysDisabledFeatureFlags();
     }
 }

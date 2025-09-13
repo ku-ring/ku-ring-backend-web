@@ -13,7 +13,7 @@ import static com.kustacks.kuring.notice.domain.DepartmentName.CIVIL_ENV;
 
 @RegisterDepartmentMap(key = CIVIL_ENV)
 public class CivilEnvironmentDept extends EngineeringCollege {
-    
+
     public CivilEnvironmentDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
@@ -28,5 +28,6 @@ public class CivilEnvironmentDept extends EngineeringCollege {
         this.staffScrapInfo = new StaffScrapInfo(CIVIL_ENV.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(CIVIL_ENV.getHostPrefix(), 401);
         this.departmentName = CIVIL_ENV;
+        this.noticeGraduationInfo = new NoticeScrapInfo(CIVIL_ENV.getHostPrefix(), 756);
     }
 }

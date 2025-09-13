@@ -10,6 +10,7 @@ import com.kustacks.kuring.user.application.port.out.dto.FeedbackDto;
 import com.kustacks.kuring.user.domain.RootUser;
 import com.kustacks.kuring.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     private final RootUserRepository rootUserRepository;
 
     @Override
-    public List<FeedbackDto> findAllFeedbackByPageRequest(Pageable pageable) {
+    public Page<FeedbackDto> findAllFeedbackByPageRequest(Pageable pageable) {
         return userRepository.findAllFeedbackByPageRequest(pageable);
     }
 

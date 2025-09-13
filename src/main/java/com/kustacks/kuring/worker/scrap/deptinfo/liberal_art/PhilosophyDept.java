@@ -28,5 +28,6 @@ public class PhilosophyDept extends LiberalArtCollege {
         this.staffScrapInfo = new StaffScrapInfo(PHILOSOPHY.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(PHILOSOPHY.getHostPrefix(), 356);
         this.departmentName = PHILOSOPHY;
+        this.noticeGraduationInfo = new NoticeScrapInfo(PHILOSOPHY.getHostPrefix(), 360);
     }
 }

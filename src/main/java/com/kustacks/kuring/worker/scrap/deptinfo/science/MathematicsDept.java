@@ -28,5 +28,6 @@ public class MathematicsDept extends ScienceCollege {
         this.staffScrapInfo = new StaffScrapInfo(MATH.getHostPrefix(), siteIds);
         this.noticeScrapInfo = new NoticeScrapInfo(MATH.getHostPrefix(), 727);
         this.departmentName = MATH;
+        this.noticeGraduationInfo = new NoticeScrapInfo(MATH.getHostPrefix(), 391);
     }
 }

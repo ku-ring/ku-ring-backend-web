@@ -10,11 +10,11 @@ import com.kustacks.kuring.report.application.port.in.dto.AdminReportsResult;
 import com.kustacks.kuring.user.application.port.in.dto.AdminFeedbacksResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Slf4j
 @UseCase
@@ -27,47 +27,41 @@ public class AdminQueryService implements AdminQueryUseCase {
 
     @Transactional(readOnly = true)
     @Override
-    public List<AdminFeedbacksResult> lookupFeedbacks(int page, int size) {
+    public Page<AdminFeedbacksResult> lookupFeedbacks(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        return adminUserFeedbackPort.findAllFeedbackByPageRequest(pageRequest)
-                .stream()
-                .map(dto -> new AdminFeedbacksResult(
-                        dto.getContents(),
-                        dto.getUserId(),
-                        dto.getCreatedAt()
-                ))
-                .toList();
+        var pageResult = adminUserFeedbackPort.findAllFeedbackByPageRequest(pageRequest);
+        return pageResult.map(dto -> new AdminFeedbacksResult(
+                dto.getContents(),
+                dto.getUserId(),
+                dto.getCreatedAt()
+        ));
     }
 
     @Override
-    public List<AdminAlertResponse> lookupAlerts(int page, int size) {
+    public Page<AdminAlertResponse> lookupAlerts(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
-        return adminAlertQueryPort.findAllAlertByPageRequest(pageRequest)
-                .stream()
-                .map(alert -> AdminAlertResponse.of(
-                        alert.getId(),
-                        alert.getTitle(),
-                        alert.getContent(),
-                        alert.getStatus(),
-                        alert.getAlertTime()
-                ))
-                .toList();
+        var pageResult = adminAlertQueryPort.findAllAlertByPageRequest(pageRequest);
+        return pageResult.map(alert -> AdminAlertResponse.of(
+                alert.getId(),
+                alert.getTitle(),
+                alert.getContent(),
+                alert.getStatus(),
+                alert.getAlertTime()
+        ));
     }
 
     @Override
-    public List<AdminReportsResult> lookupReports(int page, int size) {
+    public Page<AdminReportsResult> lookupReports(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
-        return adminUserReportPort.findAllReportByPageRequest(pageRequest)
-                .stream()
-                .map(report -> AdminReportsResult.of(
-                        report.getId(),
-                        report.getTargetId(),
-                        report.getUserId(),
-                        report.getTargetType(),
-                        report.getContent(),
-                        report.getCreatedAt(),
-                        report.getUpdatedAt()
-                ))
-                .toList();
+        var pageResult = adminUserReportPort.findAllReportByPageRequest(pageRequest);
+        return pageResult.map(report -> AdminReportsResult.of(
+                report.getId(),
+                report.getTargetId(),
+                report.getReporterId(),
+                report.getTargetType(),
+                report.getContent(),
+                report.getCreatedAt(),
+                report.getUpdatedAt()
+        ));
     }
 }

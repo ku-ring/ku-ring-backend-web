@@ -76,7 +76,7 @@ public enum DepartmentName {
     APPAREL_DESIGN("apparel_design", "apparel", "의상디자인학과"),
     LIVING_DESIGN("living_design", "livingdesign", "리빙디자인학과"),
     CONT_ART("contemporary_art", "contemporaryart", "현대미술학과"),
-    MOV_IMAGE("moving_image_film", "movingimages", "영상영화학과"),
+    MOV_IMAGE("moving_image_film", "movingimages", "영상학과"),
 
     JAPANESE_EDU("japanese_education", "japan", "일어교육과"),
     MATH_EDU("mathematics_education", "mathedu", "수학교육과"),
@@ -84,19 +84,20 @@ public enum DepartmentName {
     MUSIC_EDU("music_education", "music", "음악교육과"),
     EDU_TECH("education_technology", "edutech", "교육공학과"),
     ENGLISH_EDU("english_education", "englishedu", "영어교육과"),
-    EDUCATION("education", "edu", "교직과"),
+    EDUCATION("education", "edu", "교육학과"),
 
     ELE_EDU_CENTER("elective_education_center", "sgedu", "교양교육센터"),
     VOLUNTEER("volunteer_center", "kuvolunteer", "사회봉사센터"),
-    LIBERAL_STUDIES("liberal_studies", "kusls", "KU자유전공학부");
+    LIBERAL_STUDIES("liberal_studies", "kusls", "KU자유전공학부"),
 
+    ;
     private static final Map<String, String> NAME_MAP;
     private static final Map<String, String> HOST_PREFIX_MAP;
     private static final Map<String, String> KOR_NAME_MAP;
 
     static {
         NAME_MAP = Collections.unmodifiableMap(Arrays.stream(DepartmentName.values())
-                        .collect(Collectors.toMap(DepartmentName::getName, DepartmentName::name)));
+                .collect(Collectors.toMap(DepartmentName::getName, DepartmentName::name)));
 
         HOST_PREFIX_MAP = Collections.unmodifiableMap(Arrays.stream(DepartmentName.values())
                 .collect(Collectors.toMap(DepartmentName::getHostPrefix, DepartmentName::name)));

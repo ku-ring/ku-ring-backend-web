@@ -21,17 +21,17 @@ interface NoticeQueryRepository {
 
     void deleteAllByIdsAndCategory(CategoryName categoryName, List<String> articleIds);
 
-    List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName);
+    List<NoticeDto> findImportantNoticesByDepartment(DepartmentName departmentName, Boolean graduated);
 
-    List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Pageable pageable);
+    List<NoticeDto> findNormalNoticesByDepartmentWithOffset(DepartmentName departmentName, Boolean graduated, Pageable pageable);
 
     List<String> findImportantArticleIdsByCategoryName(CategoryName categoryName);
 
     List<String> findNormalArticleIdsByCategoryName(CategoryName categoryName);
 
-    List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentNameEnum);
+    List<Integer> findImportantArticleIdsByDepartment(DepartmentName departmentNameEnum, Boolean graduated);
 
-    List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentNameEnum);
+    List<Integer> findNormalArticleIdsByDepartment(DepartmentName departmentNameEnum, Boolean graduated);
 
     void deleteAllByIdsAndDepartment(DepartmentName departmentName, List<String> articleIds);
 

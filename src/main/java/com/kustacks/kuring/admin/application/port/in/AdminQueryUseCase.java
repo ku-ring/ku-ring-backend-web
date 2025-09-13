@@ -3,13 +3,14 @@ package com.kustacks.kuring.admin.application.port.in;
 import com.kustacks.kuring.admin.adapter.in.web.dto.AdminAlertResponse;
 import com.kustacks.kuring.report.application.port.in.dto.AdminReportsResult;
 import com.kustacks.kuring.user.application.port.in.dto.AdminFeedbacksResult;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 
 public interface AdminQueryUseCase {
-    List<AdminFeedbacksResult> lookupFeedbacks(int page, int size);
 
-    List<AdminAlertResponse> lookupAlerts(int page, int size);
+    Page<AdminFeedbacksResult> lookupFeedbacks(int page, int size);
 
-    List<AdminReportsResult> lookupReports(int page, int size);
+    Page<AdminAlertResponse> lookupAlerts(int page, int size);
+
+    Page<AdminReportsResult> lookupReports(int page, int size);
 }
