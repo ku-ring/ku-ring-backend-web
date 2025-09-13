@@ -54,6 +54,7 @@ public class NoticeQueryApiV2 {
             @Parameter(description = "단일 페이지의 사이즈, 1 ~ 30까지 허용") @RequestParam(name = "size") @Min(1) @Max(30) int size
     ) {
         NoticeRangeLookupCommand command = new NoticeRangeLookupCommand(type, department, important, graduated, page, size);
+
         List<NoticeRangeLookupResponse> searchResults = noticeQueryUseCase.getNotices(command)
                 .stream()
                 .map(NoticeRangeLookupResponse::from)

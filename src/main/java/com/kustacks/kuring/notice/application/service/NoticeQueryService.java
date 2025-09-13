@@ -161,9 +161,11 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
     private List<NoticeRangeLookupResult> getDepartmentNoticeRangeLookup(NoticeRangeLookupCommand command) {
         DepartmentName departmentName = DepartmentName.fromHostPrefix(command.department());
 
+        Boolean graduated = (command.graduated() == null) ? Boolean.FALSE : command.graduated();
+
         if (command.isImportant()) {
             return noticeQueryPort
-                    .findImportantNoticesByDepartment(departmentName, command.graduated())
+                    .findImportantNoticesByDepartment(departmentName, graduated)
                     .stream()
                     .map(NoticeQueryService::convertPortResult)
                     .toList();
@@ -172,7 +174,7 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
         return noticeQueryPort
                 .findNormalNoticesByDepartmentWithOffset(
                         departmentName,
-                        command.graduated(),
+                        graduated,
                         PageRequest.of(command.page(), command.size())
                 ).stream()
                 .map(NoticeQueryService::convertPortResult)
