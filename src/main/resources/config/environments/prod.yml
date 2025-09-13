@@ -7,3 +7,6 @@ decorator:
   datasource:
     p6spy:
       enable-logging: false
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS}

@@ -14,6 +14,7 @@ import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -40,16 +42,18 @@ public class AuthConfig implements WebMvcConfigurer {
     private final FirebaseWithUserUseCase firebaseService;
     private final UserPersistenceAdapter userPersistenceAdapter;
 
+    @Value("${cors.allowed-origins}")
+    private List<String> allowedOrigins;
+
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilterRegistration() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOriginPatterns(List.of(
-                "https://www.ku-ring.com",
-                "https://ku-ring.com",
-                "http://localhost:[*]",
-                "http://127.0.0.1:[*]"
-        ));
+        List<String> dynamicOrigins = new ArrayList<>(allowedOrigins);
+        dynamicOrigins.add("http://localhost:[*]");
+        dynamicOrigins.add("http://127.0.0.1:[*]");
+
+        config.setAllowedOriginPatterns(dynamicOrigins);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*")); // 모든 요청 헤더 허용
 
