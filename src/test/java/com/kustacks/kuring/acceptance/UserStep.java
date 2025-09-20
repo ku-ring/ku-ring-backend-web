@@ -325,4 +325,22 @@ public class UserStep {
         return response.jsonPath().getString("data.accessToken");
     }
 
+    public static ExtractableResponse<Response> 학사일정_알림_토글_요청(String fcmToken) {
+        return RestAssured
+                .given().log().all()
+                .header("User-Token", fcmToken)
+                .when().patch("/api/v2/users/notifications/academic-events")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 학사일정_알림_토글_응답_확인(ExtractableResponse<Response> response, Boolean expectedEnabled) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("학사일정 알림 설정이 변경되었습니다."),
+                () -> assertThat(response.jsonPath().getBoolean("data.enabled")).isEqualTo(expectedEnabled)
+        );
+    }
+
 }
