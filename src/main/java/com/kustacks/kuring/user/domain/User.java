@@ -177,6 +177,10 @@ public class User implements Serializable {
         return this.loginUserId != null;
     }
 
+    public Boolean toggleAcademicEventNotification() {
+        this.academicEventNotificationEnabled = !this.academicEventNotificationEnabled;
+        return this.academicEventNotificationEnabled;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
