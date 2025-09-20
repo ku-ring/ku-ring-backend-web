@@ -61,7 +61,6 @@ public class User implements Serializable {
     @Column(nullable = true)
     private Long loginUserId;
 
-    @Getter(AccessLevel.PUBLIC)
     @Column(name = "academic_event_notification_enabled", nullable = false)
     private Boolean academicEventNotificationEnabled = Boolean.TRUE;
 
