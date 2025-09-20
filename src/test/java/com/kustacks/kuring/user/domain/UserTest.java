@@ -9,7 +9,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("도메인 : User")
 class UserTest {
@@ -182,6 +184,21 @@ class UserTest {
         // then
         assertThat(user.getLoginUserId())
                 .isNull();
+    }
+
+    @DisplayName("학사일정 알림을 토글하면 상태가 변경된다")
+    @Test
+    void toggle_academic_event_notification() {
+        // given - 최초에 true
+        User user = createUser(1L, "token");
+
+        // when & then - 기본값은 true이므로 토글하면 false
+        Boolean firstToggleResult = user.toggleAcademicEventNotification();
+        assertThat(firstToggleResult).isFalse();
+
+        // when & then - 다시 토글하면 true
+        Boolean secondToggleResult = user.toggleAcademicEventNotification();
+        assertThat(secondToggleResult).isTrue();
     }
 
     private RootUser createRootUser(Long id, String email, String password, String nickname) {
