@@ -61,6 +61,7 @@ public class User implements Serializable {
     @Column(nullable = true)
     private Long loginUserId;
 
+    @Getter(AccessLevel.PUBLIC)
     @Column(name = "academic_event_notification_enabled", nullable = false)
     private Boolean academicEventNotificationEnabled = Boolean.TRUE;
 
@@ -175,6 +176,10 @@ public class User implements Serializable {
 
     public boolean isLoggedIn() {
         return this.loginUserId != null;
+    }
+
+    public void updateAcademicNotificationEnabled(Boolean enabled) {
+        this.academicEventNotificationEnabled = enabled;
     }
 
     @Override

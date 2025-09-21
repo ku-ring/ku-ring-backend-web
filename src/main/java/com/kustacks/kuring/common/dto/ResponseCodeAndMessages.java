@@ -58,6 +58,7 @@ public enum ResponseCodeAndMessages {
 
     /* Academic Events */
     ACADEMIC_EVENT_SEARCH_SUCCESS(HttpStatus.OK.value(), "학사일정 조회에 성공했습니다."),
+    ACADEMIC_EVENT_NOTIFICATION_UPDATE_SUCCESS(HttpStatus.OK.value(), "학사일정 알림 설정이 변경되었습니다."),
 
     /**
      * ErrorCodes about auth

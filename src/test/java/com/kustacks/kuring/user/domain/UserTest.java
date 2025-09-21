@@ -9,7 +9,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("도메인 : User")
 class UserTest {
@@ -182,6 +184,27 @@ class UserTest {
         // then
         assertThat(user.getLoginUserId())
                 .isNull();
+    }
+
+    @DisplayName("학사일정 알림 상태를 변경할 수 있다")
+    @Test
+    void update_academic_event_notification() {
+        // given - true
+        User user = createUser(1L, "token");
+
+        // when - false
+        user.updateAcademicNotificationEnabled(false);
+
+        // then - false
+        assertThat(user.getAcademicEventNotificationEnabled())
+                .isFalse();
+
+        // when - true
+        user.updateAcademicNotificationEnabled(true);
+
+        // then - true
+        assertThat(user.getAcademicEventNotificationEnabled())
+                .isTrue();
     }
 
     private RootUser createRootUser(Long id, String email, String password, String nickname) {
