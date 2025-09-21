@@ -7,7 +7,7 @@ import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.user.adapter.in.web.dto.UserAcademicEventNotificationResponse;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserAcademicEventNotificationRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserBookmarkRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserDepartmentsSubscribeRequest;
@@ -90,15 +90,15 @@ class UserCommandApiV2 {
         return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_SUBSCRIBE_SUCCESS, null));
     }
 
-    @Operation(summary = "학사일정 알림 상태 변경", description = "사용자의 학사일정 알림 설정 상태를 변경합니다.")
+    @Operation(summary = "사용자 학사일정 알림 설정 수정", description = "사용자의 학사일정 알림 설정 상태를 수정합니다.")
     @SecurityRequirement(name = FCM_TOKEN_HEADER_KEY)
-    @PatchMapping(value = "/notifications/academic-events")
-    public ResponseEntity<BaseResponse<UserAcademicEventNotificationResponse>> toggleAcademicEventNotification(
+    @PatchMapping(value = "/notifications/academic-events", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BaseResponse<Void>> updateAcademicEventNotification(
+            @Valid @RequestBody UserAcademicEventNotificationRequest request,
             @RequestHeader(FCM_TOKEN_HEADER_KEY) String id
     ) {
-        var result = userCommandUseCase.toggleAcademicEventNotification(new UserAcademicEventNotificationCommand(id));
-        var response = new UserAcademicEventNotificationResponse(result.enabled());
-        return ResponseEntity.ok().body(new BaseResponse<>(ACADEMIC_EVENT_NOTIFICATION_UPDATE_SUCCESS, response));
+        userCommandUseCase.updateAcademicEventNotification(new UserAcademicEventNotificationCommand(id, request.enabled()));
+        return ResponseEntity.ok().body(new BaseResponse<>(ACADEMIC_EVENT_NOTIFICATION_UPDATE_SUCCESS, null));
     }
 
     @Operation(summary = "사용자 피드백 작성", description = "사용자가 피드백을 작성하여 저장합니다")
