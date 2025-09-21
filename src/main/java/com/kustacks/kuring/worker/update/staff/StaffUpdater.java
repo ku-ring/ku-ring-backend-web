@@ -54,7 +54,6 @@ public class StaffUpdater {
         try {
             Map<String, StaffDto> staffScrapResultMap = scrapStaffByDepartment(deptInfo);
             mergeForMultipleDepartmentsStaff(kuStaffDtoMap, staffScrapResultMap);
-            log.info("스크랩 완료 {} ", deptInfo.getDeptName());
         } catch (InternalLogicException e) {
             log.error("[StaffScraperException] {}학과 교직원 스크래핑 문제 발생.", deptInfo.getDeptName());
         }
