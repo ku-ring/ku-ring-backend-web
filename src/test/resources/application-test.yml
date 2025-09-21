@@ -118,3 +118,6 @@ ip:
 
 staff:
   each-dept-url: https://{department}.konkuk.ac.kr/{department}/{siteId}/subview.do
+
+cors:
+  allowed-origins: https://www.test.com

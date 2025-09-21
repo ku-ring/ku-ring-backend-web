@@ -9,7 +9,11 @@ import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.notice.adapter.in.web.dto.CommentDetailResponse;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentReadingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeQueryUseCase;
-import com.kustacks.kuring.notice.application.port.in.dto.*;
+import com.kustacks.kuring.notice.application.port.in.dto.NoticeCategoryNameResult;
+import com.kustacks.kuring.notice.application.port.in.dto.NoticeContentSearchResult;
+import com.kustacks.kuring.notice.application.port.in.dto.NoticeDepartmentNameResult;
+import com.kustacks.kuring.notice.application.port.in.dto.NoticeRangeLookupCommand;
+import com.kustacks.kuring.notice.application.port.in.dto.NoticeRangeLookupResult;
 import com.kustacks.kuring.notice.application.port.out.CommentQueryPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.application.port.out.dto.CommentReadModel;
@@ -21,7 +25,13 @@ import com.kustacks.kuring.user.domain.RootUser;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.kustacks.kuring.notice.domain.CategoryName.DEPARTMENT;
@@ -161,9 +171,11 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
     private List<NoticeRangeLookupResult> getDepartmentNoticeRangeLookup(NoticeRangeLookupCommand command) {
         DepartmentName departmentName = DepartmentName.fromHostPrefix(command.department());
 
+        Boolean graduated = (command.graduated() == null) ? Boolean.FALSE : command.graduated();
+
         if (command.isImportant()) {
             return noticeQueryPort
-                    .findImportantNoticesByDepartment(departmentName, command.graduated())
+                    .findImportantNoticesByDepartment(departmentName, graduated)
                     .stream()
                     .map(NoticeQueryService::convertPortResult)
                     .toList();
@@ -172,7 +184,7 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
         return noticeQueryPort
                 .findNormalNoticesByDepartmentWithOffset(
                         departmentName,
-                        command.graduated(),
+                        graduated,
                         PageRequest.of(command.page(), command.size())
                 ).stream()
                 .map(NoticeQueryService::convertPortResult)

@@ -8,7 +8,11 @@ import com.kustacks.kuring.common.data.Cursor;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.notice.adapter.in.web.dto.*;
+import com.kustacks.kuring.notice.adapter.in.web.dto.CommentListResponse;
+import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeCategoryNameResponse;
+import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeContentSearchResponse;
+import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeDepartmentNameResponse;
+import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeRangeLookupResponse;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentReadingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeQueryUseCase;
 import com.kustacks.kuring.notice.application.port.in.dto.NoticeContentSearchResult;
@@ -31,7 +35,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extractAuthorizationValue;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_SEARCH_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_SEARCH_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.NOTICE_SEARCH_SUCCESS;
 
 @Tag(name = "Notice-Query", description = "공지 정보 조회")
 @Validated
@@ -54,6 +60,7 @@ public class NoticeQueryApiV2 {
             @Parameter(description = "단일 페이지의 사이즈, 1 ~ 30까지 허용") @RequestParam(name = "size") @Min(1) @Max(30) int size
     ) {
         NoticeRangeLookupCommand command = new NoticeRangeLookupCommand(type, department, important, graduated, page, size);
+
         List<NoticeRangeLookupResponse> searchResults = noticeQueryUseCase.getNotices(command)
                 .stream()
                 .map(NoticeRangeLookupResponse::from)
