@@ -13,7 +13,6 @@ import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
 import com.kustacks.kuring.user.application.port.in.dto.UserAcademicEventNotificationCommand;
-import com.kustacks.kuring.user.application.port.in.dto.UserAcademicEventNotificationResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserDecreaseQuestionCountCommand;
@@ -85,10 +84,9 @@ class UserCommandService implements UserCommandUseCase {
     }
 
     @Override
-    public UserAcademicEventNotificationResult toggleAcademicEventNotification(UserAcademicEventNotificationCommand command) {
+    public void updateAcademicEventNotification(UserAcademicEventNotificationCommand command) {
         User user = findUserByToken(command.userToken());
-        Boolean toggleResult = user.toggleAcademicEventNotification();
-        return new UserAcademicEventNotificationResult(toggleResult);
+        user.updateAcademicNotificationEnabled(command.enabled());
     }
 
     @Override

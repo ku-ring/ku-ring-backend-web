@@ -1,7 +1,6 @@
 package com.kustacks.kuring.user.application.port.in;
 
 import com.kustacks.kuring.user.application.port.in.dto.UserAcademicEventNotificationCommand;
-import com.kustacks.kuring.user.application.port.in.dto.UserAcademicEventNotificationResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserDecreaseQuestionCountCommand;
@@ -18,7 +17,7 @@ public interface UserCommandUseCase {
     void editSubscribeCategories(UserCategoriesSubscribeCommand command);
     void editSubscribeDepartments(UserDepartmentsSubscribeCommand command);
 
-    UserAcademicEventNotificationResult toggleAcademicEventNotification(UserAcademicEventNotificationCommand command);
+    void updateAcademicEventNotification(UserAcademicEventNotificationCommand command);
     void saveFeedback(UserFeedbackCommand command);
     void saveBookmark(UserBookmarkCommand command);
     void decreaseQuestionCount(UserDecreaseQuestionCountCommand command);
