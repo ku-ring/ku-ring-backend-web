@@ -186,19 +186,25 @@ class UserTest {
                 .isNull();
     }
 
-    @DisplayName("학사일정 알림을 토글하면 상태가 변경된다")
+    @DisplayName("학사일정 알림 상태를 변경할 수 있다")
     @Test
-    void toggle_academic_event_notification() {
-        // given - 최초에 true
+    void update_academic_event_notification() {
+        // given - true
         User user = createUser(1L, "token");
 
-        // when & then - 기본값은 true이므로 토글하면 false
-        Boolean firstToggleResult = user.toggleAcademicEventNotification();
-        assertThat(firstToggleResult).isFalse();
+        // when - false
+        user.updateAcademicNotificationEnabled(false);
 
-        // when & then - 다시 토글하면 true
-        Boolean secondToggleResult = user.toggleAcademicEventNotification();
-        assertThat(secondToggleResult).isTrue();
+        // then - false
+        assertThat(user.getAcademicEventNotificationEnabled())
+                .isFalse();
+
+        // when - true
+        user.updateAcademicNotificationEnabled(true);
+
+        // then - true
+        assertThat(user.getAcademicEventNotificationEnabled())
+                .isTrue();
     }
 
     private RootUser createRootUser(Long id, String email, String password, String nickname) {

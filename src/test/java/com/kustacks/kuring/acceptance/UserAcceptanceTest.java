@@ -512,13 +512,13 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         doNothing().when(firebaseSubscribeService).validationToken(anyString());
 
         // when - 첫 번째 토글 (true → false)
-        var 첫번째_토글_응답 = 학사일정_알림_토글_요청(USER_FCM_TOKEN);
+        var 첫번째_토글_응답 = 학사일정_알림_토글_요청(USER_FCM_TOKEN, false);
 
         // then
         학사일정_알림_토글_응답_확인(첫번째_토글_응답, false);
 
         // when - 두 번째 토글 (false → true)  
-        var 두번째_토글_응답 = 학사일정_알림_토글_요청(USER_FCM_TOKEN);
+        var 두번째_토글_응답 = 학사일정_알림_토글_요청(USER_FCM_TOKEN, true);
 
         // then
         학사일정_알림_토글_응답_확인(두번째_토글_응답, true);

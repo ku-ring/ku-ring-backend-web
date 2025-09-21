@@ -1,6 +1,7 @@
 package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.auth.dto.UserRegisterRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserAcademicEventNotificationRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserBookmarkRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserDepartmentsSubscribeRequest;
@@ -325,10 +326,12 @@ public class UserStep {
         return response.jsonPath().getString("data.accessToken");
     }
 
-    public static ExtractableResponse<Response> 학사일정_알림_토글_요청(String fcmToken) {
+    public static ExtractableResponse<Response> 학사일정_알림_토글_요청(String fcmToken, boolean enabled) {
         return RestAssured
                 .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("User-Token", fcmToken)
+                .body(new UserAcademicEventNotificationRequest(enabled))
                 .when().patch("/api/v2/users/notifications/academic-events")
                 .then().log().all()
                 .extract();
@@ -339,7 +342,7 @@ public class UserStep {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("학사일정 알림 설정이 변경되었습니다."),
-                () -> assertThat(response.jsonPath().getBoolean("data.enabled")).isEqualTo(expectedEnabled)
+                () -> assertThat(response.jsonPath().getList("data")).isNull()
         );
     }
 
