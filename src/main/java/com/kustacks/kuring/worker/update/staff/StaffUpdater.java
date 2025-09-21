@@ -29,7 +29,6 @@ public class StaffUpdater {
     private final FeatureFlags featureFlags;
 
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
-//    @Scheduled(cron = "0 0/5 * * * *")
     public void update() {
         if (featureFlags.isEnabled(KuringFeatures.UPDATE_STAFF.getFeature())) {
             log.info("========== 교직원 업데이트 시작 ==========");
