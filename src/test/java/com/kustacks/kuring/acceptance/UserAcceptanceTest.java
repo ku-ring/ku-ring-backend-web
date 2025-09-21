@@ -42,6 +42,8 @@ import static com.kustacks.kuring.acceptance.UserStep.피드백_요청_v2;
 import static com.kustacks.kuring.acceptance.UserStep.피드백_요청_응답_확인_v2;
 import static com.kustacks.kuring.acceptance.UserStep.학과_구독_요청;
 import static com.kustacks.kuring.acceptance.UserStep.학과_구독_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.학사일정_알림_토글_요청;
+import static com.kustacks.kuring.acceptance.UserStep.학사일정_알림_토글_응답_확인;
 import static com.kustacks.kuring.acceptance.UserStep.회원_가입_요청;
 import static com.kustacks.kuring.acceptance.UserStep.회원_탈퇴_요청;
 import static com.kustacks.kuring.acceptance.UserStep.회원_탈퇴_응답_확인;
@@ -501,5 +503,24 @@ class UserAcceptanceTest extends IntegrationTestSupport {
 
         // then
         실패_응답_확인(비밀번호_초기화_응답, HttpStatus.NOT_FOUND);
+    }
+
+    @DisplayName("[v2] 사용자는 학사일정 알림을 토글할 수 있다")
+    @Test
+    void toggle_academic_event_notification() {
+        // given
+        doNothing().when(firebaseSubscribeService).validationToken(anyString());
+
+        // when - 첫 번째 토글 (true → false)
+        var 첫번째_토글_응답 = 학사일정_알림_토글_요청(USER_FCM_TOKEN, false);
+
+        // then
+        학사일정_알림_토글_응답_확인(첫번째_토글_응답, false);
+
+        // when - 두 번째 토글 (false → true)  
+        var 두번째_토글_응답 = 학사일정_알림_토글_요청(USER_FCM_TOKEN, true);
+
+        // then
+        학사일정_알림_토글_응답_확인(두번째_토글_응답, true);
     }
 }

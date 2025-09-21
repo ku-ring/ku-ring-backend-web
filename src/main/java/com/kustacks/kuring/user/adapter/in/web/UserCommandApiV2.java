@@ -7,6 +7,7 @@ import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserAcademicEventNotificationRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserBookmarkRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserDepartmentsSubscribeRequest;
@@ -15,8 +16,8 @@ import com.kustacks.kuring.user.adapter.in.web.dto.UserLoginRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserLoginResponse;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserPasswordModifyRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserSignupRequest;
-import com.kustacks.kuring.user.application.port.in.dto.UserWithdrawCommand;
 import com.kustacks.kuring.user.application.port.in.UserCommandUseCase;
+import com.kustacks.kuring.user.application.port.in.dto.UserAcademicEventNotificationCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserCategoriesSubscribeCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserDepartmentsSubscribeCommand;
@@ -26,6 +27,7 @@ import com.kustacks.kuring.user.application.port.in.dto.UserLoginResult;
 import com.kustacks.kuring.user.application.port.in.dto.UserLogoutCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserPasswordModifyCommand;
 import com.kustacks.kuring.user.application.port.in.dto.UserSignupCommand;
+import com.kustacks.kuring.user.application.port.in.dto.UserWithdrawCommand;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extractAuthorizationValue;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ACADEMIC_EVENT_NOTIFICATION_UPDATE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.BOOKMARK_SAVE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CATEGORY_SUBSCRIBE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.DEPARTMENTS_SUBSCRIBE_SUCCESS;
@@ -85,6 +88,17 @@ class UserCommandApiV2 {
     ) {
         userCommandUseCase.editSubscribeDepartments(new UserDepartmentsSubscribeCommand(id, request.departments()));
         return ResponseEntity.ok().body(new BaseResponse<>(DEPARTMENTS_SUBSCRIBE_SUCCESS, null));
+    }
+
+    @Operation(summary = "사용자 학사일정 알림 설정 수정", description = "사용자의 학사일정 알림 설정 상태를 수정합니다.")
+    @SecurityRequirement(name = FCM_TOKEN_HEADER_KEY)
+    @PatchMapping(value = "/notifications/academic-events", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BaseResponse<Void>> updateAcademicEventNotification(
+            @Valid @RequestBody UserAcademicEventNotificationRequest request,
+            @RequestHeader(FCM_TOKEN_HEADER_KEY) String id
+    ) {
+        userCommandUseCase.updateAcademicEventNotification(new UserAcademicEventNotificationCommand(id, request.enabled()));
+        return ResponseEntity.ok().body(new BaseResponse<>(ACADEMIC_EVENT_NOTIFICATION_UPDATE_SUCCESS, null));
     }
 
     @Operation(summary = "사용자 피드백 작성", description = "사용자가 피드백을 작성하여 저장합니다")

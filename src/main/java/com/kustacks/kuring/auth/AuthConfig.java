@@ -4,7 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kustacks.kuring.admin.application.service.AdminDetailsService;
 import com.kustacks.kuring.auth.authorization.AuthenticationPrincipalArgumentResolver;
 import com.kustacks.kuring.auth.context.SecurityContextPersistenceFilter;
-import com.kustacks.kuring.auth.handler.*;
+import com.kustacks.kuring.auth.handler.AuthenticationFailureHandler;
+import com.kustacks.kuring.auth.handler.AuthenticationSuccessHandler;
+import com.kustacks.kuring.auth.handler.LoginAuthenticationFailureHandler;
+import com.kustacks.kuring.auth.handler.LoginAuthenticationSuccessHandler;
+import com.kustacks.kuring.auth.handler.UserRegisterFailureHandler;
+import com.kustacks.kuring.auth.handler.UserRegisterSuccessHandler;
 import com.kustacks.kuring.auth.interceptor.AdminTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.BearerTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.FirebaseTokenAuthenticationFilter;
@@ -48,6 +53,7 @@ public class AuthConfig implements WebMvcConfigurer {
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilterRegistration() {
         CorsConfiguration config = new CorsConfiguration();
+
 
         List<String> dynamicOrigins = new ArrayList<>(allowedOrigins);
         dynamicOrigins.add("http://localhost:[*]");

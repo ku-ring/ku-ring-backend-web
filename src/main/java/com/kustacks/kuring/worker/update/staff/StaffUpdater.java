@@ -27,7 +27,7 @@ public class StaffUpdater {
     private final StaffScraper staffScraper;
     private final List<DeptInfo> deptInfos;
     private final FeatureFlags featureFlags;
-    
+
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.DAYS)
     public void update() {
         if (featureFlags.isEnabled(KuringFeatures.UPDATE_STAFF.getFeature())) {
@@ -65,14 +65,18 @@ public class StaffUpdater {
 
     private Map<String, StaffDto> convertStaffDtoMap(List<StaffDto> scrapedStaffDtos) {
         return scrapedStaffDtos.stream()
-                .collect(Collectors.toMap(StaffDto::identifier, staffDto -> staffDto));
+                .collect(Collectors.toMap(
+                        StaffDto::identifier,
+                        staffDto -> staffDto,
+                        (existing, replacement) -> existing));
     }
 
     private void mergeForMultipleDepartmentsStaff(
             Map<String, StaffDto> kuStaffDTOMap,
             Map<String, StaffDto> staffDtoMap
     ) {
-        staffDtoMap.forEach((key, value) -> kuStaffDTOMap.merge(key, value, (v1, v2) -> {
+        staffDtoMap.forEach((key, value) -> kuStaffDTOMap.merge(key, value,
+                (v1, v2) -> {
                     v1.setDeptName(v1.getDeptName() + ", " + v2.getDeptName());
                     return v1;
                 }
