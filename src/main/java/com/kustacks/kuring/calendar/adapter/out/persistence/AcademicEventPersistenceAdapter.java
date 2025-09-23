@@ -66,4 +66,9 @@ public class AcademicEventPersistenceAdapter implements AcademicEventQueryPort, 
     public List<AcademicEventReadModel> findEventsBefore(LocalDate endDate) {
         return findEventsBetweenDate(null, endDate);
     }
+
+    @Override
+    public List<AcademicEventReadModel> findTodayEvents(LocalDate date) {
+        return academicEventRepository.findTodayEvents(date);
+    }
 }
