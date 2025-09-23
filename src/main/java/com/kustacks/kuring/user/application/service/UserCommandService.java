@@ -87,7 +87,7 @@ class UserCommandService implements UserCommandUseCase {
     @Override
     public void updateAcademicEventNotification(UserAcademicEventNotificationCommand command) {
         User user = findUserByToken(command.userToken());
-        boolean wasEnabled = user.getAcademicEventNotificationEnabled();
+        Boolean wasEnabled = user.getAcademicEventNotificationEnabled();
 
         // 설정이 변경된 경우에만 토픽 구독/해제 처리
         if (wasEnabled != command.enabled()) {
