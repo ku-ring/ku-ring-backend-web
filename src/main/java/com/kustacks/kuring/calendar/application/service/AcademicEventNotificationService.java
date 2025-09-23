@@ -35,26 +35,21 @@ public class AcademicEventNotificationService implements AcademicEventNotificati
 
     @Override
     public void sendTodayAcademicEventNotifications() {
-        try {
-            LocalDate today = LocalDate.now();
-            log.info("******** 학사일정 알림 발송 시작 ({}일자) ********", today);
+        LocalDate today = LocalDate.now();
+        log.info("******** 학사일정 알림 발송 시작 ({}일자) ********", today);
 
-            // 1. 오늘의 학사일정 조회
-            List<AcademicEventReadModel> todayEvents = academicEventQueryPort.findTodayEvents(today);
+        // 1. 오늘의 학사일정 조회
+        List<AcademicEventReadModel> todayEvents = academicEventQueryPort.findTodayEvents(today);
 
-            if (todayEvents.isEmpty()) {
-                log.info("오늘 알림 발송할 학사일정이 없습니다.");
-                return;
-            }
-
-            // 2. 각 일정별 알림 발송 (토픽 기반)
-            todayEvents.forEach(event -> sendNotificationForEvent(event, today));
-
-            log.info("******** 학사일정 알림 발송 완료 (총 {}개 일정) ********", todayEvents.size());
-
-        } catch (Exception e) {
-            log.error("학사일정 알림 발송 중 오류가 발생했습니다.", e);
+        if (todayEvents.isEmpty()) {
+            log.info("오늘 알림 발송할 학사일정이 없습니다.");
+            return;
         }
+
+        // 2. 각 일정별 알림 발송 (토픽 기반)
+        todayEvents.forEach(event -> sendNotificationForEvent(event, today));
+
+        log.info("******** 학사일정 알림 발송 완료 (총 {}개 일정) ********", todayEvents.size());
     }
 
     private void sendNotificationForEvent(AcademicEventReadModel event, LocalDate today) {
