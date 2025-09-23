@@ -20,6 +20,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ACADEMIC_EVENT_TOPIC;
 import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ALL_DEVICE_SUBSCRIBED_TOPIC;
 
 @Slf4j
@@ -59,12 +60,24 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
             log.warn("User already exists: {}", userFcmToken, e);
         }
 
-        UserSubscribeCommand command =
-                new UserSubscribeCommand(
-                        userFcmToken,
-                        serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC)
-                );
-        firebaseService.subscribe(command);
+        subscribeInitTopics(userFcmToken);
+    }
+
+    private void subscribeInitTopics(String userFcmToken) {
+        subScribeAllDeviceTopic(userFcmToken, ALL_DEVICE_SUBSCRIBED_TOPIC);
+        subScribeAllDeviceTopic(userFcmToken, ACADEMIC_EVENT_TOPIC);
+    }
+
+    private void subScribeAllDeviceTopic(String userFcmToken, String topic) {
+        UserSubscribeCommand allDeviceSubscribeCommand = makeSubscribeCommand(userFcmToken, topic);
+        firebaseService.subscribe(allDeviceSubscribeCommand);
+    }
+
+    private UserSubscribeCommand makeSubscribeCommand(String userFcmToken, String topic) {
+        return new UserSubscribeCommand(
+                userFcmToken,
+                serverProperties.ifDevThenAddSuffix(topic)
+        );
     }
 
     public String convert(HttpServletRequest request) throws IOException {
