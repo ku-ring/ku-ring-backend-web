@@ -90,7 +90,7 @@ class UserCommandService implements UserCommandUseCase {
         Boolean wasEnabled = user.getAcademicEventNotificationEnabled();
 
         // 설정이 변경된 경우에만 토픽 구독/해제 처리
-        if (wasEnabled != command.enabled()) {
+        if (wasEnabled.equals(command.enabled())) {
             editAcademicEventNotificationEnabled(
                     command.userToken(),
                     command.enabled()
