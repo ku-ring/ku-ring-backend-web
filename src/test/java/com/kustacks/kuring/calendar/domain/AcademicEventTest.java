@@ -98,7 +98,6 @@ class AcademicEventTest {
         assertThat(existingEvent.getEndTime()).isEqualTo(endTime.plusHours(1));
     }
 
-
     private AcademicEvent createAcademicEvent() {
         return AcademicEvent.builder()
                 .eventUid(uid)
