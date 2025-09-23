@@ -24,9 +24,9 @@ import static com.kustacks.kuring.message.application.service.FirebaseSubscribeS
 @RequiredArgsConstructor
 public class AcademicEventNotificationService implements AcademicEventNotificationUseCase {
 
-    private static final String MESSAGE_TODAY_PROGRESS = "[시작] %s";
-    private static final String MESSAGE_TODAY_START = "[마감] %s";
-    private static final String MESSAGE_TODAY_END = "[오늘] %s";
+    private static final String MESSAGE_TODAY_START = "[시작] %s";
+    private static final String MESSAGE_TODAY_END = "[마감] %s";
+    private static final String MESSAGE_TODAY = "[오늘] %s";
     private static final String MESSAGE_DEFAULT = "[일정 안내] %s";
 
     private final AcademicEventQueryPort academicEventQueryPort;
@@ -74,7 +74,7 @@ public class AcademicEventNotificationService implements AcademicEventNotificati
     private String createBody(AcademicEventReadModel event, LocalDate today) {
         if (event.isInProgressToday(today)) {
             // 시작일과 종료일이 모두 오늘인 경우
-            return String.format(MESSAGE_TODAY_PROGRESS, event.summary());
+            return String.format(MESSAGE_TODAY, event.summary());
         } else if (event.isStartingToday(today)) {
             // 오늘 시작
             return String.format(MESSAGE_TODAY_START, event.summary());
