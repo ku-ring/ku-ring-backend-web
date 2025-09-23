@@ -207,6 +207,28 @@ class UserTest {
                 .isTrue();
     }
 
+    @DisplayName("학사일정 알림이 활성화되어 있는지 확인한다")
+    @Test
+    void is_academic_event_notification_enabled() {
+        // given
+        User user = createUser(1L, "token");
+
+        // when & then - 기본값은 true
+        assertThat(user.isAcademicEventNotificationEnabled()).isTrue();
+
+        // when - false로 설정
+        user.updateAcademicNotificationEnabled(false);
+
+        // then
+        assertThat(user.isAcademicEventNotificationEnabled()).isFalse();
+
+        // when - true로 다시 설정
+        user.updateAcademicNotificationEnabled(true);
+
+        // then
+        assertThat(user.isAcademicEventNotificationEnabled()).isTrue();
+    }
+
     private RootUser createRootUser(Long id, String email, String password, String nickname) {
         RootUser rootUser = new RootUser(email, password, nickname);
         ReflectionTestUtils.setField(rootUser, "id", id);
