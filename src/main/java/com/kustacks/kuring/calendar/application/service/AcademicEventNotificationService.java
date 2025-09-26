@@ -7,8 +7,6 @@ import com.kustacks.kuring.calendar.application.port.in.AcademicEventNotificatio
 import com.kustacks.kuring.calendar.application.port.out.AcademicEventQueryPort;
 import com.kustacks.kuring.calendar.application.port.out.dto.AcademicEventReadModel;
 import com.kustacks.kuring.common.annotation.UseCase;
-import com.kustacks.kuring.common.exception.InternalLogicException;
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.message.application.port.out.FirebaseMessagingPort;
 import lombok.RequiredArgsConstructor;
@@ -44,15 +42,35 @@ public class AcademicEventNotificationService implements AcademicEventNotificati
         }
 
         // 2. 각 일정별 알림 발송 (토픽 기반)
-        todayEvents.forEach(this::sendNotificationForEvent);
+        int successCount = sendNotificationForEvents(todayEvents);
 
-        log.info("******** 학사일정 알림 발송 완료 (총 {}개 일정) ********", todayEvents.size());
+        log.info("******** 학사일정 알림 발송 완료 (총 {}개, 성공 {}개, 실패 {}개) ********", todayEvents.size(), successCount, todayEvents.size() - successCount);
     }
 
-    private void sendNotificationForEvent(AcademicEventReadModel event) {
-        String title = createTitle(event);
-        String body = createBody(event);
-        sendNotification(title, body);
+    private int sendNotificationForEvents(List<AcademicEventReadModel> todayEvents) {
+        int successCount = 0;
+        for (AcademicEventReadModel todayEvent : todayEvents) {
+            boolean success = sendNotificationForEvent(todayEvent);
+            successCount += success ? 1 : 0;
+        }
+        return successCount;
+    }
+
+    private boolean sendNotificationForEvent(AcademicEventReadModel event) {
+        try {
+            String title = createTitle(event);
+            String body = createBody(event);
+            sendNotificationMessage(title, body);
+
+            log.info("학사일정(ID = {}) 알림 전송에 성공했습니다.", event.id());
+            return true;
+        } catch (FirebaseMessagingException e) {
+            log.error("학사일정(ID = {}) FCM 전송에 실패했습니다.", event.id());
+            return false;
+        } catch (Exception e) {
+            log.error("학사일정(ID = {})을 FCM에 보내는 중 알 수 없는 오류가 발생했습니다.", event.id());
+            return false;
+        }
     }
 
     private String createTitle(AcademicEventReadModel event) {
@@ -67,17 +85,9 @@ public class AcademicEventNotificationService implements AcademicEventNotificati
         return String.format(MESSAGE_DEFAULT, event.summary());
     }
 
-    private void sendNotification(String title, String body) {
+    private void sendNotificationMessage(String title, String body) throws FirebaseMessagingException {
         Message message = makeMessage(title, body);
-        try {
-            firebaseMessagingPort.send(message);
-        } catch (FirebaseMessagingException e) {
-            log.error("학사일정 FCM 전송에 실패했습니다.");
-            throw new InternalLogicException(ErrorCode.FB_FAIL_SEND, e);
-        } catch (Exception e) {
-            log.error("학사일정을 FCM에 보내는 중 알 수 없는 오류가 발생했습니다.");
-            throw new InternalLogicException(ErrorCode.UNKNOWN_ERROR, e);
-        }
+        firebaseMessagingPort.send(message);
     }
 
     private Message makeMessage(String title, String body) {
