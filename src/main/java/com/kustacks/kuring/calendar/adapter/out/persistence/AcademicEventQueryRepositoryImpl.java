@@ -38,6 +38,7 @@ class AcademicEventQueryRepositoryImpl implements AcademicEventQueryRepository {
         return queryFactorySelectingReadModel()
                 .fetch();
     }
+
     @Override
     @Transactional(readOnly = true)
     public List<AcademicEventReadModel> findEventsByDate(LocalDate startDate, LocalDate endDate) {
@@ -72,5 +73,24 @@ class AcademicEventQueryRepositoryImpl implements AcademicEventQueryRepository {
 
     private BooleanExpression isStartTimeLt(LocalDate endDate) {
         return endDate != null ? academicEvent.startTime.lt(endDate.plusDays(1L).atStartOfDay()) : null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AcademicEventReadModel> findTodayEvents(LocalDate date) {
+        return queryFactorySelectingReadModel()
+                .where(
+                        academicEvent.notifyEnabled.isTrue(),
+                        academicEvent.startTime.between(
+                                date.atStartOfDay(),
+                                date.atTime(23, 59, 59, 999_999_999)
+                        ).or(
+                                academicEvent.endTime.between(
+                                        date.atStartOfDay(),
+                                        date.atTime(23, 59, 59, 999_999_999)
+                                )
+                        )
+                )
+                .fetch();
     }
 }

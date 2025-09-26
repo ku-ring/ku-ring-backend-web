@@ -13,4 +13,6 @@ interface AcademicEventQueryRepository {
     List<AcademicEventReadModel> findAllEventReadModels();
 
     List<AcademicEventReadModel> findEventsByDate(LocalDate startDate, LocalDate endDate);
+
+    List<AcademicEventReadModel> findTodayEvents(LocalDate date);
 }

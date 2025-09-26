@@ -182,6 +182,10 @@ public class User implements Serializable {
         this.academicEventNotificationEnabled = enabled;
     }
 
+    public boolean isAcademicEventNotificationEnabled() {
+        return Boolean.TRUE.equals(this.academicEventNotificationEnabled);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

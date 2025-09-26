@@ -42,6 +42,9 @@ public class IntegrationTestSupport {
     protected int port;
 
     @Autowired
+    protected FeatureFlagsSupport featureFlagsSupport;
+
+    @Autowired
     private DatabaseConfigurator databaseConfigurator;
 
     @Autowired
@@ -53,5 +56,6 @@ public class IntegrationTestSupport {
         databaseConfigurator.clear();
         databaseConfigurator.loadData();
         badWordValidator.wordsInit();
+        featureFlagsSupport.resetProperties();
     }
 }

@@ -23,6 +23,7 @@ import java.util.List;
 public class FirebaseSubscribeService implements FirebaseWithUserUseCase {
 
     public static final String ALL_DEVICE_SUBSCRIBED_TOPIC = "allDevice";
+    public static final String ACADEMIC_EVENT_TOPIC = "academicEvent";
 
     private final FirebaseSubscribePort firebaseSubscribePort;
     private final FirebaseMessagingPort firebaseMessagingPort;
