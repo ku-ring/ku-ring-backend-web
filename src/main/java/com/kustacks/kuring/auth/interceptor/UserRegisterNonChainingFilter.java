@@ -60,17 +60,17 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
             log.warn("User already exists: {}", userFcmToken, e);
         }
 
-        subscribeInitTopics(userFcmToken);
+        subscribeDefaultTopics(userFcmToken);
     }
 
-    private void subscribeInitTopics(String userFcmToken) {
-        subScribeAllDeviceTopic(userFcmToken, ALL_DEVICE_SUBSCRIBED_TOPIC);
-        subScribeAllDeviceTopic(userFcmToken, ACADEMIC_EVENT_TOPIC);
+    private void subscribeDefaultTopics(String userFcmToken) {
+        subscribeTopic(userFcmToken, ALL_DEVICE_SUBSCRIBED_TOPIC);
+        subscribeTopic(userFcmToken, ACADEMIC_EVENT_TOPIC);
     }
 
-    private void subScribeAllDeviceTopic(String userFcmToken, String topic) {
-        UserSubscribeCommand allDeviceSubscribeCommand = makeSubscribeCommand(userFcmToken, topic);
-        firebaseService.subscribe(allDeviceSubscribeCommand);
+    private void subscribeTopic(String userFcmToken, String topic) {
+        UserSubscribeCommand command = makeSubscribeCommand(userFcmToken, topic);
+        firebaseService.subscribe(command);
     }
 
     private UserSubscribeCommand makeSubscribeCommand(String userFcmToken, String topic) {
