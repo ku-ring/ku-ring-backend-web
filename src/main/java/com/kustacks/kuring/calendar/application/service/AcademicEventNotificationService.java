@@ -24,10 +24,7 @@ import static com.kustacks.kuring.message.application.service.FirebaseSubscribeS
 @RequiredArgsConstructor
 public class AcademicEventNotificationService implements AcademicEventNotificationUseCase {
 
-    private static final String MESSAGE_TODAY_START = "[시작] %s";
-    private static final String MESSAGE_TODAY_END = "[마감] %s";
-    private static final String MESSAGE_TODAY = "[오늘] %s";
-    private static final String MESSAGE_DEFAULT = "[일정 안내] %s";
+    private static final String MESSAGE_DEFAULT = "오늘은 %s 일정이 있어요";
 
     private final AcademicEventQueryPort academicEventQueryPort;
     private final FirebaseMessagingPort firebaseMessagingPort;
@@ -47,14 +44,14 @@ public class AcademicEventNotificationService implements AcademicEventNotificati
         }
 
         // 2. 각 일정별 알림 발송 (토픽 기반)
-        todayEvents.forEach(event -> sendNotificationForEvent(event, today));
+        todayEvents.forEach(this::sendNotificationForEvent);
 
         log.info("******** 학사일정 알림 발송 완료 (총 {}개 일정) ********", todayEvents.size());
     }
 
-    private void sendNotificationForEvent(AcademicEventReadModel event, LocalDate today) {
+    private void sendNotificationForEvent(AcademicEventReadModel event) {
         String title = createTitle(event);
-        String body = createBody(event, today);
+        String body = createBody(event);
         sendNotification(title, body);
     }
 
@@ -66,20 +63,8 @@ public class AcademicEventNotificationService implements AcademicEventNotificati
                 .toString();
     }
 
-    private String createBody(AcademicEventReadModel event, LocalDate today) {
-        if (event.isInProgressToday(today)) {
-            // 시작일과 종료일이 모두 오늘인 경우
-            return String.format(MESSAGE_TODAY, event.summary());
-        } else if (event.isStartingToday(today)) {
-            // 오늘 시작
-            return String.format(MESSAGE_TODAY_START, event.summary());
-        } else if (event.isEndingToday(today)) {
-            // 오늘 종료
-            return String.format(MESSAGE_TODAY_END, event.summary());
-        } else {
-            // 기본 메시지
-            return String.format(MESSAGE_DEFAULT, event.summary());
-        }
+    private String createBody(AcademicEventReadModel event) {
+        return String.format(MESSAGE_DEFAULT, event.summary());
     }
 
     private void sendNotification(String title, String body) {
