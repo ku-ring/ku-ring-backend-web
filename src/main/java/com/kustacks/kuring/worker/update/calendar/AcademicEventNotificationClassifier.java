@@ -1,10 +1,12 @@
 package com.kustacks.kuring.worker.update.calendar;
 
 import com.kustacks.kuring.calendar.domain.Transparent;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Objects;
 
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class AcademicEventNotificationClassifier {
 
     // 학생이 행정적 액션을 해야하는 일정들 (알림 필수 키워드)

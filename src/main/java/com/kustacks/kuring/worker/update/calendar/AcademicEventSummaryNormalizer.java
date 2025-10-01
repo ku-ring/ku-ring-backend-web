@@ -1,7 +1,10 @@
 package com.kustacks.kuring.worker.update.calendar;
 
+import lombok.NoArgsConstructor;
+
 import java.util.regex.Pattern;
 
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class AcademicEventSummaryNormalizer {
 
     // 괄호 안에 시간/날짜 정보가 있는 패턴
