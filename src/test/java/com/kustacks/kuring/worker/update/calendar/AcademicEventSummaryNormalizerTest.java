@@ -6,7 +6,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("AcademicEventSummaryProcessor 단위 테스트")
+@DisplayName("AcademicEventSummaryNormalizer 단위 테스트")
 class AcademicEventSummaryNormalizerTest {
 
 
