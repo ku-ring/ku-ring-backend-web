@@ -5,6 +5,7 @@ import com.kustacks.kuring.admin.domain.Admin;
 import com.kustacks.kuring.admin.domain.AdminRole;
 import com.kustacks.kuring.calendar.adapter.out.persistence.AcademicEventRepository;
 import com.kustacks.kuring.calendar.domain.AcademicEvent;
+import com.kustacks.kuring.calendar.domain.AcademicEventCategory;
 import com.kustacks.kuring.calendar.domain.Transparent;
 import com.kustacks.kuring.email.adapter.out.persistence.VerificationCodeRepository;
 import com.kustacks.kuring.email.domain.VerificationCode;
@@ -294,11 +295,11 @@ public class DatabaseConfigurator implements InitializingBean {
 
     private List<AcademicEvent> buildAcademicEvents() {
         String[][] eventData = {
-                {"2월 말 행사", "2월 28일 종료되는 행사", "ACADEMIC", "TRANSPARENT", "2025-02-28T10:00", "2025-02-28T11:00"},
-                {"3월 1일 개강", "3월 1일 정확히 시작하는 개강", "ACADEMIC", "TRANSPARENT", "2025-03-01T09:00", "2025-03-01T10:00"},
-                {"3월 15일 중간 행사", "3월 중순 행사", "EVENT", "OPAQUE", "2025-03-15T14:00", "2025-03-15T15:00"},
-                {"3월 31일 마감", "3월 마지막 날 정확히 끝나는 행사", "DEADLINE", "OPAQUE", "2025-03-31T23:00", "2025-03-31T23:59"},
-                {"4월 1일 마지막 행사", "4월 1일 마지막", "ACADEMIC", "TRANSPARENT", "2025-04-01T00:00", "2025-04-01T01:00"}
+                {"2월 말 행사", "2월 28일 종료되는 행사", "ACADEMIC_DEGREE", "TRANSPARENT", "2025-02-28T10:00", "2025-02-28T11:00"},
+                {"3월 1일 개강", "3월 1일 정확히 시작하는 개강", "ACADEMIC_DEGREE", "TRANSPARENT", "2025-03-01T09:00", "2025-03-01T10:00"},
+                {"3월 15일 중간 행사", "3월 중순 행사", "REGISTRATION_COURSE_GRADE", "OPAQUE", "2025-03-15T14:00", "2025-03-15T15:00"},
+                {"3월 31일 마감", "3월 마지막 날 정확히 끝나는 행사", "ACADEMIC_OPERATION_EVENT", "OPAQUE", "2025-03-31T23:00", "2025-03-31T23:59"},
+                {"4월 1일 마지막 행사", "4월 1일 마지막", "ETC", "TRANSPARENT", "2025-04-01T00:00", "2025-04-01T01:00"}
         };
 
         return Stream.iterate(0, i -> i + 1)
@@ -309,7 +310,7 @@ public class DatabaseConfigurator implements InitializingBean {
                             .eventUid(UUID.randomUUID().toString())
                             .summary(data[0])
                             .description(data[1])
-                            .category(data[2])
+                            .category(AcademicEventCategory.valueOf(data[2]))
                             .transparent(Transparent.valueOf(data[3]))
                             .sequence(1)
                             .notifyEnabled(true)
