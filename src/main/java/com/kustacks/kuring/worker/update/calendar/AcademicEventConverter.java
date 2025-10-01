@@ -19,8 +19,8 @@ import static com.kustacks.kuring.calendar.domain.Transparent.OPAQUE;
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class AcademicEventConverter {
 
-    // 공휴일 관련 키워드 패턴
-    private static final Pattern HOLIDAY_PATTERN = Pattern.compile(".*공휴일.*", Pattern.CASE_INSENSITIVE);
+    // 공휴일 관련 키워드 패턴 (ReDoS 방지)
+    private static final Pattern HOLIDAY_PATTERN = Pattern.compile("[^\\r\\n]*공휴일[^\\r\\n]*");
 
     public static List<AcademicEvent> convertToAcademicEvents(List<IcsEvent> icsEvents) {
         return icsEvents.stream()

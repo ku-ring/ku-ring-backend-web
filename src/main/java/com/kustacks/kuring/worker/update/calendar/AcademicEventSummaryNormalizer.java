@@ -9,7 +9,10 @@ public class AcademicEventSummaryNormalizer {
 
     // 괄호 안에 시간/날짜 정보가 있는 패턴
     // 예: (2. 25. 화 9:30 ~ 2. 26 수 17:00), (9:30 ~)
-    private static final Pattern DATE_TIME_BRACKET_PATTERN = Pattern.compile("\\s*\\([^)]*(?:\\d+[:.]|\\d+\\s*[월화수목금토일])[^)]*\\)", Pattern.CASE_INSENSITIVE);
+    // 1단계: 모든 괄호 찾기
+    private static final Pattern BRACKET_PATTERN = Pattern.compile("\\([^)]+\\)");
+    // 2단계: 괄호 내용에서 시간/날짜 확인
+    private static final Pattern TIME_IN_BRACKET = Pattern.compile("\\d+[:.]|\\d+\\s*[월화수목금토일]");
 
     // 괄호 없는 날짜/시간 패턴 제거
     // 예: 14.(월) 10:30 ~ 15.(화) 16:30
@@ -51,9 +54,20 @@ public class AcademicEventSummaryNormalizer {
      * 괄호 안의 날짜/시간 정보 제거 (차수 정보는 유지)
      * 예: "전체학년 수강신청 (2. 25. 화 9:30 ~ 2. 26 수 17:00)" → "전체학년 수강신청"
      * 예: "강의시간표조회 (9:30 ~)" → "강의시간표조회"
+     * 예: "취득학점포기(3차)" → "취득학점포기(3차)" (차수 정보 유지)
      */
     private static String removeDateTimeBrackets(String text) {
-        return DATE_TIME_BRACKET_PATTERN.matcher(text).replaceAll("").trim();
+        return BRACKET_PATTERN.matcher(text).replaceAll(matchResult -> {
+            String bracketContent = matchResult.group();
+            String innerContent = bracketContent.substring(1, bracketContent.length() - 1);
+
+            // 괄호 안에 시간/날짜 정보가 있으면 전체 괄호를 제거
+            if (TIME_IN_BRACKET.matcher(innerContent).find()) {
+                return ""; // 괄호와 내용 모두 제거
+            }
+
+            return bracketContent; // 시간/날짜 정보가 없으면 괄호 유지 (차수 정보 등)
+        }).trim();
     }
 
     /**
