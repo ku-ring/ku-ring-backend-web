@@ -66,9 +66,9 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
         // when - 업데이트 실행
         assertDoesNotThrow(() -> academicEventUpdater.update());
 
-        // then - DB에 저장된 데이터 검증(기존 5건 + 신규 198건)
+        // then - DB에 저장된 데이터 검증(기존 5건 + 신규 198건 - 공휴일 19건 = 184)
         List<AcademicEvent> allEvents = academicEventQueryPort.findAll();
-        assertThat(allEvents).hasSize(203);
+        assertThat(allEvents).hasSize(184);
 
         AcademicEvent event1 = allEvents.stream()
                 .filter(event -> event.getEventUid().equals(testEventUids.get(0)))
@@ -86,7 +86,7 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
                 LocalDateTime.of(2024, 9, 2, 0, 0));
 
         // 폐강교과목 공지 이벤트 검증
-        assertEventFields(event2, "폐강교과목 공지(1차)(9:00~)", 0, Transparent.TRANSPARENT, false,
+        assertEventFields(event2, "폐강교과목 공지(1차)", 0, Transparent.TRANSPARENT, false,
                 LocalDateTime.of(2024, 9, 2, 0, 0),
                 LocalDateTime.of(2024, 9, 3, 0, 0));
     }
@@ -103,9 +103,9 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
         mockingScrapCalendar(updatedCalendar);
         assertDoesNotThrow(() -> academicEventUpdater.update());
 
-        // then - DB에 저장된 데이터 검증(기존 5건 + 신규 199건)
+        // then - DB에 저장된 데이터 검증(기존 5건 + 신규 199건 - 19건 = 185건)
         List<AcademicEvent> allEvents = academicEventQueryPort.findAll();
-        assertThat(allEvents).hasSize(204);
+        assertThat(allEvents).hasSize(185);
 
         AcademicEvent event1 = allEvents.stream()
                 .filter(event -> event.getEventUid().equals(testEventUids.get(0)))
@@ -128,7 +128,7 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
                 LocalDateTime.of(2024, 9, 2, 0, 0));
 
         // 폐강교과목 공지 이벤트 검증
-        assertEventFields(event2, "폐강교과목 공지(1차)(9:00~)", 1, Transparent.OPAQUE, true,
+        assertEventFields(event2, "폐강교과목 공지(1차)", 1, Transparent.OPAQUE, true,
                 LocalDateTime.of(2024, 9, 3, 0, 0),
                 LocalDateTime.of(2024, 9, 4, 0, 0));
 
