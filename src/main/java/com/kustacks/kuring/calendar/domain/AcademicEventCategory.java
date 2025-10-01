@@ -1,9 +1,5 @@
 package com.kustacks.kuring.calendar.domain;
 
-/**
- * 학사일정 카테고리를 나타내는 순수 enum
- * 비즈니스 로직은 제거하고 카테고리 정의만 담당
- */
 public enum AcademicEventCategory {
 
     ACADEMIC_DEGREE("학적/학위"),
