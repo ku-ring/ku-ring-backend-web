@@ -14,16 +14,16 @@ public class AcademicEventSummaryNormalizer {
     // 2단계: 괄호 내용에서 시간/날짜 확인
     private static final Pattern TIME_IN_BRACKET = Pattern.compile("\\d+[:.]|\\d+\\s*[월화수목금토일]");
 
-    // 괄호 없는 날짜/시간 패턴 제거
-    // 예: 14.(월) 10:30 ~ 15.(화) 16:30
-    private static final Pattern DATE_TIME_PATTERN = Pattern.compile("\\s+\\d+\\.\\s*\\([월화수목금토일]\\)\\s*\\d+[:.]\\d+.*$", Pattern.CASE_INSENSITIVE);
+    // 괄호 없는 날짜/시간 패턴 제거 (ReDoS 방지)
+    // 예: 14.(월) 10:30 ~ 15.(화) 16:30, ~ 5.(월) 16:30
+    private static final Pattern DATE_TIME_PATTERN = Pattern.compile("\\s*~?\\s*\\d+\\.\\s*\\([월화수목금토일]\\)\\s*\\d+[:.]\\d+[^\\r\\n]*$");
 
     // 단순 시간 패턴 제거 (HH:MM 형식)
     // 예: 17:00
-    private static final Pattern SIMPLE_TIME_PATTERN = Pattern.compile("\\s+\\d{1,2}:\\d{2}\\s*$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SIMPLE_TIME_PATTERN = Pattern.compile("\\s+\\d{1,2}:\\d{2}\\s*$");
 
-    // ※ 당구장 기호 이후의 모든 텍스트 제거 패턴
-    private static final Pattern REFERENCE_MARK_PATTERN = Pattern.compile("※.*$", Pattern.CASE_INSENSITIVE);
+    // ※ 기호 이후의 모든 텍스트 제거 패턴 (줄바꿈 전까지)
+    private static final Pattern REFERENCE_MARK_PATTERN = Pattern.compile("※[^\\r\\n]*$");
 
     public static String normalize(String summary) {
         if (summary == null || summary.isBlank()) {
@@ -71,8 +71,9 @@ public class AcademicEventSummaryNormalizer {
     }
 
     /**
-     * 괄호 없는 직접 날짜/시간 정보 제거
+     * 괄호 없는 직접 날짜/시간 정보 제거 (~ 기호 포함)
      * 예: "취득학점포기(3차) 14.(월) 10:30 ~ 15.(화) 16:30" → "취득학점포기(3차)"
+     * 예: "최정성적이의신청 ~ 5.(월) 16:30" → "최정성적이의신청"
      */
     private static String removeDateTime(String text) {
         return DATE_TIME_PATTERN.matcher(text).replaceAll("").trim();
