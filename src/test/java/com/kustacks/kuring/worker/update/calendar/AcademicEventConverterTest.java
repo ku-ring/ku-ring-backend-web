@@ -5,6 +5,8 @@ import com.kustacks.kuring.calendar.domain.Transparent;
 import com.kustacks.kuring.worker.parser.calendar.dto.IcsEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -72,9 +74,132 @@ class AcademicEventConverterTest {
                 LocalDateTime.of(2024, 6, 22, 0, 0),
                 LocalDateTime.of(2024, 9, 2, 0, 0));
 
-        assertEventFields(academicEvents.get(1), "폐강교과목 공지(1차)(9:00~)", 0, Transparent.TRANSPARENT, false,
+        assertEventFields(academicEvents.get(1), "폐강교과목 공지(1차)", 0, Transparent.TRANSPARENT, false,
                 LocalDateTime.of(2024, 9, 2, 0, 0),
                 LocalDateTime.of(2024, 9, 3, 0, 0));
+    }
+
+    @DisplayName("공휴일 이벤트는 변환에서 제외")
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "신정공휴일",
+            "설날연휴공휴일",
+            "추석연휴공휴일",
+            "어린이날공휴일",
+            "광복절공휴일",
+            "크리스마스공휴일",
+            "공휴일입니다"
+    })
+    void convert_exclude_holiday_events(String holidaySummary) {
+        // given
+        IcsEvent holidayEvent = new IcsEvent(
+                "test-uid",
+                holidaySummary,
+                "설명",
+                "20240101",
+                "20240102",
+                "PUBLIC",
+                "0",
+                "20250826T143707Z",
+                "TRANSPARENT",
+                "CONFIRMED",
+                "0",
+                ""
+        );
+
+        // when
+        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(holidayEvent);
+
+        // then
+        assertThat(academicEvent).isNull();
+    }
+
+    @DisplayName("일반 학사일정 이벤트는 변환 대상")
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "수강신청",
+            "중간고사",
+            "기말고사",
+            "휴학신청",
+            "개강",
+            "방학"
+    })
+    void convert_include_normal_events(String normalSummary) {
+        // given
+        IcsEvent normalEvent = new IcsEvent(
+                "test-uid",
+                normalSummary,
+                "설명",
+                "20240101",
+                "20240102",
+                "PUBLIC",
+                "0",
+                "20250826T143707Z",
+                "TRANSPARENT",
+                "CONFIRMED",
+                "0",
+                ""
+        );
+
+        // when
+        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(normalEvent);
+
+        // then
+        assertThat(academicEvent).isNotNull();
+        assertThat(academicEvent.getSummary()).isEqualTo(normalSummary);
+    }
+
+    @DisplayName("null이나 빈 summary는 변환에서 제외")
+    @ParameterizedTest
+    @ValueSource(strings = {"", "   "})
+    void convert_exclude_empty_summary(String emptySummary) {
+        // given
+        IcsEvent emptyEvent = new IcsEvent(
+                "test-uid",
+                emptySummary,
+                "설명",
+                "20240101",
+                "20240102",
+                "PUBLIC",
+                "0",
+                "20250826T143707Z",
+                "TRANSPARENT",
+                "CONFIRMED",
+                "0",
+                ""
+        );
+
+        // when
+        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(emptyEvent);
+
+        // then
+        assertThat(academicEvent).isNull();
+    }
+
+    @DisplayName("null summary는 변환에서 제외")
+    @Test
+    void convert_exclude_null_summary() {
+        // given
+        IcsEvent nullEvent = new IcsEvent(
+                "test-uid",
+                null,
+                "설명",
+                "20240101",
+                "20240102",
+                "PUBLIC",
+                "0",
+                "20250826T143707Z",
+                "TRANSPARENT",
+                "CONFIRMED",
+                "0",
+                ""
+        );
+
+        // when
+        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(nullEvent);
+
+        // then
+        assertThat(academicEvent).isNull();
     }
 
     private void assertEventFields(AcademicEvent academicEvent, String summary, Integer sequence, Transparent transparent,
