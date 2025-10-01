@@ -36,9 +36,9 @@ public class AcademicEvent extends BaseTimeEntity {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description; // 이벤트 설명
 
-    //TODO: 카테고리 확정 시 ENUM화 필요 @김한주 25.08.24
-    @Column(name = "category", length = 20)
-    private String category; // 일정 분류 (예: 학사, 시험, 휴강 등)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", length = 30)
+    private AcademicEventCategory category; // 일정 분류
 
     @Enumerated(EnumType.STRING)
     @Column(name = "transparent", nullable = false, length = 20)
@@ -57,7 +57,7 @@ public class AcademicEvent extends BaseTimeEntity {
     private LocalDateTime endTime; // 종료일시
 
     @Builder
-    private AcademicEvent(String eventUid, String summary, String description, String category,
+    private AcademicEvent(String eventUid, String summary, String description, AcademicEventCategory category,
                          Transparent transparent, Integer sequence, Boolean notifyEnabled,
                          LocalDateTime startTime, LocalDateTime endTime) {
         this.eventUid = eventUid;
@@ -71,7 +71,7 @@ public class AcademicEvent extends BaseTimeEntity {
         this.endTime = endTime;
     }
 
-    public static AcademicEvent from(String uid, String summary, String description, String category,
+    public static AcademicEvent from(String uid, String summary, String description, AcademicEventCategory category,
                                      Transparent transparent, Integer sequence, Boolean notifyEnabled,
                                      LocalDateTime startTime, LocalDateTime endTime) {
         Assert.notNull(uid, "UID must not be null");
