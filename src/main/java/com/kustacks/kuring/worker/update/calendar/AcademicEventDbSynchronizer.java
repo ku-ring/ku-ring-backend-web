@@ -40,7 +40,7 @@ public class AcademicEventDbSynchronizer {
         // 4. 저장, 업데이트
         saveAndUpdate(eventUpdateResult);
 
-        log.debug("신규 이벤트 {} 개, 업데이트 이벤트 {} 개", eventUpdateResult.newEvents().size(), eventUpdateResult.updatedEvents().size());
+        log.info("신규 이벤트 {} 개, 업데이트 이벤트 {} 개", eventUpdateResult.newEvents().size(), eventUpdateResult.updatedEvents().size());
     }
 
     private void saveAndUpdate(EventUpdateResult eventUpdateResult) {
