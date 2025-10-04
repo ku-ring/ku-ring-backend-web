@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.sanghuo_biology;
 
 import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -17,7 +18,8 @@ public class FoodMarketingSafetyDept extends SanghuoBiologyCollege {
     public FoodMarketingSafetyDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
-            LatestPageNoticeProperties latestPageNoticeProperties
+            LatestPageNoticeProperties latestPageNoticeProperties,
+            LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient
     ) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
@@ -29,5 +31,6 @@ public class FoodMarketingSafetyDept extends SanghuoBiologyCollege {
         this.noticeScrapInfo = new NoticeScrapInfo(FOOD_MARKETING.getHostPrefix(), 929);
         this.departmentName = FOOD_MARKETING;
         this.noticeGraduationInfo = new NoticeScrapInfo(FOOD_MARKETING.getHostPrefix(), 475);
+        this.latestPageGraduateNoticeApiClient = latestPageGraduateNoticeApiClient;
     }
 }

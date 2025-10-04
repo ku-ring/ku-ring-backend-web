@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.real_estate;
 
 import com.kustacks.kuring.worker.parser.notice.RealEstateNoticeHtmlParser;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.RealEstateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -16,7 +17,8 @@ public class RealEstateDept extends RealEstateCollege {
 
     public RealEstateDept(RealEstateNoticeApiClient realEstateNoticeApiClient,
                           RealEstateNoticeHtmlParser realEstateNoticeHtmlParser,
-                          LatestPageNoticeProperties latestPageNoticeProperties) {
+                          LatestPageNoticeProperties latestPageNoticeProperties,
+                          LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient) {
         super();
         this.noticeApiClient = realEstateNoticeApiClient;
         this.htmlParser = realEstateNoticeHtmlParser;
@@ -27,5 +29,6 @@ public class RealEstateDept extends RealEstateCollege {
         this.noticeScrapInfo = new NoticeScrapInfo(REAL_ESTATE.getHostPrefix(), 1563);
         this.departmentName = REAL_ESTATE;
         this.noticeGraduationInfo = new NoticeScrapInfo(REAL_ESTATE.getHostPrefix(), 1565);
+        this.latestPageGraduateNoticeApiClient = latestPageGraduateNoticeApiClient;
     }
 }

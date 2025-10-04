@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.liberal_art;
 
 import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -17,7 +18,8 @@ public class MediaCommunicationDept extends LiberalArtCollege {
     public MediaCommunicationDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
-            LatestPageNoticeProperties latestPageNoticeProperties
+            LatestPageNoticeProperties latestPageNoticeProperties,
+            LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient
     ) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
@@ -29,5 +31,6 @@ public class MediaCommunicationDept extends LiberalArtCollege {
         this.noticeScrapInfo = new NoticeScrapInfo(MEDIA_COMM.getHostPrefix(), 375);
         this.departmentName = MEDIA_COMM;
         this.noticeGraduationInfo = new NoticeScrapInfo(MEDIA_COMM.getHostPrefix(), 602);
+        this.latestPageGraduateNoticeApiClient = latestPageGraduateNoticeApiClient;
     }
 }

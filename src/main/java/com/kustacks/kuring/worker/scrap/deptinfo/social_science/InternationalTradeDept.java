@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.social_science;
 
 import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -17,7 +18,8 @@ public class InternationalTradeDept extends SocialSciencesCollege {
     public InternationalTradeDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
-            LatestPageNoticeProperties latestPageNoticeProperties
+            LatestPageNoticeProperties latestPageNoticeProperties,
+            LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient
     ) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
@@ -29,5 +31,6 @@ public class InternationalTradeDept extends SocialSciencesCollege {
         this.noticeScrapInfo = new NoticeScrapInfo(INT_TRADE.getHostPrefix(), 429);
         this.departmentName = INT_TRADE;
         this.noticeGraduationInfo = new NoticeScrapInfo(INT_TRADE.getHostPrefix(), 815);
+        this.latestPageGraduateNoticeApiClient = latestPageGraduateNoticeApiClient;
     }
 }

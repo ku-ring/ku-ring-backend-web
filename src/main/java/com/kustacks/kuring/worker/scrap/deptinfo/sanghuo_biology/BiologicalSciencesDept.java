@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.sanghuo_biology;
 
 import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -18,7 +19,8 @@ public class BiologicalSciencesDept extends SanghuoBiologyCollege {
     public BiologicalSciencesDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
-            LatestPageNoticeProperties latestPageNoticeProperties
+            LatestPageNoticeProperties latestPageNoticeProperties,
+            LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient
     ) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
@@ -30,5 +32,6 @@ public class BiologicalSciencesDept extends SanghuoBiologyCollege {
         this.noticeScrapInfo = new NoticeScrapInfo(BIO_SCIENCE.getHostPrefix(), 909);
         this.departmentName = BIO_SCIENCE;
         this.noticeGraduationInfo = new NoticeScrapInfo(BIO_SCIENCE.getHostPrefix(), 905);
+        this.latestPageGraduateNoticeApiClient = latestPageGraduateNoticeApiClient;
     }
 }

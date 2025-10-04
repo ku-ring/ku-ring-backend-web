@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.art_design;
 
 import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -17,7 +18,8 @@ public class MovingImageFilmDept extends ArtDesignCollege {
     public MovingImageFilmDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
-            LatestPageNoticeProperties latestPageNoticeProperties
+            LatestPageNoticeProperties latestPageNoticeProperties,
+            LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient
     ) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
@@ -29,5 +31,6 @@ public class MovingImageFilmDept extends ArtDesignCollege {
         this.noticeScrapInfo = new NoticeScrapInfo(MOV_IMAGE.getHostPrefix(), 491);
         this.departmentName = MOV_IMAGE;
         this.noticeGraduationInfo = new NoticeScrapInfo(MOV_IMAGE.getHostPrefix(), 5710);
+        this.latestPageGraduateNoticeApiClient = latestPageGraduateNoticeApiClient;
     }
 }
