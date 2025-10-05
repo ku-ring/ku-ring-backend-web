@@ -9,11 +9,7 @@ import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.notice.adapter.in.web.dto.CommentDetailResponse;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentReadingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeQueryUseCase;
-import com.kustacks.kuring.notice.application.port.in.dto.NoticeCategoryNameResult;
-import com.kustacks.kuring.notice.application.port.in.dto.NoticeContentSearchResult;
-import com.kustacks.kuring.notice.application.port.in.dto.NoticeDepartmentNameResult;
-import com.kustacks.kuring.notice.application.port.in.dto.NoticeRangeLookupCommand;
-import com.kustacks.kuring.notice.application.port.in.dto.NoticeRangeLookupResult;
+import com.kustacks.kuring.notice.application.port.in.dto.*;
 import com.kustacks.kuring.notice.application.port.out.CommentQueryPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.application.port.out.dto.CommentReadModel;
@@ -22,16 +18,11 @@ import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.domain.RootUser;
+import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.kustacks.kuring.notice.domain.CategoryName.DEPARTMENT;
@@ -48,18 +39,19 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
     private final CommentQueryPort commentQueryPort;
     private final RootUserQueryPort rootUserQueryPort;
     private final List<CategoryName> supportedCategoryNameList;
-    private final List<DepartmentName> supportedDepartmentNameList;
+    private final List<DeptInfo> deptInfoList;
 
     public NoticeQueryService(
             NoticeQueryPort noticeQueryPort,
             CommentQueryPort commentQueryPort,
-            RootUserQueryPort rootUserQueryPort
+            RootUserQueryPort rootUserQueryPort,
+            List<DeptInfo> deptInfoList
     ) {
         this.noticeQueryPort = noticeQueryPort;
         this.commentQueryPort = commentQueryPort;
         this.rootUserQueryPort = rootUserQueryPort;
         this.supportedCategoryNameList = Arrays.asList(CategoryName.values());
-        this.supportedDepartmentNameList = Arrays.asList(DepartmentName.values());
+        this.deptInfoList = deptInfoList;
     }
 
     @Override
@@ -87,7 +79,7 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
 
     @Override
     public List<NoticeDepartmentNameResult> lookupSupportedDepartments() {
-        return convertDepartmentNameDtos(supportedDepartmentNameList);
+        return convertDepartmentNameDtos(deptInfoList);
     }
 
     @Override
@@ -191,9 +183,9 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
                 .toList();
     }
 
-    private List<NoticeDepartmentNameResult> convertDepartmentNameDtos(List<DepartmentName> departmentNames) {
-        return departmentNames.stream()
-                .filter(dn -> !dn.equals(DepartmentName.COMM_DESIGN))
+    private List<NoticeDepartmentNameResult> convertDepartmentNameDtos(List<DeptInfo> deptInfos) {
+        return deptInfos.stream()
+                .filter(dept -> !dept.getDepartmentName().equals(DepartmentName.COMM_DESIGN))
                 .map(NoticeDepartmentNameResult::from)
                 .toList();
     }
