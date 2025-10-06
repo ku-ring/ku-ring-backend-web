@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.science;
 
 import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -17,7 +18,8 @@ public class MathematicsDept extends ScienceCollege {
     public MathematicsDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
-            LatestPageNoticeProperties latestPageNoticeProperties
+            LatestPageNoticeProperties latestPageNoticeProperties,
+            LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient
     ) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
@@ -29,5 +31,6 @@ public class MathematicsDept extends ScienceCollege {
         this.noticeScrapInfo = new NoticeScrapInfo(MATH.getHostPrefix(), 727);
         this.departmentName = MATH;
         this.noticeGraduationInfo = new NoticeScrapInfo(MATH.getHostPrefix(), 391);
+        this.latestPageGraduateNoticeApiClient = latestPageGraduateNoticeApiClient;
     }
 }

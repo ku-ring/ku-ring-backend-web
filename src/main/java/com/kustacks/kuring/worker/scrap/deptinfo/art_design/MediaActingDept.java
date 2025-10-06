@@ -1,7 +1,6 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.art_design;
 
 import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
-import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -10,27 +9,24 @@ import com.kustacks.kuring.worker.scrap.deptinfo.StaffScrapInfo;
 
 import java.util.List;
 
-import static com.kustacks.kuring.notice.domain.DepartmentName.MOV_IMAGE;
+import static com.kustacks.kuring.notice.domain.DepartmentName.MEDIA_ACTING;
 
-@RegisterDepartmentMap(key = MOV_IMAGE)
-public class MovingImageFilmDept extends ArtDesignCollege {
+@RegisterDepartmentMap(key = MEDIA_ACTING)
+public class MediaActingDept extends ArtDesignCollege {
 
-    public MovingImageFilmDept(
+    public MediaActingDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
-            LatestPageNoticeProperties latestPageNoticeProperties,
-            LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient
+            LatestPageNoticeProperties latestPageNoticeProperties
     ) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
         this.htmlParser = latestPageNoticeHtmlParser;
         this.latestPageNoticeProperties = latestPageNoticeProperties;
 
-        List<Integer> siteIds = List.of(11276);
-        this.staffScrapInfo = new StaffScrapInfo(MOV_IMAGE.getHostPrefix(), siteIds);
-        this.noticeScrapInfo = new NoticeScrapInfo(MOV_IMAGE.getHostPrefix(), 491);
-        this.departmentName = MOV_IMAGE;
-        this.noticeGraduationInfo = new NoticeScrapInfo(MOV_IMAGE.getHostPrefix(), 5710);
-        this.latestPageGraduateNoticeApiClient = latestPageGraduateNoticeApiClient;
+        List<Integer> siteIds = List.of(11299);
+        this.staffScrapInfo = new StaffScrapInfo(MEDIA_ACTING.getHostPrefix(), siteIds);
+        this.noticeScrapInfo = new NoticeScrapInfo(MEDIA_ACTING.getHostPrefix(), 493);
+        this.departmentName = MEDIA_ACTING;
     }
 }

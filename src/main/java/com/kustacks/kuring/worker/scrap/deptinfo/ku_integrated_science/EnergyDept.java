@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.ku_integrated_science;
 
 import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -17,7 +18,8 @@ public class EnergyDept extends KuIntegratedScienceCollege {
     public EnergyDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
-            LatestPageNoticeProperties latestPageNoticeProperties
+            LatestPageNoticeProperties latestPageNoticeProperties,
+            LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient
     ) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
@@ -29,5 +31,6 @@ public class EnergyDept extends KuIntegratedScienceCollege {
         this.noticeScrapInfo = new NoticeScrapInfo(ENERGY.getHostPrefix(), 451);
         this.departmentName = ENERGY;
         this.noticeGraduationInfo = new NoticeScrapInfo(ENERGY.getHostPrefix(), 848);
+        this.latestPageGraduateNoticeApiClient = latestPageGraduateNoticeApiClient;
     }
 }

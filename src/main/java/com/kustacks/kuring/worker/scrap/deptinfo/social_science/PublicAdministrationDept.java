@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.social_science;
 
 import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -17,7 +18,8 @@ public class PublicAdministrationDept extends SocialSciencesCollege {
     public PublicAdministrationDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
-            LatestPageNoticeProperties latestPageNoticeProperties
+            LatestPageNoticeProperties latestPageNoticeProperties,
+            LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient
     ) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
@@ -29,5 +31,6 @@ public class PublicAdministrationDept extends SocialSciencesCollege {
         this.noticeScrapInfo = new NoticeScrapInfo(ADMINISTRATION.getHostPrefix(), 855);
         this.departmentName = ADMINISTRATION;
         this.noticeGraduationInfo = new NoticeScrapInfo(ADMINISTRATION.getHostPrefix(), 427);
+        this.latestPageGraduateNoticeApiClient = latestPageGraduateNoticeApiClient;
     }
 }

@@ -112,8 +112,8 @@ public class DepartmentGraduationNoticeUpdater {
         return newNoticeList;
     }
 
-    private List<DepartmentNotice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important, boolean graduate) {
-        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important, graduate);
+    private List<DepartmentNotice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important, boolean graduated) {
+        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important, graduated);
         noticeCommandPort.saveAllDepartmentNotices(newNotices);
         return newNotices;
     }
@@ -141,8 +141,8 @@ public class DepartmentGraduationNoticeUpdater {
         }
     }
 
-    private void synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important, boolean graduate) {
-        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important, graduate);
+    private void synchronizationWithDb(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important, boolean graduated) {
+        List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important, graduated);
 
         List<Integer> latestNoticeIds = noticeUpdateSupport.extractDepartmentNoticeIds(scrapResults);
 
