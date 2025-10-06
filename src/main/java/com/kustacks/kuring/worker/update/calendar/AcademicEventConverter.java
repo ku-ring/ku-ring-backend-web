@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import static com.kustacks.kuring.calendar.domain.Transparent.OPAQUE;
@@ -25,18 +26,19 @@ public class AcademicEventConverter {
     public static List<AcademicEvent> convertToAcademicEvents(List<IcsEvent> icsEvents) {
         return icsEvents.stream()
                 .map(AcademicEventConverter::convertToAcademicEvent)
-                .filter(Objects::nonNull)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .toList();
     }
 
-    public static AcademicEvent convertToAcademicEvent(IcsEvent icsEvent) {
+    public static Optional<AcademicEvent> convertToAcademicEvent(IcsEvent icsEvent) {
         String uid = parseString(icsEvent.uid());
         String rawSummary = parseString(icsEvent.summary());
         String description = parseString(icsEvent.description());
 
         // 1. 학사일정 변환 가능 여부 확인 (공휴일 제외)
         if (!shouldConvertToAcademicEvent(rawSummary)) {
-            return null;
+            return Optional.empty();
         }
 
         // 2. summary 전처리 (괄호 안 날짜/시간 제거 등)
@@ -51,11 +53,13 @@ public class AcademicEventConverter {
         boolean notifyEnabled = AcademicEventNotificationClassifier.proceed(transparent, summary);
 
         try {
-            return AcademicEvent.from(uid, summary, description,
-                    category, transparent, sequence, notifyEnabled, startTime, endTime);
+            return Optional.of(
+                    AcademicEvent.from(uid, summary, description, category,
+                            transparent, sequence, notifyEnabled, startTime, endTime)
+            );
         } catch (Exception e) {
             log.warn("ICS event 변좐에 실패했습니다.(uid={}, summary={}): {}", uid, summary, e.toString());
-            return null;
+            return Optional.empty();
         }
     }
 

@@ -55,7 +55,7 @@ class AcademicEventConverterTest {
         IcsEvent icsEvent = testIcsEvents.get(0);
 
         //when
-        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(icsEvent);
+        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(icsEvent).orElse(null);
 
         //then
         assertEventFields(academicEvent, "하계방학", 0, Transparent.TRANSPARENT, false,
@@ -108,7 +108,7 @@ class AcademicEventConverterTest {
         );
 
         // when
-        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(holidayEvent);
+        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(holidayEvent).orElse(null);
 
         // then
         assertThat(academicEvent).isNull();
@@ -142,7 +142,7 @@ class AcademicEventConverterTest {
         );
 
         // when
-        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(normalEvent);
+        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(normalEvent).orElse(null);
 
         // then
         assertThat(academicEvent).isNotNull();
@@ -170,7 +170,7 @@ class AcademicEventConverterTest {
         );
 
         // when
-        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(emptyEvent);
+        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(emptyEvent).orElse(null);
 
         // then
         assertThat(academicEvent).isNull();
@@ -196,7 +196,7 @@ class AcademicEventConverterTest {
         );
 
         // when
-        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(nullEvent);
+        AcademicEvent academicEvent = AcademicEventConverter.convertToAcademicEvent(nullEvent).orElse(null);
 
         // then
         assertThat(academicEvent).isNull();
