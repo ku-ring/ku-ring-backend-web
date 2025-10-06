@@ -12,7 +12,14 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
-import static com.kustacks.kuring.acceptance.CategoryStep.*;
+import static com.kustacks.kuring.acceptance.CategoryStep.사용자가_구독한_카테고리_목록_조회_요청;
+import static com.kustacks.kuring.acceptance.CategoryStep.지원하는_카테고리_조회_요청;
+import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_구독_요청;
+import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_구독_요청_응답_확인;
+import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_수정_요청;
+import static com.kustacks.kuring.acceptance.CategoryStep.카테고리_조회_요청_응답_확인;
+import static com.kustacks.kuring.acceptance.CategoryStep.학과_조회_요청;
+import static com.kustacks.kuring.acceptance.CategoryStep.학과_조회_응답_확인;
 import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -53,7 +60,7 @@ class CategoryAcceptanceTest extends IntegrationTestSupport {
         var 학과_조회_요청_응답 = 학과_조회_요청();
 
         // then
-        학과_조회_응답_확인(학과_조회_요청_응답, 62);
+        학과_조회_응답_확인(학과_조회_요청_응답, 63);
     }
 
     /**
