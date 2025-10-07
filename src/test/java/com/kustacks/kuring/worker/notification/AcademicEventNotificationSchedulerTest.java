@@ -4,6 +4,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.kustacks.kuring.calendar.adapter.out.persistence.AcademicEventRepository;
 import com.kustacks.kuring.calendar.application.port.in.AcademicEventNotificationUseCase;
 import com.kustacks.kuring.calendar.domain.AcademicEvent;
+import com.kustacks.kuring.calendar.domain.AcademicEventCategory;
 import com.kustacks.kuring.calendar.domain.Transparent;
 import com.kustacks.kuring.common.featureflag.KuringFeatures;
 import com.kustacks.kuring.message.adapter.out.firebase.FakeFirebaseAdapter;
@@ -160,7 +161,7 @@ class AcademicEventNotificationSchedulerTest extends IntegrationTestSupport {
                 .eventUid(UUID.randomUUID().toString())
                 .summary(summary)
                 .description("테스트 이벤트: " + summary)
-                .category("TEST")
+                .category(AcademicEventCategory.ETC)
                 .transparent(Transparent.TRANSPARENT)
                 .sequence(1)
                 .notifyEnabled(true)

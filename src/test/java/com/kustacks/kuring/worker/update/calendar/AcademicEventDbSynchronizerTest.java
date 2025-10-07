@@ -3,6 +3,7 @@ package com.kustacks.kuring.worker.update.calendar;
 import com.kustacks.kuring.calendar.application.port.out.AcademicEventCommandPort;
 import com.kustacks.kuring.calendar.application.port.out.AcademicEventQueryPort;
 import com.kustacks.kuring.calendar.domain.AcademicEvent;
+import com.kustacks.kuring.calendar.domain.AcademicEventCategory;
 import com.kustacks.kuring.calendar.domain.Transparent;
 import com.kustacks.kuring.worker.parser.calendar.dto.IcsCalendarProperties;
 import com.kustacks.kuring.worker.parser.calendar.dto.IcsCalendarResult;
@@ -84,7 +85,7 @@ class AcademicEventDbSynchronizerTest {
                 .summary("기존 테스트 이벤트 2")
                 .startTime(LocalDateTime.of(2024, 3, 2, 9, 0))
                 .endTime(LocalDateTime.of(2024, 3, 2, 17, 0))
-                .category("기본")
+                .category(AcademicEventCategory.ETC)
                 .transparent(Transparent.TRANSPARENT)
                 .sequence(0) // 새 이벤트보다 sequence가 낮음
                 .notifyEnabled(true)
@@ -149,7 +150,7 @@ class AcademicEventDbSynchronizerTest {
                 .summary("높은 sequence 이벤트")
                 .startTime(LocalDateTime.of(2024, 3, 2, 9, 0))
                 .endTime(LocalDateTime.of(2024, 3, 2, 17, 0))
-                .category("기본")
+                .category(AcademicEventCategory.ETC)
                 .transparent(Transparent.TRANSPARENT)
                 .sequence(2) // 새 이벤트보다 sequence가 높음
                 .notifyEnabled(true)

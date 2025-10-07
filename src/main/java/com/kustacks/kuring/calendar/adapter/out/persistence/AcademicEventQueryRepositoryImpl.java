@@ -57,7 +57,7 @@ class AcademicEventQueryRepositoryImpl implements AcademicEventQueryRepository {
                         academicEvent.eventUid,
                         academicEvent.summary,
                         academicEvent.description,
-                        academicEvent.category,
+                        academicEvent.category.stringValue(),
                         academicEvent.transparent,
                         academicEvent.sequence,
                         academicEvent.notifyEnabled,

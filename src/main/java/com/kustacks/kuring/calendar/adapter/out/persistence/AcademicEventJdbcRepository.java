@@ -35,7 +35,7 @@ public class AcademicEventJdbcRepository {
                         ps.setString(1, academicEvent.getEventUid());
                         ps.setString(2, academicEvent.getSummary());
                         ps.setString(3, academicEvent.getDescription());
-                        ps.setString(4, academicEvent.getCategory());
+                        ps.setString(4, academicEvent.getCategory().name());
                         ps.setString(5, academicEvent.getTransparent().toString());
                         ps.setInt(6, academicEvent.getSequence());
                         ps.setBoolean(7, academicEvent.getNotifyEnabled());
@@ -68,7 +68,7 @@ public class AcademicEventJdbcRepository {
                         AcademicEvent academicEvent = events.get(i);
                         ps.setString(1, academicEvent.getSummary());
                         ps.setString(2, academicEvent.getDescription());
-                        ps.setString(3, academicEvent.getCategory());
+                        ps.setString(3, academicEvent.getCategory().name());
                         ps.setString(4, academicEvent.getTransparent().toString());
                         ps.setInt(5, academicEvent.getSequence());
                         ps.setBoolean(6, academicEvent.getNotifyEnabled());
