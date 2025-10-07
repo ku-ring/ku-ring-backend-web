@@ -152,10 +152,22 @@ public class AdminCommandService implements AdminCommandUseCase {
             String topic = entry.getKey();
             List<String> tokens = entry.getValue();
 
+            log.info("Resubscribing {} users to topic: {}", tokens.size(), topic);
+
+            int successCount = 0;
+            int failureCount = 0;
+
             for (int i = 0; i < tokens.size(); i += 500) {
                 List<String> batch = tokens.subList(i, Math.min(i + 500, tokens.size()));
-                firebaseSubscribePort.subscribeToTopic(batch, topic);
+                try {
+                    firebaseSubscribePort.subscribeToTopic(batch, topic);
+                    successCount += batch.size();
+                } catch (Exception e) {
+                    failureCount += batch.size();
+                }
             }
+
+            log.info("Resubscribed {} users to topic: {}. {} users failed.", successCount, topic, failureCount);
         }
     }
 
