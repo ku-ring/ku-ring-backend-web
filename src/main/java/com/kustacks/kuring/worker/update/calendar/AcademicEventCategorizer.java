@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.update.calendar;
 
 import com.kustacks.kuring.calendar.domain.AcademicEventCategory;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import static com.kustacks.kuring.calendar.domain.AcademicEventCategory.ACADEMIC
 import static com.kustacks.kuring.calendar.domain.AcademicEventCategory.ACADEMIC_OPERATION_EVENT;
 import static com.kustacks.kuring.calendar.domain.AcademicEventCategory.REGISTRATION_COURSE_GRADE;
 
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class AcademicEventCategorizer {
 
     private static final Map<AcademicEventCategory, List<String>> CATEGORY_KEYWORDS = Map.of(
