@@ -11,11 +11,11 @@ public interface AdminCommandUseCase {
 
     void createRealNoticeForAllUser(RealNotificationCommand command);
 
-    void subscribeAllUserSameTopic();
-
     void addAlertSchedule(AlertCreateCommand command);
 
     void cancelAlertSchedule(Long id);
 
     void embeddingCustomData(DataEmbeddingCommand command);
+
+    void resubscribeAllUsersToTopics();
 }
