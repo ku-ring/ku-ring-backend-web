@@ -23,6 +23,8 @@ jobs:
 
       # (3) firebase secret decrypt
       - name: Decrypt Secrets
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           sh .github/workflows/decrypt.sh
 
