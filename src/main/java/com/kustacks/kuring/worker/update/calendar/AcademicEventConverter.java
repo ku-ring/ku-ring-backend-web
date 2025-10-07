@@ -58,7 +58,7 @@ public class AcademicEventConverter {
                             transparent, sequence, notifyEnabled, startTime, endTime)
             );
         } catch (Exception e) {
-            log.warn("ICS event 변좐에 실패했습니다.(uid={}, summary={}): {}", uid, summary, e.toString());
+            log.warn("ICS event 변환에 실패했습니다.(uid={}, summary={}): {}", uid, summary, e.toString());
             return Optional.empty();
         }
     }
