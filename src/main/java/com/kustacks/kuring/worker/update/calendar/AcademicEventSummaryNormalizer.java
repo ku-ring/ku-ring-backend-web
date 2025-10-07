@@ -12,11 +12,11 @@ public class AcademicEventSummaryNormalizer {
     // 1단계: 모든 괄호 찾기
     private static final Pattern BRACKET_PATTERN = Pattern.compile("\\([^)]+\\)");
     // 2단계: 괄호 내용에서 시간/날짜 확인
-    private static final Pattern TIME_IN_BRACKET = Pattern.compile("\\d+[:.]|\\d+\\s*[월화수목금토일]");
+    private static final Pattern TIME_IN_BRACKET = Pattern.compile("\\d{1,4}[:.]|\\d{1,4}\\s{0,3}[월화수목금토일]");
 
     // 괄호 없는 날짜/시간 패턴 제거 (ReDoS 방지)
     // 예: 14.(월) 10:30 ~ 15.(화) 16:30, ~ 5.(월) 16:30
-    private static final Pattern DATE_TIME_PATTERN = Pattern.compile("\\s*~?\\s*\\d+\\.\\s*\\([월화수목금토일]\\)\\s*\\d+[:.]\\d+[^\\r\\n]*$");
+    private static final Pattern DATE_TIME_PATTERN = Pattern.compile("\\s{0,5}~?\\s{0,5}\\d{1,2}\\.\\s{0,5}\\([월화수목금토일]\\)\\s{0,5}\\d{1,2}[:.]\\d{1,2}.{0,200}$");
 
     // 단순 시간 패턴 제거 (HH:MM 형식)
     // 예: 17:00
