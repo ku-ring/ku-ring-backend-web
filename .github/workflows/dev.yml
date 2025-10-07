@@ -21,16 +21,21 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # (3) Gradle 빌드
+      # (3) firebase secret decrypt
+      - name: Decrypt Secrets
+        run: |
+          sh .github/workflows/decrypt.sh
+
+      # (4) Gradle 빌드
       - name: Build project
         run: |
           ./gradlew clean build -x test
 
-      # (4) 빌드 결과 확인
+      # (5) 빌드 결과 확인
       - name: Verify JAR
         run: ls -al build/libs
 
-      # (5) OCI 서버로 JAR 파일 전송
+      # (6) OCI 서버로 JAR 파일 전송
       - name: Upload to OCI
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -40,7 +45,7 @@ jobs:
           source: "build/libs/*.jar"
           target: "/home/ubuntu/dev-app"
 
-      # (6) SSH 접속 → 기존 프로세스 중지 → 새 버전 실행
+      # (7) SSH 접속 → 기존 프로세스 중지 → 새 버전 실행
       - name: Restart Dev Application
         uses: appleboy/ssh-action@v1.1.0
         with:
@@ -49,7 +54,7 @@ jobs:
           key: ${{ secrets.OCI_DEV_SSH_KEY }}
           script: |
             echo "[1] 현재 실행중인 개발 서버 종료 중..."
-            PID=$(ps -ef | grep java | grep 'dev-app' | awk '{print $2}')
+            PID=$(ps -ef | grep 'kuring-.*\.jar' | grep -v grep | awk '{print $2}')
             if [ -n "$PID" ]; then
               echo "기존 프로세스 종료: $PID"
               kill -9 $PID
@@ -60,5 +65,5 @@ jobs:
             echo "[2] 새 JAR 실행"
             cd /home/ubuntu/dev-app
             JAR_FILE=$(ls -t build/libs/*.jar | grep -m1 -v 'plain')
-            nohup java -jar $JAR_FILE --spring.profiles.active=dev > dev-app.log 2>&1 &
+            nohup java -jar "$JAR_FILE" --spring.profiles.active=dev > /home/ubuntu/dev-app.log 2>&1 &
             echo "✅ 개발 서버 재시작 완료!"
