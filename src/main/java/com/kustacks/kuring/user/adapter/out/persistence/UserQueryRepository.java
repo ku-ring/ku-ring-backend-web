@@ -13,5 +13,7 @@ interface UserQueryRepository {
 
     List<User> findByPageRequest(Pageable pageable);
 
+    List<User> findAllWithSubscriptions();
+
     void resetAllUserQuestionCount();
 }

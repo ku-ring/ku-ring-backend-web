@@ -31,11 +31,6 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     }
 
     @Override
-    public List<String> findAllToken() {
-        return userRepository.findAllFcmTokens();
-    }
-
-    @Override
     public Optional<User> findByToken(String token) {
         if (token == null || token.isBlank()) {
             return Optional.empty();
@@ -65,6 +60,11 @@ public class UserPersistenceAdapter implements UserCommandPort, UserQueryPort, A
     @Override
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public List<User> findAllWithSubscriptions() {
+        return userRepository.findAllWithSubscriptions();
     }
 
     @Override

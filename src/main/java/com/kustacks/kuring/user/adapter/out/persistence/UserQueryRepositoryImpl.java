@@ -45,6 +45,16 @@ class UserQueryRepositoryImpl implements UserQueryRepository {
                 .fetch();
     }
 
+    @Override
+    public List<User> findAllWithSubscriptions() {
+        return queryFactory
+                .selectFrom(user)
+                .leftJoin(user.categories.categoryNamesSet).fetchJoin()
+                .leftJoin(user.departments.departmentNamesSet).fetchJoin()
+                .distinct()
+                .fetch();
+    }
+
     @Transactional
     @Override
     public void resetAllUserQuestionCount() {
