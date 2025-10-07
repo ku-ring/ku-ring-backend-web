@@ -113,7 +113,6 @@ public class AdminCommandService implements AdminCommandUseCase {
         }
     }
 
-    @Transactional
     @Override
     public void resubscribeAllUsersToTopics() {
         List<User> allUsers = userQueryPort.findAllWithSubscriptions();
