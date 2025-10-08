@@ -16,8 +16,8 @@ public class AcademicEventNotificationScheduler {
     private final AcademicEventNotificationUseCase academicEventNotificationUseCase;
     private final FeatureFlags featureFlags;
 
-    // 매주 월요일 새벽 5시 학사일정 알림 전송
-    @Scheduled(cron = "0 0 5 * * 1", zone = "Asia/Seoul")
+    // 매일 아침 9시 학사일정 알림 전송
+    @Scheduled(cron = "0 0 9 * * *", zone = "Asia/Seoul")
     public void sendDailyAcademicEventNotifications() {
         if (featureFlags.isEnabled(KuringFeatures.NOTIFY_ACADEMIC_EVENT.getFeature())) {
             log.info("******** 일일 학사일정 알림 발송 시작 ********");

@@ -24,8 +24,8 @@ public class AcademicEventUpdater {
     private final AcademicEventDbSynchronizer academicEventDbSynchronizer;
     private final FeatureFlags featureFlags;
 
-    //매월 1일 00시 00분 업데이트 진행
-    @Scheduled(cron = "0 0 0 1 * *", zone = "Asia/Seoul")
+    //매주 월요일 새벽 5시 학사일정 업데이트 진행
+    @Scheduled(cron = "0 0 5 * * 1", zone = "Asia/Seoul")
     public void update() {
         if (featureFlags.isEnabled(KuringFeatures.UPDATE_ACADEMIC_EVENT.getFeature())) {
             log.info("******** 학사일정 업데이트 시작 ********");
