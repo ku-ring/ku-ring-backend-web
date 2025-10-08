@@ -35,6 +35,7 @@ public class User implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Getter(AccessLevel.PUBLIC)
     @Column(name = "fcm_token", unique = true, nullable = false)
     private String fcmToken;
 

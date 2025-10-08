@@ -17,7 +17,6 @@ import com.kustacks.kuring.common.dto.ResponseCodeAndMessages;
 import com.kustacks.kuring.common.utils.converter.StringToDateTimeConverter;
 import com.kustacks.kuring.common.utils.validator.BadWordInitProcessor;
 import com.kustacks.kuring.common.utils.validator.WhitelistWordInitProcessor;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -28,7 +27,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -136,11 +134,12 @@ public class AdminCommandApiV2 {
         return ResponseEntity.ok().body(new BaseResponse<>(ResponseCodeAndMessages.ADMIN_LOAD_WHITELIST_WORDS, null));
     }
 
-    @Hidden
+    @Operation(summary = "사용자 토픽 재구독", description = "모든 사용자의 구독 정보를 기반으로 Firebase 토픽을 재구독합니다")
+    @SecurityRequirement(name = "JWT")
     @Secured(AdminRole.ROLE_ROOT)
-    @GetMapping("/subscribe/all")
-    public ResponseEntity<Void> subscribe() {
-        adminCommandUseCase.subscribeAllUserSameTopic();
-        return ResponseEntity.ok().build();
+    @PostMapping("/users/subscriptions/all")
+    public ResponseEntity<BaseResponse<String>> resubscribeAllUsersToTopics() {
+        adminCommandUseCase.resubscribeAllUsersToTopics();
+        return ResponseEntity.ok().body(new BaseResponse<>(ResponseCodeAndMessages.ADMIN_USER_SUBSCRIPTION_UPDATE_SUCCESS, null));
     }
 }

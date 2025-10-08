@@ -11,6 +11,8 @@ public interface UserQueryPort {
     Optional<User> findByToken(String token);
 
     List<User> findAll();
+
+    List<User> findAllWithSubscriptions();
     List<User> findByPageRequest(Pageable pageable);
     List<User> findByLoggedInUserId(Long id);
     
