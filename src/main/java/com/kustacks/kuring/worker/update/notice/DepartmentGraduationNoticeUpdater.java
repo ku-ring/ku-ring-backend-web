@@ -41,26 +41,28 @@ public class DepartmentGraduationNoticeUpdater {
 
     @Scheduled(cron = "0 15/20 7-19 * * *", zone = "Asia/Seoul") // 학교 공지는 오전 7:15 ~ 오후 7:55분 사이에 20분마다 업데이트 된다.
     public void update() {
-        log.info("******** 학과별 (대학원) 최신 공지 업데이트 시작 ********");
+        if (featureFlags.isEnabled(KuringFeatures.UPDATE_DEPARTMENT_GRADUATION_NOTICE.getFeature())) {
+            log.info("******** 학과별 (대학원) 최신 공지 업데이트 시작 ********");
 
-        List<DeptInfo> graduateDeptInfoList = getGraduateDeptInfoList();
+            List<DeptInfo> graduateDeptInfoList = getGraduateDeptInfoList();
 
-        for (DeptInfo deptInfo : graduateDeptInfoList) {
-            CompletableFuture
-                    .supplyAsync(
-                            () -> updateDepartmentAsync(deptInfo, DeptInfo::scrapGraduateLatestPageHtml),
-                            noticeUpdaterThreadTaskExecutor
-                    ).thenApply(
-                            scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName())
-                    ).thenAccept(
-                            notificationService::sendNotifications
-                    );
+            for (DeptInfo deptInfo : graduateDeptInfoList) {
+                CompletableFuture
+                        .supplyAsync(
+                                () -> updateDepartmentAsync(deptInfo, DeptInfo::scrapGraduateLatestPageHtml),
+                                noticeUpdaterThreadTaskExecutor
+                        ).thenApply(
+                                scrapResults -> compareLatestAndUpdateDB(scrapResults, deptInfo.getDeptName())
+                        ).thenAccept(
+                                notificationService::sendNotifications
+                        );
+            }
         }
     }
 
     @Scheduled(cron = "0 0 1 * * 6", zone = "Asia/Seoul") // 전체 업데이트는 매주 토요일 오전 1시에 한다.
     public void updateAll() {
-        if (featureFlags.isEnabled(KuringFeatures.UPDATE_DEPARTMENT_NOTICE.getFeature())) {
+        if (featureFlags.isEnabled(KuringFeatures.UPDATE_DEPARTMENT_GRADUATION_NOTICE.getFeature())) {
             log.info("******** 학과별 (대학원) 전체 공지 업데이트 시작 ********");
 
             List<DeptInfo> graduateDeptInfoList = getGraduateDeptInfoList();
