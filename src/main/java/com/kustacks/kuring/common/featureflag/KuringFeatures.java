@@ -4,6 +4,7 @@ public enum KuringFeatures {
 
     UPDATE_NOTICE_EMBEDDING(new Feature("update_notice_embedding")),
     UPDATE_DEPARTMENT_NOTICE(new Feature("update_department_notice")),
+    UPDATE_DEPARTMENT_GRADUATION_NOTICE(new Feature("update_department_graduation_notice")),
     UPDATE_KUIS_HOMEPAGE_NOTICE(new Feature("update_kuis_homepage_notice")),
     UPDATE_KUIS_NOTICE(new Feature("update_kuis_notice")),
     UPDATE_USER(new Feature("update_user")),
