@@ -118,4 +118,23 @@ public class AdminStep {
                 .then().log().all()
                 .extract();
     }
+
+    public static ExtractableResponse<Response> 사용자_토픽_재구독_요청(String accessToken) {
+        return RestAssured
+                .given().log().all()
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().post("/api/v2/admin/users/subscriptions/all")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 사용자_토픽_재구독_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("사용자들의 구독 정보를 성공적으로 재설정했습니다."),
+                () -> assertThat(response.jsonPath().getString("data")).isNull()
+        );
+    }
 }

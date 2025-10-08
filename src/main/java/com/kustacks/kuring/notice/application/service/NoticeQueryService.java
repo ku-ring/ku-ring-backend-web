@@ -22,6 +22,7 @@ import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.domain.RootUser;
+import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,18 +49,19 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
     private final CommentQueryPort commentQueryPort;
     private final RootUserQueryPort rootUserQueryPort;
     private final List<CategoryName> supportedCategoryNameList;
-    private final List<DepartmentName> supportedDepartmentNameList;
+    private final List<DeptInfo> deptInfoList;
 
     public NoticeQueryService(
             NoticeQueryPort noticeQueryPort,
             CommentQueryPort commentQueryPort,
-            RootUserQueryPort rootUserQueryPort
+            RootUserQueryPort rootUserQueryPort,
+            List<DeptInfo> deptInfoList
     ) {
         this.noticeQueryPort = noticeQueryPort;
         this.commentQueryPort = commentQueryPort;
         this.rootUserQueryPort = rootUserQueryPort;
         this.supportedCategoryNameList = Arrays.asList(CategoryName.values());
-        this.supportedDepartmentNameList = Arrays.asList(DepartmentName.values());
+        this.deptInfoList = deptInfoList;
     }
 
     @Override
@@ -87,7 +89,7 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
 
     @Override
     public List<NoticeDepartmentNameResult> lookupSupportedDepartments() {
-        return convertDepartmentNameDtos(supportedDepartmentNameList);
+        return convertDepartmentNameDtos(deptInfoList);
     }
 
     @Override
@@ -191,9 +193,9 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
                 .toList();
     }
 
-    private List<NoticeDepartmentNameResult> convertDepartmentNameDtos(List<DepartmentName> departmentNames) {
-        return departmentNames.stream()
-                .filter(dn -> !dn.equals(DepartmentName.COMM_DESIGN))
+    private List<NoticeDepartmentNameResult> convertDepartmentNameDtos(List<DeptInfo> deptInfos) {
+        return deptInfos.stream()
+                .filter(dept -> !dept.getDepartmentName().equals(DepartmentName.COMM_DESIGN))
                 .map(NoticeDepartmentNameResult::from)
                 .toList();
     }

@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.liberal_art;
 
 import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -17,7 +18,8 @@ public class PhilosophyDept extends LiberalArtCollege {
     public PhilosophyDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
-            LatestPageNoticeProperties latestPageNoticeProperties
+            LatestPageNoticeProperties latestPageNoticeProperties,
+            LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient
     ) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
@@ -29,5 +31,6 @@ public class PhilosophyDept extends LiberalArtCollege {
         this.noticeScrapInfo = new NoticeScrapInfo(PHILOSOPHY.getHostPrefix(), 356);
         this.departmentName = PHILOSOPHY;
         this.noticeGraduationInfo = new NoticeScrapInfo(PHILOSOPHY.getHostPrefix(), 360);
+        this.latestPageGraduateNoticeApiClient = latestPageGraduateNoticeApiClient;
     }
 }

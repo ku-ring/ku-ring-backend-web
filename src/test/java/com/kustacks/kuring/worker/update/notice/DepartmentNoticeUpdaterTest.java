@@ -64,7 +64,7 @@ class DepartmentNoticeUpdaterTest {
         List<CommonNoticeFormatDto> importantNoticeList = new ArrayList<>();
         List<CommonNoticeFormatDto> normalNoticeList = new ArrayList<>();
 
-        for(int i = 0; i < 30; i++) {
+        for (int i = 0; i < 30; i++) {
             CommonNoticeFormatDto importantFormatDto = CommonNoticeFormatDto.builder().articleId(String.valueOf(i)).updatedDate("2021-01-01").subject("important" + i)
                     .postedDate("2021-01-01").fullUrl("https://library.konkuk.ac.kr/library-guide/bulletins/important/71921")
                     .important(true).build();
@@ -78,5 +78,21 @@ class DepartmentNoticeUpdaterTest {
 
         result.add(new ComplexNoticeFormatDto(importantNoticeList, normalNoticeList));
         return result;
+    }
+
+    @DisplayName("학과별(학사) 전체 공지 업데이트 테스트")
+    @Test
+    void updateAll_undergraduate_test() throws InterruptedException {
+        // given
+        doReturn(createDepartmentNoticesFixture()).when(scrapperTemplate).scrap(any(), any());
+        doNothing().when(firebaseService).sendNotifications(anyList());
+
+        // when
+        departmentNoticeUpdater.updateAll();
+        noticeUpdaterThreadTaskExecutor.getThreadPoolExecutor().awaitTermination(2, TimeUnit.SECONDS);
+
+        // then
+        Long count = noticeQueryPort.count();
+        assertThat(count).isEqualTo(3720);
     }
 }

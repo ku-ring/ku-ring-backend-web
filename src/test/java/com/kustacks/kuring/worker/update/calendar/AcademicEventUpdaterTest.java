@@ -3,7 +3,6 @@ package com.kustacks.kuring.worker.update.calendar;
 import com.kustacks.kuring.calendar.application.port.out.AcademicEventQueryPort;
 import com.kustacks.kuring.calendar.domain.AcademicEvent;
 import com.kustacks.kuring.calendar.domain.Transparent;
-import com.kustacks.kuring.common.featureflag.FeatureFlags;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import com.kustacks.kuring.worker.scrap.calendar.IcsScraper;
 import net.fortuna.ical4j.data.CalendarBuilder;
@@ -23,7 +22,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -38,9 +36,6 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
 
     @MockBean
     private IcsScraper icsScraper;
-
-    @MockBean
-    private FeatureFlags featureFlags;
 
     private final String ORIGINAL_CALENDAR_FILE = "src/test/resources/calendar/academic-calendar-origin.ics";
     private final String UPDATED_CALENDAR_FILE = "src/test/resources/calendar/academic-calendar-updated.ics";
@@ -60,7 +55,6 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
         } catch (IOException | ParserException e) {
             throw new RuntimeException(e);
         }
-        when(featureFlags.isEnabled(any())).thenReturn(true);
     }
 
     @Test
@@ -72,9 +66,9 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
         // when - 업데이트 실행
         assertDoesNotThrow(() -> academicEventUpdater.update());
 
-        // then - DB에 저장된 데이터 검증(기존 5건 + 신규 198건)
+        // then - DB에 저장된 데이터 검증(기존 5건 + 신규 198건 - 공휴일 19건 = 184)
         List<AcademicEvent> allEvents = academicEventQueryPort.findAll();
-        assertThat(allEvents).hasSize(203);
+        assertThat(allEvents).hasSize(184);
 
         AcademicEvent event1 = allEvents.stream()
                 .filter(event -> event.getEventUid().equals(testEventUids.get(0)))
@@ -92,7 +86,7 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
                 LocalDateTime.of(2024, 9, 2, 0, 0));
 
         // 폐강교과목 공지 이벤트 검증
-        assertEventFields(event2, "폐강교과목 공지(1차)(9:00~)", 0, Transparent.TRANSPARENT, false,
+        assertEventFields(event2, "폐강교과목 공지(1차)", 0, Transparent.TRANSPARENT, false,
                 LocalDateTime.of(2024, 9, 2, 0, 0),
                 LocalDateTime.of(2024, 9, 3, 0, 0));
     }
@@ -109,9 +103,9 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
         mockingScrapCalendar(updatedCalendar);
         assertDoesNotThrow(() -> academicEventUpdater.update());
 
-        // then - DB에 저장된 데이터 검증(기존 5건 + 신규 199건)
+        // then - DB에 저장된 데이터 검증(기존 5건 + 신규 199건 - 19건 = 185건)
         List<AcademicEvent> allEvents = academicEventQueryPort.findAll();
-        assertThat(allEvents).hasSize(204);
+        assertThat(allEvents).hasSize(185);
 
         AcademicEvent event1 = allEvents.stream()
                 .filter(event -> event.getEventUid().equals(testEventUids.get(0)))
@@ -134,7 +128,7 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
                 LocalDateTime.of(2024, 9, 2, 0, 0));
 
         // 폐강교과목 공지 이벤트 검증
-        assertEventFields(event2, "폐강교과목 공지(1차)(9:00~)", 1, Transparent.OPAQUE, true,
+        assertEventFields(event2, "폐강교과목 공지(1차)", 1, Transparent.OPAQUE, true,
                 LocalDateTime.of(2024, 9, 3, 0, 0),
                 LocalDateTime.of(2024, 9, 4, 0, 0));
 

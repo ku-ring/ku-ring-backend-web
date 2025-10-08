@@ -18,7 +18,17 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static com.kustacks.kuring.acceptance.AdminStep.*;
+import static com.kustacks.kuring.acceptance.AdminStep.금칙어_로드_요청;
+import static com.kustacks.kuring.acceptance.AdminStep.사용자_토픽_재구독_요청;
+import static com.kustacks.kuring.acceptance.AdminStep.사용자_토픽_재구독_응답_확인;
+import static com.kustacks.kuring.acceptance.AdminStep.사용자_피드백_조회_요청;
+import static com.kustacks.kuring.acceptance.AdminStep.신고_목록_조회_요청;
+import static com.kustacks.kuring.acceptance.AdminStep.신고_목록_조회_확인;
+import static com.kustacks.kuring.acceptance.AdminStep.알림_예약;
+import static com.kustacks.kuring.acceptance.AdminStep.예약_알림_삭제;
+import static com.kustacks.kuring.acceptance.AdminStep.예약_알림_조회;
+import static com.kustacks.kuring.acceptance.AdminStep.피드백_조회_확인;
+import static com.kustacks.kuring.acceptance.AdminStep.허용_단어_로드_요청;
 import static com.kustacks.kuring.acceptance.AuthStep.로그인_되어_있음;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -354,6 +364,19 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("인증에 실패하였습니다"),
                 () -> assertThat(response.jsonPath().getString("data")).isNull()
         );
+    }
+
+    @DisplayName("[v2] Admin은 모든 사용자의 토픽을 재구독할 수 있다")
+    @Test
+    void admin_can_resubscribe_all_users_to_topics() {
+        // given
+        String adminAccessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
+
+        // when
+        var 재구독_응답 = 사용자_토픽_재구독_요청(adminAccessToken);
+
+        // then
+        사용자_토픽_재구독_응답_확인(재구독_응답);
     }
 
     private void 댓글_작성_및_신고() {

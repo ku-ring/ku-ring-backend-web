@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.deptinfo.art_design;
 
 import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
+import com.kustacks.kuring.worker.scrap.client.notice.LatestPageGraduateNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.LatestPageNoticeApiClient;
 import com.kustacks.kuring.worker.scrap.client.notice.property.LatestPageNoticeProperties;
 import com.kustacks.kuring.worker.scrap.deptinfo.NoticeScrapInfo;
@@ -17,7 +18,8 @@ public class IndustrialDesignDept extends ArtDesignCollege {
     public IndustrialDesignDept(
             LatestPageNoticeApiClient latestPageNoticeApiClient,
             LatestPageNoticeHtmlParser latestPageNoticeHtmlParser,
-            LatestPageNoticeProperties latestPageNoticeProperties
+            LatestPageNoticeProperties latestPageNoticeProperties,
+            LatestPageGraduateNoticeApiClient latestPageGraduateNoticeApiClient
     ) {
         super();
         this.noticeApiClient = latestPageNoticeApiClient;
@@ -29,5 +31,6 @@ public class IndustrialDesignDept extends ArtDesignCollege {
         this.noticeScrapInfo = new NoticeScrapInfo(IND_DESIGN.getHostPrefix(), 4017);
         this.departmentName = IND_DESIGN;
         this.noticeGraduationInfo = new NoticeScrapInfo(IND_DESIGN.getHostPrefix(), 5683);
+        this.latestPageGraduateNoticeApiClient = latestPageGraduateNoticeApiClient;
     }
 }

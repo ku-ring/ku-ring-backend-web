@@ -17,7 +17,7 @@ class AcademicEventTest {
     private String uid = UUID.randomUUID().toString();
     private String summary = "개강";
     private String description = "2025년 1학기 개강";
-    private String category = "ETC";
+    private AcademicEventCategory category = AcademicEventCategory.ETC;
     private Transparent transparent = Transparent.TRANSPARENT;
     private Integer sequence = 1;
     private Boolean notifyEnabled = true;
@@ -64,7 +64,7 @@ class AcademicEventTest {
                 .eventUid("test-uid")
                 .summary("기존 제목")
                 .description("기존 설명")
-                .category("기존 카테고리")
+                .category(AcademicEventCategory.ETC)
                 .transparent(Transparent.OPAQUE)
                 .sequence(0)
                 .notifyEnabled(true)
@@ -76,7 +76,7 @@ class AcademicEventTest {
                 .eventUid("test-uid")
                 .summary("새로운 제목")
                 .description("새로운 설명")
-                .category("새로운 카테고리")
+                .category(AcademicEventCategory.ACADEMIC_DEGREE)
                 .transparent(Transparent.TRANSPARENT)
                 .sequence(1)
                 .notifyEnabled(false)
@@ -90,14 +90,13 @@ class AcademicEventTest {
         // then
         assertThat(existingEvent.getSummary()).isEqualTo("새로운 제목");
         assertThat(existingEvent.getDescription()).isEqualTo("새로운 설명");
-        assertThat(existingEvent.getCategory()).isEqualTo("새로운 카테고리");
+        assertThat(existingEvent.getCategory()).isEqualTo(AcademicEventCategory.ACADEMIC_DEGREE);
         assertThat(existingEvent.getTransparent()).isEqualTo(Transparent.TRANSPARENT);
         assertThat(existingEvent.getSequence()).isEqualTo(1);
         assertThat(existingEvent.getNotifyEnabled()).isFalse();
         assertThat(existingEvent.getStartTime()).isEqualTo(startTime.plusHours(1));
         assertThat(existingEvent.getEndTime()).isEqualTo(endTime.plusHours(1));
     }
-
 
     private AcademicEvent createAcademicEvent() {
         return AcademicEvent.builder()

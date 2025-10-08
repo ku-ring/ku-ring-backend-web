@@ -9,7 +9,11 @@ import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.in.UserQueryUseCase;
-import com.kustacks.kuring.user.application.port.in.dto.*;
+import com.kustacks.kuring.user.application.port.in.dto.UserAIAskCountResult;
+import com.kustacks.kuring.user.application.port.in.dto.UserBookmarkResult;
+import com.kustacks.kuring.user.application.port.in.dto.UserCategoryNameResult;
+import com.kustacks.kuring.user.application.port.in.dto.UserDepartmentNameResult;
+import com.kustacks.kuring.user.application.port.in.dto.UserInfoResult;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.application.port.out.UserCommandPort;
 import com.kustacks.kuring.user.application.port.out.UserEventPort;
@@ -23,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ACADEMIC_EVENT_TOPIC;
 import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ALL_DEVICE_SUBSCRIBED_TOPIC;
 
 @Slf4j
@@ -103,6 +108,7 @@ class UserQueryService implements UserQueryUseCase {
         if (optionalUser.isEmpty()) {
             optionalUser = Optional.of(userCommandPort.save(new User(token)));
             userEventPort.subscribeEvent(token, serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
+            userEventPort.subscribeEvent(token, serverProperties.ifDevThenAddSuffix(ACADEMIC_EVENT_TOPIC));
         }
 
         return optionalUser.orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));

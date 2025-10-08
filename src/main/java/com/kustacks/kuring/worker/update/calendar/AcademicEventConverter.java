@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.update.calendar;
 
 import com.kustacks.kuring.calendar.domain.AcademicEvent;
+import com.kustacks.kuring.calendar.domain.AcademicEventCategory;
 import com.kustacks.kuring.calendar.domain.Transparent;
 import com.kustacks.kuring.common.utils.converter.StringToDateTimeConverter;
 import com.kustacks.kuring.worker.parser.calendar.dto.IcsEvent;
@@ -10,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static com.kustacks.kuring.calendar.domain.Transparent.OPAQUE;
 
@@ -17,34 +20,46 @@ import static com.kustacks.kuring.calendar.domain.Transparent.OPAQUE;
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class AcademicEventConverter {
 
+    // 공휴일 관련 키워드 패턴 (ReDoS 방지)
+    private static final Pattern HOLIDAY_PATTERN = Pattern.compile("[^\\r\\n]*공휴일[^\\r\\n]*");
+
     public static List<AcademicEvent> convertToAcademicEvents(List<IcsEvent> icsEvents) {
         return icsEvents.stream()
                 .map(AcademicEventConverter::convertToAcademicEvent)
-                .filter(Objects::nonNull)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .toList();
     }
 
-    public static AcademicEvent convertToAcademicEvent(IcsEvent icsEvent) {
+    public static Optional<AcademicEvent> convertToAcademicEvent(IcsEvent icsEvent) {
         String uid = parseString(icsEvent.uid());
-        String summary = parseString(icsEvent.summary());
+        String rawSummary = parseString(icsEvent.summary());
         String description = parseString(icsEvent.description());
 
+        // 1. 학사일정 변환 가능 여부 확인 (공휴일 제외)
+        if (!shouldConvertToAcademicEvent(rawSummary)) {
+            return Optional.empty();
+        }
+
+        // 2. summary 전처리 (괄호 안 날짜/시간 제거 등)
+        String summary = AcademicEventSummaryNormalizer.normalize(rawSummary);
         LocalDateTime startTime = StringToDateTimeConverter.convert(icsEvent.dtstart());
         LocalDateTime endTime = StringToDateTimeConverter.convert(icsEvent.dtend());
 
-        //초기 기타로 통일, 별도 분류 필요 25.08.26 김한주
-        String category = "ETC";
+        AcademicEventCategory category = AcademicEventCategorizer.categorize(summary);
         Transparent transparent = convertToTransparent(icsEvent.transp());
         Integer sequence = convertToSequence(icsEvent.sequence());
 
-        boolean notifyEnabled = determineNotifyEnabled(transparent);
+        boolean notifyEnabled = AcademicEventNotificationClassifier.proceed(transparent, summary);
 
         try {
-            return AcademicEvent.from(uid, summary, description,
-                    category, transparent, sequence, notifyEnabled, startTime, endTime);
+            return Optional.of(
+                    AcademicEvent.from(uid, summary, description, category,
+                            transparent, sequence, notifyEnabled, startTime, endTime)
+            );
         } catch (Exception e) {
-            log.warn("ICS event 변좐에 실패했습니다.(uid={}, summary={}): {}", uid, summary, e.toString());
-            return null;
+            log.warn("ICS event 변환에 실패했습니다.(uid={}, summary={}): {}", uid, summary, e.toString());
+            return Optional.empty();
         }
     }
 
@@ -54,6 +69,7 @@ public class AcademicEventConverter {
         }
         return string.trim();
     }
+
 
     private static Transparent convertToTransparent(String transp) {
         if (Objects.isNull(transp)) {
@@ -74,15 +90,20 @@ public class AcademicEventConverter {
         }
     }
 
-    private static boolean determineNotifyEnabled(Transparent transparent) {
-        if (Objects.isNull(transparent)) {
+    /**
+     * summary가 학사일정으로 변환 가능한지 필터링
+     */
+    private static boolean shouldConvertToAcademicEvent(String summary) {
+        if (summary == null || summary.isBlank()) {
             return false;
         }
 
-        return switch (transparent) {
-            case OPAQUE -> true;  // 중요한 일정은 알림 활성화
-            case TRANSPARENT -> false; // 덜 중요한 일정은 알림 비활성화
-            default -> false;
-        };
+        // 공휴일 관련 이벤트는 제외
+        return !isHolidayEvent(summary);
     }
+
+    private static boolean isHolidayEvent(String summary) {
+        return HOLIDAY_PATTERN.matcher(summary).matches();
+    }
+
 }

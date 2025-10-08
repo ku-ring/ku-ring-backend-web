@@ -22,4 +22,12 @@ public interface AcademicEventQueryPort {
     List<AcademicEventReadModel> findEventsAfter(LocalDate startDate);
 
     List<AcademicEventReadModel> findEventsBefore(LocalDate endDate);
+
+    /**
+     * 지정된 날짜에 시작하거나 종료하는 알림 가능한 학사일정들을 조회합니다.
+     *
+     * @param date 조회할 날짜
+     * @return notifyEnabled가 true이고 해당 날짜에 시작하거나 종료하는 일정들
+     */
+    List<AcademicEventReadModel> findTodayEvents(LocalDate date);
 }

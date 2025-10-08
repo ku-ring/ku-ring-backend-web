@@ -3,6 +3,7 @@ package com.kustacks.kuring.calendar.application.port.out.dto;
 import com.kustacks.kuring.calendar.domain.Transparent;
 import com.querydsl.core.annotations.QueryProjection;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record AcademicEventReadModel(
@@ -30,5 +31,21 @@ public record AcademicEventReadModel(
         this.notifyEnabled = notifyEnabled;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public boolean isStartingToday(LocalDate today) {
+        return startTime.toLocalDate().equals(today);
+    }
+
+    public boolean isEndingToday(LocalDate today) {
+        return endTime.toLocalDate().equals(today);
+    }
+
+    public boolean isInProgressToday(LocalDate today) {
+        return isStartingToday(today) && isEndingToday(today);
+    }
+
+    public boolean isRelatedToDate(LocalDate date) {
+        return isStartingToday(date) || isEndingToday(date);
     }
 }
