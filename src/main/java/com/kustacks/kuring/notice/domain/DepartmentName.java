@@ -38,6 +38,9 @@ public enum DepartmentName {
     ADV_INDUSTRIAL("advanced_industrial", "aif", "신산업융합학과"),
     BIOLOGICAL("biological", "microbio", "생물공학과"),
     KBEAUTY("kbeauty_industry_fusion", "kbeauty", "K뷰티산업융합학과"),
+    MECHA_ROBOT_AUTO("mechanical_robot_automotive", "me", "기계로봇자동차공학부"),
+    MATERIAL("materials_science", "mse", "재료공학과"),
+    AERO_MOBILITY("aerospace_mobility", "aeroeng", "항공우주모빌리티공학과"),
 
     POLITICS("political_science", "kupol", "정치외교학과"),
     ECONOMICS("economics", "econ", "경제학과"),
