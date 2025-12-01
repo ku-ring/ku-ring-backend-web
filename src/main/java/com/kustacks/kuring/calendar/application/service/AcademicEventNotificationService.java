@@ -99,6 +99,7 @@ public class AcademicEventNotificationService implements AcademicEventNotificati
                 .setTopic(serverProperties.ifDevThenAddSuffix(ACADEMIC_EVENT_TOPIC))
                 .putData("title", title)
                 .putData("body", body)
+                .putData("messageType", "academic")
                 .build();
     }
 }
