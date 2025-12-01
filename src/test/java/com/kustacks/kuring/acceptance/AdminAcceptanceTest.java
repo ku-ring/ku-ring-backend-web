@@ -1,5 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
+import com.kustacks.kuring.admin.adapter.in.web.dto.AcademicTestNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.AdminAlertCreateRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.RealNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.TestNotificationRequest;
@@ -146,6 +147,33 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("실제 공지 생성에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getString("data")).isNull()
+        );
+    }
+
+    @DisplayName("[v2] 테스트 학사일정 알림 발송")
+    @Test
+    void role_root_admin_send_academic_test_notification() {
+        // given
+        String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
+
+        // when
+        var response = RestAssured
+                .given().log().all()
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .body(new AcademicTestNotificationRequest("테스트-수강신청 일정", "오늘은 수강신청 일정이 있어요"))
+                .when().post("/api/v2/admin/academic/dev")
+                .then().log().all()
+                .extract();
+
+        // then
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message"))
+                        .isEqualTo("테스트 학사일정 알림 생성에 성공하였습니다"),
                 () -> assertThat(response.jsonPath().getString("data")).isNull()
         );
     }
