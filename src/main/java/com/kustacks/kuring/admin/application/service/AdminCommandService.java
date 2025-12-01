@@ -12,6 +12,7 @@ import com.kustacks.kuring.alert.application.port.in.dto.DataEmbeddingCommand;
 import com.kustacks.kuring.auth.userdetails.UserDetailsServicePort;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.properties.ServerProperties;
+import com.kustacks.kuring.message.application.port.in.dto.AcademicTestNotificationCommand;
 import com.kustacks.kuring.message.application.port.out.FirebaseSubscribePort;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
@@ -80,6 +81,14 @@ public class AdminCommandService implements AdminCommandUseCase {
         }
 
         adminEventPort.sendNotificationByAdmin(command.title(), command.body(), command.url());
+    }
+
+    @Override
+    public void createAcademicTestNotification(AcademicTestNotificationCommand command) {
+        adminEventPort.sendAcademicTestNotification(
+                command.title(),
+                command.body()
+        );
     }
 
     @Override

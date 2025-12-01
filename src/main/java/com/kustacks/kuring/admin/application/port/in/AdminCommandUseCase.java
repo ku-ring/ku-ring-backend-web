@@ -4,6 +4,7 @@ import com.kustacks.kuring.admin.application.port.in.dto.RealNotificationCommand
 import com.kustacks.kuring.admin.application.port.in.dto.TestNotificationCommand;
 import com.kustacks.kuring.alert.application.port.in.dto.AlertCreateCommand;
 import com.kustacks.kuring.alert.application.port.in.dto.DataEmbeddingCommand;
+import com.kustacks.kuring.message.application.port.in.dto.AcademicTestNotificationCommand;
 
 public interface AdminCommandUseCase {
 
@@ -18,4 +19,7 @@ public interface AdminCommandUseCase {
     void embeddingCustomData(DataEmbeddingCommand command);
 
     void resubscribeAllUsersToTopics();
+
+    void createAcademicTestNotification(AcademicTestNotificationCommand command);
+
 }

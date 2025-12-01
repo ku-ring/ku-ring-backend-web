@@ -30,6 +30,7 @@ public enum ResponseCodeAndMessages {
     ADMIN_LOAD_BAD_WORDS(HttpStatus.OK.value(), "금칙어 로드에 성공했습니다."),
     ADMIN_LOAD_WHITELIST_WORDS(HttpStatus.OK.value(), "허용 단어 로드에 성공했습니다."),
     ADMIN_USER_SUBSCRIPTION_UPDATE_SUCCESS(HttpStatus.OK.value(), "사용자들의 구독 정보를 성공적으로 재설정했습니다."),
+    ADMIN_TEST_ACADEMIC_CREATE_SUCCESS(HttpStatus.OK.value(), "테스트 학사일정 알림 생성에 성공하였습니다"),
 
     /* User */
     USER_REGISTER_SUCCESS(HttpStatus.OK.value(), "회원가입에 성공하였습니다"),
@@ -52,7 +53,7 @@ public enum ResponseCodeAndMessages {
 
     /* Email */
     EMAIL_SEND_SUCCESS(HttpStatus.OK.value(), "이메일 전송에 성공했습니다."),
-    EMAIL_CODE_VERIFY_SUCCESS(HttpStatus.OK.value(),"인증에 성공했습니다."),
+    EMAIL_CODE_VERIFY_SUCCESS(HttpStatus.OK.value(), "인증에 성공했습니다."),
 
     REPORT_SEARCH_SUCCESS(HttpStatus.OK.value(), "신고 목록 조회에 성공하였습니다"),
     REPORT_COMMENT_SUCCESS(HttpStatus.CREATED.value(), "댓글 신고에 성공했습니다"),

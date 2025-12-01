@@ -2,6 +2,7 @@ package com.kustacks.kuring.admin.adapter.out.event;
 
 import com.kustacks.kuring.admin.application.port.out.AdminEventPort;
 import com.kustacks.kuring.common.domain.Events;
+import com.kustacks.kuring.message.adapter.in.event.dto.AcademicTestNotificationEvent;
 import com.kustacks.kuring.message.adapter.in.event.dto.AdminNotificationEvent;
 import com.kustacks.kuring.message.adapter.in.event.dto.AdminTestNotificationEvent;
 import com.kustacks.kuring.message.application.service.exception.FirebaseMessageSendException;
@@ -36,5 +37,10 @@ public class AdminFirebaseMessageAdapter implements AdminEventPort {
                         .baseUrl(url)
                         .build()
         );
+    }
+
+    @Override
+    public void sendAcademicTestNotification(String title, String body) {
+        Events.raise(new AcademicTestNotificationEvent(title, body));
     }
 }
