@@ -35,6 +35,11 @@ public class CommentPersistenceAdapter implements CommentCommandPort, CommentQue
     }
 
     @Override
+    public void deleteByParentId(Long parentId) {
+        commentRepository.deleteByParentId(parentId);
+    }
+
+    @Override
     public Optional<CommentReadModel> findComment(Long id) {
         return commentRepository.findReadModelById(id);
     }
