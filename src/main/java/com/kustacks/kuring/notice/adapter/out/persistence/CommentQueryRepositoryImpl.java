@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -84,6 +85,14 @@ class CommentQueryRepositoryImpl implements CommentQueryRepository {
                         comment.noticeId.eq(noticeId),
                         comment.parentId.in(parentCommentIds)
                 ).fetch();
+    }
+
+    @Override
+    public void deleteByParentId(Long parentId) {
+        queryFactory.update(comment)
+                .set(comment.destroyedAt, LocalDateTime.now())
+                .where(comment.parentId.eq(parentId))
+                .execute();
     }
 
     private static BooleanExpression cursorId(String cursorId) {
