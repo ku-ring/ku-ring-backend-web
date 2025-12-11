@@ -103,6 +103,8 @@ public class NoticeCommandService implements
         commentCommandPort.delete(findComment);
 
         log.info("delete notice-comment, user{}, notice{}, comment{}", rootUser.getId(), findNotice.getId(), findComment.getId());
+
+        commentCommandPort.deleteByParentId(findComment.getId());
     }
 
     private static boolean isNotCommentOwner(Comment findComment, RootUser findUser, NoticeDto findNotice) {
