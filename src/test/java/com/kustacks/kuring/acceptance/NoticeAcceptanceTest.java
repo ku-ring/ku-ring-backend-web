@@ -2,8 +2,7 @@ package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.support.IntegrationTestSupport;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
@@ -453,6 +452,55 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
         assertAll(
                 () -> assertThat(response1.statusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value()),
                 () -> assertThat(response2.statusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY.value())
+        );
+    }
+
+    /**
+     * Given : 사전에 저장된 공지와 원댓글 3개, 답글 3개가 있다
+     * When : 댓글을 삭제하면
+     * Then : 댓글의 답글들도 같이 삭제된다.
+     */
+    @DisplayName("[v2] 댓글 삭제 시 답글들도 함께 삭제된다.")
+    @Test
+    void delete_parent_comment_with_sub_comments() {
+        //given - 사용자 로그인
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        var 공지_조회_응답 = 공지사항_조회_요청("stu");
+        var noticeId = 공지_조회_응답.jsonPath().getLong("data[0].id");
+
+        //댓글 추가
+        공지에_댓글_추가(noticeId, accessToken, "다른 원댓글 1");
+        공지에_댓글_추가(noticeId, accessToken, "다른 원댓글 2");
+        공지에_댓글_추가(noticeId, accessToken, "삭제될 원댓글");
+
+        //원댓글 ID 조회
+        var 댓글_목록_응답 = 공지의_댓글_조회(noticeId, null, 10);
+        long parentCommentId = 댓글_목록_응답.jsonPath().getLong("data.comments[2].comment.id"); //3번째 추가.
+
+        //답글 3개 추가
+        공지에_댓글_추가(noticeId, parentCommentId, accessToken, "답글 1");
+        공지에_댓글_추가(noticeId, parentCommentId, accessToken, "답글 2");
+        공지에_댓글_추가(noticeId, parentCommentId, accessToken, "답글 3");
+
+        var 삭제_전_응답 = 공지사항_조회_요청("stu");
+        long 삭제_전_댓글_수 = 삭제_전_응답.jsonPath().getLong("data[0].commentCount");
+
+        //when - 댓글 삭제(댓글 1건 + 답글 3건 총 4건 삭제)
+        댓글_삭제(accessToken, noticeId, parentCommentId);
+
+        //then - 삭제 후 공지 목록 조회
+        var 삭제_후_응답 = 공지사항_조회_요청("stu");
+        long 삭제_후_댓글_수 = 삭제_후_응답.jsonPath().getLong("data[0].commentCount");
+
+        // 공지의 댓글 목록 조회 시에도 두건만 나와야 함(기존 6건 - 4건 = 2건)
+        var 삭제_후_댓글_목록 = 공지의_댓글_조회(noticeId, null, 10);
+        int 실제_조회된_댓글_수 = 삭제_후_댓글_목록.jsonPath().getList("data.comments").size();
+
+        assertAll(
+                () -> assertThat(삭제_전_댓글_수).isEqualTo(6),
+                () -> assertThat(삭제_후_댓글_수).isEqualTo(2),
+                () -> assertThat(실제_조회된_댓글_수).isEqualTo(2)
         );
     }
 }
