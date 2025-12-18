@@ -497,8 +497,8 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
 
         assertAll(
                 () -> assertThat(삭제_전_댓글_수).isEqualTo(4),
-                () -> assertThat(삭제_후_댓글_수).isEqualTo(0),
-                () -> assertThat(실제_조회된_댓글_수).isEqualTo(0)
+                () -> assertThat(삭제_후_댓글_수).isZero(),
+                () -> assertThat(실제_조회된_댓글_수).isZero()
         );
     }
 }
