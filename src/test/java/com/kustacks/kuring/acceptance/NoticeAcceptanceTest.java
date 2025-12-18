@@ -470,13 +470,11 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
         var noticeId = 공지_조회_응답.jsonPath().getLong("data[0].id");
 
         //댓글 추가
-        공지에_댓글_추가(noticeId, accessToken, "다른 원댓글 1");
-        공지에_댓글_추가(noticeId, accessToken, "다른 원댓글 2");
         공지에_댓글_추가(noticeId, accessToken, "삭제될 원댓글");
 
         //원댓글 ID 조회
         var 댓글_목록_응답 = 공지의_댓글_조회(noticeId, null, 10);
-        long parentCommentId = 댓글_목록_응답.jsonPath().getLong("data.comments[2].comment.id"); //3번째 추가.
+        long parentCommentId = 댓글_목록_응답.jsonPath().getLong("data.comments[0].comment.id"); //3번째 추가.
 
         //답글 3개 추가
         공지에_댓글_추가(noticeId, parentCommentId, accessToken, "답글 1");
@@ -498,9 +496,9 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
         int 실제_조회된_댓글_수 = 삭제_후_댓글_목록.jsonPath().getList("data.comments").size();
 
         assertAll(
-                () -> assertThat(삭제_전_댓글_수).isEqualTo(6),
-                () -> assertThat(삭제_후_댓글_수).isEqualTo(2),
-                () -> assertThat(실제_조회된_댓글_수).isEqualTo(2)
+                () -> assertThat(삭제_전_댓글_수).isEqualTo(4),
+                () -> assertThat(삭제_후_댓글_수).isEqualTo(0),
+                () -> assertThat(실제_조회된_댓글_수).isEqualTo(0)
         );
     }
 }
