@@ -135,9 +135,6 @@ notice:
   homepage:
     list-url: https://www.konkuk.ac.kr/bbs/{category}/{siteId}/artclList.do
     view-url: https://www.konkuk.ac.kr/bbs/{category}/{siteId}/{noticeId}/artclView.do
-  real-estate:
-    list-url: http://www.realestate.ac.kr/gb/bbs/board.php?bo_table=notice
-    view-url: http://www.realestate.ac.kr/gb/bbs/board.php?bo_table=notice
   recent:
     list-url: https://{department}.konkuk.ac.kr/bbs/{department}/{siteId}/artclList.do
     view-url: https://{department}.konkuk.ac.kr/bbs/{department}/{siteId}/{noticeId}/artclView.do

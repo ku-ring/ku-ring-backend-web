@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import static com.kustacks.kuring.notice.domain.DepartmentName.REAL_ESTATE;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -68,10 +66,6 @@ public class DepartmentGraduationNoticeUpdater {
             List<DeptInfo> graduateDeptInfoList = getGraduateDeptInfoList();
 
             for (DeptInfo deptInfo : graduateDeptInfoList) {
-                if (deptInfo.isSameDepartment(REAL_ESTATE)) {
-                    continue;
-                }
-
                 CompletableFuture
                         .supplyAsync(() -> updateDepartmentAsync(deptInfo, DeptInfo::scrapGraduateAllPageHtml), noticeUpdaterThreadTaskExecutor)
                         .thenAccept(scrapResults -> compareAllAndUpdateDB(scrapResults, deptInfo.getDeptName()));
