@@ -9,4 +9,6 @@ public interface CommentCommandPort {
     void createReply(Long userId, Long noticeId, Long parentId, String content);
 
     void delete(Comment comment);
+
+    void deleteByParentId(Long parentId);
 }
