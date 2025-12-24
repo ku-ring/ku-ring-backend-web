@@ -13,4 +13,7 @@ public interface AdminEventPort {
             String korName,
             String url
     ) throws FirebaseMessageSendException;
+
+    void sendAcademicTestNotification(String title, String body);
+
 }

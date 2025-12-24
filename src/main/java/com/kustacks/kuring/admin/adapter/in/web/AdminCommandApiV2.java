@@ -1,6 +1,7 @@
 package com.kustacks.kuring.admin.adapter.in.web;
 
 import com.google.firebase.database.annotations.NotNull;
+import com.kustacks.kuring.admin.adapter.in.web.dto.AcademicTestNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.AdminAlertCreateRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.RealNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.TestNotificationRequest;
@@ -38,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_EMBEDDING_NOTICE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_REAL_NOTICE_CREATE_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_TEST_ACADEMIC_CREATE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_TEST_NOTICE_CREATE_SUCCESS;
 
 @Tag(name = "Admin-Command", description = "관리자가 주체가 되는 정보 수정")
@@ -74,6 +76,18 @@ public class AdminCommandApiV2 {
         adminCommandUseCase.createRealNoticeForAllUser(command);
         return ResponseEntity.ok().body(new BaseResponse<>(ADMIN_REAL_NOTICE_CREATE_SUCCESS, null));
     }
+
+    @Operation(summary = "테스트 학사일정 알림 전송", description = "테스트 학사일정 알림을 전송합니다, 실제 운영시 사용하지 않습니다")
+    @SecurityRequirement(name = "JWT")
+    @Secured(AdminRole.ROLE_ROOT)
+    @PostMapping("/academic/dev")
+    public ResponseEntity<BaseResponse<String>> sendAcademicTest(
+            @RequestBody AcademicTestNotificationRequest request
+    ) {
+        adminCommandUseCase.createAcademicTestNotification(request.toCommand());
+        return ResponseEntity.ok().body(new BaseResponse<>(ADMIN_TEST_ACADEMIC_CREATE_SUCCESS, null));
+    }
+
 
     @Operation(summary = "예약 알림 등록", description = "서버에 알림 시간을 yyyy-MM-dd HH:mm:ss 형태로 요청시 예약 알림을 등록한다")
     @SecurityRequirement(name = "JWT")

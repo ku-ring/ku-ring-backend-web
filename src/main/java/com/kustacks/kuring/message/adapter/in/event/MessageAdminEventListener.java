@@ -1,5 +1,6 @@
 package com.kustacks.kuring.message.adapter.in.event;
 
+import com.kustacks.kuring.message.adapter.in.event.dto.AcademicTestNotificationEvent;
 import com.kustacks.kuring.message.adapter.in.event.dto.AdminNotificationEvent;
 import com.kustacks.kuring.message.adapter.in.event.dto.AdminTestNotificationEvent;
 import com.kustacks.kuring.message.adapter.in.event.dto.AlertSendEvent;
@@ -37,4 +38,13 @@ public class MessageAdminEventListener {
     ) {
         firebaseWithAdminUseCase.sendNotificationByAdmin(event.toCommand());
     }
+
+    @Async
+    @EventListener
+    public void sendAcademicTestNotificationEvent(
+            AcademicTestNotificationEvent event
+    ) {
+        firebaseWithAdminUseCase.sendAcademicTestNotification(event.toCommand());
+    }
+
 }
