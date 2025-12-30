@@ -77,9 +77,9 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
                             .build())
                     .putAllData(Map.of(
                             "title", command.title(),
-                            "body", command.body()
+                            "body", command.body(),
+                            "messageType", ACADEMIC.getValue()
                     ))
-                    .putData("messageType", ACADEMIC.getValue())
                     .setTopic(serverProperties.addDevSuffix(ACADEMIC_EVENT_TOPIC))
                     .build();
 
