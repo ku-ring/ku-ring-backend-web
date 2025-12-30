@@ -28,6 +28,7 @@ import static com.kustacks.kuring.acceptance.AdminStep.신고_목록_조회_확�
 import static com.kustacks.kuring.acceptance.AdminStep.알림_예약;
 import static com.kustacks.kuring.acceptance.AdminStep.예약_알림_삭제;
 import static com.kustacks.kuring.acceptance.AdminStep.예약_알림_조회;
+import static com.kustacks.kuring.acceptance.AdminStep.테스트_학사일정_알림_발송;
 import static com.kustacks.kuring.acceptance.AdminStep.피드백_조회_확인;
 import static com.kustacks.kuring.acceptance.AdminStep.허용_단어_로드_요청;
 import static com.kustacks.kuring.acceptance.AuthStep.로그인_되어_있음;
@@ -158,15 +159,10 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
         String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
 
         // when
-        var response = RestAssured
-                .given().log().all()
-                .header("Authorization", "Bearer " + accessToken)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .body(new AcademicTestNotificationRequest("테스트-수강신청 일정", "오늘은 수강신청 일정이 있어요"))
-                .when().post("/api/v2/admin/academic/dev")
-                .then().log().all()
-                .extract();
+        var response = 테스트_학사일정_알림_발송(
+                accessToken,
+                new AcademicTestNotificationRequest("테스트-수강신청 일정", "오늘은 수강신청 일정이 있어요")
+        );
 
         // then
         assertAll(

@@ -1,5 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
+import com.kustacks.kuring.admin.adapter.in.web.dto.AcademicTestNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.AdminAlertCreateRequest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
@@ -137,4 +138,20 @@ public class AdminStep {
                 () -> assertThat(response.jsonPath().getString("data")).isNull()
         );
     }
+
+    public static ExtractableResponse<Response> 테스트_학사일정_알림_발송(
+            String accessToken,
+            AcademicTestNotificationRequest request
+    ) {
+        return RestAssured
+                .given().log().all()
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .body(request)
+                .when().post("/api/v2/admin/academic/dev")
+                .then().log().all()
+                .extract();
+    }
+
 }
