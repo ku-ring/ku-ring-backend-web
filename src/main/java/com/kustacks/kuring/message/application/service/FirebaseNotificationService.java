@@ -25,6 +25,9 @@ import java.util.function.UnaryOperator;
 
 import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ACADEMIC_EVENT_TOPIC;
 import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ALL_DEVICE_SUBSCRIBED_TOPIC;
+import static com.kustacks.kuring.message.domain.MessageType.ACADEMIC;
+import static com.kustacks.kuring.message.domain.MessageType.ADMIN;
+import static com.kustacks.kuring.message.domain.MessageType.NOTICE;
 
 @Slf4j
 @UseCase
@@ -76,7 +79,7 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
                             "title", command.title(),
                             "body", command.body()
                     ))
-                    .putData("messageType", "academic")
+                    .putData("messageType", ACADEMIC.getValue())
                     .setTopic(serverProperties.addDevSuffix(ACADEMIC_EVENT_TOPIC))
                     .build();
 
@@ -152,7 +155,7 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
                         .setBody(command.body())
                         .build())
                 .putAllData(objectMapper.convertValue(command, Map.class))
-                .putData("messageType", "admin")
+                .putData("messageType", ADMIN.getValue())
                 .setTopic(serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC))
                 .build();
     }
@@ -165,7 +168,7 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
                         .setBody(messageDto.getSubject())
                         .build())
                 .putAllData(objectMapper.convertValue(messageDto, Map.class))
-                .putData("messageType", "notice")
+                .putData("messageType", NOTICE.getValue())
                 .setTopic(suffixUtil.apply(messageDto.getCategory()))
                 .build();
     }
