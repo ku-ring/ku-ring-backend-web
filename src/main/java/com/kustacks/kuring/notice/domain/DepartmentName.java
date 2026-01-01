@@ -53,7 +53,7 @@ public enum DepartmentName {
     BUIS_ADMIN("business_administration", "biz", "경영학과"),
     TECH_BUSI("technological_business", "mot", "기술경영학과"),
 
-    REAL_ESTATE("real_estate", "rest", "부동산학과"),
+    REAL_ESTATE("real_estate", "kure", "부동산학과"),
 
     ENERGY("energy", "energy", "미래에너지공학과"),
     SMART_VEHICLE("smart_vehicle", "smartvehicle", "스마트운행체공학과"),
