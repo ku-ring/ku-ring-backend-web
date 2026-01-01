@@ -1,5 +1,6 @@
 package com.kustacks.kuring.acceptance;
 
+import com.kustacks.kuring.admin.adapter.in.web.dto.AcademicTestNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.AdminAlertCreateRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.RealNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.TestNotificationRequest;
@@ -27,6 +28,7 @@ import static com.kustacks.kuring.acceptance.AdminStep.신고_목록_조회_확�
 import static com.kustacks.kuring.acceptance.AdminStep.알림_예약;
 import static com.kustacks.kuring.acceptance.AdminStep.예약_알림_삭제;
 import static com.kustacks.kuring.acceptance.AdminStep.예약_알림_조회;
+import static com.kustacks.kuring.acceptance.AdminStep.테스트_학사일정_알림_발송;
 import static com.kustacks.kuring.acceptance.AdminStep.피드백_조회_확인;
 import static com.kustacks.kuring.acceptance.AdminStep.허용_단어_로드_요청;
 import static com.kustacks.kuring.acceptance.AuthStep.로그인_되어_있음;
@@ -146,6 +148,28 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("실제 공지 생성에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getString("data")).isNull()
+        );
+    }
+
+    @DisplayName("[v2] 테스트 학사일정 알림 발송")
+    @Test
+    void role_root_admin_send_academic_test_notification() {
+        // given
+        String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
+
+        // when
+        var response = 테스트_학사일정_알림_발송(
+                accessToken,
+                new AcademicTestNotificationRequest("테스트-수강신청 일정", "오늘은 수강신청 일정이 있어요")
+        );
+
+        // then
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message"))
+                        .isEqualTo("테스트 학사일정 알림 생성에 성공하였습니다"),
                 () -> assertThat(response.jsonPath().getString("data")).isNull()
         );
     }
