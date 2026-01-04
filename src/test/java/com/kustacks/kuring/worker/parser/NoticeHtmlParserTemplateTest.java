@@ -1,7 +1,9 @@
 package com.kustacks.kuring.worker.parser;
 
 import com.kustacks.kuring.support.TestFileLoader;
-import com.kustacks.kuring.worker.parser.notice.*;
+import com.kustacks.kuring.worker.parser.notice.KuisHomepageNoticeHtmlParser;
+import com.kustacks.kuring.worker.parser.notice.LatestPageNoticeHtmlParser;
+import com.kustacks.kuring.worker.parser.notice.RowsDto;
 import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatDto;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -130,24 +132,6 @@ class NoticeHtmlParserTemplateTest {
                                 tuple("915663", "[학사팀] 재학생 졸업요건 관리를 위한 필수 확인사항 안내", "2022.11.07", "https://www.konkuk.ac.kr/bbs/konkuk/4017/915663/artclView.do", true)
                         ),
                 () -> assertThat(normal).hasSize(10)
-        );
-    }
-
-    @DisplayName("부동산 학과의 경우 별도의 HTML 파서를 사용하여 공지를 분석한다")
-    @Test
-    void RealEstateNoticeHtmlParser() throws IOException {
-        // given
-        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/realestate.html"));
-
-        // when
-        RowsDto rowsDto = new RealEstateNoticeHtmlParser().parse(doc);
-        List<CommonNoticeFormatDto> important = rowsDto.buildImportantRowList("important");
-        List<CommonNoticeFormatDto> normal = rowsDto.buildNormalRowList("normal");
-
-        // then
-        assertAll(
-                () -> assertThat(important).isEmpty(),
-                () -> assertThat(normal).hasSize(15)
         );
     }
 

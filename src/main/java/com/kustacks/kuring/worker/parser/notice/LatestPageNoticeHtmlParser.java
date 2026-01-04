@@ -1,7 +1,6 @@
 package com.kustacks.kuring.worker.parser.notice;
 
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
-import com.kustacks.kuring.worker.scrap.deptinfo.real_estate.RealEstateDept;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -12,7 +11,7 @@ public class LatestPageNoticeHtmlParser extends NoticeHtmlParserTemplate {
 
     @Override
     public boolean support(DeptInfo deptInfo) {
-        return !(deptInfo instanceof RealEstateDept);
+        return true;
     }
 
     @Override

@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ACADEMIC_EVENT_TOPIC;
+import static com.kustacks.kuring.message.domain.MessageType.ACADEMIC;
 
 @Slf4j
 @UseCase
@@ -99,6 +100,7 @@ public class AcademicEventNotificationService implements AcademicEventNotificati
                 .setTopic(serverProperties.ifDevThenAddSuffix(ACADEMIC_EVENT_TOPIC))
                 .putData("title", title)
                 .putData("body", body)
+                .putData("messageType", ACADEMIC.getValue())
                 .build();
     }
 }

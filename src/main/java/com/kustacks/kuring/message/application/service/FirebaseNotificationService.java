@@ -9,6 +9,7 @@ import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithAdminUseCase;
+import com.kustacks.kuring.message.application.port.in.dto.AcademicTestNotificationCommand;
 import com.kustacks.kuring.message.application.port.in.dto.AdminNotificationCommand;
 import com.kustacks.kuring.message.application.port.in.dto.AdminTestNotificationCommand;
 import com.kustacks.kuring.message.application.port.out.FirebaseMessagingPort;
@@ -22,7 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
+import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ACADEMIC_EVENT_TOPIC;
 import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ALL_DEVICE_SUBSCRIBED_TOPIC;
+import static com.kustacks.kuring.message.domain.MessageType.ACADEMIC;
+import static com.kustacks.kuring.message.domain.MessageType.ADMIN;
+import static com.kustacks.kuring.message.domain.MessageType.NOTICE;
 
 @Slf4j
 @UseCase
@@ -61,6 +66,29 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
         List<NoticeMessageDto> notificationDtoList = createNotification(noticeList);
         sendNotices(notificationDtoList);
     }
+
+    @Override
+    public void sendAcademicTestNotification(AcademicTestNotificationCommand command) {
+        try {
+            Message newMessage = Message.builder()
+                    .setNotification(Notification.builder()
+                            .setTitle(command.title())
+                            .setBody(command.body())
+                            .build())
+                    .putAllData(Map.of(
+                            "title", command.title(),
+                            "body", command.body(),
+                            "messageType", ACADEMIC.getValue()
+                    ))
+                    .setTopic(serverProperties.addDevSuffix(ACADEMIC_EVENT_TOPIC))
+                    .build();
+
+            firebaseMessagingPort.send(newMessage);
+        } catch (FirebaseMessagingException exception) {
+            throw new FirebaseMessageSendException();
+        }
+    }
+
 
     private void sendNotices(List<NoticeMessageDto> notificationDtoList) {
         try {
@@ -127,6 +155,7 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
                         .setBody(command.body())
                         .build())
                 .putAllData(objectMapper.convertValue(command, Map.class))
+                .putData("messageType", ADMIN.getValue())
                 .setTopic(serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC))
                 .build();
     }
@@ -139,6 +168,7 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
                         .setBody(messageDto.getSubject())
                         .build())
                 .putAllData(objectMapper.convertValue(messageDto, Map.class))
+                .putData("messageType", NOTICE.getValue())
                 .setTopic(suffixUtil.apply(messageDto.getCategory()))
                 .build();
     }
