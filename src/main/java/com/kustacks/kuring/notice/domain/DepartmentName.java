@@ -127,6 +127,10 @@ public enum DepartmentName {
     }
 
     public static DepartmentName fromHostPrefix(String hostPrefix) {
+        if ("rest".equals(hostPrefix)) {
+            return REAL_ESTATE;
+        }
+
         String findHostPrefix = Optional.ofNullable(HOST_PREFIX_MAP.get(hostPrefix))
                 .orElseThrow(() -> new NotFoundException(DEPARTMENT_NOT_FOUND));
         return DepartmentName.valueOf(findHostPrefix);
