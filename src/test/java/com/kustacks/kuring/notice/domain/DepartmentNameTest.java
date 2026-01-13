@@ -99,4 +99,28 @@ class DepartmentNameTest {
         assertThatThrownBy(actual)
                 .isInstanceOf(NotFoundException.class);
     }
+
+    @Test
+    @DisplayName("HOST_PREFIX_MAP은 모든 hostPrefix와 legacyHostPrefix를 정확히 매핑한다")
+    void hostPrefixMap_test() {
+        for (DepartmentName department : DepartmentName.values()) {
+
+            //when
+            String hostPrefix = department.getHostPrefix();
+            //then
+            assertThat(
+                    DepartmentName.fromHostPrefix(hostPrefix)
+            ).isEqualTo(department);
+
+            if (department.getLegacyHostPrefix() != null) {
+                //when
+                String legacyPrefix = department.getLegacyHostPrefix();
+                //then
+                assertThat(
+                        DepartmentName.fromHostPrefix(legacyPrefix)
+                ).isEqualTo(department);
+            }
+        }
+    }
+
 }
