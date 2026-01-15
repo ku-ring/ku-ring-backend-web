@@ -104,11 +104,11 @@ public enum DepartmentName {
                 .collect(Collectors.toMap(DepartmentName::getName, DepartmentName::name)));
 
         HOST_PREFIX_MAP = Collections.unmodifiableMap(Arrays.stream(DepartmentName.values())
-                .flatMap(d -> d.legacyHostPrefix == null ? Arrays.stream(new String[]{d.hostPrefix}) : Arrays.stream(new String[]{d.hostPrefix, d.legacyHostPrefix}))
+                .flatMap(d -> d.fallbackHostPrefix == null ? Arrays.stream(new String[]{d.hostPrefix}) : Arrays.stream(new String[]{d.hostPrefix, d.fallbackHostPrefix}))
                 .collect(Collectors.toMap(
                         prefix -> prefix,
                         prefix -> Arrays.stream(values())
-                                .filter(d -> d.hostPrefix.equals(prefix) || prefix.equals(d.legacyHostPrefix))
+                                .filter(d -> d.hostPrefix.equals(prefix) || prefix.equals(d.fallbackHostPrefix))
                                 .findFirst().orElseThrow().name())
                 ));
 
@@ -118,13 +118,13 @@ public enum DepartmentName {
 
     private final String name;
     private final String hostPrefix;
-    private final String legacyHostPrefix;
+    private final String fallbackHostPrefix;
     private final String korName;
 
-    DepartmentName(String name, String hostPrefix, String legacyHostPrefix, String korName) {
+    DepartmentName(String name, String hostPrefix, String fallbackHostPrefix, String korName) {
         this.name = name;
         this.hostPrefix = hostPrefix;
-        this.legacyHostPrefix = legacyHostPrefix;
+        this.fallbackHostPrefix = fallbackHostPrefix;
         this.korName = korName;
     }
 
