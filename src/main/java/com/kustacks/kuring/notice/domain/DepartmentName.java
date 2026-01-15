@@ -6,8 +6,10 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.kustacks.kuring.common.exception.code.ErrorCode.DEPARTMENT_NOT_FOUND;
 
@@ -104,11 +106,12 @@ public enum DepartmentName {
                 .collect(Collectors.toMap(DepartmentName::getName, DepartmentName::name)));
 
         HOST_PREFIX_MAP = Collections.unmodifiableMap(Arrays.stream(DepartmentName.values())
-                .flatMap(d -> d.fallbackHostPrefix == null ? Arrays.stream(new String[]{d.hostPrefix}) : Arrays.stream(new String[]{d.hostPrefix, d.fallbackHostPrefix}))
+                .flatMap(d -> Stream.of(d.hostPrefix, d.fallbackHostPrefix))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toMap(
                         prefix -> prefix,
                         prefix -> Arrays.stream(values())
-                                .filter(d -> d.hostPrefix.equals(prefix) || prefix.equals(d.fallbackHostPrefix))
+                                .filter(d -> d.matchesHostPrefix(prefix))
                                 .findFirst().orElseThrow().name())
                 ));
 
@@ -144,5 +147,10 @@ public enum DepartmentName {
         String findKorName = Optional.ofNullable(KOR_NAME_MAP.get(korName))
                 .orElseThrow(() -> new NotFoundException(DEPARTMENT_NOT_FOUND));
         return DepartmentName.valueOf(findKorName);
+    }
+
+    private boolean matchesHostPrefix(String prefix) {
+        return hostPrefix.equals(prefix)
+                || (fallbackHostPrefix != null && fallbackHostPrefix.equals(prefix));
     }
 }
