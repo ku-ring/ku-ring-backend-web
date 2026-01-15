@@ -101,7 +101,7 @@ class DepartmentNameTest {
     }
 
     @Test
-    @DisplayName("HOST_PREFIX_MAP은 모든 hostPrefix와 legacyHostPrefix를 정확히 매핑한다")
+    @DisplayName("HOST_PREFIX_MAP은 모든 hostPrefix와 fallbackHostPrefix를 정확히 매핑한다")
     void hostPrefixMap_test() {
         for (DepartmentName department : DepartmentName.values()) {
 
@@ -112,12 +112,12 @@ class DepartmentNameTest {
                     DepartmentName.fromHostPrefix(hostPrefix)
             ).isEqualTo(department);
 
-            if (department.getLegacyHostPrefix() != null) {
+            if (department.getFallbackHostPrefix() != null) {
                 //when
-                String legacyPrefix = department.getLegacyHostPrefix();
+                String fallbackHostPrefix = department.getFallbackHostPrefix();
                 //then
                 assertThat(
-                        DepartmentName.fromHostPrefix(legacyPrefix)
+                        DepartmentName.fromHostPrefix(fallbackHostPrefix)
                 ).isEqualTo(department);
             }
         }
