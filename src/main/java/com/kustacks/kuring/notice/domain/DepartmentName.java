@@ -105,15 +105,17 @@ public enum DepartmentName {
         NAME_MAP = Collections.unmodifiableMap(Arrays.stream(DepartmentName.values())
                 .collect(Collectors.toMap(DepartmentName::getName, DepartmentName::name)));
 
-        HOST_PREFIX_MAP = Collections.unmodifiableMap(Arrays.stream(DepartmentName.values())
-                .flatMap(d -> Stream.of(d.hostPrefix, d.fallbackHostPrefix))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toMap(
-                        prefix -> prefix,
-                        prefix -> Arrays.stream(values())
-                                .filter(d -> d.matchesHostPrefix(prefix))
-                                .findFirst().orElseThrow().name())
-                ));
+        HOST_PREFIX_MAP = Collections.unmodifiableMap(
+                Arrays.stream(DepartmentName.values())
+                        .flatMap(d -> Stream.of(d.hostPrefix, d.fallbackHostPrefix)
+                                .filter(Objects::nonNull)
+                                .map(prefix -> Map.entry(prefix, d.name()))
+                        )
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey, Map.Entry::getValue,
+                                (a, b) -> a
+                        ))
+        );
 
         KOR_NAME_MAP = Collections.unmodifiableMap(Arrays.stream(DepartmentName.values())
                 .collect(Collectors.toMap(DepartmentName::getKorName, DepartmentName::name)));
@@ -147,10 +149,5 @@ public enum DepartmentName {
         String findKorName = Optional.ofNullable(KOR_NAME_MAP.get(korName))
                 .orElseThrow(() -> new NotFoundException(DEPARTMENT_NOT_FOUND));
         return DepartmentName.valueOf(findKorName);
-    }
-
-    private boolean matchesHostPrefix(String prefix) {
-        return hostPrefix.equals(prefix)
-                || (fallbackHostPrefix != null && fallbackHostPrefix.equals(prefix));
     }
 }
