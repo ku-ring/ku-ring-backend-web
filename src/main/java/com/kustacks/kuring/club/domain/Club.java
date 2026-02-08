@@ -37,8 +37,8 @@ public class Club {
     @Enumerated(EnumType.STRING)
     private ClubCategory category;
 
-    @Column(length = 30, nullable = false)
-    private String division;
+    @Enumerated(EnumType.STRING)
+    private ClubDivision division;
 
     @Column(name = "instagram_url", length = 255)
     private String instagramUrl;

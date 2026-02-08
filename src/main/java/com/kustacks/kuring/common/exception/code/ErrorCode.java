@@ -56,6 +56,7 @@ public enum ErrorCode {
 
     CAT_NOT_EXIST_CATEGORY(HttpStatus.BAD_REQUEST, "서버에서 지원하지 않는 카테고리입니다."),
     CAT_NOT_EXIST_CLUB_CATEGORY(HttpStatus.BAD_REQUEST, "서버에서 지원하지 않는 동아리 카테고리입니다."),
+    CAT_NOT_EXIST_CLUB_DIVISION(HttpStatus.BAD_REQUEST, "서버에서 지원하지 않는 동아리 소속입니다."),
 
     STAFF_SCRAPER_EXCEED_RETRY_LIMIT("교직원 업데이트 재시도 횟수를 초과했습니다."),
     STAFF_SCRAPER_CANNOT_SCRAP("건국대학교 홈페이지가 불안정합니다. 교직원 정보를 가져올 수 없습니다."),
