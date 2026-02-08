@@ -35,9 +35,11 @@ public class Club {
     private String description;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ClubCategory category;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ClubDivision division;
 
     @Column(name = "instagram_url", length = 255)
