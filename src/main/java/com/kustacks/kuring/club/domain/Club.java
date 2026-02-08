@@ -2,6 +2,8 @@ package com.kustacks.kuring.club.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,8 +34,8 @@ public class Club {
     @Lob
     private String description;
 
-    @Column(length = 30, nullable = false)
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private ClubCategory category;
 
     @Column(length = 30, nullable = false)
     private String division;
