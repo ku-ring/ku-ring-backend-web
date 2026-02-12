@@ -99,7 +99,7 @@ class S3CompatibleStorageAdapterTest {
         String actualUrl = s3CompatibleStorageAdapter.getPresignedUrl(fileKey);
 
         // then
-        assertThat(actualUrl).isEqualTo(expectedUrl);
+        assertThat(actualUrl).isEqualTo(expectedUrl.toString());
         verify(mockS3Presigner, times(1)).presignGetObject(any(GetObjectPresignRequest.class));
     }
 
