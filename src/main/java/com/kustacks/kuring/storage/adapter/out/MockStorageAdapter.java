@@ -1,7 +1,6 @@
 package com.kustacks.kuring.storage.adapter.out;
 
 import com.kustacks.kuring.storage.application.port.out.StoragePort;
-import com.kustacks.kuring.storage.exception.CloudStorageException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,8 @@ public class MockStorageAdapter implements StoragePort {
         try {
             return new URL(MOCK_SERVER + key);
         } catch (MalformedURLException e) {
-            throw new CloudStorageException(null);
+            log.error("잘못된 URL입니다.");
+            return null;
         }
     }
 
