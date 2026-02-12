@@ -109,7 +109,8 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
 
         log.info("전송된 공지 목록은 다음과 같습니다.");
         for (NoticeMessageDto noticeMessageDto : notificationDtoList) {
-            log.info("아이디 = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}",
+            log.info("ID = {}, ArticleId = {}, 날짜 = {}, 카테고리 = {}, 제목 = {}",
+                    noticeMessageDto.getId(),
                     noticeMessageDto.getArticleId(),
                     noticeMessageDto.getPostedDate(),
                     noticeMessageDto.getCategory(),
