@@ -44,7 +44,7 @@ public class S3CompatibleStorageAdapter implements StoragePort {
         } catch (IOException e) {
             throw new CloudStorageException(FILE_IO_EXCEPTION);
         } catch (S3Exception | SdkClientException e) {
-            throw new CloudStorageException(CLOUD_STORAGE_SDK_PROBLEM);
+            throw new CloudStorageException(STORAGE_S3_SDK_PROBLEM);
         }
     }
 
@@ -65,7 +65,7 @@ public class S3CompatibleStorageAdapter implements StoragePort {
 
             return presignedGetObjectRequest.url();
         } catch (S3Exception | SdkClientException e) {
-            throw new CloudStorageException(CLOUD_STORAGE_SDK_PROBLEM);
+            throw new CloudStorageException(STORAGE_S3_SDK_PROBLEM);
         }
     }
 
@@ -79,7 +79,7 @@ public class S3CompatibleStorageAdapter implements StoragePort {
 
             s3Client.deleteObject(deleteObjectRequest);
         } catch (S3Exception | SdkClientException e) {
-            throw new CloudStorageException(CLOUD_STORAGE_SDK_PROBLEM);
+            throw new CloudStorageException(STORAGE_S3_SDK_PROBLEM);
         }
     }
 }
