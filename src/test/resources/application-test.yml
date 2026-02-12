@@ -52,6 +52,15 @@ spring:
           starttls:
             enable: true # TLS
 
+cloud:
+  storage:
+    region: ap-northeast-2
+    endpoint: https://test.com
+    bucket: test-bucket
+    credentials:
+      access-key: test-access-key
+      secret-key: test-secret-key
+
 testcontainers:
   reuse:
     enable: true

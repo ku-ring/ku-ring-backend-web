@@ -66,6 +66,11 @@ spring:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
 
+  servlet:
+    multipart:
+      max-file-size: 10MB       # 파일 하나당 최대 용량
+      max-request-size: 50MB    # 한번 요청에 받을 수 있는 용량
+
 management:
   endpoint:
     health:
@@ -88,6 +93,15 @@ aws:
     environment: ${AWS_APPCONFIG_ENVIRONMENT}
     profile: ${AWS_APPCONFIG_PROFILE}
     region: ${AWS_APPCONFIG_REGION}
+
+cloud:
+  storage:
+    region: ${CLOUD_STORAGE_REGION}
+    endpoint: ${CLOUD_STORAGE_ENDPOINT}
+    bucket: ${CLOUD_STORAGE_BUCKET}
+    credentials:
+      access-key: ${CLOUD_STORAGE_ACCESS_KEY}
+      secret-key: ${CLOUD_STORAGE_SECRET_KEY}
 
 springdoc:
   swagger-ui:
