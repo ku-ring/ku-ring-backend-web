@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.net.*;
 
 @Profile("local | test")
 @Slf4j
@@ -21,13 +20,8 @@ public class MockStorageAdapter implements StoragePort {
     }
 
     @Override
-    public URL getPresignedUrl(String key) {
-        try {
-            return new URL(MOCK_SERVER + key);
-        } catch (MalformedURLException e) {
-            log.error("잘못된 URL입니다.");
-            return null;
-        }
+    public String getPresignedUrl(String key) {
+        return MOCK_SERVER + key;
     }
 
     @Override

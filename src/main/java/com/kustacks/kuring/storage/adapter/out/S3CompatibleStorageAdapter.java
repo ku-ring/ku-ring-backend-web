@@ -14,7 +14,6 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.*;
 
 import java.io.*;
-import java.net.URL;
 import java.time.Duration;
 
 import static com.kustacks.kuring.common.exception.code.ErrorCode.*;
@@ -49,7 +48,7 @@ public class S3CompatibleStorageAdapter implements StoragePort {
     }
 
     @Override
-    public URL getPresignedUrl(String key) {
+    public String getPresignedUrl(String key) {
         try {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                     .bucket(properties.bucket())
@@ -63,7 +62,7 @@ public class S3CompatibleStorageAdapter implements StoragePort {
 
             PresignedGetObjectRequest presignedGetObjectRequest = s3Presigner.presignGetObject(presignRequest);
 
-            return presignedGetObjectRequest.url();
+            return presignedGetObjectRequest.url().toString();
         } catch (S3Exception | SdkClientException e) {
             throw new CloudStorageException(STORAGE_S3_SDK_PROBLEM);
         }
