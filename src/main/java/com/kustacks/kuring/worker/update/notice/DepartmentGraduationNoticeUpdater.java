@@ -110,8 +110,7 @@ public class DepartmentGraduationNoticeUpdater {
 
     private List<DepartmentNotice> saveNewNotices(List<CommonNoticeFormatDto> scrapResults, List<Integer> savedArticleIds, DepartmentName departmentNameEnum, boolean important, boolean graduated) {
         List<DepartmentNotice> newNotices = noticeUpdateSupport.filteringSoonSaveDepartmentNotices(scrapResults, savedArticleIds, departmentNameEnum, important, graduated);
-        noticeCommandPort.saveAllDepartmentNotices(newNotices);
-        return newNotices;
+        return noticeCommandPort.saveAllDepartmentNoticesAndReturn(newNotices);
     }
 
     private void compareAllAndUpdateDB(List<ComplexNoticeFormatDto> scrapResults, String departmentName) {
