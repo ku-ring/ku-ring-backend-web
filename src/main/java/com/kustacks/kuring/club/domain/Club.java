@@ -54,9 +54,9 @@ public class Club {
     @Column(length = 30)
     private String room;
 
-    private Double x;
+    private Double lat;
 
-    private Double y;
+    private Double lon;
 
     @Column(name = "recruit_start_at")
     private LocalDateTime recruitStartAt;
