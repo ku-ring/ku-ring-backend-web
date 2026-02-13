@@ -7,12 +7,15 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -41,8 +44,8 @@ public class Club {
     @Column(nullable = false)
     private ClubDivision division;
 
-    @Column(name = "instagram_url", length = 255)
-    private String instagramUrl;
+    @OneToMany(mappedBy = "club")
+    private List<ClubSns> homepageUrls = new ArrayList<>();
 
     @Column(name = "poster_image_path", length = 255)
     private String posterImagePath;
