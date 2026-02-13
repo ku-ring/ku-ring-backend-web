@@ -9,6 +9,7 @@ import org.jsoup.select.Elements;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public abstract class NoticeHtmlParserTemplate {
@@ -34,6 +35,7 @@ public abstract class NoticeHtmlParserTemplate {
 
         return rows.stream()
                 .map(this::extractNoticeFromRow)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
