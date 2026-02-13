@@ -24,7 +24,7 @@ class DepartmentNameTest {
     }
 
     @DisplayName("hostPrefix를 String으로 받아 해당 DepartmentName enum으로 변환한다")
-    @CsvSource({"korea,KOREAN", "cee,CIVIL_ENV", "biz,BUIS_ADMIN"})
+    @CsvSource({"korea,KOREAN", "cee,CIVIL_ENV", "biz,BUIS_ADMIN", "rest,REAL_ESTATE", "kure,REAL_ESTATE"})
     @ParameterizedTest
     void fromHostPrefix(String name, DepartmentName departmentName) {
         // when
@@ -59,14 +59,27 @@ class DepartmentNameTest {
                 .isInstanceOf(NotFoundException.class);
     }
 
-    @DisplayName("존재하지 않는 String fromHostPrefix로 DepartmentName을 찾으려 하는 경우 예외가 발생한다")
-    @Test
-    void fromHostPrefixException() {
-        // given
-        String name = "invalidName";
-
+    @DisplayName("유효하지 않은 hostPrefix로 DepartmentName을 찾으려 하는 경우 예외가 발생한다")
+    @ParameterizedTest
+    @CsvSource({
+            "invalidName",
+            "' '",
+            "''"
+    })
+    void fromHostPrefix_invalid_exception(String hostPrefix) {
         // when
-        ThrowingCallable actual = () -> DepartmentName.fromHostPrefix(name);
+        ThrowingCallable actual = () -> DepartmentName.fromHostPrefix(hostPrefix);
+
+        // then
+        assertThatThrownBy(actual)
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("hostPrefix가 null이면 예외가 발생한다")
+    void fromHostPrefix_null_exception() {
+        // when
+        ThrowingCallable actual = () -> DepartmentName.fromHostPrefix(null);
 
         // then
         assertThatThrownBy(actual)
@@ -86,4 +99,28 @@ class DepartmentNameTest {
         assertThatThrownBy(actual)
                 .isInstanceOf(NotFoundException.class);
     }
+
+    @Test
+    @DisplayName("HOST_PREFIX_MAP은 모든 hostPrefix와 fallbackHostPrefix를 정확히 매핑한다")
+    void hostPrefixMap_test() {
+        for (DepartmentName department : DepartmentName.values()) {
+
+            //when
+            String hostPrefix = department.getHostPrefix();
+            //then
+            assertThat(
+                    DepartmentName.fromHostPrefix(hostPrefix)
+            ).isEqualTo(department);
+
+            if (department.getFallbackHostPrefix() != null) {
+                //when
+                String fallbackHostPrefix = department.getFallbackHostPrefix();
+                //then
+                assertThat(
+                        DepartmentName.fromHostPrefix(fallbackHostPrefix)
+                ).isEqualTo(department);
+            }
+        }
+    }
+
 }
