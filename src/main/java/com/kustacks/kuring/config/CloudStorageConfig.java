@@ -2,10 +2,15 @@ package com.kustacks.kuring.config;
 
 import com.kustacks.kuring.common.properties.CloudStorageProperties;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.*;
-import software.amazon.awssdk.auth.credentials.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.*;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3ClientBuilder;
+import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 import java.net.URI;
@@ -26,43 +31,47 @@ public class CloudStorageConfig {
     @Bean
     @Profile("prod")
     public S3Client awsS3Client() {
-        return S3Client.builder()
-                .region(Region.of(properties.region()))
-                .credentialsProvider(staticCredentialsProvider())
+        return defaultS3ClientBuilder()
                 .build();
     }
 
     @Bean
     @Profile("prod")
     public S3Presigner awsS3Presigner() {
-        return S3Presigner.builder()
-                .region(Region.of(properties.region()))
-                .credentialsProvider(staticCredentialsProvider())
+        return defaultS3PresignerBuilder()
                 .build();
     }
 
     @Bean
     @Profile("dev")
     public S3Client oracleStorageClient() {
-        return S3Client.builder()
-                .region(Region.of(properties.region()))
+        return defaultS3ClientBuilder()
                 .endpointOverride(URI.create(properties.endpoint())) //OCI는 엔드포인트를 강제 지정한다.
                 .forcePathStyle(true) // 강제로 PathStyle 지정.
-                .credentialsProvider(staticCredentialsProvider())
                 .build();
     }
 
     @Bean
     @Profile("dev")
     public S3Presigner oracleS3Presigner() {
-        return S3Presigner.builder()
-                .region(Region.of(properties.region()))
+        return defaultS3PresignerBuilder()
                 .endpointOverride(URI.create(properties.endpoint()))
-                .credentialsProvider(staticCredentialsProvider())
                 .serviceConfiguration(S3Configuration.builder()
                         .pathStyleAccessEnabled(true)
                         .build())
                 .build();
+    }
+
+    private S3ClientBuilder defaultS3ClientBuilder() {
+        return S3Client.builder()
+                .region(Region.of(properties.region()))
+                .credentialsProvider(staticCredentialsProvider());
+    }
+
+    private S3Presigner.Builder defaultS3PresignerBuilder() {
+        return S3Presigner.builder()
+                .region(Region.of(properties.region()))
+                .credentialsProvider(staticCredentialsProvider());
     }
 
     private StaticCredentialsProvider staticCredentialsProvider() {
