@@ -8,10 +8,12 @@ import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,7 +22,7 @@ import java.util.List;
 public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResultDto, DeptInfo> {
 
     private static final int START_PAGE_NUM = 1; // page는 인자가 1부터 시작
-    private static final int ROW_NUMBERS_PER_PAGE = 20;
+    private static final int ROW_NUMBERS_PER_PAGE = 100;
     private static final int LATEST_SCRAP_TIMEOUT = 2000; // 2초
     private static final int LATEST_SCRAP_ALL_TIMEOUT = 60000; // 1분
 
@@ -45,11 +47,49 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
     @Override
     public List<ScrapingResultDto> requestAll(DeptInfo deptInfo) throws InternalLogicException {
         try {
-            String url = buildUrlForTotalNoticeCount(deptInfo);
-            int totalNoticeSize = getTotalNoticeSize(url);
+            String totalUrl = buildUrlForTotalNoticeCount(deptInfo);
+            int totalNoticeSize = getTotalNoticeSize(totalUrl);
+            int totalPages = (int) Math.ceil((double) totalNoticeSize / ROW_NUMBERS_PER_PAGE);
 
-            ScrapingResultDto resultDto = getScrapingResultDto(deptInfo, totalNoticeSize, LATEST_SCRAP_ALL_TIMEOUT);
-            return List.of(resultDto);
+            String viewUrl = deptInfo.createUndergraduateViewUrl();
+
+            String firstUrl = deptInfo.createUndergraduateRequestUrl(START_PAGE_NUM, ROW_NUMBERS_PER_PAGE);
+            log.info("[SCRAP] dept={} basePage=1/{} url={}", deptInfo.getDeptName(), totalPages, firstUrl);
+
+            Document baseDoc = jsoupClient.get(firstUrl, LATEST_SCRAP_TIMEOUT);
+
+            Element baseTbody = baseDoc.selectFirst(".board-table > tbody");
+            if (baseTbody == null) {
+                log.warn("[SCRAP] dept={} base page has no tbody, title={}", deptInfo.getDeptName(), baseDoc.title());
+                return Collections.emptyList();
+            }
+
+            for(int page = START_PAGE_NUM + 1; page <= totalPages; page++){
+                String pageUrl = deptInfo.createUndergraduateRequestUrl(page, ROW_NUMBERS_PER_PAGE);
+                log.info("[SCRAP] dept={} page={}/{} url={}", deptInfo.getDeptName(), page, totalPages, pageUrl);
+
+                Document doc = jsoupClient.get(pageUrl, LATEST_SCRAP_TIMEOUT);
+                Element tbody = doc.selectFirst(".board-table > tbody");
+                if (tbody == null) {
+                    log.warn("[SCRAP] dept={} page={} no tbody, title={}", deptInfo.getDeptName(), page, doc.title());
+                    break;
+                }
+
+                Elements trs = tbody.select("tr");
+                int rows = trs.size();
+
+                if (rows == 0) break;
+
+                for (Element tr : trs) {
+                    baseTbody.appendChild(tr.clone());
+                }
+            }
+
+            int mergedRows = baseDoc.select(".board-table > tbody > tr").size();
+            log.info("[SCRAP] dept={} merged total rows={}", deptInfo.getDeptName(), mergedRows);
+
+            return List.of(new ScrapingResultDto(baseDoc, viewUrl));
+
         } catch (IOException e) {
             log.warn("Department Scrap all IOException: {}", e.getMessage());
         } catch (NullPointerException | IndexOutOfBoundsException e) {
@@ -91,7 +131,6 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
 
         stopWatch.stop();
         log.debug("[{}] takes {}millis to respond", deptInfo.getDeptName(), stopWatch.getTotalTimeMillis());
-
         return new ScrapingResultDto(document, viewUrl);
     }
 }
