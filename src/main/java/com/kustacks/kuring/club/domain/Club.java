@@ -7,7 +7,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -31,7 +30,7 @@ public class Club {
     @Column(length = 30, nullable = false)
     private String summary;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -70,6 +69,6 @@ public class Club {
     @Column(name = "apply_url", length = 255)
     private String applyUrl;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String qualifications;
 }
