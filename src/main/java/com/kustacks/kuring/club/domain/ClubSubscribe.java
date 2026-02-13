@@ -16,14 +16,14 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(
-        name = "club_bookmark",
+        name = "club_subscribe",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"club_id", "user_id"})
         }
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ClubBookmark {
+public class ClubSubscribe {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
