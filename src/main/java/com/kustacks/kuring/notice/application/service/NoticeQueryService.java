@@ -201,7 +201,7 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
     }
 
     private boolean isDepartmentSearchRequest(String type, String department) {
-        return type.equals("dep") && !department.isEmpty();
+        return type.equals("dep") && department != null && !department.isBlank();
     }
 
     private boolean isDepartment(String categoryName) {
