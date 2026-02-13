@@ -119,10 +119,11 @@ dependencies {
 
     // Test Container
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
-    testImplementation 'org.testcontainers:testcontainers:1.19.8'
-    testImplementation 'org.testcontainers:junit-jupiter:1.19.8'
-    testImplementation 'org.testcontainers:mariadb:1.19.8'
-    testImplementation 'org.testcontainers:chromadb:1.19.8'
+    testImplementation "org.testcontainers:testcontainers:2.0.2"
+    testImplementation "org.testcontainers:testcontainers-junit-jupiter:2.0.2"
+    testImplementation "org.testcontainers:testcontainers-mariadb:2.0.2"
+    testImplementation "org.testcontainers:testcontainers-chromadb:2.0.2"
+    testImplementation "org.apache.commons:commons-lang3:3.18.0"
     testImplementation 'io.projectreactor:reactor-test'
 }
 
