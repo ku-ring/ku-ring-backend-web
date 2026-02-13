@@ -8,6 +8,7 @@ jobs:
   deploy:
     name: Build & Deploy to OCI (Dev)
     runs-on: ubuntu-latest
+    environment: Test-Server
 
     steps:
       # (1) 코드 체크아웃
