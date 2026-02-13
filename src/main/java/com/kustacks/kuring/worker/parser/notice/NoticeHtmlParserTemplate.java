@@ -28,6 +28,12 @@ public abstract class NoticeHtmlParserTemplate {
         }
     }
 
+    /**
+     * Extracts a list of notice arrays from the provided HTML row elements.
+     *
+     * @param rows Elements representing HTML rows to parse into notices
+     * @return a list of `String[]` where each array represents a parsed notice; returns an empty list if `rows` is empty
+     */
     private List<String[]> extractNoticeListFromRows(Elements rows) {
         if(rows.isEmpty()) {
             return Collections.emptyList();

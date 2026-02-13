@@ -44,6 +44,15 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         }
     }
 
+    /**
+     * Scrapes every listing page for the specified department, merges the rows into one HTML document, and produces a single result referencing the department's view URL.
+     *
+     * The method returns an empty list when scraping cannot complete (for example, network errors or missing listing content); it throws InternalLogicException when page parsing fails in a way that indicates malformed or unexpected HTML structure.
+     *
+     * @param deptInfo information about the department whose notices will be scraped
+     * @return a list containing one ScrapingResultDto with the merged listing document and the department view URL, or an empty list if scraping did not complete
+     * @throws InternalLogicException if parsing the pages fails (e.g., unexpected/malformed HTML structure)
+     */
     @Override
     public List<ScrapingResultDto> requestAll(DeptInfo deptInfo) throws InternalLogicException {
         try {
@@ -120,6 +129,15 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         return deptInfo.createUndergraduateRequestUrl(1, 1);
     }
 
+    /**
+     * Fetches the first page of notices for the given department and returns a scraping result.
+     *
+     * @param deptInfo department metadata used to build the request and view URLs
+     * @param rowSize number of rows to request per page
+     * @param timeout per-request timeout in milliseconds
+     * @return a ScrapingResultDto containing the fetched HTML Document and the department's view URL
+     * @throws IOException if the HTTP request fails
+     */
     private ScrapingResultDto getScrapingResultDto(DeptInfo deptInfo, int rowSize, int timeout) throws IOException {
         String requestUrl = deptInfo.createUndergraduateRequestUrl(START_PAGE_NUM, rowSize);
         String viewUrl = deptInfo.createUndergraduateViewUrl();
