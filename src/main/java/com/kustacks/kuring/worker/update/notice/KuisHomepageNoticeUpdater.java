@@ -106,13 +106,13 @@ public class KuisHomepageNoticeUpdater {
 
         List<String> deletedNoticesArticleIds = noticeUpdateSupport.filteringSoonDeleteNoticeIds(savedArticleIds, scrapNoticeIds);
 
-        noticeCommandPort.saveAllCategoryNotices(newNotices);
+        List<Notice> savedNotices = noticeCommandPort.saveAllCategoryNoticesAndReturn(newNotices);
 
         if (!deletedNoticesArticleIds.isEmpty()) {
             noticeCommandPort.deleteAllByIdsAndCategory(categoryName, deletedNoticesArticleIds);
         }
 
-        return newNotices;
+        return savedNotices;
     }
 
     // 여기부터는 KUIS 공지
@@ -179,8 +179,7 @@ public class KuisHomepageNoticeUpdater {
             updateNoticesByImportantToNormal(savedArticleIds, newNotices, categoryName);
         }
 
-        noticeCommandPort.saveAllCategoryNotices(newNotices);
-        return newNotices;
+        return noticeCommandPort.saveAllCategoryNoticesAndReturn(newNotices);
     }
 
     private void updateNoticesByImportantToNormal(

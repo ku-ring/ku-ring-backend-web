@@ -35,6 +35,16 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
     }
 
     @Override
+    public List<Notice> saveAllCategoryNoticesAndReturn(List<Notice> notices) {
+        return this.noticeRepository.saveAll(notices);
+    }
+
+    @Override
+    public List<DepartmentNotice> saveAllDepartmentNoticesAndReturn(List<DepartmentNotice> notices) {
+        return this.noticeRepository.saveAll(notices);
+    }
+
+    @Override
     public void deleteAllByIdsAndCategory(CategoryName categoryName, List<String> articleIds) {
         this.noticeRepository.deleteAllByIdsAndCategory(categoryName, articleIds);
     }
