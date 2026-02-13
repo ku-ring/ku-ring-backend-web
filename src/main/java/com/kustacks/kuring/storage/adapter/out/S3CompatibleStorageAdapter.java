@@ -9,14 +9,18 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.*;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
-import java.io.*;
+import java.io.InputStream;
 import java.time.Duration;
 
-import static com.kustacks.kuring.common.exception.code.ErrorCode.*;
+import static com.kustacks.kuring.common.exception.code.ErrorCode.STORAGE_S3_SDK_PROBLEM;
 
 @Profile("dev | prod")
 @Service
@@ -28,20 +32,17 @@ public class S3CompatibleStorageAdapter implements StoragePort {
     private final CloudStorageProperties properties;
 
     @Override
-    public void upload(InputStream inputStream, String key, String contentType) {
+    public void upload(InputStream inputStream, String key, String contentType, long contentLength) {
         try {
-            byte[] fileContent = inputStream.readAllBytes();
-
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(properties.bucket())
                     .key(key)
                     .contentType(contentType)
-                    .contentLength((long) fileContent.length)
+                    .contentLength(contentLength)
                     .build();
 
-                s3Client.putObject(putObjectRequest, RequestBody.fromBytes(fileContent));
-        } catch (IOException e) {
-            throw new CloudStorageException(FILE_IO_EXCEPTION);
+                s3Client.putObject(putObjectRequest,
+                        RequestBody.fromInputStream(inputStream, contentLength));
         } catch (S3Exception | SdkClientException e) {
             throw new CloudStorageException(STORAGE_S3_SDK_PROBLEM);
         }

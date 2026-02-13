@@ -2,23 +2,34 @@ package com.kustacks.kuring.storage.adapter.out;
 
 import com.kustacks.kuring.common.properties.CloudStorageProperties;
 import com.kustacks.kuring.storage.exception.CloudStorageException;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.*;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
-import java.io.*;
-import java.net.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class S3CompatibleStorageAdapterTest {
@@ -47,22 +58,24 @@ class S3CompatibleStorageAdapterTest {
         InputStream inputStream = new ByteArrayInputStream(testFile);
 
         // when
-        s3CompatibleStorageAdapter.upload(inputStream, fileKey, "image/jpeg");
+        s3CompatibleStorageAdapter.upload(inputStream, fileKey, "image/jpeg", testFile.length);
 
         // then
         verify(mockS3Client, times(1))
                 .putObject(any(PutObjectRequest.class), any(RequestBody.class));
     }
 
-    @DisplayName("S3에 파일을 업로드 중 IOException이 발생하면 예외를 던진다")
+    @DisplayName("S3에 파일을 업로드 중 SdkClientException이 발생하면 예외를 던진다")
     @Test
-    void uploadFileWithIOException() throws IOException {
+    void uploadFileWithSdkClientException() {
         // given
-        InputStream mockInputStream = mock(InputStream.class);
-        when(mockInputStream.readAllBytes()).thenThrow(new IOException());
+        when(properties.bucket()).thenReturn(bucketName);
+        doThrow(SdkClientException.create("S3 error"))
+                .when(mockS3Client).putObject(any(PutObjectRequest.class), any(RequestBody.class));
+        InputStream inputStream = new ByteArrayInputStream(testFile);
 
         // when, then
-        assertThatThrownBy(() -> s3CompatibleStorageAdapter.upload(mockInputStream, fileKey, "image/jpeg"))
+        assertThatThrownBy(() -> s3CompatibleStorageAdapter.upload(inputStream, fileKey, "image/jpeg", testFile.length))
                 .isInstanceOf(CloudStorageException.class);
     }
 
@@ -77,7 +90,7 @@ class S3CompatibleStorageAdapterTest {
         InputStream inputStream = new ByteArrayInputStream(testFile);
 
         // when, then
-        assertThatThrownBy(() -> s3CompatibleStorageAdapter.upload(inputStream, fileKey, "image/jpeg"))
+        assertThatThrownBy(() -> s3CompatibleStorageAdapter.upload(inputStream, fileKey, "image/jpeg", testFile.length))
                 .isInstanceOf(CloudStorageException.class);
     }
 

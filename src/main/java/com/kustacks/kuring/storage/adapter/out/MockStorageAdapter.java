@@ -15,7 +15,7 @@ public class MockStorageAdapter implements StoragePort {
     private static final String MOCK_SERVER = "https://mock.ku-ring.com/";
 
     @Override
-    public void upload(InputStream inputStream, String key, String contentType) {
+    public void upload(InputStream inputStream, String key, String contentType, long contentLength) {
         log.info(String.format("%s 파일 저장 완료", key));
     }
 
