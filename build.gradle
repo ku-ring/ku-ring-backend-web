@@ -66,6 +66,7 @@ dependencies {
 
     // Feature Flag by AWS AppConfig
     implementation(platform("software.amazon.awssdk:bom:2.27.21"))
+    implementation 'software.amazon.awssdk:s3'
     implementation 'software.amazon.awssdk:appconfig'
     implementation 'software.amazon.awssdk:appconfigdata'
 
