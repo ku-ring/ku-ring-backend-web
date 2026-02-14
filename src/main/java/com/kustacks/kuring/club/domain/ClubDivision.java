@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.kustacks.kuring.common.exception.code.ErrorCode.CAT_NOT_EXIST_CLUB_DIVISION;
+import static com.kustacks.kuring.common.exception.code.ErrorCode.CLUB_DIVISION_NOT_SUPPORTED;
 
 @Getter
 public enum ClubDivision {
@@ -51,7 +51,7 @@ public enum ClubDivision {
 
     public static ClubDivision fromName(String name) {
         String findName = Optional.ofNullable(NAME_MAP.get(name))
-                .orElseThrow(() -> new NotFoundException(CAT_NOT_EXIST_CLUB_DIVISION));
+                .orElseThrow(() -> new NotFoundException(CLUB_DIVISION_NOT_SUPPORTED));
         return ClubDivision.valueOf(findName);
     }
 }

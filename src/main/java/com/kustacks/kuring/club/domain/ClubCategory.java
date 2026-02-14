@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.kustacks.kuring.common.exception.code.ErrorCode.CAT_NOT_EXIST_CLUB_CATEGORY;
+import static com.kustacks.kuring.common.exception.code.ErrorCode.CLUB_CATEGORY_NOT_SUPPORTED;
 
 @Getter
 public enum ClubCategory {
@@ -37,7 +37,7 @@ public enum ClubCategory {
 
     public static ClubCategory fromName(String name) {
         String findName = Optional.ofNullable(NAME_MAP.get(name))
-                .orElseThrow(() -> new NotFoundException(CAT_NOT_EXIST_CLUB_CATEGORY));
+                .orElseThrow(() -> new NotFoundException(CLUB_CATEGORY_NOT_SUPPORTED));
         return ClubCategory.valueOf(findName);
     }
 }
