@@ -15,7 +15,7 @@ import java.util.List;
 
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CLUB_DIVISION_SEARCH_SUCCESS;
 
-@Tag(name = "Club Query", description = "동아리 정보 조회")
+@Tag(name = "Club-Query", description = "동아리 정보 조회")
 @Validated
 @RequiredArgsConstructor
 @RestWebAdapter(path = "/api/v2/clubs")
