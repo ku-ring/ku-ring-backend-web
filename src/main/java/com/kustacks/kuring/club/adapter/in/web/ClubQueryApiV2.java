@@ -1,5 +1,6 @@
 package com.kustacks.kuring.club.adapter.in.web;
 
+import com.kustacks.kuring.club.adapter.in.web.dto.ClubDivisionListResponse;
 import com.kustacks.kuring.club.adapter.in.web.dto.ClubDivisionResponse;
 import com.kustacks.kuring.club.application.port.in.ClubQueryUseCase;
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
@@ -25,14 +26,16 @@ public class ClubQueryApiV2 {
 
     @Operation(summary = "동아리 소속 목록 조회", description = "서버가 지원하는 동아리 소속 목록을 조회합니다")
     @GetMapping("/divisions")
-    public ResponseEntity<BaseResponse<List<ClubDivisionResponse>>> getSupportedClubDivisions() {
+    public ResponseEntity<BaseResponse<ClubDivisionListResponse>> getSupportedClubDivisions() {
 
         List<ClubDivisionResponse> divisions = clubQueryUseCase.getClubDivisions()
                 .stream()
                 .map(ClubDivisionResponse::from)
                 .toList();
 
-        return ResponseEntity.ok().body(new BaseResponse<>(CLUB_DIVISION_SEARCH_SUCCESS, divisions));
+        ClubDivisionListResponse response = new ClubDivisionListResponse(divisions);
+
+        return ResponseEntity.ok().body(new BaseResponse<>(CLUB_DIVISION_SEARCH_SUCCESS, response));
     }
 
 }
