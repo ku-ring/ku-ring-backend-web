@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,7 +21,8 @@ import java.util.List;
 public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResultDto, DeptInfo> {
 
     private static final int START_PAGE_NUM = 1; // page는 인자가 1부터 시작
-    private static final int ROW_NUMBERS_PER_PAGE = 100;
+    private static final int ROW_NUMBERS_PER_PAGE = 20;
+    private static final int ROW_NUMBERS_PER_PAGE_ALL = 100;
     private static final int LATEST_SCRAP_TIMEOUT = 2000; // 2초
     private static final int LATEST_SCRAP_ALL_TIMEOUT = 60000; // 1분
 
@@ -47,48 +47,34 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
     @Override
     public List<ScrapingResultDto> requestAll(DeptInfo deptInfo) throws InternalLogicException {
         try {
+            // 1) 총 공지 개수 및 페이지 수 계산
             String totalUrl = buildUrlForTotalNoticeCount(deptInfo);
             int totalNoticeSize = getTotalNoticeSize(totalUrl);
-            int totalPages = (int) Math.ceil((double) totalNoticeSize / ROW_NUMBERS_PER_PAGE);
+            int totalPageSize = (int) Math.ceil((double) totalNoticeSize / ROW_NUMBERS_PER_PAGE_ALL);
 
-            String viewUrl = deptInfo.createUndergraduateViewUrl();
-
-            String firstUrl = deptInfo.createUndergraduateRequestUrl(START_PAGE_NUM, ROW_NUMBERS_PER_PAGE);
-            log.info("[SCRAP] dept={} basePage=1/{} url={}", deptInfo.getDeptName(), totalPages, firstUrl);
-
-            Document baseDoc = jsoupClient.get(firstUrl, LATEST_SCRAP_TIMEOUT);
-
-            Element baseTbody = baseDoc.selectFirst(".board-table > tbody");
+            // 2) 첫 페이지를 base로 가져오기(1 page)
+            String firstUrl = deptInfo.createUndergraduateRequestUrl(START_PAGE_NUM, ROW_NUMBERS_PER_PAGE_ALL);
+            Document baseDoc = getDocumentPerPage(firstUrl, LATEST_SCRAP_ALL_TIMEOUT);
+            Element baseTbody = extractTbodyFromDocument(baseDoc);
             if (baseTbody == null) {
-                log.warn("[SCRAP] dept={} base page has no tbody, title={}", deptInfo.getDeptName(), baseDoc.title());
+                log.warn("[SCRAP] no tbody : dept={}, title={}, url={}", deptInfo.getDeptName(), baseDoc.title(), firstUrl);
                 return Collections.emptyList();
             }
 
-            for(int page = START_PAGE_NUM + 1; page <= totalPages; page++){
-                String pageUrl = deptInfo.createUndergraduateRequestUrl(page, ROW_NUMBERS_PER_PAGE);
-                log.info("[SCRAP] dept={} page={}/{} url={}", deptInfo.getDeptName(), page, totalPages, pageUrl);
+            // 3) 반복문을 돌며 baseTbody에 뒷 페이지의 tr들 합치기(2 page~)
+            for(int page = START_PAGE_NUM + 1; page <= totalPageSize; page++){
+                String pageUrl = deptInfo.createUndergraduateRequestUrl(page, ROW_NUMBERS_PER_PAGE_ALL);
+                Document doc = getDocumentPerPage(pageUrl, LATEST_SCRAP_ALL_TIMEOUT);
+                Elements trs = extractTrsFromDocument(doc);
 
-                Document doc = jsoupClient.get(pageUrl, LATEST_SCRAP_TIMEOUT);
-                Element tbody = doc.selectFirst(".board-table > tbody");
-                if (tbody == null) {
-                    log.warn("[SCRAP] dept={} page={} no tbody, title={}", deptInfo.getDeptName(), page, doc.title());
-                    break;
-                }
-
-                Elements trs = tbody.select("tr");
-                int rows = trs.size();
-
-                if (rows == 0) break;
-
+                if (trs.isEmpty()) break;
                 for (Element tr : trs) {
                     baseTbody.appendChild(tr.clone());
                 }
             }
 
-            int mergedRows = baseDoc.select(".board-table > tbody > tr").size();
-            log.info("[SCRAP] dept={} merged total rows={}", deptInfo.getDeptName(), mergedRows);
-
-            return List.of(new ScrapingResultDto(baseDoc, viewUrl));
+            // 4) 합쳐진 Document을 ScrapingResultDto로 가공하여 반환
+            return List.of(new ScrapingResultDto(baseDoc, deptInfo.createUndergraduateViewUrl()));
 
         } catch (IOException e) {
             log.warn("Department Scrap all IOException: {}", e.getMessage());
@@ -114,6 +100,22 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
 
         assert totalNoticeSizeElement != null;
         return Integer.parseInt(totalNoticeSizeElement.ownText());
+    }
+
+    private Element extractTbodyFromDocument(Document doc){
+        return doc.selectFirst(".board-table > tbody");
+    }
+
+    private Elements extractTrsFromDocument(Document doc){
+        Element tbody = extractTbodyFromDocument(doc);
+        if(tbody == null){
+            return new Elements();
+        }
+        return tbody.select("tr");
+    }
+
+    private Document getDocumentPerPage(String url, int timeout) throws IOException{
+        return jsoupClient.get(url, timeout);
     }
 
     private String buildUrlForTotalNoticeCount(DeptInfo deptInfo) {
