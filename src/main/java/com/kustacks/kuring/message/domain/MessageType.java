@@ -9,7 +9,8 @@ public enum MessageType {
 
     NOTICE("notice"),
     ADMIN("admin"),
-    ACADEMIC("academic");
+    ACADEMIC("academic"),
+    CLUB("club");
 
     private final String value;
 }
