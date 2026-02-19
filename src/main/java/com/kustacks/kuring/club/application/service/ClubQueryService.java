@@ -41,7 +41,7 @@ public class ClubQueryService implements ClubQueryUseCase {
                 searchSize -> clubQueryPort.searchClubs(
                         command.category(),
                         command.divisionList(),
-                        command.cursor().getStringCursor(),
+                        command.cursor(),
                         searchSize,
                         command.sortBy()
                 )
@@ -66,9 +66,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         int totalCount = clubQueryPort.countClubs(command.category(), command.divisionList());
 
-        Long nextCursor = cursorBasedList.getEndCursor() == null
-                ? null
-                : Long.valueOf(cursorBasedList.getEndCursor());
+        String nextCursor = cursorBasedList.getEndCursor();
 
         return new ClubListResult(
                 items,

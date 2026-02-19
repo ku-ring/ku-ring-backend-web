@@ -6,7 +6,7 @@ import java.util.List;
 
 public record ClubListResponse(
         List<ClubItemResponse> clubs,
-        Long cursor,
+        String cursor,
         boolean hasNext,
         int totalCount
 ) {

@@ -4,7 +4,7 @@ import java.util.List;
 
 public record ClubListResult(
         List<ClubItemResult> clubs,
-        Long cursor,
+        String cursor,
         boolean hasNext,
         int totalCount
 ) {
