@@ -116,6 +116,7 @@ public class DatabaseConfigurator implements InitializingBean {
         log.info("[DatabaseConfigurator] init start");
 
         initAdmin();
+        initClub();
         initUser();
         initRootUser();
         initUserCategory();
@@ -128,6 +129,17 @@ public class DatabaseConfigurator implements InitializingBean {
         initWhitelistWords();
 
         log.info("[DatabaseConfigurator] init complete");
+    }
+
+    private void initClub() {
+        jdbcTemplate.update(
+                "INSERT INTO club (name, summary, category, division, is_always) VALUES (?, ?, ?, ?, ?)",
+                "테스트동아리1",
+                "테스트 요약",
+                "ACADEMIC",
+                "CENTRAL",
+                false
+        );
     }
 
     private void setCharsetAllTable() {
