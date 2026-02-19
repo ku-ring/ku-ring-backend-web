@@ -173,6 +173,28 @@ class DependencyRuleTests {
                         .importPackages("com.kustacks.kuring.calendar.."));
     }
 
+	@DisplayName("Club Domain 의존성 검증")
+	@Test
+	void validateClubDomainDependencies() {
+		HexagonalArchitecture.boundedContext("com.kustacks.kuring.club")
+
+				.withDomainLayer("domain")
+
+				.withAdaptersLayer("adapter")
+				.outgoing("out.persistence")
+				.and()
+
+				.withApplicationLayer("application")
+				.services("service")
+				.incomingPorts("port.in")
+				.outgoingPorts("port.out")
+				.and()
+
+				.withConfiguration("configuration")
+				.check(new ClassFileImporter()
+						.importPackages("com.kustacks.kuring.club.."));
+	}
+
 	@DisplayName("테스트 페키지 의존성 검증")
 	@Test
 	void testPackageDependencies() {
