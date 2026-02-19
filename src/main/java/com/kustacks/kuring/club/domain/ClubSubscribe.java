@@ -1,6 +1,6 @@
 package com.kustacks.kuring.club.domain;
 
-import com.kustacks.kuring.user.domain.User;
+import com.kustacks.kuring.user.domain.RootUser;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Table(
         name = "club_subscribe",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"club_id", "user_id"})
+                @UniqueConstraint(columnNames = {"club_id", "root_user_id"})
         }
 )
 @Getter
@@ -34,6 +34,11 @@ public class ClubSubscribe {
     private Club club;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "root_user_id", nullable = false)
+    private RootUser rootUser;
+
+    public ClubSubscribe(RootUser rootUser, Club club) {
+        this.rootUser = rootUser;
+        this.club = club;
+    }
 }
