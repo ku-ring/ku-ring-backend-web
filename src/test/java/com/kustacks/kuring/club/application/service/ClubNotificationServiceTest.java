@@ -5,10 +5,13 @@ import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
 import com.kustacks.kuring.club.domain.Club;
 import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.message.application.port.out.FirebaseMessagingPort;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -29,64 +32,67 @@ import static org.mockito.Mockito.when;
 @DisplayName("ClubNotificationService")
 class ClubNotificationServiceTest {
 
+    @InjectMocks
+    private ClubNotificationService service;
+
     @Mock
     private ClubQueryPort clubQueryPort;
 
     @Mock
     private FirebaseMessagingPort firebaseMessagingPort;
 
+    @Mock
+    private ServerProperties serverProperties;
+
+    private Club club1;
+
+    private Club club2;
+
+    @BeforeEach
+    void setUp() {
+        club1 = club(1L, "쿠링");
+        club2 = club(2L, "리드미");
+
+        when(serverProperties.ifDevThenAddSuffix("club.1")).thenReturn("club.1.dev");
+        when(serverProperties.ifDevThenAddSuffix("club.2")).thenReturn("club.2.dev");
+        when(clubQueryPort.findNextDayRecruitEndClubs(any(LocalDateTime.class)))
+                .thenReturn(List.of(club1, club2));
+    }
+
     @DisplayName("내일 마감 대상 목록을 모두 발송한다")
     @Test
     void send_deadline_notifications_only_for_targets() throws Exception {
-        Club target = club(1L, "쿠링");
-        Club target2 = club(2L, "리드미");
-
-        when(clubQueryPort.findNextDayRecruitEndClubs(any(LocalDateTime.class)))
-                .thenReturn(List.of(target, target2));
-
-        ClubNotificationService service = new ClubNotificationService(clubQueryPort, firebaseMessagingPort, new ServerProperties("dev"));
+        //when
         service.sendDeadlineNotifications();
 
+        //then
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
         verify(firebaseMessagingPort, times(2)).send(captor.capture());
 
-        Message sent = captor.getAllValues().get(0);
+        Message sent = captor.getAllValues().get(0); // 1번 ID에 대한 Club 메시지
         String topic = (String) ReflectionTestUtils.getField(sent, "topic");
-        @SuppressWarnings("unchecked")
+
         Map<String, String> data = (Map<String, String>) ReflectionTestUtils.getField(sent, "data");
-        assertThat(topic).isEqualTo("club.1.dev");
-        assertThat(data).containsEntry("clubId", "1");
-        assertThat(data).containsEntry("messageType", "club");
-    }
-
-    @DisplayName("내일 마감 대상은 adapter 전용 메서드로 조회한다")
-    @Test
-    void should_query_by_adapter_method() {
-        when(clubQueryPort.findNextDayRecruitEndClubs(any(LocalDateTime.class)))
-                .thenReturn(List.of());
-
-        ClubNotificationService service = new ClubNotificationService(clubQueryPort, firebaseMessagingPort, new ServerProperties("dev"));
-        service.sendDeadlineNotifications();
-
-        verify(clubQueryPort).findNextDayRecruitEndClubs(any(LocalDateTime.class));
+        Assertions.assertAll(
+                () -> assertThat(topic).isEqualTo("club.1.dev"),
+                () -> assertThat(data).containsEntry("clubId", "1"),
+                () -> assertThat(data).containsEntry("messageType", "club")
+        );
     }
 
     @DisplayName("발송 실패가 발생해도 다른 대상은 계속 발송")
     @Test
     void should_continue_even_if_one_send_fails() throws Exception {
-        Club first = club(1L, "첫번째");
-        Club second = club(2L, "두번째");
-
-        when(clubQueryPort.findNextDayRecruitEndClubs(any(LocalDateTime.class)))
-                .thenReturn(List.of(first, second));
+        //given
         doThrow(new RuntimeException("send fail"))
                 .doNothing()
                 .when(firebaseMessagingPort)
                 .send(any(Message.class));
 
-        ClubNotificationService service = new ClubNotificationService(clubQueryPort, firebaseMessagingPort, new ServerProperties("dev"));
+        //when
         service.sendDeadlineNotifications();
 
+        //then
         verify(firebaseMessagingPort, times(2)).send(any(Message.class));
     }
 
