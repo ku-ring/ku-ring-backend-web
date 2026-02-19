@@ -4,6 +4,7 @@ import com.kustacks.kuring.auth.dto.UserRegisterRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserAcademicEventNotificationRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserBookmarkRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeRequest;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserClubSubscriptionRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserDepartmentsSubscribeRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserFeedbackRequest;
 import com.kustacks.kuring.user.adapter.in.web.dto.UserLoginRequest;
@@ -84,11 +85,61 @@ public class UserStep {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> 동아리_구독_추가_요청(String userToken, String accessToken, Long clubId) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", userToken)
+                .header("Authorization", "Bearer " + accessToken)
+                .body(new UserClubSubscriptionRequest(clubId))
+                .when().post("/api/v2/users/subscriptions/clubs")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 동아리_구독_제거_요청(String userToken, String accessToken, Long clubId) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", userToken)
+                .header("Authorization", "Bearer " + accessToken)
+                .body(new UserClubSubscriptionRequest(clubId))
+                .when().delete("/api/v2/users/subscriptions/clubs")
+                .then().log().all()
+                .extract();
+    }
+
+    public static ExtractableResponse<Response> 동아리_구독_추가_요청_유저토큰없음(String accessToken, Long clubId) {
+        return RestAssured.given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + accessToken)
+                .body(new UserClubSubscriptionRequest(clubId))
+                .when().post("/api/v2/users/subscriptions/clubs")
+                .then().log().all()
+                .extract();
+    }
+
     public static void 학과_구독_응답_확인(ExtractableResponse<Response> response) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("사용자의 학과 구독에 성공하였습니다")
+        );
+    }
+
+    public static void 동아리_구독_추가_성공_응답_확인(ExtractableResponse<Response> response, long expectedCount) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("구독에 성공했습니다."),
+                () -> assertThat(response.jsonPath().getLong("data.subscriptionCount")).isEqualTo(expectedCount)
+        );
+    }
+
+    public static void 동아리_구독_제거_성공_응답_확인(ExtractableResponse<Response> response, long expectedCount) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("구독이 취소되었습니다."),
+                () -> assertThat(response.jsonPath().getLong("data.subscriptionCount")).isEqualTo(expectedCount)
         );
     }
 

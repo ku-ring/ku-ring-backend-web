@@ -14,40 +14,7 @@ import java.util.List;
 import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
 import static com.kustacks.kuring.acceptance.EmailStep.인증코드_인증_요청;
 import static com.kustacks.kuring.acceptance.EmailStep.회원가입_인증코드_이메일_전송_요청;
-import static com.kustacks.kuring.acceptance.UserStep.구독한_학과_목록_조회_요청;
-import static com.kustacks.kuring.acceptance.UserStep.남은_질문_횟수_조회;
-import static com.kustacks.kuring.acceptance.UserStep.로그아웃_요청;
-import static com.kustacks.kuring.acceptance.UserStep.로그아웃_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.로그인_요청;
-import static com.kustacks.kuring.acceptance.UserStep.로그인_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.루트유저_남은_질문_횟수_조회;
-import static com.kustacks.kuring.acceptance.UserStep.북마크_생성_요청;
-import static com.kustacks.kuring.acceptance.UserStep.북마크_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.북마크_조회_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.북마크한_공지_조회_요청;
-import static com.kustacks.kuring.acceptance.UserStep.비밀번호_변경_요청;
-import static com.kustacks.kuring.acceptance.UserStep.비밀번호_변경_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_로그인_되어_있음;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_정보_조회_요청;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_정보_조회_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_카테고리_구독_목록_조회_요청;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_학과_조회_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_회원가입_요청;
-import static com.kustacks.kuring.acceptance.UserStep.액세스_토큰으로_비밀번호_변경_요청;
-import static com.kustacks.kuring.acceptance.UserStep.질문_횟수_응답_검증;
-import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_목록_조회_요청_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_요청;
-import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_요청_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.피드백_요청_v2;
-import static com.kustacks.kuring.acceptance.UserStep.피드백_요청_응답_확인_v2;
-import static com.kustacks.kuring.acceptance.UserStep.학과_구독_요청;
-import static com.kustacks.kuring.acceptance.UserStep.학과_구독_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.학사일정_알림_토글_요청;
-import static com.kustacks.kuring.acceptance.UserStep.학사일정_알림_토글_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.회원_가입_요청;
-import static com.kustacks.kuring.acceptance.UserStep.회원_탈퇴_요청;
-import static com.kustacks.kuring.acceptance.UserStep.회원_탈퇴_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.회원가입_응답_확인;
+import static com.kustacks.kuring.acceptance.UserStep.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -58,6 +25,7 @@ import static org.mockito.Mockito.doThrow;
 class UserAcceptanceTest extends IntegrationTestSupport {
 
     public static final String NEW_EMAIL = "new-client@konkuk.ac.kr";
+    private static final Long TEST_CLUB_ID = 1L;
 
     /**
      * Given: 가입되지 않은 사용자가 있다
@@ -522,5 +490,57 @@ class UserAcceptanceTest extends IntegrationTestSupport {
 
         // then
         학사일정_알림_토글_응답_확인(두번째_토글_응답, true);
+    }
+
+    @DisplayName("[v2] 사용자는 동아리를 구독할 수 있다")
+    @Test
+    void add_club_subscription_success() {
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        var response = 동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID);
+
+        동아리_구독_추가_성공_응답_확인(response, 1L);
+    }
+
+    @DisplayName("[v2] 이미 구독한 동아리는 다시 구독할 수 없다")
+    @Test
+    void add_club_subscription_fail_when_already_subscribed() {
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID);
+        var response = 동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID);
+
+        실패_응답_확인(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @DisplayName("[v2] 존재하지 않는 동아리 구독은 실패한다")
+    @Test
+    void add_club_subscription_fail_when_club_not_found() {
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        var response = 동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, 99999L);
+
+        실패_응답_확인(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @DisplayName("[v2] 사용자는 동아리 구독을 취소할 수 있다")
+    @Test
+    void remove_club_subscription_success() {
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID);
+        var response = 동아리_구독_제거_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID);
+
+        동아리_구독_제거_성공_응답_확인(response, 0L);
+    }
+
+    @DisplayName("[v2] 구독하지 않은 동아리 취소는 실패한다")
+    @Test
+    void remove_club_subscription_fail_when_not_subscribed() {
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        var response = 동아리_구독_제거_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID);
+
+        실패_응답_확인(response, HttpStatus.BAD_REQUEST);
     }
 }
