@@ -62,6 +62,11 @@ public enum ResponseCodeAndMessages {
     ACADEMIC_EVENT_SEARCH_SUCCESS(HttpStatus.OK.value(), "학사일정 조회에 성공했습니다."),
     ACADEMIC_EVENT_NOTIFICATION_UPDATE_SUCCESS(HttpStatus.OK.value(), "학사일정 알림 설정이 변경되었습니다."),
 
+    /* Club */
+    CLUB_SUBSCRIPTION_LOOKUP_SUCCESS(HttpStatus.OK.value(), "조회되었습니다."),
+    CLUB_SUBSCRIPTION_ADD_SUCCESS(HttpStatus.OK.value(), "구독에 성공했습니다."),
+    CLUB_SUBSCRIPTION_DELETE_SUCCESS(HttpStatus.OK.value(), "구독이 취소되었습니다."),
+
     /**
      * ErrorCodes about auth
      */
