@@ -5,7 +5,6 @@ import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
 import com.kustacks.kuring.club.domain.Club;
 import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.message.application.port.out.FirebaseMessagingPort;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -73,7 +73,7 @@ class ClubNotificationServiceTest {
         String topic = (String) ReflectionTestUtils.getField(sent, "topic");
 
         Map<String, String> data = (Map<String, String>) ReflectionTestUtils.getField(sent, "data");
-        Assertions.assertAll(
+        assertAll(
                 () -> assertThat(topic).isEqualTo("club.1.dev"),
                 () -> assertThat(data).containsEntry("clubId", "1"),
                 () -> assertThat(data).containsEntry("messageType", "club")

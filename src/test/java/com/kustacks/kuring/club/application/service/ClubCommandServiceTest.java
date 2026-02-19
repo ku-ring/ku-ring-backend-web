@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -85,9 +86,11 @@ class ClubCommandServiceTest {
         long count = service.addSubscription(new ClubSubscriptionCommand("client@konkuk.ac.kr", 1L));
 
         //then
-        assertThat(count).isEqualTo(1L);
-        verify(userEventPort).subscribeEvent("token-1", "club.1");
-        verify(userEventPort).subscribeEvent("token-2", "club.1");
+        assertAll(
+                () -> assertThat(count).isEqualTo(1L),
+                () -> verify(userEventPort).subscribeEvent("token-1", "club.1"),
+                () -> verify(userEventPort).subscribeEvent("token-2", "club.1")
+        );
     }
 
     @DisplayName("이미 구독된 동아리는 추가할 수 없다")
@@ -102,12 +105,13 @@ class ClubCommandServiceTest {
         when(clubSubscriptionQueryPort.existsSubscription(1L, 1L)).thenReturn(Boolean.TRUE);
 
         //when & then
-        assertThatThrownBy(() -> service.addSubscription(new ClubSubscriptionCommand("client@konkuk.ac.kr", 1L)))
-                .isInstanceOf(InvalidStateException.class)
-                .extracting(ex -> ((InvalidStateException) ex).getErrorCode())
-                .isEqualTo(ErrorCode.CLUB_ALREADY_SUBSCRIBED);
-
-        verify(userEventPort, never()).subscribeEvent(anyString(), anyString());
+        assertAll(
+                () -> assertThatThrownBy(() -> service.addSubscription(new ClubSubscriptionCommand("client@konkuk.ac.kr", 1L)))
+                        .isInstanceOf(InvalidStateException.class)
+                        .extracting(ex -> ((InvalidStateException) ex).getErrorCode())
+                        .isEqualTo(ErrorCode.CLUB_ALREADY_SUBSCRIBED),
+                () -> verify(userEventPort, never()).subscribeEvent(anyString(), anyString())
+        );
     }
 
     @DisplayName("구독 제거 성공")
@@ -127,8 +131,10 @@ class ClubCommandServiceTest {
         long count = service.removeSubscription(new ClubSubscriptionCommand("client@konkuk.ac.kr", 1L));
 
         //then
-        assertThat(count).isEqualTo(0L);
-        verify(userEventPort).unsubscribeEvent("token-1", "club.1");
+        assertAll(
+                () -> assertThat(count).isEqualTo(0L),
+                () -> verify(userEventPort).unsubscribeEvent("token-1", "club.1")
+        );
     }
 
     @DisplayName("구독하지 않은 동아리는 제거할 수 없다")
@@ -142,12 +148,13 @@ class ClubCommandServiceTest {
         when(clubSubscriptionQueryPort.existsSubscription(1L, club.getId())).thenReturn(Boolean.FALSE);
 
         //when & then
-        assertThatThrownBy(() -> service.removeSubscription(new ClubSubscriptionCommand("client@konkuk.ac.kr", 1L)))
-                .isInstanceOf(InvalidStateException.class)
-                .extracting(ex -> ((InvalidStateException) ex).getErrorCode())
-                .isEqualTo(ErrorCode.CLUB_NOT_SUBSCRIBED);
-
-        verify(userEventPort, never()).unsubscribeEvent(anyString(), anyString());
+        assertAll(
+                () -> assertThatThrownBy(() -> service.removeSubscription(new ClubSubscriptionCommand("client@konkuk.ac.kr", 1L)))
+                        .isInstanceOf(InvalidStateException.class)
+                        .extracting(ex -> ((InvalidStateException) ex).getErrorCode())
+                        .isEqualTo(ErrorCode.CLUB_NOT_SUBSCRIBED),
+                () -> verify(userEventPort, never()).unsubscribeEvent(anyString(), anyString())
+        );
     }
 
     @DisplayName("존재하지 않는 동아리는 구독할 수 없다")
@@ -159,12 +166,13 @@ class ClubCommandServiceTest {
         when(clubQueryPort.findClubById(1L)).thenReturn(Optional.empty());
 
         //when & then
-        assertThatThrownBy(() -> service.addSubscription(new ClubSubscriptionCommand("client@konkuk.ac.kr", 1L)))
-                .isInstanceOf(InvalidStateException.class)
-                .extracting(ex -> ((InvalidStateException) ex).getErrorCode())
-                .isEqualTo(ErrorCode.CLUB_NOT_FOUND);
-
-        verify(userEventPort, never()).subscribeEvent(anyString(), anyString());
+        assertAll(
+                () -> assertThatThrownBy(() -> service.addSubscription(new ClubSubscriptionCommand("client@konkuk.ac.kr", 1L)))
+                        .isInstanceOf(InvalidStateException.class)
+                        .extracting(ex -> ((InvalidStateException) ex).getErrorCode())
+                        .isEqualTo(ErrorCode.CLUB_NOT_FOUND),
+                () -> verify(userEventPort, never()).subscribeEvent(anyString(), anyString())
+        );
     }
 
     private RootUser rootUser() {

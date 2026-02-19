@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,7 +46,9 @@ class ClubPersistenceAdapterTest {
         ArgumentCaptor<LocalDateTime> endCaptor = ArgumentCaptor.forClass(LocalDateTime.class);
         verify(clubRepository).findClubsBetweenDates(startCaptor.capture(), endCaptor.capture());
 
-        assertThat(startCaptor.getValue()).isEqualTo(LocalDateTime.of(2026, 2, 20, 0, 0, 0));
-        assertThat(endCaptor.getValue()).isEqualTo(LocalDateTime.of(2026, 2, 21, 0, 0, 0));
+        assertAll(
+                () -> assertThat(startCaptor.getValue()).isEqualTo(LocalDateTime.of(2026, 2, 20, 0, 0, 0)),
+                () -> assertThat(endCaptor.getValue()).isEqualTo(LocalDateTime.of(2026, 2, 21, 0, 0, 0))
+        );
     }
 }
