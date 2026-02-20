@@ -63,17 +63,29 @@ public class ClubQueryApiV2 {
     }
 
     @Operation(summary = "동아리 목록 조회", description = "필터 조건에 맞는 동아리 목록을 커서 페이징으로 조회합니다")
+    @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
     @GetMapping
     public ResponseEntity<BaseResponse<ClubListResponse>> getClubs(
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String division,
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "20") @Min(1) @Max(30) int size,
-            @RequestParam(defaultValue = "name") String sortBy
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestHeader(value = AuthorizationExtractor.AUTHORIZATION, required = false) String bearerToken
     ) {
+        Long loginUserId = null;
+
+        if (bearerToken != null) {
+            String jwt = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
+
+            if (jwtTokenProvider.validateToken(jwt)) {
+                loginUserId = Long.parseLong(jwtTokenProvider.getPrincipal(jwt));
+            }
+        }
+
         ClubListCommand command = new ClubListCommand(category, division, Cursor.from(cursor), size, sortBy);
 
-        ClubListResult result = clubQueryUseCase.getClubs(command);
+        ClubListResult result = clubQueryUseCase.getClubs(command, loginUserId);
 
         ClubListResponse response = ClubListResponse.from(result);
 

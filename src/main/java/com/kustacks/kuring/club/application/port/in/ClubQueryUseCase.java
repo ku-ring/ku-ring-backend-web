@@ -10,7 +10,7 @@ import java.util.List;
 public interface ClubQueryUseCase {
     List<ClubDivisionResult> getClubDivisions();
 
-    ClubListResult getClubs(ClubListCommand command);
+    ClubListResult getClubs(ClubListCommand command, Long loginUserId);
 
     ClubDetailResult getClubDetail(Long id, String userToken, Long loginUserId);
 

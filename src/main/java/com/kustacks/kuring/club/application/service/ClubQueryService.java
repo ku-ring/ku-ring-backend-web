@@ -36,7 +36,7 @@ public class ClubQueryService implements ClubQueryUseCase {
     }
 
     @Override
-    public ClubListResult getClubs(ClubListCommand command) {
+    public ClubListResult getClubs(ClubListCommand command, Long loginUserId) {
 
         int limit = Math.min(command.size(), 30);
 
@@ -55,18 +55,30 @@ public class ClubQueryService implements ClubQueryUseCase {
         List<ClubItemResult> items =
                 cursorBasedList.getContents()
                         .stream()
-                        .map(r -> new ClubItemResult(
-                                r.getId(),
-                                r.getName(),
-                                r.getSummary(),
-                                r.getIconImageUrl(),
-                                r.getCategory().getName(),
-                                r.getDivision().getName(),
-                                false, // 추후 구독 기능
-                                0, // 추후 구독 기능
-                                r.getRecruitStartDate(),
-                                r.getRecruitEndDate()
-                        ))
+                        .map(r -> {
+
+                            int subscriberCount =
+                                    clubQueryPort.countSubscribers(r.getId());
+
+                            boolean isSubscribed = false;
+                            if (loginUserId != null) {
+                                isSubscribed =
+                                        clubQueryPort.existsSubscription(r.getId(), loginUserId);
+                            }
+
+                            return new ClubItemResult(
+                                    r.getId(),
+                                    r.getName(),
+                                    r.getSummary(),
+                                    r.getIconImageUrl(),
+                                    r.getCategory().getName(),
+                                    r.getDivision().getName(),
+                                    isSubscribed,
+                                    subscriberCount,
+                                    r.getRecruitStartDate(),
+                                    r.getRecruitEndDate()
+                            );
+                        })
                         .toList();
 
         int totalCount = clubQueryPort.countClubs(command.category(), command.divisionList());
