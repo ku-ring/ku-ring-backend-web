@@ -1,11 +1,15 @@
 package com.kustacks.kuring.club.application.service;
 
+import com.kustacks.kuring.club.application.port.in.dto.ClubDetailResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubDivisionResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
+import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
+import com.kustacks.kuring.club.domain.ClubCategory;
 import com.kustacks.kuring.club.domain.ClubDivision;
+import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
 import com.kustacks.kuring.common.data.Cursor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,8 +21,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,8 +47,8 @@ class ClubQueryServiceTest {
                             "쿠링",
                             "건국대 공지사항 앱 만드는 개발 동아리",
                             "icon-url-1",
-                            "ACADEMIC",
-                            "CENTRAL",
+                            ClubCategory.ACADEMIC,
+                            ClubDivision.CENTRAL,
                             LocalDateTime.of(2025, 3, 1, 0, 0),
                             LocalDateTime.of(2025, 3, 31, 23, 59)
                     ),
@@ -49,8 +57,8 @@ class ClubQueryServiceTest {
                             "쿠잇",
                             "건국대 개발 동아리",
                             "icon-url-2",
-                            "ACADEMIC",
-                            "ENGINEERING",
+                            ClubCategory.ACADEMIC,
+                            ClubDivision.ENGINEERING,
                             LocalDateTime.of(2025, 3, 1, 0, 0),
                             LocalDateTime.of(2025, 3, 31, 23, 59)
                     ),
@@ -59,8 +67,8 @@ class ClubQueryServiceTest {
                             "DIUS",
                             "건국대 공과대학 댄스 동아리",
                             "icon-url-3",
-                            "CULTURE_ART",
-                            "ENGINEERING",
+                            ClubCategory.CULTURE_ART,
+                            ClubDivision.ENGINEERING,
                             LocalDateTime.of(2025, 2, 20, 0, 0),
                             LocalDateTime.of(2025, 3, 31, 23, 59)
                     )
@@ -92,6 +100,7 @@ class ClubQueryServiceTest {
         Cursor cursor = Cursor.from(null);
         int size = 10;
         String sortBy = "name";
+        Long loginUserId = 100L;
 
         ClubListCommand command = new ClubListCommand(category, divisions, cursor, size, sortBy);
 
@@ -103,17 +112,150 @@ class ClubQueryServiceTest {
         when(clubQueryPort.countClubs(category, divisionList))
                 .thenReturn(2);
 
+        when(clubQueryPort.countSubscribers(anyLong()))
+                .thenReturn(10);
+
+        when(clubQueryPort.existsSubscription(anyLong(), anyLong()))
+                .thenReturn(true);
+
         // when
-        ClubListResult result = clubQueryService.getClubs(command);
+        ClubListResult result = clubQueryService.getClubs(command, loginUserId);
 
         // then
         assertThat(result.totalCount()).isEqualTo(2);
         assertThat(result.clubs()).hasSize(3);
         assertThat(result.hasNext()).isFalse();
         assertThat(result.cursor()).isNull();
-
+        assertThat(result.clubs().get(0).subscriberCount()).isEqualTo(10);
+        assertThat(result.clubs().get(0).isSubscribed()).isTrue();
         verify(clubQueryPort).searchClubs(category, divisionList, cursor, size + 1, sortBy);
         verify(clubQueryPort).countClubs(category, divisionList);
     }
 
+    @Test
+    @DisplayName("비로그인 사용자는 목록에서 구독 여부를 조회하지 않는다")
+    void getClubs_withoutLogin() {
+        //given
+        String category = "academic";
+        String divisions = "central,engineering";
+        Cursor cursor = Cursor.from(null);
+        int size = 10;
+        String sortBy = "name";
+
+        ClubListCommand command = new ClubListCommand(category, divisions, cursor, size, sortBy);
+
+        List<String> divisionList = List.of("central", "engineering");
+
+        when(clubQueryPort.searchClubs(category, divisionList, cursor, size + 1, sortBy))
+                .thenReturn(mockReadModels);
+
+        when(clubQueryPort.countClubs(category, divisionList))
+                .thenReturn(2);
+
+        when(clubQueryPort.countSubscribers(anyLong()))
+                .thenReturn(5);
+
+        //when
+        ClubListResult result = clubQueryService.getClubs(command, null);
+
+        //then
+        assertThat(result.clubs().get(0).isSubscribed()).isFalse();
+        verify(clubQueryPort, never()).existsSubscription(anyLong(), anyLong());
+    }
+
+    @Test
+    @DisplayName("동아리 상세 정보를 정상적으로 조회한다")
+    void getClubDetail_success() {
+        // given
+        Long clubId = 1L;
+        String userToken = "fcm-token";
+        Long loginUserId = 100L;
+
+        ClubDetailDto dto = new ClubDetailDto(
+                1L,
+                "쿠링",
+                "건국대 공지사항 앱 만드는 개발 동아리",
+                ClubCategory.ACADEMIC,
+                ClubDivision.CENTRAL,
+                "instagram-url",
+                "youtube-url",
+                null,
+                "상세 설명",
+                "지원 자격",
+                ClubRecruitmentStatus.RECRUITING,
+                LocalDateTime.of(2025, 3, 1, 0, 0),
+                LocalDateTime.of(2025, 3, 31, 23, 59),
+                "apply-url",
+                "poster-path",
+                "공학관",
+                "101호",
+                127.0,
+                37.5
+        );
+
+        when(clubQueryPort.findClubDetailById(clubId))
+                .thenReturn(Optional.of(dto));
+
+        when(clubQueryPort.countSubscribers(clubId))
+                .thenReturn(10);
+
+        when(clubQueryPort.existsSubscription(clubId, loginUserId))
+                .thenReturn(true);
+
+        // when
+        ClubDetailResult result = clubQueryService.getClubDetail(clubId, userToken, loginUserId);
+
+        // then
+        assertThat(result.id()).isEqualTo(1L);
+        assertThat(result.name()).isEqualTo("쿠링");
+        assertThat(result.subscriberCount()).isEqualTo(10);
+        assertThat(result.isSubscribed()).isTrue();
+        assertThat(result.location().building()).isEqualTo("공학관");
+        assertThat(result.recruitmentStatus())
+                .isEqualTo(ClubRecruitmentStatus.RECRUITING);
+        assertThat(result.category())
+                .isEqualTo(ClubCategory.ACADEMIC);
+        assertThat(result.division())
+                .isEqualTo(ClubDivision.CENTRAL);
+
+        verify(clubQueryPort).findClubDetailById(clubId);
+        verify(clubQueryPort).countSubscribers(clubId);
+        verify(clubQueryPort).existsSubscription(clubId, loginUserId);
+    }
+
+    @Test
+    @DisplayName("비로그인 사용자는 구독 여부를 조회하지 않는다")
+    void getClubDetail_withoutLogin() {
+
+        Long clubId = 1L;
+        String userToken = "fcm-token";
+
+        ClubDetailDto dto = new ClubDetailDto(
+                1L, "쿠링", "건국대 공지사항 앱 만드는 개발 동아리",
+                ClubCategory.ACADEMIC, ClubDivision.CENTRAL,
+                null, null, null,
+                null, null,
+                ClubRecruitmentStatus.RECRUITING,
+                null, null,
+                null, null,
+                null, null,
+                null, null
+        );
+
+        when(clubQueryPort.findClubDetailById(clubId))
+                .thenReturn(Optional.of(dto));
+
+        when(clubQueryPort.countSubscribers(clubId))
+                .thenReturn(5);
+
+        // when
+        ClubDetailResult result =
+                clubQueryService.getClubDetail(clubId, userToken, null);
+
+        // then
+        assertThat(result.isSubscribed()).isFalse();
+        verify(clubQueryPort).countSubscribers(clubId);
+        verify(clubQueryPort, never()).existsSubscription(anyLong(), any());
+        assertThat(result.subscriberCount()).isEqualTo(5);
+    }
 }
