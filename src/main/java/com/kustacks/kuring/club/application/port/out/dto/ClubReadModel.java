@@ -1,5 +1,7 @@
 package com.kustacks.kuring.club.application.port.out.dto;
 
+import com.kustacks.kuring.club.domain.ClubCategory;
+import com.kustacks.kuring.club.domain.ClubDivision;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 
@@ -12,8 +14,8 @@ public class ClubReadModel {
     private final String name;
     private final String summary;
     private final String iconImageUrl;
-    private final String category;
-    private final String division;
+    private final ClubCategory category;
+    private final ClubDivision division;
     private final LocalDateTime recruitStartDate;
     private final LocalDateTime recruitEndDate;
 
@@ -23,8 +25,8 @@ public class ClubReadModel {
             String name,
             String summary,
             String iconImageUrl,
-            String category,
-            String division,
+            ClubCategory category,
+            ClubDivision division,
             LocalDateTime recruitStartDate,
             LocalDateTime recruitEndDate
     ) {
