@@ -3,12 +3,15 @@ package com.kustacks.kuring.club.adapter.out.persistence;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
 import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
+import com.kustacks.kuring.club.domain.ClubSubscribe;
 import com.kustacks.kuring.common.annotation.PersistenceAdapter;
 import com.kustacks.kuring.common.data.Cursor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
@@ -52,5 +55,43 @@ public class ClubPersistenceAdapter implements ClubQueryPort {
     @Override
     public boolean existsSubscription(Long clubId, Long loginUserId) {
         return clubSubscribeRepository.existsByClubIdAndUser_LoginUserId(clubId, loginUserId);
+    }
+
+    @Override
+    public Map<Long, Integer> countSubscribersByClubIds(List<Long> clubIds) {
+
+        if (clubIds == null || clubIds.isEmpty()) {
+            return Map.of();
+        }
+
+        List<ClubSubscribe> subscriptions = clubSubscribeRepository.findByClubIdIn(clubIds);
+
+        return subscriptions.stream()
+                .collect(Collectors.groupingBy(
+                        sub -> sub.getClub().getId(),
+                        Collectors.collectingAndThen(
+                                Collectors.counting(),
+                                Long::intValue
+                        )
+                ));
+    }
+
+    @Override
+    public Map<Long, Boolean> findSubscribedClubIds(
+            List<Long> clubIds,
+            Long loginUserId
+    ) {
+
+        if (clubIds == null || clubIds.isEmpty() || loginUserId == null) {
+            return Map.of();
+        }
+
+        List<ClubSubscribe> subscriptions = clubSubscribeRepository.findByClubIdInAndUser_LoginUserId(clubIds, loginUserId);
+
+        return subscriptions.stream()
+                .collect(Collectors.toMap(
+                        sub -> sub.getClub().getId(),
+                        sub -> true
+                ));
     }
 }

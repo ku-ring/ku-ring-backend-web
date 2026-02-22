@@ -23,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -125,11 +126,19 @@ class ClubQueryServiceTest {
         when(clubQueryPort.countClubs(category, divisionList))
                 .thenReturn(2);
 
-        when(clubQueryPort.countSubscribers(anyLong()))
-                .thenReturn(10);
+        when(clubQueryPort.countSubscribersByClubIds(any()))
+                .thenReturn(Map.of(
+                        1L, 10,
+                        2L, 10,
+                        3L, 10
+                ));
 
-        when(clubQueryPort.existsSubscription(anyLong(), anyLong()))
-                .thenReturn(true);
+        when(clubQueryPort.findSubscribedClubIds(any(), anyLong()))
+                .thenReturn(Map.of(
+                        1L, true,
+                        2L, true,
+                        3L, true
+                ));
 
         // when
         ClubListResult result = clubQueryService.getClubs(command, email);
@@ -167,8 +176,12 @@ class ClubQueryServiceTest {
         when(clubQueryPort.countClubs(category, divisionList))
                 .thenReturn(2);
 
-        when(clubQueryPort.countSubscribers(anyLong()))
-                .thenReturn(5);
+        when(clubQueryPort.countSubscribersByClubIds(any()))
+                .thenReturn(Map.of(
+                        1L, 5,
+                        2L, 5,
+                        3L, 5
+                ));
 
         //when
         ClubListResult result = clubQueryService.getClubs(command, null);

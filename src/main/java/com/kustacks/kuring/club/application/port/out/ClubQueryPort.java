@@ -5,6 +5,7 @@ import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.common.data.Cursor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ClubQueryPort {
@@ -18,4 +19,8 @@ public interface ClubQueryPort {
     int countSubscribers(Long clubId);
 
     boolean existsSubscription(Long clubId, Long loginUserId);
+
+    Map<Long, Integer> countSubscribersByClubIds(List<Long> clubIds);
+
+    Map<Long, Boolean> findSubscribedClubIds(List<Long> clubIds, Long loginUserId);
 }

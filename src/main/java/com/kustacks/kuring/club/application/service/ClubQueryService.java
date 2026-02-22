@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.kustacks.kuring.common.exception.code.ErrorCode.CLUB_NOT_FOUND;
@@ -59,33 +60,35 @@ public class ClubQueryService implements ClubQueryUseCase {
                 )
         );
 
+        List<Long> clubIds = cursorBasedList.getContents()
+                .stream()
+                .map(ClubReadModel::getId)
+                .toList();
+
+        Map<Long, Integer> subscriberCountMap = clubQueryPort.countSubscribersByClubIds(clubIds);
+
+        Map<Long, Boolean> subscribedMap = loginUserId != null
+                ? clubQueryPort.findSubscribedClubIds(clubIds, loginUserId)
+                : Map.of();
+
+
         List<ClubItemResult> items =
                 cursorBasedList.getContents()
                         .stream()
-                        .map(r -> {
-
-                            int subscriberCount =
-                                    clubQueryPort.countSubscribers(r.getId());
-
-                            boolean isSubscribed = false;
-                            if (loginUserId != null) {
-                                isSubscribed = clubQueryPort.existsSubscription(r.getId(), loginUserId);
-                            }
-
-                            return new ClubItemResult(
-                                    r.getId(),
-                                    r.getName(),
-                                    r.getSummary(),
-                                    r.getIconImageUrl(),
-                                    r.getCategory().getName(),
-                                    r.getDivision().getName(),
-                                    isSubscribed,
-                                    subscriberCount,
-                                    r.getRecruitStartDate(),
-                                    r.getRecruitEndDate()
-                            );
-                        })
+                        .map(r -> new ClubItemResult(
+                                r.getId(),
+                                r.getName(),
+                                r.getSummary(),
+                                r.getIconImageUrl(),
+                                r.getCategory().getName(),
+                                r.getDivision().getName(),
+                                subscribedMap.getOrDefault(r.getId(), false),
+                                subscriberCountMap.getOrDefault(r.getId(), 0),
+                                r.getRecruitStartDate(),
+                                r.getRecruitEndDate()
+                        ))
                         .toList();
+
 
         int totalCount = clubQueryPort.countClubs(command.category(), command.divisionList());
 
