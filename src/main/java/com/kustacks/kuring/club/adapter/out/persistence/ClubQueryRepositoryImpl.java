@@ -51,7 +51,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                 .where(
                         categoryEq(category),
                         divisionIn(divisions),
-                        idAfterCursor(cursor)
+                        cursorCondition(sortBy, cursor)
                 )
                 .orderBy(getOrderSpecifiers(sortBy))
                 .limit(size)
@@ -177,23 +177,74 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
         );
     }
 
-    private BooleanExpression idAfterCursor(String cursor) {
+    private BooleanExpression cursorCondition(String sortBy, String cursor) {
+
         if (cursor == null || cursor.equals("0")) return null;
-        return club.id.gt(Long.parseLong(cursor));
+
+        try {
+
+            String[] parts = cursor.split("\\|");
+            if (parts.length < 2) return null;
+
+            return switch (sortBy) {
+
+                case "name" -> {
+                    String lastName = parts[0];
+                    Long lastId = Long.parseLong(parts[1]);
+
+                    yield club.name.gt(lastName)
+                            .or(
+                                    club.name.eq(lastName)
+                                            .and(club.id.gt(lastId))
+                            );
+                }
+
+                case "recruitEndDate" -> {
+                    Long lastId = Long.parseLong(parts[1]);
+
+                    if ("null".equals(parts[0])) {
+                        yield club.recruitEndAt.isNull()
+                                .and(club.id.gt(lastId))
+                                .or(club.recruitEndAt.isNotNull());
+                    }
+
+                    LocalDateTime lastDate = LocalDateTime.parse(parts[0]);
+
+                    yield club.recruitEndAt.gt(lastDate)
+                            .or(
+                                    club.recruitEndAt.eq(lastDate)
+                                            .and(club.id.gt(lastId))
+                            );
+                }
+
+                default -> {
+                    Long lastId = Long.parseLong(cursor);
+                    yield club.id.gt(lastId);
+                }
+            };
+
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private OrderSpecifier<?>[] getOrderSpecifiers(String sortBy) {
 
-        if ("recruitEndDate".equals(sortBy)) {
-            return new OrderSpecifier[]{
+        return switch (sortBy) {
+
+            case "name" -> new OrderSpecifier[]{
+                    club.name.asc(),
+                    club.id.asc()
+            };
+
+            case "recruitEndDate" -> new OrderSpecifier[]{
                     club.recruitEndAt.asc(),
                     club.id.asc()
             };
-        }
 
-        return new OrderSpecifier[]{
-                club.name.asc(),
-                club.id.asc()
+            default -> new OrderSpecifier[]{
+                    club.id.asc()
+            };
         };
     }
 

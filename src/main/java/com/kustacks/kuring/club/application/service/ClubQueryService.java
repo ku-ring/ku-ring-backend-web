@@ -49,7 +49,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         CursorBasedList<ClubReadModel> cursorBasedList = CursorBasedList.of(
                 limit,
-                club -> club.getId().toString(),
+                club -> generateCursor(club, command.sortBy()),
                 searchSize -> clubQueryPort.searchClubs(
                         command.category(),
                         command.divisionList(),
@@ -149,5 +149,19 @@ public class ClubQueryService implements ClubQueryUseCase {
                 || dto.getRoom() != null
                 || dto.getLon() != null
                 || dto.getLat() != null;
+    }
+
+    private String generateCursor(ClubReadModel club, String sortBy) {
+        return switch (sortBy) {
+            case "name" -> club.getName() + "|" + club.getId();
+            case "recruitEndDate" -> {
+                if (club.getRecruitEndDate() == null) {
+                    yield "null|" + club.getId();
+                }
+                yield club.getRecruitEndDate()
+                        + "|" + club.getId();
+            }
+            default -> club.getId().toString();
+        };
     }
 }
