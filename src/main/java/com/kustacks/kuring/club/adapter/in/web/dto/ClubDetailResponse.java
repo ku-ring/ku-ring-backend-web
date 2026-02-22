@@ -26,15 +26,15 @@ public record ClubDetailResponse(
 ) {
 
     public static ClubDetailResponse from(ClubDetailResult result) {
-        Location location = null;
-        if (result.location() != null) {
-            location = new Location(
-                    result.location().building(),
-                    result.location().room(),
-                    result.location().lon(),
-                    result.location().lat()
-            );
-        }
+
+        Location location = result.location() == null ?
+                null
+                : new Location(
+                result.location().building(),
+                result.location().room(),
+                result.location().lon(),
+                result.location().lat()
+        );
 
         return new ClubDetailResponse(
                 result.id(),

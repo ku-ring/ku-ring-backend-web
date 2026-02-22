@@ -113,6 +113,15 @@ public class ClubQueryService implements ClubQueryUseCase {
             isSubscribed = clubQueryPort.existsSubscription(id, loginUserId);
         }
 
+        ClubDetailResult.Location location = hasLocation(dto) ?
+                new ClubDetailResult.Location(
+                        dto.getBuilding(),
+                        dto.getRoom(),
+                        dto.getLon(),
+                        dto.getLat()
+                )
+                : null;
+
         return new ClubDetailResult(
                 dto.getId(),
                 dto.getName(),
@@ -131,13 +140,14 @@ public class ClubQueryService implements ClubQueryUseCase {
                 dto.getRecruitEndAt(),
                 dto.getApplyUrl(),
                 dto.getPosterImagePath(),
-                new ClubDetailResult.Location(
-                        dto.getBuilding(),
-                        dto.getRoom(),
-                        dto.getLon(),
-                        dto.getLat()
-                )
+                location
         );
     }
 
+    private boolean hasLocation(ClubDetailDto dto) {
+        return dto.getBuilding() != null
+                || dto.getRoom() != null
+                || dto.getLon() != null
+                || dto.getLat() != null;
+    }
 }
