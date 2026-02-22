@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extractAuthorizationValue;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CLUB_DETAIL_SEARCH_SUCCESS;
@@ -73,19 +74,11 @@ public class ClubQueryApiV2 {
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestHeader(value = AuthorizationExtractor.AUTHORIZATION, required = false) String bearerToken
     ) {
-        Long loginUserId = null;
-
-        if (bearerToken != null) {
-            String jwt = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
-
-            if (jwtTokenProvider.validateToken(jwt)) {
-                loginUserId = Long.parseLong(jwtTokenProvider.getPrincipal(jwt));
-            }
-        }
+        String email = resolveLoginEmail(bearerToken);
 
         ClubListCommand command = new ClubListCommand(category, division, Cursor.from(cursor), size, sortBy);
 
-        ClubListResult result = clubQueryUseCase.getClubs(command, loginUserId);
+        ClubListResult result = clubQueryUseCase.getClubs(command, email);
 
         ClubListResponse response = ClubListResponse.from(result);
 
@@ -101,23 +94,26 @@ public class ClubQueryApiV2 {
             @RequestHeader(value = FCM_TOKEN_HEADER_KEY, required = false) String userToken,
             @RequestHeader(value = AuthorizationExtractor.AUTHORIZATION, required = false) String bearerToken
     ) {
-        Long loginUserId = null;
+        String email = resolveLoginEmail(bearerToken);
 
-        if (bearerToken != null) {
-            String jwt = extractAuthorizationValue(bearerToken, AuthorizationType.BEARER);
-
-            if (!jwtTokenProvider.validateToken(jwt)) {
-                throw new InvalidStateException(ErrorCode.JWT_INVALID_TOKEN);
-            }
-
-            loginUserId = Long.parseLong(jwtTokenProvider.getPrincipal(jwt));
-        }
-
-
-        ClubDetailResult result = clubQueryUseCase.getClubDetail(id, userToken, loginUserId);
+        ClubDetailResult result = clubQueryUseCase.getClubDetail(id, userToken, email);
 
         ClubDetailResponse response = ClubDetailResponse.from(result);
 
         return ResponseEntity.ok().body(new BaseResponse<>(CLUB_DETAIL_SEARCH_SUCCESS, response));
+    }
+
+    private String resolveLoginEmail(String bearerToken) {
+        return Optional.ofNullable(bearerToken)
+                .map(token -> extractAuthorizationValue(token, AuthorizationType.BEARER))
+                .map(this::validateJwtAndGetEmail)
+                .orElse(null);
+    }
+
+    private String validateJwtAndGetEmail(String jwtToken) {
+        if (!jwtTokenProvider.validateToken(jwtToken)) {
+            throw new InvalidStateException(ErrorCode.JWT_INVALID_TOKEN);
+        }
+        return jwtTokenProvider.getPrincipal(jwtToken);
     }
 }

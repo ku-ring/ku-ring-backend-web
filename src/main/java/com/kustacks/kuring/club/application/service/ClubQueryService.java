@@ -13,11 +13,14 @@ import com.kustacks.kuring.club.domain.ClubDivision;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.data.CursorBasedList;
 import com.kustacks.kuring.common.exception.NotFoundException;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
+import com.kustacks.kuring.user.domain.RootUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static com.kustacks.kuring.common.exception.code.ErrorCode.CLUB_NOT_FOUND;
 
@@ -27,6 +30,7 @@ import static com.kustacks.kuring.common.exception.code.ErrorCode.CLUB_NOT_FOUND
 public class ClubQueryService implements ClubQueryUseCase {
 
     private final ClubQueryPort clubQueryPort;
+    private final RootUserQueryPort rootUserQueryPort;
 
     @Override
     public List<ClubDivisionResult> getClubDivisions() {
@@ -36,7 +40,10 @@ public class ClubQueryService implements ClubQueryUseCase {
     }
 
     @Override
-    public ClubListResult getClubs(ClubListCommand command, Long loginUserId) {
+    public ClubListResult getClubs(ClubListCommand command, String email) {
+
+        Optional<RootUser> optionalRootUser = rootUserQueryPort.findRootUserByEmail(email);
+        Long loginUserId = optionalRootUser.map(RootUser::getId).orElse(null);
 
         int limit = Math.min(command.size(), 30);
 
@@ -62,8 +69,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
                             boolean isSubscribed = false;
                             if (loginUserId != null) {
-                                isSubscribed =
-                                        clubQueryPort.existsSubscription(r.getId(), loginUserId);
+                                isSubscribed = clubQueryPort.existsSubscription(r.getId(), loginUserId);
                             }
 
                             return new ClubItemResult(
@@ -83,18 +89,19 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         int totalCount = clubQueryPort.countClubs(command.category(), command.divisionList());
 
-        String nextCursor = cursorBasedList.getEndCursor();
-
         return new ClubListResult(
                 items,
-                nextCursor,
+                cursorBasedList.getEndCursor(),
                 cursorBasedList.hasNext(),
                 totalCount
         );
     }
 
     @Override
-    public ClubDetailResult getClubDetail(Long id, String userToken, Long loginUserId) {
+    public ClubDetailResult getClubDetail(Long id, String userToken, String email) {
+
+        Optional<RootUser> optionalRootUser = rootUserQueryPort.findRootUserByEmail(email);
+        Long loginUserId = optionalRootUser.map(RootUser::getId).orElse(null);
 
         ClubDetailDto dto = clubQueryPort.findClubDetailById(id)
                 .orElseThrow(() -> new NotFoundException(CLUB_NOT_FOUND));

@@ -11,6 +11,8 @@ import com.kustacks.kuring.club.domain.ClubCategory;
 import com.kustacks.kuring.club.domain.ClubDivision;
 import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
 import com.kustacks.kuring.common.data.Cursor;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
+import com.kustacks.kuring.user.domain.RootUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +28,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,6 +39,9 @@ class ClubQueryServiceTest {
 
     @Mock
     private ClubQueryPort clubQueryPort;
+
+    @Mock
+    private RootUserQueryPort rootUserQueryPort;
 
     @InjectMocks
     private ClubQueryService clubQueryService;
@@ -100,7 +106,14 @@ class ClubQueryServiceTest {
         Cursor cursor = Cursor.from(null);
         int size = 10;
         String sortBy = "name";
+
+        String email = "test@test.com";
         Long loginUserId = 100L;
+
+        RootUser rootUser = mock(RootUser.class);
+        when(rootUser.getId()).thenReturn(loginUserId);
+        when(rootUserQueryPort.findRootUserByEmail(email))
+                .thenReturn(Optional.of(rootUser));
 
         ClubListCommand command = new ClubListCommand(category, divisions, cursor, size, sortBy);
 
@@ -119,7 +132,7 @@ class ClubQueryServiceTest {
                 .thenReturn(true);
 
         // when
-        ClubListResult result = clubQueryService.getClubs(command, loginUserId);
+        ClubListResult result = clubQueryService.getClubs(command, email);
 
         // then
         assertThat(result.totalCount()).isEqualTo(2);
@@ -128,6 +141,8 @@ class ClubQueryServiceTest {
         assertThat(result.cursor()).isNull();
         assertThat(result.clubs().get(0).subscriberCount()).isEqualTo(10);
         assertThat(result.clubs().get(0).isSubscribed()).isTrue();
+
+        verify(rootUserQueryPort).findRootUserByEmail(email);
         verify(clubQueryPort).searchClubs(category, divisionList, cursor, size + 1, sortBy);
         verify(clubQueryPort).countClubs(category, divisionList);
     }
@@ -169,7 +184,14 @@ class ClubQueryServiceTest {
         // given
         Long clubId = 1L;
         String userToken = "fcm-token";
+
+        String email = "test@test.com";
         Long loginUserId = 100L;
+
+        RootUser rootUser = mock(RootUser.class);
+        when(rootUser.getId()).thenReturn(loginUserId);
+        when(rootUserQueryPort.findRootUserByEmail(email))
+                .thenReturn(Optional.of(rootUser));
 
         ClubDetailDto dto = new ClubDetailDto(
                 1L,
@@ -203,7 +225,7 @@ class ClubQueryServiceTest {
                 .thenReturn(true);
 
         // when
-        ClubDetailResult result = clubQueryService.getClubDetail(clubId, userToken, loginUserId);
+        ClubDetailResult result = clubQueryService.getClubDetail(clubId, userToken, email);
 
         // then
         assertThat(result.id()).isEqualTo(1L);
@@ -218,6 +240,7 @@ class ClubQueryServiceTest {
         assertThat(result.division())
                 .isEqualTo(ClubDivision.CENTRAL);
 
+        verify(rootUserQueryPort).findRootUserByEmail(email);
         verify(clubQueryPort).findClubDetailById(clubId);
         verify(clubQueryPort).countSubscribers(clubId);
         verify(clubQueryPort).existsSubscription(clubId, loginUserId);
