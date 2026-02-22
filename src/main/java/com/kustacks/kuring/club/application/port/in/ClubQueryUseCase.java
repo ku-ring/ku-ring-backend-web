@@ -12,6 +12,6 @@ public interface ClubQueryUseCase {
 
     ClubListResult getClubs(ClubListCommand command, String email);
 
-    ClubDetailResult getClubDetail(Long id, String userToken, String email);
+    ClubDetailResult getClubDetail(Long id, String email);
 
 }

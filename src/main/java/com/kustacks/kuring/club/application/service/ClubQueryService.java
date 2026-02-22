@@ -98,7 +98,7 @@ public class ClubQueryService implements ClubQueryUseCase {
     }
 
     @Override
-    public ClubDetailResult getClubDetail(Long id, String userToken, String email) {
+    public ClubDetailResult getClubDetail(Long id, String email) {
 
         Optional<RootUser> optionalRootUser = rootUserQueryPort.findRootUserByEmail(email);
         Long loginUserId = optionalRootUser.map(RootUser::getId).orElse(null);

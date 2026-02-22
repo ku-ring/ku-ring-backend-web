@@ -96,7 +96,7 @@ public class ClubQueryApiV2 {
     ) {
         String email = resolveLoginEmail(bearerToken);
 
-        ClubDetailResult result = clubQueryUseCase.getClubDetail(id, userToken, email);
+        ClubDetailResult result = clubQueryUseCase.getClubDetail(id, email);
 
         ClubDetailResponse response = ClubDetailResponse.from(result);
 

@@ -183,7 +183,6 @@ class ClubQueryServiceTest {
     void getClubDetail_success() {
         // given
         Long clubId = 1L;
-        String userToken = "fcm-token";
 
         String email = "test@test.com";
         Long loginUserId = 100L;
@@ -225,7 +224,7 @@ class ClubQueryServiceTest {
                 .thenReturn(true);
 
         // when
-        ClubDetailResult result = clubQueryService.getClubDetail(clubId, userToken, email);
+        ClubDetailResult result = clubQueryService.getClubDetail(clubId, email);
 
         // then
         assertThat(result.id()).isEqualTo(1L);
@@ -251,7 +250,6 @@ class ClubQueryServiceTest {
     void getClubDetail_withoutLogin() {
 
         Long clubId = 1L;
-        String userToken = "fcm-token";
 
         ClubDetailDto dto = new ClubDetailDto(
                 1L, "쿠링", "건국대 공지사항 앱 만드는 개발 동아리",
@@ -273,7 +271,7 @@ class ClubQueryServiceTest {
 
         // when
         ClubDetailResult result =
-                clubQueryService.getClubDetail(clubId, userToken, null);
+                clubQueryService.getClubDetail(clubId, null);
 
         // then
         assertThat(result.isSubscribed()).isFalse();
