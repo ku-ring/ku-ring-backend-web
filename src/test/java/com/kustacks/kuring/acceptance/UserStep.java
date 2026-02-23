@@ -107,16 +107,6 @@ public class UserStep {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> 동아리_구독_추가_요청_유저토큰없음(String accessToken, Long clubId) {
-        return RestAssured.given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer " + accessToken)
-                .body(new UserClubSubscriptionRequest(clubId))
-                .when().post("/api/v2/users/subscriptions/clubs")
-                .then().log().all()
-                .extract();
-    }
-
     public static void 학과_구독_응답_확인(ExtractableResponse<Response> response) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
