@@ -53,18 +53,16 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
             int totalPageSize = (int) Math.ceil((double) totalNoticeSize / ROW_NUMBERS_PER_PAGE_ALL);
 
             // 2) 첫 페이지를 base로 가져오기(1 page)
-            String firstUrl = deptInfo.createUndergraduateRequestUrl(START_PAGE_NUM, ROW_NUMBERS_PER_PAGE_ALL);
-            Document baseDoc = getDocumentPerPage(firstUrl, LATEST_SCRAP_ALL_TIMEOUT);
+            Document baseDoc = fetchPageDoc(deptInfo, START_PAGE_NUM, ROW_NUMBERS_PER_PAGE_ALL);
             Element baseTbody = extractTbodyFromDocument(baseDoc);
             if (baseTbody == null) {
-                log.warn("[SCRAP] no tbody : dept={}, title={}, url={}", deptInfo.getDeptName(), baseDoc.title(), firstUrl);
+                log.warn("[SCRAP] no tbody : dept={}, title={}, url={}", deptInfo.getDeptName(), baseDoc.title(), totalUrl);
                 return Collections.emptyList();
             }
 
             // 3) 반복문을 돌며 baseTbody에 뒷 페이지의 tr들 합치기(2 page~)
             for(int page = START_PAGE_NUM + 1; page <= totalPageSize; page++){
-                String pageUrl = deptInfo.createUndergraduateRequestUrl(page, ROW_NUMBERS_PER_PAGE_ALL);
-                Document doc = getDocumentPerPage(pageUrl, LATEST_SCRAP_ALL_TIMEOUT);
+                Document doc = fetchPageDoc(deptInfo, page, ROW_NUMBERS_PER_PAGE_ALL);
                 Elements trs = extractTrsFromDocument(doc);
 
                 if (trs.isEmpty()) break;
@@ -116,6 +114,11 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private Document getDocumentPerPage(String url, int timeout) throws IOException{
         return jsoupClient.get(url, timeout);
+    }
+
+    private Document fetchPageDoc(DeptInfo deptInfo, int page, int row) throws IOException {
+        String url = deptInfo.createUndergraduateRequestUrl(page, row);
+        return getDocumentPerPage(url, LATEST_SCRAP_ALL_TIMEOUT);
     }
 
     private String buildUrlForTotalNoticeCount(DeptInfo deptInfo) {
