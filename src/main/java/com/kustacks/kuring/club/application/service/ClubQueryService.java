@@ -18,6 +18,7 @@ import com.kustacks.kuring.user.domain.RootUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -48,15 +49,18 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         int limit = Math.min(command.size(), 30);
 
+        LocalDateTime now = LocalDateTime.now();
+
         CursorBasedList<ClubReadModel> cursorBasedList = CursorBasedList.of(
                 limit,
-                club -> generateCursor(club, command.sortBy()),
+                club -> generateCursor(club, command.sortBy(), now),
                 searchSize -> clubQueryPort.searchClubs(
                         command.category(),
                         command.divisionList(),
                         command.cursor(),
                         searchSize,
-                        command.sortBy()
+                        command.sortBy(),
+                        now
                 )
         );
 
@@ -154,15 +158,24 @@ public class ClubQueryService implements ClubQueryUseCase {
                 || dto.getLat() != null;
     }
 
-    private String generateCursor(ClubReadModel club, String sortBy) {
+    private String generateCursor(ClubReadModel club, String sortBy, LocalDateTime now) {
         return switch (sortBy) {
             case "name" -> club.getName() + "|" + club.getId();
             case "recruitEndDate" -> {
+                int group;
                 if (club.getRecruitEndDate() == null) {
-                    yield "null|" + club.getId();
+                    group = 2;
+                } else if (club.getRecruitEndDate().isBefore(now)) {
+                    group = 1;
+                } else {
+                    group = 0;
                 }
-                yield club.getRecruitEndDate()
-                        + "|" + club.getId();
+
+                String datePart = club.getRecruitEndDate() == null
+                        ? "null"
+                        : club.getRecruitEndDate().toString();
+
+                yield group + "|" + datePart + "|" + club.getId();
             }
             default -> club.getId().toString();
         };

@@ -10,6 +10,8 @@ import com.kustacks.kuring.club.domain.ClubSnsType;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +35,8 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
             List<String> divisions,
             String cursor,
             int size,
-            String sortBy
+            String sortBy,
+            LocalDateTime now
     ) {
 
         return queryFactory
@@ -51,9 +54,9 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                 .where(
                         categoryEq(category),
                         divisionIn(divisions),
-                        cursorCondition(sortBy, cursor)
+                        cursorCondition(sortBy, cursor, now)
                 )
-                .orderBy(getOrderSpecifiers(sortBy))
+                .orderBy(getOrderSpecifiers(sortBy, now))
                 .limit(size)
                 .fetch();
     }
@@ -177,18 +180,19 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
         );
     }
 
-    private BooleanExpression cursorCondition(String sortBy, String cursor) {
+    private BooleanExpression cursorCondition(String sortBy, String cursor, LocalDateTime now) {
 
         if (cursor == null || cursor.equals("0")) return null;
 
         try {
 
             String[] parts = cursor.split("\\|");
-            if (parts.length < 2) return null;
 
             return switch (sortBy) {
 
                 case "name" -> {
+                    if (parts.length < 2) yield null;
+
                     String lastName = parts[0];
                     Long lastId = Long.parseLong(parts[1]);
 
@@ -200,21 +204,34 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                 }
 
                 case "recruitEndDate" -> {
-                    Long lastId = Long.parseLong(parts[1]);
+                    if (parts.length < 3) yield null;
 
-                    if ("null".equals(parts[0])) {
-                        yield club.recruitEndAt.isNull()
-                                .and(club.id.gt(lastId))
-                                .or(club.recruitEndAt.isNotNull());
+                    int lastGroup = Integer.parseInt(parts[0]);
+                    String lastDateStr = parts[1];
+                    Long lastId = Long.parseLong(parts[2]);
+
+                    NumberExpression<Integer> currentGroup = recruitmentGroup(now);
+
+                    BooleanExpression groupCondition = currentGroup.gt(lastGroup);
+
+                    BooleanExpression sameGroupCondition;
+
+                    if ("null".equals(lastDateStr)) {
+                        sameGroupCondition = currentGroup.eq(lastGroup)
+                                .and(club.id.gt(lastId));
+                    } else {
+                        LocalDateTime lastDate = LocalDateTime.parse(lastDateStr);
+                        sameGroupCondition = currentGroup.eq(lastGroup)
+                                .and(
+                                        club.recruitEndAt.gt(lastDate)
+                                                .or(
+                                                        club.recruitEndAt.eq(lastDate)
+                                                                .and(club.id.gt(lastId))
+                                                )
+                                );
                     }
+                    yield groupCondition.or(sameGroupCondition);
 
-                    LocalDateTime lastDate = LocalDateTime.parse(parts[0]);
-
-                    yield club.recruitEndAt.gt(lastDate)
-                            .or(
-                                    club.recruitEndAt.eq(lastDate)
-                                            .and(club.id.gt(lastId))
-                            );
                 }
 
                 default -> {
@@ -228,7 +245,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
         }
     }
 
-    private OrderSpecifier<?>[] getOrderSpecifiers(String sortBy) {
+    private OrderSpecifier<?>[] getOrderSpecifiers(String sortBy, LocalDateTime now) {
 
         return switch (sortBy) {
 
@@ -237,15 +254,31 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                     club.id.asc()
             };
 
-            case "recruitEndDate" -> new OrderSpecifier[]{
-                    club.recruitEndAt.asc(),
-                    club.id.asc()
-            };
+            case "recruitEndDate" -> {
+
+                var statusOrder = new CaseBuilder()
+                        .when(club.recruitEndAt.isNull()).then(2)
+                        .when(club.recruitEndAt.lt(now)).then(1)
+                        .otherwise(0);
+
+                yield new OrderSpecifier[]{
+                        statusOrder.asc(),
+                        club.recruitEndAt.asc().nullsLast(),
+                        club.id.asc()
+                };
+            }
 
             default -> new OrderSpecifier[]{
                     club.id.asc()
             };
         };
+    }
+
+    private NumberExpression<Integer> recruitmentGroup(LocalDateTime now) {
+        return new CaseBuilder()
+                .when(club.recruitEndAt.isNull()).then(2)
+                .when(club.recruitEndAt.lt(now)).then(1)
+                .otherwise(0);
     }
 
     private ClubRecruitmentStatus calculateRecruitmentStatus(

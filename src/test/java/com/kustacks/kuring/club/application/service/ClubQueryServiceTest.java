@@ -29,6 +29,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -120,8 +121,14 @@ class ClubQueryServiceTest {
 
         List<String> divisionList = List.of("central", "engineering");
 
-        when(clubQueryPort.searchClubs(category, divisionList, cursor, size + 1, sortBy))
-                .thenReturn(mockReadModels);
+        when(clubQueryPort.searchClubs(
+                eq(category),
+                eq(divisionList),
+                eq(cursor),
+                eq(size + 1),
+                eq(sortBy),
+                any(LocalDateTime.class)
+        )).thenReturn(mockReadModels);
 
         when(clubQueryPort.countClubs(category, divisionList))
                 .thenReturn(2);
@@ -152,7 +159,7 @@ class ClubQueryServiceTest {
         assertThat(result.clubs().get(0).isSubscribed()).isTrue();
 
         verify(rootUserQueryPort).findRootUserByEmail(email);
-        verify(clubQueryPort).searchClubs(category, divisionList, cursor, size + 1, sortBy);
+        verify(clubQueryPort).searchClubs(eq(category), eq(divisionList), eq(cursor), eq(size + 1), eq(sortBy), any(LocalDateTime.class));
         verify(clubQueryPort).countClubs(category, divisionList);
     }
 
@@ -170,8 +177,14 @@ class ClubQueryServiceTest {
 
         List<String> divisionList = List.of("central", "engineering");
 
-        when(clubQueryPort.searchClubs(category, divisionList, cursor, size + 1, sortBy))
-                .thenReturn(mockReadModels);
+        when(clubQueryPort.searchClubs(
+                eq(category),
+                eq(divisionList),
+                eq(cursor),
+                eq(size + 1),
+                eq(sortBy),
+                any(LocalDateTime.class)
+        )).thenReturn(mockReadModels);
 
         when(clubQueryPort.countClubs(category, divisionList))
                 .thenReturn(2);

@@ -8,6 +8,7 @@ import com.kustacks.kuring.common.annotation.PersistenceAdapter;
 import com.kustacks.kuring.common.data.Cursor;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,14 +27,16 @@ public class ClubPersistenceAdapter implements ClubQueryPort {
             List<String> divisions,
             Cursor cursor,
             int size,
-            String sortBy
+            String sortBy,
+            LocalDateTime now
     ) {
         return clubRepository.searchClubs(
                 category,
                 divisions,
                 cursor == null ? null : cursor.getStringCursor(),
                 size,
-                sortBy
+                sortBy,
+                now
         );
     }
 
