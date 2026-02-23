@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -56,14 +57,14 @@ class UserClubSubscriptionApiV2 {
     @Operation(summary = "사용자 동아리 구독 제거")
     @SecurityRequirement(name = FCM_TOKEN_HEADER_KEY)
     @SecurityRequirement(name = "JWT")
-    @DeleteMapping
+    @DeleteMapping("/{clubId}")
     public ResponseEntity<BaseResponse<UserClubSubscriptionCountResponse>> deleteSubscription(
             @RequestHeader(FCM_TOKEN_HEADER_KEY) String userToken,
             @RequestHeader(AuthorizationExtractor.AUTHORIZATION) String bearerToken,
-            @Valid @RequestBody UserClubSubscriptionRequest request
+            @PathVariable Long clubId
     ) {
         String email = validateJwtAndGetEmail(extractAuthorizationValue(bearerToken, AuthorizationType.BEARER));
-        long subscriptionCount = clubSubscriptionUseCase.removeSubscription(new ClubSubscriptionCommand(email, request.id()));
+        long subscriptionCount = clubSubscriptionUseCase.removeSubscription(new ClubSubscriptionCommand(email, clubId));
 
         return ResponseEntity.ok(new BaseResponse<>(CLUB_SUBSCRIPTION_DELETE_SUCCESS, new UserClubSubscriptionCountResponse(subscriptionCount)));
     }

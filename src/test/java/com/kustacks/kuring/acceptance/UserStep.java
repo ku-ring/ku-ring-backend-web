@@ -101,8 +101,7 @@ public class UserStep {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("User-Token", userToken)
                 .header("Authorization", "Bearer " + accessToken)
-                .body(new UserClubSubscriptionRequest(clubId))
-                .when().delete("/api/v2/users/subscriptions/clubs")
+                .when().delete("/api/v2/users/subscriptions/clubs/{clubId}", clubId)
                 .then().log().all()
                 .extract();
     }
