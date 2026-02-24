@@ -57,7 +57,7 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
             Element baseTbody = extractTbodyFromDocument(baseDoc);
             if (baseTbody == null) {
                 log.warn("[SCRAP] no tbody : dept={}, title={}, url={}", deptInfo.getDeptName(), baseDoc.title(), totalUrl);
-                return Collections.emptyList();
+                throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_SCRAP);
             }
 
             // 3) 반복문을 돌며 baseTbody에 뒷 페이지의 tr들 합치기(2 page~)
