@@ -35,13 +35,15 @@ import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CLUB_SUBSCR
 class UserClubSubscriptionApiV2 {
 
     private static final String FCM_TOKEN_HEADER_KEY = "User-Token";
+    private static final String JWT_TOKEN_HEADER_KEY = "JWT";
+
 
     private final ClubSubscriptionUseCase clubSubscriptionUseCase;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Operation(summary = "사용자 동아리 구독 추가")
     @SecurityRequirement(name = FCM_TOKEN_HEADER_KEY)
-    @SecurityRequirement(name = "JWT")
+    @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
     @PostMapping
     public ResponseEntity<BaseResponse<UserClubSubscriptionCountResponse>> addSubscription(
             @RequestHeader(FCM_TOKEN_HEADER_KEY) String userToken,
@@ -56,7 +58,7 @@ class UserClubSubscriptionApiV2 {
 
     @Operation(summary = "사용자 동아리 구독 제거")
     @SecurityRequirement(name = FCM_TOKEN_HEADER_KEY)
-    @SecurityRequirement(name = "JWT")
+    @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
     @DeleteMapping("/{clubId}")
     public ResponseEntity<BaseResponse<UserClubSubscriptionCountResponse>> deleteSubscription(
             @RequestHeader(FCM_TOKEN_HEADER_KEY) String userToken,
