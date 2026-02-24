@@ -15,11 +15,14 @@ import java.util.List;
 import java.util.stream.IntStream;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.dto.ScrapingResultDto;
+import com.kustacks.kuring.common.exception.InternalLogicException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
 class LatestPageNoticeApiClientTest {
@@ -81,9 +84,9 @@ class LatestPageNoticeApiClientTest {
         verify(jsoupClient).get(eq(page3), anyInt());
     }
 
-    @DisplayName("base 페이지에 tbody가 없으면 empty 반환한다")
+    @DisplayName("base 페이지에 tbody가 없으면 NOTICE_SCRAPER_CANNOT_SCRAP 에러를 발생시킨다.")
     @Test
-    void requestAll_return_empty_when_no_tbody() throws Exception {
+    void requestAll_throw_notice_scrap_exception_when_no_tbody() throws Exception {
         // given
         LatestPageNoticeApiClient apiClient = new LatestPageNoticeApiClient(jsoupClient);
 
@@ -103,11 +106,9 @@ class LatestPageNoticeApiClientTest {
         when(jsoupClient.get(eq(firstUrl), anyInt()))
                 .thenReturn(Jsoup.parse("<html><head><title>x</title></head><body><div>no table</div></body></html>"));
 
-        // when
-        List<ScrapingResultDto> result = apiClient.requestAll(deptInfo);
-
-        // then
-        assertThat(result).isEmpty();
+        // when & then
+        assertThatThrownBy(() -> apiClient.requestAll(deptInfo))
+                .isInstanceOf(InternalLogicException.class);
     }
 
     @DisplayName("IOException이 발생하면 empty 반환한다")
