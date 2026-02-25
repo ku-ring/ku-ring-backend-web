@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.kustacks.kuring.common.exception.code.ErrorCode.CLUB_NOT_FOUND;
 
@@ -71,10 +72,14 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         Map<Long, Integer> subscriberCountMap = clubQueryPort.countSubscribersByClubIds(clubIds);
 
-        Map<Long, Boolean> subscribedMap = loginUserId != null
-                ? clubQueryPort.findSubscribedClubIds(clubIds, loginUserId)
-                : Map.of();
+        List<Long> subscribedClubIds = List.of();
 
+        if (loginUserId != null && !clubIds.isEmpty()) {
+            subscribedClubIds = clubQueryPort.findSubscribedClubIds(clubIds, loginUserId);
+        }
+
+        Map<Long, Boolean> subscribedMap = subscribedClubIds.stream()
+                .collect(Collectors.toMap(id -> id, id -> true));
 
         List<ClubItemResult> items =
                 cursorBasedList.getContents()

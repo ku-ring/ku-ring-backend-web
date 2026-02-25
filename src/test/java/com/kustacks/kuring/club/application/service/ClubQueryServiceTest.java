@@ -141,11 +141,7 @@ class ClubQueryServiceTest {
                 ));
 
         when(clubQueryPort.findSubscribedClubIds(any(), anyLong()))
-                .thenReturn(Map.of(
-                        1L, true,
-                        2L, true,
-                        3L, true
-                ));
+                .thenReturn(List.of(1L, 2L, 3L));
 
         // when
         ClubListResult result = clubQueryService.getClubs(command, email);
@@ -201,7 +197,7 @@ class ClubQueryServiceTest {
 
         //then
         assertThat(result.clubs().get(0).isSubscribed()).isFalse();
-        verify(clubQueryPort, never()).existsSubscription(anyLong(), anyLong());
+        verify(clubQueryPort, never()).findSubscribedClubIds(any(), anyLong());
     }
 
     @Test

@@ -23,5 +23,5 @@ public interface ClubQueryPort {
 
     Map<Long, Integer> countSubscribersByClubIds(List<Long> clubIds);
 
-    Map<Long, Boolean> findSubscribedClubIds(List<Long> clubIds, Long loginUserId);
+    List<Long> findSubscribedClubIds(List<Long> clubIds, Long loginUserId);
 }

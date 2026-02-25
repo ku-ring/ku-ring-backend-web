@@ -80,21 +80,14 @@ public class ClubPersistenceAdapter implements ClubQueryPort {
     }
 
     @Override
-    public Map<Long, Boolean> findSubscribedClubIds(
+    public List<Long> findSubscribedClubIds(
             List<Long> clubIds,
             Long loginUserId
     ) {
-
-        if (clubIds == null || clubIds.isEmpty() || loginUserId == null) {
-            return Map.of();
-        }
-
-        List<ClubSubscribe> subscriptions = clubSubscribeRepository.findByClubIdInAndUser_LoginUserId(clubIds, loginUserId);
-
-        return subscriptions.stream()
-                .collect(Collectors.toMap(
-                        sub -> sub.getClub().getId(),
-                        sub -> true
-                ));
+        return clubSubscribeRepository
+                .findByClubIdInAndUser_LoginUserId(clubIds, loginUserId)
+                .stream()
+                .map(sub -> sub.getClub().getId())
+                .toList();
     }
 }
