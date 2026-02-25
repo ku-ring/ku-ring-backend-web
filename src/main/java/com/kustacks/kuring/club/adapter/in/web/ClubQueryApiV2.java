@@ -8,6 +8,7 @@ import com.kustacks.kuring.club.adapter.in.web.dto.ClubDivisionListResponse;
 import com.kustacks.kuring.club.adapter.in.web.dto.ClubDivisionResponse;
 import com.kustacks.kuring.club.adapter.in.web.dto.ClubListResponse;
 import com.kustacks.kuring.club.application.port.in.ClubQueryUseCase;
+import com.kustacks.kuring.club.application.port.in.dto.ClubDetailCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubDetailResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
@@ -76,9 +77,9 @@ public class ClubQueryApiV2 {
     ) {
         String email = resolveLoginEmail(bearerToken);
 
-        ClubListCommand command = new ClubListCommand(category, division, Cursor.from(cursor), size, sortBy);
+        ClubListCommand command = new ClubListCommand(category, division, Cursor.from(cursor), size, sortBy, email);
 
-        ClubListResult result = clubQueryUseCase.getClubs(command, email);
+        ClubListResult result = clubQueryUseCase.getClubs(command);
 
         ClubListResponse response = ClubListResponse.from(result);
 
@@ -96,7 +97,9 @@ public class ClubQueryApiV2 {
     ) {
         String email = resolveLoginEmail(bearerToken);
 
-        ClubDetailResult result = clubQueryUseCase.getClubDetail(id, email);
+        ClubDetailCommand command = new ClubDetailCommand(id, email);
+
+        ClubDetailResult result = clubQueryUseCase.getClubDetail(command);
 
         ClubDetailResponse response = ClubDetailResponse.from(result);
 

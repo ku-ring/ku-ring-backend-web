@@ -1,6 +1,7 @@
 package com.kustacks.kuring.club.application.service;
 
 import com.kustacks.kuring.club.application.port.in.ClubQueryUseCase;
+import com.kustacks.kuring.club.application.port.in.dto.ClubDetailCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubDetailResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubDivisionResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubItemResult;
@@ -43,8 +44,8 @@ public class ClubQueryService implements ClubQueryUseCase {
     }
 
     @Override
-    public ClubListResult getClubs(ClubListCommand command, String email) {
-
+    public ClubListResult getClubs(ClubListCommand command) {
+        String email = command.email();
         Optional<RootUser> optionalRootUser = rootUserQueryPort.findRootUserByEmail(email);
         Long loginUserId = optionalRootUser.map(RootUser::getId).orElse(null);
 
@@ -110,7 +111,9 @@ public class ClubQueryService implements ClubQueryUseCase {
     }
 
     @Override
-    public ClubDetailResult getClubDetail(Long id, String email) {
+    public ClubDetailResult getClubDetail(ClubDetailCommand command) {
+        Long id = command.clubId();
+        String email = command.email();
 
         Optional<RootUser> optionalRootUser = rootUserQueryPort.findRootUserByEmail(email);
         Long loginUserId = optionalRootUser.map(RootUser::getId).orElse(null);

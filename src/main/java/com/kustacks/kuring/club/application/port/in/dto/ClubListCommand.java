@@ -10,7 +10,8 @@ public record ClubListCommand(
         String division,
         Cursor cursor,
         int size,
-        String sortBy
+        String sortBy,
+        String email
 ) {
     public List<String> divisionList() {
         if (division == null || division.isBlank()) {
