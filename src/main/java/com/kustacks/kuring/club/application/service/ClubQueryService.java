@@ -46,8 +46,7 @@ public class ClubQueryService implements ClubQueryUseCase {
     @Override
     public ClubListResult getClubs(ClubListCommand command) {
         String email = command.email();
-        Optional<RootUser> optionalRootUser = rootUserQueryPort.findRootUserByEmail(email);
-        Long loginUserId = optionalRootUser.map(RootUser::getId).orElse(null);
+        Optional<RootUser> rootUser = rootUserQueryPort.findRootUserByEmail(email);
 
         int limit = Math.min(command.size(), 30);
 
@@ -75,7 +74,8 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         List<Long> subscribedClubIds = List.of();
 
-        if (loginUserId != null && !clubIds.isEmpty()) {
+        if (rootUser.isPresent()) {
+            Long loginUserId = rootUser.get().getId();
             subscribedClubIds = clubQueryPort.findSubscribedClubIds(clubIds, loginUserId);
         }
 
@@ -115,8 +115,7 @@ public class ClubQueryService implements ClubQueryUseCase {
         Long id = command.clubId();
         String email = command.email();
 
-        Optional<RootUser> optionalRootUser = rootUserQueryPort.findRootUserByEmail(email);
-        Long loginUserId = optionalRootUser.map(RootUser::getId).orElse(null);
+        Optional<RootUser> rootUser = rootUserQueryPort.findRootUserByEmail(email);
 
         ClubDetailDto dto = clubQueryPort.findClubDetailById(id)
                 .orElseThrow(() -> new NotFoundException(CLUB_NOT_FOUND));
@@ -124,7 +123,8 @@ public class ClubQueryService implements ClubQueryUseCase {
         int subscriberCount = clubQueryPort.countSubscribers(id);
 
         boolean isSubscribed = false;
-        if (loginUserId != null) {
+        if (rootUser.isPresent()) {
+            Long loginUserId = rootUser.get().getId();
             isSubscribed = clubQueryPort.existsSubscription(id, loginUserId);
         }
 
