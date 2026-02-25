@@ -26,16 +26,6 @@ public record ClubDetailResponse(
 ) {
 
     public static ClubDetailResponse from(ClubDetailResult result) {
-
-        Location location = result.location() == null ?
-                null
-                : new Location(
-                result.location().building(),
-                result.location().room(),
-                result.location().lon(),
-                result.location().lat()
-        );
-
         return new ClubDetailResponse(
                 result.id(),
                 result.name(),
@@ -54,7 +44,7 @@ public record ClubDetailResponse(
                 result.recruitEndAt(),
                 result.applyUrl(),
                 result.posterImageUrl(),
-                location
+                Location.from(result.location())
         );
     }
 
@@ -64,5 +54,15 @@ public record ClubDetailResponse(
             Double lon,
             Double lat
     ) {
+        public static Location from(ClubDetailResult.Location location) {
+            if (location == null) return null;
+
+            return new Location(
+                    location.building(),
+                    location.room(),
+                    location.lon(),
+                    location.lat()
+            );
+        }
     }
 }
