@@ -99,7 +99,7 @@ public class ClubQueryService implements ClubQueryUseCase {
                         .toList();
 
 
-        int totalCount = clubQueryPort.countClubs(command.category(), command.divisionList());
+        int totalCount = clubQueryPort.countClubsByCategoryAndDivisions(command.category(), command.divisionList());
 
         return new ClubListResult(
                 items,

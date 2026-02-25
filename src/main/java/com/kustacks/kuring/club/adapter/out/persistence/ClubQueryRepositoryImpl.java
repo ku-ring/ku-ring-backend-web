@@ -63,7 +63,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public int countClubs(String category, List<String> divisions) {
+    public int countClubsByCategoryAndDivisions(String category, List<String> divisions) {
 
         Long count = queryFactory
                 .select(club.count())

@@ -131,7 +131,7 @@ class ClubQueryServiceTest {
                 any(LocalDateTime.class)
         )).thenReturn(mockReadModels);
 
-        when(clubQueryPort.countClubs(category, divisionList))
+        when(clubQueryPort.countClubsByCategoryAndDivisions(category, divisionList))
                 .thenReturn(2);
 
         when(clubQueryPort.countSubscribersByClubIds(any()))
@@ -157,7 +157,7 @@ class ClubQueryServiceTest {
 
         verify(rootUserQueryPort).findRootUserByEmail(email);
         verify(clubQueryPort).searchClubs(eq(category), eq(divisionList), eq(cursor), eq(size + 1), eq(sortBy), any(LocalDateTime.class));
-        verify(clubQueryPort).countClubs(category, divisionList);
+        verify(clubQueryPort).countClubsByCategoryAndDivisions(category, divisionList);
     }
 
     @Test
@@ -184,7 +184,7 @@ class ClubQueryServiceTest {
                 any(LocalDateTime.class)
         )).thenReturn(mockReadModels);
 
-        when(clubQueryPort.countClubs(category, divisionList))
+        when(clubQueryPort.countClubsByCategoryAndDivisions(category, divisionList))
                 .thenReturn(2);
 
         when(clubQueryPort.countSubscribersByClubIds(any()))

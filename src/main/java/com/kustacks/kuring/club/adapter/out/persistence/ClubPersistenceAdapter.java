@@ -41,8 +41,8 @@ public class ClubPersistenceAdapter implements ClubQueryPort {
     }
 
     @Override
-    public int countClubs(String category, List<String> divisions) {
-        return clubRepository.countClubs(category, divisions);
+    public int countClubsByCategoryAndDivisions(String category, List<String> divisions) {
+        return clubRepository.countClubsByCategoryAndDivisions(category, divisions);
     }
 
     @Override
@@ -51,13 +51,26 @@ public class ClubPersistenceAdapter implements ClubQueryPort {
     }
 
     @Override
-    public int countSubscribers(Long clubId) {
-        return clubSubscribeRepository.countByClubId(clubId);
+    public boolean existsSubscription(Long clubId, Long loginUserId) {
+        return clubSubscribeRepository.existsByClubIdAndUser_LoginUserId(clubId, loginUserId);
     }
 
     @Override
-    public boolean existsSubscription(Long clubId, Long loginUserId) {
-        return clubSubscribeRepository.existsByClubIdAndUser_LoginUserId(clubId, loginUserId);
+    public List<Long> findSubscribedClubIds(
+            List<Long> clubIds,
+            Long loginUserId
+    ) {
+        return clubSubscribeRepository
+                .findByClubIdInAndUser_LoginUserId(clubIds, loginUserId)
+                .stream()
+                .map(sub -> sub.getClub().getId())
+                .toList();
+    }
+
+
+    @Override
+    public int countSubscribers(Long clubId) {
+        return clubSubscribeRepository.countByClubId(clubId);
     }
 
     @Override
@@ -79,15 +92,4 @@ public class ClubPersistenceAdapter implements ClubQueryPort {
                 ));
     }
 
-    @Override
-    public List<Long> findSubscribedClubIds(
-            List<Long> clubIds,
-            Long loginUserId
-    ) {
-        return clubSubscribeRepository
-                .findByClubIdInAndUser_LoginUserId(clubIds, loginUserId)
-                .stream()
-                .map(sub -> sub.getClub().getId())
-                .toList();
-    }
 }
