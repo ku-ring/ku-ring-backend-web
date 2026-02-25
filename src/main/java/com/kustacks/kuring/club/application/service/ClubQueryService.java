@@ -73,7 +73,6 @@ public class ClubQueryService implements ClubQueryUseCase {
         Map<Long, Integer> subscriberCountMap = clubQueryPort.countSubscribersByClubIds(clubIds);
 
         List<Long> subscribedClubIds = List.of();
-
         if (rootUser.isPresent()) {
             Long loginUserId = rootUser.get().getId();
             subscribedClubIds = clubQueryPort.findSubscribedClubIds(clubIds, loginUserId);
@@ -128,7 +127,7 @@ public class ClubQueryService implements ClubQueryUseCase {
             isSubscribed = clubQueryPort.existsSubscription(id, loginUserId);
         }
 
-        ClubDetailResult.Location location = hasLocation(dto) ?
+        ClubDetailResult.Location location = dto.hasLocation() ?
                 new ClubDetailResult.Location(
                         dto.getBuilding(),
                         dto.getRoom(),
@@ -157,13 +156,6 @@ public class ClubQueryService implements ClubQueryUseCase {
                 dto.getPosterImagePath(),
                 location
         );
-    }
-
-    private boolean hasLocation(ClubDetailDto dto) {
-        return dto.getBuilding() != null
-                || dto.getRoom() != null
-                || dto.getLon() != null
-                || dto.getLat() != null;
     }
 
     private String generateCursor(ClubReadModel club, String sortBy, LocalDateTime now) {

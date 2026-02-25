@@ -81,4 +81,11 @@ public class ClubDetailDto {
         this.lon = lon;
         this.lat = lat;
     }
+
+    public boolean hasLocation() {
+        return building != null
+                || room != null
+                || lon != null
+                || lat != null;
+    }
 }
