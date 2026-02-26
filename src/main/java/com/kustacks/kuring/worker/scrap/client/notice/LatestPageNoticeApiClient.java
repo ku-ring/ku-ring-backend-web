@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -48,39 +47,22 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
     public List<ScrapingResultDto> requestAll(DeptInfo deptInfo) throws InternalLogicException {
         try {
             // 1) 총 공지 개수 및 페이지 수 계산
-            String totalUrl = buildUrlForTotalNoticeCount(deptInfo);
-            int totalNoticeSize = getTotalNoticeSize(totalUrl);
-            int totalPageSize = (int) Math.ceil((double) totalNoticeSize / ROW_NUMBERS_PER_PAGE_ALL);
+            int totalPageSize = calculateTotalPageSize(deptInfo);
 
             // 2) 첫 페이지를 base로 가져오기(1 page)
             Document baseDoc = fetchPageDoc(deptInfo, START_PAGE_NUM, ROW_NUMBERS_PER_PAGE_ALL);
-            Element baseTbody = extractTbodyFromDocument(baseDoc);
-            if (baseTbody == null) {
-                log.warn("[SCRAP] no tbody : dept={}, title={}, url={}", deptInfo.getDeptName(), baseDoc.title(), totalUrl);
-                throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE);
-            }
 
             // 3) 반복문을 돌며 baseTbody에 뒷 페이지의 tr들 합치기(2 page~)
-            for(int page = START_PAGE_NUM + 1; page <= totalPageSize; page++){
-                Document doc = fetchPageDoc(deptInfo, page, ROW_NUMBERS_PER_PAGE_ALL);
-                Elements trs = extractTrsFromDocument(doc);
-
-                if (trs.isEmpty()) break;
-                for (Element tr : trs) {
-                    baseTbody.appendChild(tr.clone());
-                }
-            }
+            appendRemainRows(deptInfo, totalPageSize, baseDoc);
 
             // 4) 합쳐진 Document을 ScrapingResultDto로 가공하여 반환
             return List.of(new ScrapingResultDto(baseDoc, deptInfo.createUndergraduateViewUrl()));
 
         } catch (IOException e) {
-            log.warn("Department Scrap all IOException: {}", e.getMessage());
+            throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_SCRAP, e);
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE, e);
         }
-
-        return Collections.emptyList();
     }
 
     @Override
@@ -98,6 +80,26 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
 
         assert totalNoticeSizeElement != null;
         return Integer.parseInt(totalNoticeSizeElement.ownText());
+    }
+
+    private void appendRemainRows(DeptInfo deptInfo, int totalPageSize, Document baseDoc) throws IOException {
+        Element baseTbody = extractTbodyFromDocument(baseDoc);
+
+        for(int page = START_PAGE_NUM + 1; page <= totalPageSize; page++){
+            Document doc = fetchPageDoc(deptInfo, page, ROW_NUMBERS_PER_PAGE_ALL);
+            Elements trs = extractTrsFromDocument(doc);
+
+            if(trs.isEmpty()) break;
+            for (Element tr : trs) {
+                baseTbody.appendChild(tr.clone());
+            }
+        }
+    }
+
+    private int calculateTotalPageSize(DeptInfo deptInfo) throws IOException {
+        String totalUrl = buildUrlForTotalNoticeCount(deptInfo);
+        int totalNoticeSize = getTotalNoticeSize(totalUrl);
+        return (int) Math.ceil((double) totalNoticeSize / ROW_NUMBERS_PER_PAGE_ALL);
     }
 
     private Element extractTbodyFromDocument(Document doc){
