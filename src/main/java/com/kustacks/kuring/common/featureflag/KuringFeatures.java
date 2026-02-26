@@ -10,7 +10,8 @@ public enum KuringFeatures {
     UPDATE_USER(new Feature("update_user")),
     UPDATE_STAFF(new Feature("update_staff")),
     UPDATE_ACADEMIC_EVENT(new Feature("update_academic_event")),
-    NOTIFY_ACADEMIC_EVENT(new Feature("notify_academic_event"));
+    NOTIFY_ACADEMIC_EVENT(new Feature("notify_academic_event")),
+    NOTIFY_CLUB_DEADLINE(new Feature("notify_club_deadline"));
 
     private final Feature feature;
 
