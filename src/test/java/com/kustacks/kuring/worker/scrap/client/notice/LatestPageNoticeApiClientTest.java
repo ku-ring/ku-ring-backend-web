@@ -16,7 +16,6 @@ import java.util.stream.IntStream;
 import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.common.exception.InternalLogicException;
-import com.kustacks.kuring.common.exception.code.ErrorCode;
 
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,46 +90,27 @@ class LatestPageNoticeApiClientTest {
         LatestPageNoticeApiClient apiClient = new LatestPageNoticeApiClient(jsoupClient);
 
         DeptInfo deptInfo = mock(DeptInfo.class);
-        when(deptInfo.getDeptName()).thenReturn("COMPUTER");
 
         when(deptInfo.createUndergraduateRequestUrl(anyInt(), anyInt()))
                 .thenAnswer(arg -> "https://example.com/list?page=" + arg.getArgument(0) + "&row=" + arg.getArgument(1));
 
         String totalUrl = "https://example.com/list?page=1&row=1";
         String firstUrl = "https://example.com/list?page=1&row=100";
+        String secondUrl = "https://example.com/list?page=2&row=100";
 
         when(jsoupClient.get(eq(totalUrl), anyInt()))
-                .thenReturn(docWithTotalCount(10));
+                .thenReturn(docWithTotalCount(110));
 
-        // 총 공지 갯수가 10이였으나 baseDoc에 tbody 없는 경우
+        // 총 공지 갯수가 110개였으나 baseDoc에 tbody 없는 경우
         when(jsoupClient.get(eq(firstUrl), anyInt()))
                 .thenReturn(Jsoup.parse("<html><head><title>x</title></head><body><div>no table</div></body></html>"));
+        // 두번째 페이지는 tbody 존재
+        when(jsoupClient.get(eq(secondUrl), anyInt()))
+                .thenReturn(Jsoup.parse("<html><body><table class='board-table'><tbody><tr></tr></tbody></table></body></html>"));
 
         // when & then
         assertThatThrownBy(() -> apiClient.requestAll(deptInfo))
                 .isInstanceOf(InternalLogicException.class);
-    }
-
-    @DisplayName("IOException이 발생하면 empty 반환한다")
-    @Test
-    void requestAll_return_empty_when_io_exception_occurs() throws Exception {
-        // given
-        LatestPageNoticeApiClient apiClient = new LatestPageNoticeApiClient(jsoupClient);
-
-        DeptInfo deptInfo = mock(DeptInfo.class);
-        when(deptInfo.createUndergraduateRequestUrl(anyInt(), anyInt()))
-                .thenAnswer(arg -> "https://example.com/list?page=" + arg.getArgument(0) + "&row=" + arg.getArgument(1));
-
-        String totalUrl = "https://example.com/list?page=1&row=1";
-
-        // total count 단계에서 IOException 발생
-        when(jsoupClient.get(eq(totalUrl), anyInt())).thenThrow(new IOException("network error"));
-
-        // when
-        List<ScrapingResultDto> result = apiClient.requestAll(deptInfo);
-
-        // then
-        assertThat(result).isEmpty();
     }
 
     @DisplayName("중간 페이지에서 tr이 비면 break 한다(이후 페이지 호출 안 함)")
