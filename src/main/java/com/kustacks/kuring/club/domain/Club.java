@@ -74,4 +74,5 @@ public class Club {
 
     @Column(columnDefinition = "TEXT")
     private String qualifications;
+
 }

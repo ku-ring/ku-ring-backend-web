@@ -3,6 +3,7 @@ package com.kustacks.kuring.club.adapter.out.persistence;
 import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.application.port.out.dto.QClubReadModel;
+import com.kustacks.kuring.club.domain.Club;
 import com.kustacks.kuring.club.domain.ClubCategory;
 import com.kustacks.kuring.club.domain.ClubDivision;
 import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
@@ -27,6 +28,26 @@ import static com.kustacks.kuring.club.domain.QClubSns.clubSns;
 class ClubQueryRepositoryImpl implements ClubQueryRepository {
 
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public List<Club> findClubsBetweenDates(LocalDateTime start, LocalDateTime end) {
+        return queryFactory.selectFrom(club)
+                .where(
+                        club.isAlways.isFalse(),
+                        recruitEndAtGoe(start),
+                        recruitEndAtLt(end)
+                )
+                .fetch();
+    }
+
+    private BooleanExpression recruitEndAtGoe(LocalDateTime start) {
+        return start != null ? club.recruitEndAt.goe(start) : null;
+    }
+
+    private BooleanExpression recruitEndAtLt(LocalDateTime end) {
+        return end != null ? club.recruitEndAt.lt(end) : null;
+    }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -306,6 +327,4 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
 
         return ClubRecruitmentStatus.RECRUITING;
     }
-
-
 }

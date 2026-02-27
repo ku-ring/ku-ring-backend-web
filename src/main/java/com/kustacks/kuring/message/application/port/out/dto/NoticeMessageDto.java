@@ -1,14 +1,18 @@
 package com.kustacks.kuring.message.application.port.out.dto;
 
-import com.kustacks.kuring.notice.domain.*;
-import lombok.*;
+import com.kustacks.kuring.notice.domain.DepartmentNotice;
+import com.kustacks.kuring.notice.domain.Notice;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NoticeMessageDto {
 
-    private Long id;
+    private String id;
 
     private String type;
 
@@ -25,7 +29,7 @@ public class NoticeMessageDto {
     private String baseUrl;
 
     @Builder
-    private NoticeMessageDto(Long id, String articleId, String postedDate, String subject, String category, String categoryKorName, String baseUrl) {
+    private NoticeMessageDto(String id, String articleId, String postedDate, String subject, String category, String categoryKorName, String baseUrl) {
         Assert.notNull(id, "id must not be empty");
         Assert.notNull(articleId, "articleId must not be null");
         Assert.notNull(postedDate, "postedDate must not be null");
@@ -46,7 +50,7 @@ public class NoticeMessageDto {
 
     public static NoticeMessageDto from(Notice notice) {
         return NoticeMessageDto.builder()
-                .id(notice.getId())
+                .id(String.valueOf(notice.getId()))
                 .articleId(notice.getArticleId())
                 .postedDate(notice.getPostedDate())
                 .subject(notice.getSubject())
@@ -58,7 +62,7 @@ public class NoticeMessageDto {
 
     public static NoticeMessageDto from(DepartmentNotice departmentNotice) {
         return NoticeMessageDto.builder()
-                .id(departmentNotice.getId())
+                .id(String.valueOf(departmentNotice.getId()))
                 .articleId(departmentNotice.getArticleId())
                 .postedDate(departmentNotice.getPostedDate())
                 .subject(departmentNotice.getSubject())

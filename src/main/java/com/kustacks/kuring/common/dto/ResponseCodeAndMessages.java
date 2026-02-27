@@ -66,6 +66,8 @@ public enum ResponseCodeAndMessages {
     CLUB_DIVISION_SEARCH_SUCCESS(HttpStatus.OK.value(), "지원하는 동아리 소속 조회에 성공하였습니다"),
     CLUB_LIST_SEARCH_SUCCESS(HttpStatus.OK.value(), "동아리 목록 조회에 성공하였습니다"),
     CLUB_DETAIL_SEARCH_SUCCESS(HttpStatus.OK.value(), "동아리 상세 조회에 성공하였습니다"),
+    CLUB_SUBSCRIPTION_ADD_SUCCESS(HttpStatus.OK.value(), "구독에 성공했습니다."),
+    CLUB_SUBSCRIPTION_DELETE_SUCCESS(HttpStatus.OK.value(), "구독이 취소되었습니다."),
 
     /**
      * ErrorCodes about auth
