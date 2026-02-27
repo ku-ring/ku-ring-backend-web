@@ -141,10 +141,10 @@ public class AdminCommandApiV2 {
     @PostMapping(value = "/clubs", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BaseResponse<AdminClubCreateResponse>> createClub(
             @Valid @RequestPart("request") AdminClubCreateRequest request,
-            @RequestPart(name = "iconImage", required = true) MultipartFile logoImage,
+            @RequestPart(name = "iconImage", required = true) MultipartFile iconImage,
             @RequestPart(name = "postImage", required = false) MultipartFile postImage
     ) {
-        clubCreateAdminUseCase.createClub(request.toCommand(logoImage, postImage));
+        clubCreateAdminUseCase.createClub(request.toCommand(iconImage, postImage));
 
         return ResponseEntity.status(ADMIN_CLUB_CREATE_SUCCESS.getCode())
                 .body(new BaseResponse<>(ADMIN_CLUB_CREATE_SUCCESS, null));
