@@ -25,7 +25,7 @@ public record AdminClubCreateRequest(
         Double lat,
         Double lon
 ) {
-    public AdminClubCreateCommand toCommand(MultipartFile logoImage, MultipartFile posterImage) {
+    public AdminClubCreateCommand toCommand(MultipartFile iconImage, MultipartFile posterImage) {
         return new AdminClubCreateCommand(
                 name,
                 summary,
@@ -44,7 +44,7 @@ public record AdminClubCreateRequest(
                 room,
                 lat,
                 lon,
-                logoImage,
+                iconImage,
                 posterImage
         );
     }

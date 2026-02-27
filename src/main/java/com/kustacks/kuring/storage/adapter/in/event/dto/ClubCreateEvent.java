@@ -5,18 +5,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 public record ClubCreateEvent(
         Long clubId,
-        ClubCreateImage logoImage,
+        ClubCreateImage iconImage,
         ClubCreateImage posterImage
 ) {
     public UploadFileCommand toCommand() {
         return new UploadFileCommand(
-                Stream.of(logoImage, posterImage)
+                Stream.of(iconImage, posterImage)
                         .filter(Objects::nonNull)
                         .map(ClubCreateImage::toUploadFile)
                         .toList()
