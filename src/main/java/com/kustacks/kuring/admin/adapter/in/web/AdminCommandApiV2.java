@@ -3,6 +3,8 @@ package com.kustacks.kuring.admin.adapter.in.web;
 import com.google.firebase.database.annotations.NotNull;
 import com.kustacks.kuring.admin.adapter.in.web.dto.AcademicTestNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.AdminAlertCreateRequest;
+import com.kustacks.kuring.admin.adapter.in.web.dto.AdminClubCreateRequest;
+import com.kustacks.kuring.admin.adapter.in.web.dto.AdminClubCreateResponse;
 import com.kustacks.kuring.admin.adapter.in.web.dto.RealNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.TestNotificationRequest;
 import com.kustacks.kuring.admin.application.port.in.AdminCommandUseCase;
@@ -13,6 +15,7 @@ import com.kustacks.kuring.alert.application.port.in.dto.DataEmbeddingCommand;
 import com.kustacks.kuring.auth.authorization.AuthenticationPrincipal;
 import com.kustacks.kuring.auth.context.Authentication;
 import com.kustacks.kuring.auth.secured.Secured;
+import com.kustacks.kuring.club.application.port.in.ClubCreateAdminUseCase;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.common.dto.ResponseCodeAndMessages;
 import com.kustacks.kuring.common.utils.converter.StringToDateTimeConverter;
@@ -22,6 +25,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,10 +37,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_CLUB_CREATE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_EMBEDDING_NOTICE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_REAL_NOTICE_CREATE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_TEST_ACADEMIC_CREATE_SUCCESS;
@@ -50,6 +56,7 @@ import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_TEST_
 public class AdminCommandApiV2 {
 
     private final AdminCommandUseCase adminCommandUseCase;
+    private final ClubCreateAdminUseCase clubCreateAdminUseCase;
     private final BadWordInitProcessor badWordinitProcessor;
     private final WhitelistWordInitProcessor whitelistWordInitProcessor;
 
@@ -126,6 +133,21 @@ public class AdminCommandApiV2 {
         adminCommandUseCase.embeddingCustomData(new DataEmbeddingCommand(file));
 
         return ResponseEntity.ok().body(new BaseResponse<>(ADMIN_EMBEDDING_NOTICE_SUCCESS, null));
+    }
+
+    @Operation(summary = "동아리 생성", description = "어드민이 신규 동아리 정보를 생성합니다")
+    @SecurityRequirement(name = "JWT")
+    @Secured(AdminRole.ROLE_ROOT)
+    @PostMapping(value = "/clubs", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BaseResponse<AdminClubCreateResponse>> createClub(
+            @Valid @RequestPart("request") AdminClubCreateRequest request,
+            @RequestPart(name = "iconImage", required = true) MultipartFile logoImage,
+            @RequestPart(name = "postImage", required = false) MultipartFile postImage
+    ) {
+        clubCreateAdminUseCase.createClub(request.toCommand(logoImage, postImage));
+
+        return ResponseEntity.status(ADMIN_CLUB_CREATE_SUCCESS.getCode())
+                .body(new BaseResponse<>(ADMIN_CLUB_CREATE_SUCCESS, null));
     }
 
     @Operation(summary = "금칙어 로드", description = "어드민은 DB에 있는 금칙어를 수동으로 로드할 수 있다.")
