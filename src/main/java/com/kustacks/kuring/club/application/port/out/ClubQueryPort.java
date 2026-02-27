@@ -1,6 +1,7 @@
 package com.kustacks.kuring.club.application.port.out;
 
 import com.kustacks.kuring.club.domain.Club;
+import com.kustacks.kuring.club.domain.ClubDivision;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,4 +14,6 @@ public interface ClubQueryPort {
     List<Club> findClubsBetweenDates(LocalDateTime start, LocalDateTime end);
 
     List<Club> findNextDayRecruitEndClubs(LocalDateTime now);
+
+    boolean existsByNameAndDivision(String name, ClubDivision division);
 }
