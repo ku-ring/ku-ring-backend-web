@@ -20,7 +20,7 @@ public class ClubEventAdapter implements ClubEventPort {
             ClubCreateImage icon = new ClubCreateImage(iconImagePath, iconImage);
 
             if (posterImage != null) {
-                ClubCreateImage poster = new ClubCreateImage(iconImagePath, posterImage);
+                ClubCreateImage poster = new ClubCreateImage(posterImagePath, posterImage);
                 Events.raise(new ClubCreateEvent(clubId, icon, poster));
             } else {
                 Events.raise(new ClubCreateEvent(clubId, icon, null));
