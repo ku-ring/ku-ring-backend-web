@@ -1,9 +1,12 @@
 package com.kustacks.kuring.club.adapter.out.persistence;
 
+import com.kustacks.kuring.club.application.port.out.ClubCommandPort;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
 import com.kustacks.kuring.club.application.port.out.ClubSubscriptionCommandPort;
 import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
 import com.kustacks.kuring.club.domain.Club;
+import com.kustacks.kuring.club.domain.ClubDivision;
+import com.kustacks.kuring.club.domain.ClubSns;
 import com.kustacks.kuring.club.domain.ClubSubscribe;
 import com.kustacks.kuring.common.annotation.PersistenceAdapter;
 import com.kustacks.kuring.user.domain.RootUser;
@@ -16,9 +19,11 @@ import java.util.Optional;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCommandPort, ClubSubscriptionQueryPort {
+public class ClubPersistenceAdapter implements ClubQueryPort, ClubCommandPort,
+        ClubSubscriptionCommandPort, ClubSubscriptionQueryPort{
 
     private final ClubRepository clubRepository;
+    private final ClubSnsRepository clubSnsRepository;
     private final ClubSubscribeRepository clubSubscribeRepository;
 
     @Override
@@ -57,5 +62,20 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
     @Override
     public long countSubscriptions(Long rootUserId) {
         return clubSubscribeRepository.countByRootUserId(rootUserId);
+    }
+
+    @Override
+    public boolean existsByNameAndDivision(String name, ClubDivision division) {
+        return clubRepository.existsByNameAndDivision(name, division);
+    }
+
+    @Override
+    public Club save(Club club) {
+        return clubRepository.save(club);
+    }
+
+    @Override
+    public void saveAll(List<ClubSns> toSave) {
+        clubSnsRepository.saveAll(toSave);
     }
 }
