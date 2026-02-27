@@ -65,6 +65,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
     @Transactional(readOnly = true)
     public int countClubsByCategoryAndDivisions(String category, List<String> divisions) {
 
+        //jpa로 해도!
         Long count = queryFactory
                 .select(club.count())
                 .from(club)
@@ -74,6 +75,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                 )
                 .fetchOne();
 
+        //count는 null일수 없음
         return count == null ? 0 : count.intValue();
     }
 
@@ -180,12 +182,13 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
         );
     }
 
+    //서비스로
     private BooleanExpression cursorCondition(String sortBy, String cursor, LocalDateTime now) {
 
         if (cursor == null || cursor.equals("0")) return null;
 
         try {
-
+            // 언더바로
             String[] parts = cursor.split("\\|");
 
             return switch (sortBy) {
@@ -205,7 +208,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
 
                 case "recruitEndDate" -> {
                     if (parts.length < 3) yield null;
-
+                    //스트링
                     int lastGroup = Integer.parseInt(parts[0]);
                     String lastDateStr = parts[1];
                     Long lastId = Long.parseLong(parts[2]);
@@ -281,6 +284,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                 .otherwise(0);
     }
 
+    // 얘도 서비스쪽에서 해야될듯
     private ClubRecruitmentStatus calculateRecruitmentStatus(
             LocalDateTime start,
             LocalDateTime end,

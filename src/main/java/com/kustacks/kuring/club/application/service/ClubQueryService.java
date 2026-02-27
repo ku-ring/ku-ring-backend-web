@@ -72,6 +72,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         Map<Long, Integer> subscriberCountMap = clubQueryPort.countSubscribersByClubIds(clubIds);
 
+        // 구독 관련 메서드화 하면 좋을듯!
         List<Long> subscribedClubIds = List.of();
         if (rootUser.isPresent()) {
             Long loginUserId = rootUser.get().getId();
@@ -81,6 +82,7 @@ public class ClubQueryService implements ClubQueryUseCase {
         Map<Long, Boolean> subscribedMap = subscribedClubIds.stream()
                 .collect(Collectors.toMap(id -> id, id -> true));
 
+        //items -> clubItemResults로 이름 수정?
         List<ClubItemResult> items =
                 cursorBasedList.getContents()
                         .stream()
@@ -116,6 +118,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         Optional<RootUser> rootUser = rootUserQueryPort.findRootUserByEmail(email);
 
+        // dto -> readmodel로 이름 수정
         ClubDetailDto dto = clubQueryPort.findClubDetailById(id)
                 .orElseThrow(() -> new NotFoundException(CLUB_NOT_FOUND));
 

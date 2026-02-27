@@ -82,6 +82,7 @@ public class ClubPersistenceAdapter implements ClubQueryPort {
 
         List<ClubSubscribe> subscriptions = clubSubscribeRepository.findByClubIdIn(clubIds);
 
+        // groupby로 해도 될듯
         return subscriptions.stream()
                 .collect(Collectors.groupingBy(
                         sub -> sub.getClub().getId(),
