@@ -2,16 +2,23 @@ package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.admin.adapter.in.web.dto.AcademicTestNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.AdminAlertCreateRequest;
+import com.kustacks.kuring.admin.adapter.in.web.dto.AdminClubCreateRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class AdminStep {
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public static void 피드백_조회_확인(ExtractableResponse<Response> response) {
         assertAll(
@@ -152,6 +159,38 @@ public class AdminStep {
                 .when().post("/api/v2/admin/academic/dev")
                 .then().log().all()
                 .extract();
+    }
+
+    public static ExtractableResponse<Response> 동아리_생성_요청(String accessToken, AdminClubCreateRequest request) {
+        String requestJson = 직렬화(request);
+
+        return RestAssured
+                .given().log().all()
+                .header("Authorization", "Bearer " + accessToken)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .multiPart("request", "request.json", requestJson, MediaType.APPLICATION_JSON_VALUE)
+                .multiPart("iconImage", "icon.png", "icon-bytes".getBytes(StandardCharsets.UTF_8), "image/png")
+                .multiPart("postImage", "post.png", "post-bytes".getBytes(StandardCharsets.UTF_8), "image/png")
+                .when().post("/api/v2/admin/clubs")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 동아리_생성_응답_확인(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(201),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("동아리 생성에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getString("data")).isNull()
+        );
+    }
+
+    private static String 직렬화(AdminClubCreateRequest request) {
+        try {
+            return OBJECT_MAPPER.writeValueAsString(request);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("동아리 생성 요청 직렬화 실패", e);
+        }
     }
 
 }
