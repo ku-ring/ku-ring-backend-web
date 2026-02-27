@@ -8,7 +8,7 @@ public record AdminClubCreateCommand(
         String description,
         String category,
         String division,
-        Boolean isAlways,
+        boolean isAlways,
         String recruitStartAt,
         String recruitEndAt,
         String applyUrl,
