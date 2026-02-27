@@ -4,7 +4,6 @@ import com.kustacks.kuring.common.properties.CloudStorageProperties;
 import com.kustacks.kuring.storage.application.port.out.StoragePort;
 import com.kustacks.kuring.storage.exception.CloudStorageException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -22,7 +21,7 @@ import java.time.Duration;
 
 import static com.kustacks.kuring.common.exception.code.ErrorCode.STORAGE_S3_SDK_PROBLEM;
 
-@Profile("dev | prod")
+//@Profile("dev | prod")
 @Service
 @RequiredArgsConstructor
 public class S3CompatibleStorageAdapter implements StoragePort {
