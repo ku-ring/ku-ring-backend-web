@@ -22,9 +22,11 @@ import java.util.stream.Collectors;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
-public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCommandPort, ClubSubscriptionQueryPort {
+public class ClubPersistenceAdapter implements ClubQueryPort, ClubCommandPort,
+        ClubSubscriptionCommandPort, ClubSubscriptionQueryPort{
 
     private final ClubRepository clubRepository;
+    private final ClubSnsRepository clubSnsRepository;
     private final ClubSubscribeRepository clubSubscribeRepository;
 
     @Override
@@ -120,5 +122,20 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
     @Override
     public Long countSubscriptions(Long rootUserId) {
         return clubSubscribeRepository.countByRootUserId(rootUserId);
+    }
+
+    @Override
+    public boolean existsByNameAndDivision(String name, ClubDivision division) {
+        return clubRepository.existsByNameAndDivision(name, division);
+    }
+
+    @Override
+    public Club save(Club club) {
+        return clubRepository.save(club);
+    }
+
+    @Override
+    public void saveAll(List<ClubSns> toSave) {
+        clubSnsRepository.saveAll(toSave);
     }
 }
