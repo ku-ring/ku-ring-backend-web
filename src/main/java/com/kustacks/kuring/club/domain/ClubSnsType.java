@@ -41,7 +41,7 @@ public enum ClubSnsType {
         try {
             URI uri = URI.create(url.trim());
             return uri.getHost();
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             throw new InvalidStateException(ErrorCode.API_INVALID_PARAM);
         }
     }
