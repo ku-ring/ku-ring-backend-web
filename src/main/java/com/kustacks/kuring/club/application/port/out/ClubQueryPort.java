@@ -23,4 +23,6 @@ public interface ClubQueryPort {
     List<Club> findClubsBetweenDates(LocalDateTime start, LocalDateTime end);
 
     List<Club> findNextDayRecruitEndClubs(LocalDateTime now);
+
+    boolean existsByNameAndDivision(String name, ClubDivision division);
 }
