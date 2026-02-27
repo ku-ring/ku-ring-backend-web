@@ -59,6 +59,7 @@ public enum ErrorCode {
 
     CLUB_CATEGORY_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "서버에서 지원하지 않는 동아리 카테고리입니다."),
     CLUB_DIVISION_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "서버에서 지원하지 않는 동아리 소속입니다."),
+    CLUB_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 동아리입니다."),
     CLUB_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 동아리를 찾을 수 없습니다."),
     CLUB_ALREADY_SUBSCRIBED(HttpStatus.BAD_REQUEST, "이미 구독한 동아리입니다."),
     CLUB_NOT_SUBSCRIBED(HttpStatus.BAD_REQUEST, "구독하지 않은 동아리입니다."),
@@ -116,7 +117,8 @@ public enum ErrorCode {
     QUESTION_COUNT_NOT_ENOUGH(HttpStatus.TOO_MANY_REQUESTS, "남은 질문 횟수가 부족합니다."),
 
     STORAGE_S3_SDK_PROBLEM(HttpStatus.INTERNAL_SERVER_ERROR, "S3 클라이언트 통신 간 에러가 발생했습니다."),
-    FILE_IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 읽어들이는데 문제가 발생했습니다.");
+    FILE_IO_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 읽어들이는데 문제가 발생했습니다.")
+    ;
 
     private final HttpStatus httpStatus;
     private final String message;
