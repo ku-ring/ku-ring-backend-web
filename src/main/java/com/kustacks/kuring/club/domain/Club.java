@@ -7,15 +7,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -44,11 +41,11 @@ public class Club {
     @Column(nullable = false)
     private ClubDivision division;
 
-    @OneToMany(mappedBy = "club")
-    private List<ClubSns> homepageUrls = new ArrayList<>();
-
     @Column(name = "poster_image_path", length = 255)
     private String posterImagePath;
+
+    @Column(name = "icon_image_path", length = 255)
+    private String iconImagePath;
 
     @Column(length = 30)
     private String building;
@@ -75,4 +72,31 @@ public class Club {
     @Column(columnDefinition = "TEXT")
     private String qualifications;
 
+    public Club(String name, String summary, String description,
+            ClubCategory category, ClubDivision division,
+            String building, String room, Double lat, Double lon,
+            LocalDateTime recruitStartAt, LocalDateTime recruitEndAt, boolean isAlways, String applyUrl, String qualifications,
+            String iconImagePath, String posterImagePath
+    ) {
+        this.name = name;
+        this.summary = summary;
+        this.description = description;
+
+        this.category = category;
+        this.division = division;
+
+        this.building = building;
+        this.room = room;
+        this.lat = lat;
+        this.lon = lon;
+
+        this.recruitStartAt = recruitStartAt;
+        this.recruitEndAt = recruitEndAt;
+        this.isAlways = isAlways;
+        this.applyUrl = applyUrl;
+        this.qualifications = qualifications;
+
+        this.iconImagePath = iconImagePath;
+        this.posterImagePath = posterImagePath;
+    }
 }
