@@ -14,7 +14,7 @@ import static com.kustacks.kuring.common.exception.code.ErrorCode.CLUB_DIVISION_
 @Getter
 public enum ClubDivision {
 
-    CENTRAL("central", "중앙"),
+    CENTRAL("central", "중앙동아리"),
     LIBERAL_ARTS("liberal_arts", "문과대학"),
     SCIENCE("science", "이과대학"),
     ARCHITECTURE("architecture", "건축대학"),
@@ -34,10 +34,14 @@ public enum ClubDivision {
     ETC("etc", "기타");
 
     private static final Map<String, String> NAME_MAP;
+    private static final Map<String, String> KOR_NAME_MAP;
 
     static {
         NAME_MAP = Collections.unmodifiableMap(Arrays.stream(values())
                 .collect(Collectors.toMap(ClubDivision::getName, ClubDivision::name))
+        );
+        KOR_NAME_MAP = Collections.unmodifiableMap(Arrays.stream(values())
+                .collect(Collectors.toMap(ClubDivision::getKorName, ClubDivision::name))
         );
     }
 
@@ -51,6 +55,12 @@ public enum ClubDivision {
 
     public static ClubDivision fromName(String name) {
         String findName = Optional.ofNullable(NAME_MAP.get(name))
+                .orElseThrow(() -> new NotFoundException(CLUB_DIVISION_NOT_SUPPORTED));
+        return ClubDivision.valueOf(findName);
+    }
+
+    public static ClubDivision fromKorName(String korName) {
+        String findName = Optional.ofNullable(KOR_NAME_MAP.get(korName))
                 .orElseThrow(() -> new NotFoundException(CLUB_DIVISION_NOT_SUPPORTED));
         return ClubDivision.valueOf(findName);
     }
