@@ -73,24 +73,6 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public int countClubsByCategoryAndDivisions(String category, List<String> divisions) {
-
-        //jpa로 해도!
-        Long count = queryFactory
-                .select(club.count())
-                .from(club)
-                .where(
-                        categoryEq(category),
-                        divisionIn(divisions)
-                )
-                .fetchOne();
-
-        //count는 null일수 없음
-        return count == null ? 0 : count.intValue();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Optional<ClubDetailDto> findClubDetailById(Long id) {
 
         LocalDateTime now = LocalDateTime.now();

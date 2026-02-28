@@ -12,8 +12,6 @@ public interface ClubQueryRepository {
 
     List<ClubReadModel> searchClubs(String category, List<String> divisions);
 
-    int countClubsByCategoryAndDivisions(String category, List<String> divisions);
-
     Optional<ClubDetailDto> findClubDetailById(Long id);
 
     List<Club> findClubsBetweenDates(LocalDateTime start, LocalDateTime end);
