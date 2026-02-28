@@ -2,7 +2,6 @@ package com.kustacks.kuring.club.application.port.out.dto;
 
 import com.kustacks.kuring.club.domain.ClubCategory;
 import com.kustacks.kuring.club.domain.ClubDivision;
-import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,10 +25,10 @@ public class ClubDetailDto {
 
     private String description;
     private String qualifications;
-    private ClubRecruitmentStatus recruitmentStatus;
 
     private LocalDateTime recruitStartAt;
     private LocalDateTime recruitEndAt;
+    Boolean isAlways;
 
     private String applyUrl;
     private String posterImagePath;
@@ -51,9 +50,9 @@ public class ClubDetailDto {
             String etcUrl,
             String description,
             String qualifications,
-            ClubRecruitmentStatus recruitmentStatus,
             LocalDateTime recruitStartAt,
             LocalDateTime recruitEndAt,
+            Boolean isAlways,
             String applyUrl,
             String posterImagePath,
             String building,
@@ -71,9 +70,9 @@ public class ClubDetailDto {
         this.etcUrl = etcUrl;
         this.description = description;
         this.qualifications = qualifications;
-        this.recruitmentStatus = recruitmentStatus;
         this.recruitStartAt = recruitStartAt;
         this.recruitEndAt = recruitEndAt;
+        this.isAlways = isAlways;
         this.applyUrl = applyUrl;
         this.posterImagePath = posterImagePath;
         this.building = building;

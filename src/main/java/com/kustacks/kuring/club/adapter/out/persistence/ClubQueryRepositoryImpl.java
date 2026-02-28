@@ -6,7 +6,6 @@ import com.kustacks.kuring.club.application.port.out.dto.QClubReadModel;
 import com.kustacks.kuring.club.domain.Club;
 import com.kustacks.kuring.club.domain.ClubCategory;
 import com.kustacks.kuring.club.domain.ClubDivision;
-import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
 import com.kustacks.kuring.club.domain.ClubSnsType;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -75,8 +74,6 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
     @Transactional(readOnly = true)
     public Optional<ClubDetailDto> findClubDetailById(Long id) {
 
-        LocalDateTime now = LocalDateTime.now();
-
         List<Tuple> tuples = queryFactory
                 .select(
                         club.id,
@@ -126,13 +123,6 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
             }
         }
 
-        ClubRecruitmentStatus recruitmentStatus = calculateRecruitmentStatus(
-                first.get(club.recruitStartAt),
-                first.get(club.recruitEndAt),
-                first.get(club.isAlways),
-                now
-        );
-
         return Optional.of(
                 new ClubDetailDto(
                         first.get(club.id),
@@ -145,9 +135,9 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                         etc,
                         first.get(club.description),
                         first.get(club.qualifications),
-                        recruitmentStatus,
                         first.get(club.recruitStartAt),
                         first.get(club.recruitEndAt),
+                        first.get(club.isAlways),
                         first.get(club.applyUrl),
                         first.get(club.posterImagePath),
                         first.get(club.building),
@@ -157,7 +147,6 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                 )
         );
     }
-
 
     private BooleanExpression categoryEq(String category) {
         if (category == null) return null;
@@ -174,26 +163,4 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
         );
     }
 
-    // 얘도 서비스쪽에서 해야될듯
-    private ClubRecruitmentStatus calculateRecruitmentStatus(
-            LocalDateTime start,
-            LocalDateTime end,
-            Boolean isAlways,
-            LocalDateTime now
-    ) {
-
-        if (Boolean.TRUE.equals(isAlways)) {
-            return ClubRecruitmentStatus.ALWAYS;
-        }
-
-        if (start != null && now.isBefore(start)) {
-            return ClubRecruitmentStatus.BEFORE;
-        }
-
-        if (end != null && now.isAfter(end)) {
-            return ClubRecruitmentStatus.CLOSED;
-        }
-
-        return ClubRecruitmentStatus.RECRUITING;
-    }
 }

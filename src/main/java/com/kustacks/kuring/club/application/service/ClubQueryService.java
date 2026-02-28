@@ -11,6 +11,7 @@ import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
 import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.ClubDivision;
+import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
@@ -18,6 +19,7 @@ import com.kustacks.kuring.user.domain.RootUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -88,10 +90,19 @@ public class ClubQueryService implements ClubQueryUseCase {
             isSubscribed = clubQueryPort.existsSubscription(rootUserId, clubId);
         }
 
+        ClubRecruitmentStatus recruitmentStatus =
+                ClubRecruitmentStatus.from(
+                        clubDetailDto.getRecruitStartAt(),
+                        clubDetailDto.getRecruitEndAt(),
+                        clubDetailDto.getIsAlways(),
+                        LocalDateTime.now()
+                );
+
         return ClubDetailResult.from(
                 clubDetailDto,
                 subscriberCount,
-                isSubscribed
+                isSubscribed,
+                recruitmentStatus
         );
     }
 

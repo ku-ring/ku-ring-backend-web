@@ -31,7 +31,8 @@ public record ClubDetailResult(
     public static ClubDetailResult from(
             ClubDetailDto clubDetailDto,
             int subscriberCount,
-            boolean isSubscribed
+            boolean isSubscribed,
+            ClubRecruitmentStatus recruitmentStatus
     ) {
         return new ClubDetailResult(
                 clubDetailDto.getId(),
@@ -46,7 +47,7 @@ public record ClubDetailResult(
                 clubDetailDto.getEtcUrl(),
                 clubDetailDto.getDescription(),
                 clubDetailDto.getQualifications(),
-                clubDetailDto.getRecruitmentStatus(),
+                recruitmentStatus,
                 clubDetailDto.getRecruitStartAt(),
                 clubDetailDto.getRecruitEndAt(),
                 clubDetailDto.getApplyUrl(),

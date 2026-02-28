@@ -57,8 +57,8 @@ class ClubQueryServiceTest {
                             "icon-url-1",
                             ClubCategory.ACADEMIC,
                             ClubDivision.CENTRAL,
-                            LocalDateTime.of(2025, 3, 1, 0, 0),
-                            LocalDateTime.of(2025, 3, 31, 23, 59)
+                            LocalDateTime.of(2026, 3, 1, 0, 0),
+                            LocalDateTime.of(2026, 3, 31, 23, 59)
                     ),
                     new ClubReadModel(
                             2L,
@@ -67,8 +67,8 @@ class ClubQueryServiceTest {
                             "icon-url-2",
                             ClubCategory.ACADEMIC,
                             ClubDivision.ENGINEERING,
-                            LocalDateTime.of(2025, 3, 1, 0, 0),
-                            LocalDateTime.of(2025, 3, 31, 23, 59)
+                            LocalDateTime.of(2026, 3, 1, 0, 0),
+                            LocalDateTime.of(2026, 3, 31, 23, 59)
                     ),
                     new ClubReadModel(
                             3L,
@@ -77,8 +77,8 @@ class ClubQueryServiceTest {
                             "icon-url-3",
                             ClubCategory.CULTURE_ART,
                             ClubDivision.ENGINEERING,
-                            LocalDateTime.of(2025, 2, 20, 0, 0),
-                            LocalDateTime.of(2025, 3, 31, 23, 59)
+                            LocalDateTime.of(2026, 2, 10, 0, 0),
+                            LocalDateTime.of(2026, 2, 25, 23, 59)
                     )
             );
 
@@ -204,9 +204,9 @@ class ClubQueryServiceTest {
                 null,
                 "상세 설명",
                 "지원 자격",
-                ClubRecruitmentStatus.RECRUITING,
-                LocalDateTime.of(2025, 3, 1, 0, 0),
-                LocalDateTime.of(2025, 3, 31, 23, 59),
+                LocalDateTime.of(2099, 3, 1, 0, 0),
+                LocalDateTime.of(2099, 3, 31, 23, 59),
+                false,
                 "apply-url",
                 "poster-path",
                 "공학관",
@@ -234,7 +234,7 @@ class ClubQueryServiceTest {
         assertThat(result.isSubscribed()).isTrue();
         assertThat(result.location().building()).isEqualTo("공학관");
         assertThat(result.recruitmentStatus())
-                .isEqualTo(ClubRecruitmentStatus.RECRUITING);
+                .isEqualTo(ClubRecruitmentStatus.BEFORE);
         assertThat(result.category())
                 .isEqualTo(ClubCategory.ACADEMIC);
         assertThat(result.division())
@@ -260,8 +260,8 @@ class ClubQueryServiceTest {
                 ClubCategory.ACADEMIC, ClubDivision.CENTRAL,
                 null, null, null,
                 null, null,
-                ClubRecruitmentStatus.RECRUITING,
                 null, null,
+                true,
                 null, null,
                 null, null,
                 null, null
