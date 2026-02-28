@@ -1,5 +1,6 @@
 package com.kustacks.kuring.club.application.port.in.dto;
 
+import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
 import com.kustacks.kuring.club.domain.ClubCategory;
 import com.kustacks.kuring.club.domain.ClubDivision;
 import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
@@ -26,11 +27,51 @@ public record ClubDetailResult(
         String posterImageUrl,
         Location location
 ) {
+
+    public static ClubDetailResult from(
+            ClubDetailDto clubDetailDto,
+            int subscriberCount,
+            boolean isSubscribed
+    ) {
+        return new ClubDetailResult(
+                clubDetailDto.getId(),
+                clubDetailDto.getName(),
+                clubDetailDto.getSummary(),
+                clubDetailDto.getCategory(),
+                clubDetailDto.getDivision(),
+                subscriberCount,
+                isSubscribed,
+                clubDetailDto.getInstagramUrl(),
+                clubDetailDto.getYoutubeUrl(),
+                clubDetailDto.getEtcUrl(),
+                clubDetailDto.getDescription(),
+                clubDetailDto.getQualifications(),
+                clubDetailDto.getRecruitmentStatus(),
+                clubDetailDto.getRecruitStartAt(),
+                clubDetailDto.getRecruitEndAt(),
+                clubDetailDto.getApplyUrl(),
+                clubDetailDto.getPosterImagePath(),
+                Location.from(clubDetailDto)
+        );
+    }
+
     public record Location(
             String building,
             String room,
             Double lon,
             Double lat
     ) {
+        public static Location from(ClubDetailDto clubDetailDto) {
+            if (!clubDetailDto.hasLocation()) {
+                return null;
+            }
+
+            return new Location(
+                    clubDetailDto.getBuilding(),
+                    clubDetailDto.getRoom(),
+                    clubDetailDto.getLon(),
+                    clubDetailDto.getLat()
+            );
+        }
     }
 }

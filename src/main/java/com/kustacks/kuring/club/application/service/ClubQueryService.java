@@ -56,29 +56,14 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         Map<Long, Integer> subscriberCountMap = clubQueryPort.countSubscribersByClubIds(clubIds);
 
-        // 구독 관련 메서드화 하면 좋을듯!
-        List<Long> subscribedClubIds = List.of();
-        if (rootUser.isPresent()) {
-            Long rootUserId = rootUser.get().getId();
-            subscribedClubIds = clubQueryPort.findSubscribedClubIds(clubIds, rootUserId);
-        }
-
-        Map<Long, Boolean> subscribedMap = subscribedClubIds.stream()
-                .collect(Collectors.toMap(id -> id, id -> true));
+        Map<Long, Boolean> subscribedMap = getSubscribedMap(clubIds, rootUser);
 
         List<ClubItemResult> clubItemResults =
                 clubReadModels.stream()
-                        .map(r -> new ClubItemResult(
-                                r.getId(),
-                                r.getName(),
-                                r.getSummary(),
-                                r.getIconImageUrl(),
-                                r.getCategory().getName(),
-                                r.getDivision().getName(),
+                        .map(r -> ClubItemResult.from(
+                                r,
                                 subscribedMap.getOrDefault(r.getId(), false),
-                                subscriberCountMap.getOrDefault(r.getId(), 0),
-                                r.getRecruitStartDate(),
-                                r.getRecruitEndDate()
+                                subscriberCountMap.getOrDefault(r.getId(), 0)
                         ))
                         .toList();
 
@@ -92,8 +77,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         Optional<RootUser> rootUser = rootUserQueryPort.findRootUserByEmail(email);
 
-        // dto -> readmodel로 이름 수정
-        ClubDetailDto dto = clubQueryPort.findClubDetailById(clubId)
+        ClubDetailDto clubDetailDto = clubQueryPort.findClubDetailById(clubId)
                 .orElseThrow(() -> new NotFoundException(CLUB_NOT_FOUND));
 
         int subscriberCount = clubQueryPort.countSubscribers(clubId);
@@ -104,35 +88,26 @@ public class ClubQueryService implements ClubQueryUseCase {
             isSubscribed = clubQueryPort.existsSubscription(rootUserId, clubId);
         }
 
-        ClubDetailResult.Location location = dto.hasLocation() ?
-                new ClubDetailResult.Location(
-                        dto.getBuilding(),
-                        dto.getRoom(),
-                        dto.getLon(),
-                        dto.getLat()
-                )
-                : null;
-
-        return new ClubDetailResult(
-                dto.getId(),
-                dto.getName(),
-                dto.getSummary(),
-                dto.getCategory(),
-                dto.getDivision(),
+        return ClubDetailResult.from(
+                clubDetailDto,
                 subscriberCount,
-                isSubscribed,
-                dto.getInstagramUrl(),
-                dto.getYoutubeUrl(),
-                dto.getEtcUrl(),
-                dto.getDescription(),
-                dto.getQualifications(),
-                dto.getRecruitmentStatus(),
-                dto.getRecruitStartAt(),
-                dto.getRecruitEndAt(),
-                dto.getApplyUrl(),
-                dto.getPosterImagePath(),
-                location
+                isSubscribed
         );
+    }
+
+    private Map<Long, Boolean> getSubscribedMap(List<Long> clubIds, Optional<RootUser> rootUser) {
+
+        if (rootUser.isEmpty()) {
+            return Map.of();
+        }
+
+        Long rootUserId = rootUser.get().getId();
+
+        List<Long> subscribedClubIds =
+                clubQueryPort.findSubscribedClubIds(clubIds, rootUserId);
+
+        return subscribedClubIds.stream()
+                .collect(Collectors.toMap(id -> id, id -> true));
     }
 
 }
