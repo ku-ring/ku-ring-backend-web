@@ -5,11 +5,11 @@ import com.kustacks.kuring.auth.authentication.AuthorizationType;
 import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.club.adapter.in.web.dto.ClubDetailResponse;
 import com.kustacks.kuring.club.adapter.in.web.dto.ClubDivisionListResponse;
-import com.kustacks.kuring.club.adapter.in.web.dto.ClubDivisionResponse;
 import com.kustacks.kuring.club.adapter.in.web.dto.ClubListResponse;
 import com.kustacks.kuring.club.application.port.in.ClubQueryUseCase;
 import com.kustacks.kuring.club.application.port.in.dto.ClubDetailCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubDetailResult;
+import com.kustacks.kuring.club.application.port.in.dto.ClubDivisionResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
@@ -51,12 +51,9 @@ public class ClubQueryApiV2 {
     @GetMapping("/divisions")
     public ResponseEntity<BaseResponse<ClubDivisionListResponse>> getSupportedClubDivisions() {
 
-        List<ClubDivisionResponse> divisions = clubQueryUseCase.getClubDivisions()
-                .stream()
-                .map(ClubDivisionResponse::from)
-                .toList();
+        List<ClubDivisionResult> results = clubQueryUseCase.getClubDivisions();
 
-        ClubDivisionListResponse response = new ClubDivisionListResponse(divisions);
+        ClubDivisionListResponse response = ClubDivisionListResponse.from(results);
 
         return ResponseEntity.ok().body(new BaseResponse<>(CLUB_DIVISION_SEARCH_SUCCESS, response));
     }

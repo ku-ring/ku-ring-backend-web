@@ -34,11 +34,6 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
     }
 
     @Override
-    public int countClubsByCategoryAndDivisions(String category, List<String> divisions) {
-        return clubRepository.countClubsByCategoryAndDivisions(category, divisions);
-    }
-
-    @Override
     public Optional<ClubDetailDto> findClubDetailById(Long id) {
         return clubRepository.findClubDetailById(id);
     }
