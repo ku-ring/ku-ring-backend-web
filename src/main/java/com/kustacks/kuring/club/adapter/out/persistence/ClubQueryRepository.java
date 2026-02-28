@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface ClubQueryRepository {
 
-    List<ClubReadModel> searchClubs(String category, List<String> divisions, String cursor, int size, String sortBy, LocalDateTime now);
+    List<ClubReadModel> searchClubs(String category, List<String> divisions);
 
     int countClubsByCategoryAndDivisions(String category, List<String> divisions);
 

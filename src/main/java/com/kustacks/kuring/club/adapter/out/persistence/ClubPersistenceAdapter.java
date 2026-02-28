@@ -8,7 +8,6 @@ import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.Club;
 import com.kustacks.kuring.club.domain.ClubSubscribe;
 import com.kustacks.kuring.common.annotation.PersistenceAdapter;
-import com.kustacks.kuring.common.data.Cursor;
 import com.kustacks.kuring.user.domain.RootUser;
 import lombok.RequiredArgsConstructor;
 
@@ -29,20 +28,9 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
     @Override
     public List<ClubReadModel> searchClubs(
             String category,
-            List<String> divisions,
-            Cursor cursor,
-            int size,
-            String sortBy,
-            LocalDateTime now
+            List<String> divisions
     ) {
-        return clubRepository.searchClubs(
-                category,
-                divisions,
-                cursor == null ? null : cursor.getStringCursor(),
-                size,
-                sortBy,
-                now
-        );
+        return clubRepository.searchClubs(category, divisions);
     }
 
     @Override

@@ -9,10 +9,7 @@ import com.kustacks.kuring.club.domain.ClubDivision;
 import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
 import com.kustacks.kuring.club.domain.ClubSnsType;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,13 +50,8 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
     @Transactional(readOnly = true)
     public List<ClubReadModel> searchClubs(
             String category,
-            List<String> divisions,
-            String cursor,
-            int size,
-            String sortBy,
-            LocalDateTime now
+            List<String> divisions
     ) {
-
         return queryFactory
                 .select(new QClubReadModel(
                         club.id,
@@ -74,11 +66,8 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                 .from(club)
                 .where(
                         categoryEq(category),
-                        divisionIn(divisions),
-                        cursorCondition(sortBy, cursor, now)
+                        divisionIn(divisions)
                 )
-                .orderBy(getOrderSpecifiers(sortBy, now))
-                .limit(size)
                 .fetch();
     }
 
@@ -201,108 +190,6 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                         .map(ClubDivision::fromName)
                         .toList()
         );
-    }
-
-    //서비스로
-    private BooleanExpression cursorCondition(String sortBy, String cursor, LocalDateTime now) {
-
-        if (cursor == null || cursor.equals("0")) return null;
-
-        try {
-            // 언더바로
-            String[] parts = cursor.split("\\|");
-
-            return switch (sortBy) {
-
-                case "name" -> {
-                    if (parts.length < 2) yield null;
-
-                    String lastName = parts[0];
-                    Long lastId = Long.parseLong(parts[1]);
-
-                    yield club.name.gt(lastName)
-                            .or(
-                                    club.name.eq(lastName)
-                                            .and(club.id.gt(lastId))
-                            );
-                }
-
-                case "recruitEndDate" -> {
-                    if (parts.length < 3) yield null;
-                    //스트링
-                    int lastGroup = Integer.parseInt(parts[0]);
-                    String lastDateStr = parts[1];
-                    Long lastId = Long.parseLong(parts[2]);
-
-                    NumberExpression<Integer> currentGroup = recruitmentGroup(now);
-
-                    BooleanExpression groupCondition = currentGroup.gt(lastGroup);
-
-                    BooleanExpression sameGroupCondition;
-
-                    if ("null".equals(lastDateStr)) {
-                        sameGroupCondition = currentGroup.eq(lastGroup)
-                                .and(club.id.gt(lastId));
-                    } else {
-                        LocalDateTime lastDate = LocalDateTime.parse(lastDateStr);
-                        sameGroupCondition = currentGroup.eq(lastGroup)
-                                .and(
-                                        club.recruitEndAt.gt(lastDate)
-                                                .or(
-                                                        club.recruitEndAt.eq(lastDate)
-                                                                .and(club.id.gt(lastId))
-                                                )
-                                );
-                    }
-                    yield groupCondition.or(sameGroupCondition);
-
-                }
-
-                default -> {
-                    Long lastId = Long.parseLong(cursor);
-                    yield club.id.gt(lastId);
-                }
-            };
-
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private OrderSpecifier<?>[] getOrderSpecifiers(String sortBy, LocalDateTime now) {
-
-        return switch (sortBy) {
-
-            case "name" -> new OrderSpecifier[]{
-                    club.name.asc(),
-                    club.id.asc()
-            };
-
-            case "recruitEndDate" -> {
-
-                var statusOrder = new CaseBuilder()
-                        .when(club.recruitEndAt.isNull()).then(2)
-                        .when(club.recruitEndAt.lt(now)).then(1)
-                        .otherwise(0);
-
-                yield new OrderSpecifier[]{
-                        statusOrder.asc(),
-                        club.recruitEndAt.asc().nullsLast(),
-                        club.id.asc()
-                };
-            }
-
-            default -> new OrderSpecifier[]{
-                    club.id.asc()
-            };
-        };
-    }
-
-    private NumberExpression<Integer> recruitmentGroup(LocalDateTime now) {
-        return new CaseBuilder()
-                .when(club.recruitEndAt.isNull()).then(2)
-                .when(club.recruitEndAt.lt(now)).then(1)
-                .otherwise(0);
     }
 
     // 얘도 서비스쪽에서 해야될듯

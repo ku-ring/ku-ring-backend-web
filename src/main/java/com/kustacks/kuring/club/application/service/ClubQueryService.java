@@ -12,14 +12,12 @@ import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.ClubDivision;
 import com.kustacks.kuring.common.annotation.UseCase;
-import com.kustacks.kuring.common.data.CursorBasedList;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.domain.RootUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -45,28 +43,14 @@ public class ClubQueryService implements ClubQueryUseCase {
 
     @Override
     public ClubListResult getClubs(ClubListCommand command) {
-        String email = command.email();
-        Optional<RootUser> rootUser = rootUserQueryPort.findRootUserByEmail(email);
+        Optional<RootUser> rootUser = rootUserQueryPort.findRootUserByEmail(command.email());
 
-        int limit = Math.min(command.size(), 30);
-
-        LocalDateTime now = LocalDateTime.now();
-
-        CursorBasedList<ClubReadModel> cursorBasedList = CursorBasedList.of(
-                limit,
-                club -> generateCursor(club, command.sortBy(), now),
-                searchSize -> clubQueryPort.searchClubs(
-                        command.category(),
-                        command.divisionList(),
-                        command.cursor(),
-                        searchSize,
-                        command.sortBy(),
-                        now
-                )
+        List<ClubReadModel> clubReadModels = clubQueryPort.searchClubs(
+                command.category(),
+                command.divisionList()
         );
 
-        List<Long> clubIds = cursorBasedList.getContents()
-                .stream()
+        List<Long> clubIds = clubReadModels.stream()
                 .map(ClubReadModel::getId)
                 .toList();
 
@@ -82,10 +66,8 @@ public class ClubQueryService implements ClubQueryUseCase {
         Map<Long, Boolean> subscribedMap = subscribedClubIds.stream()
                 .collect(Collectors.toMap(id -> id, id -> true));
 
-        //items -> clubItemResults로 이름 수정?
-        List<ClubItemResult> items =
-                cursorBasedList.getContents()
-                        .stream()
+        List<ClubItemResult> clubItemResults =
+                clubReadModels.stream()
                         .map(r -> new ClubItemResult(
                                 r.getId(),
                                 r.getName(),
@@ -100,15 +82,7 @@ public class ClubQueryService implements ClubQueryUseCase {
                         ))
                         .toList();
 
-
-        int totalCount = clubQueryPort.countClubsByCategoryAndDivisions(command.category(), command.divisionList());
-
-        return new ClubListResult(
-                items,
-                cursorBasedList.getEndCursor(),
-                cursorBasedList.hasNext(),
-                totalCount
-        );
+        return new ClubListResult(clubItemResults);
     }
 
     @Override
@@ -161,26 +135,4 @@ public class ClubQueryService implements ClubQueryUseCase {
         );
     }
 
-    private String generateCursor(ClubReadModel club, String sortBy, LocalDateTime now) {
-        return switch (sortBy) {
-            case "name" -> club.getName() + "|" + club.getId();
-            case "recruitEndDate" -> {
-                int group;
-                if (club.getRecruitEndDate() == null) {
-                    group = 2;
-                } else if (club.getRecruitEndDate().isBefore(now)) {
-                    group = 1;
-                } else {
-                    group = 0;
-                }
-
-                String datePart = club.getRecruitEndDate() == null
-                        ? "null"
-                        : club.getRecruitEndDate().toString();
-
-                yield group + "|" + datePart + "|" + club.getId();
-            }
-            default -> club.getId().toString();
-        };
-    }
 }

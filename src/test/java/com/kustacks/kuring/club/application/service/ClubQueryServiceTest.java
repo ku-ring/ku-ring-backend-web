@@ -11,7 +11,6 @@ import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.ClubCategory;
 import com.kustacks.kuring.club.domain.ClubDivision;
 import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
-import com.kustacks.kuring.common.data.Cursor;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.domain.RootUser;
 import org.junit.jupiter.api.DisplayName;
@@ -106,9 +105,6 @@ class ClubQueryServiceTest {
         // given
         String category = "academic";
         String divisions = "central,engineering";
-        Cursor cursor = Cursor.from(null);
-        int size = 10;
-        String sortBy = "name";
 
         String email = "test@test.com";
         Long loginUserId = 100L;
@@ -118,21 +114,14 @@ class ClubQueryServiceTest {
         when(rootUserQueryPort.findRootUserByEmail(email))
                 .thenReturn(Optional.of(rootUser));
 
-        ClubListCommand command = new ClubListCommand(category, divisions, cursor, size, sortBy, email);
+        ClubListCommand command = new ClubListCommand(category, divisions, email);
 
         List<String> divisionList = List.of("central", "engineering");
 
         when(clubQueryPort.searchClubs(
                 eq(category),
-                eq(divisionList),
-                eq(cursor),
-                eq(size + 1),
-                eq(sortBy),
-                any(LocalDateTime.class)
+                eq(divisionList)
         )).thenReturn(mockReadModels);
-
-        when(clubQueryPort.countClubsByCategoryAndDivisions(category, divisionList))
-                .thenReturn(2);
 
         when(clubQueryPort.countSubscribersByClubIds(any()))
                 .thenReturn(Map.of(
@@ -148,16 +137,12 @@ class ClubQueryServiceTest {
         ClubListResult result = clubQueryService.getClubs(command);
 
         // then
-        assertThat(result.totalCount()).isEqualTo(2);
         assertThat(result.clubs()).hasSize(3);
-        assertThat(result.hasNext()).isFalse();
-        assertThat(result.cursor()).isNull();
         assertThat(result.clubs().get(0).subscriberCount()).isEqualTo(10);
         assertThat(result.clubs().get(0).isSubscribed()).isTrue();
 
         verify(rootUserQueryPort).findRootUserByEmail(email);
-        verify(clubQueryPort).searchClubs(eq(category), eq(divisionList), eq(cursor), eq(size + 1), eq(sortBy), any(LocalDateTime.class));
-        verify(clubQueryPort).countClubsByCategoryAndDivisions(category, divisionList);
+        verify(clubQueryPort).searchClubs(eq(category), eq(divisionList));
     }
 
     @Test
@@ -166,26 +151,16 @@ class ClubQueryServiceTest {
         //given
         String category = "academic";
         String divisions = "central,engineering";
-        Cursor cursor = Cursor.from(null);
-        int size = 10;
-        String sortBy = "name";
         String email = null;
 
-        ClubListCommand command = new ClubListCommand(category, divisions, cursor, size, sortBy, email);
+        ClubListCommand command = new ClubListCommand(category, divisions, email);
 
         List<String> divisionList = List.of("central", "engineering");
 
         when(clubQueryPort.searchClubs(
                 eq(category),
-                eq(divisionList),
-                eq(cursor),
-                eq(size + 1),
-                eq(sortBy),
-                any(LocalDateTime.class)
+                eq(divisionList)
         )).thenReturn(mockReadModels);
-
-        when(clubQueryPort.countClubsByCategoryAndDivisions(category, divisionList))
-                .thenReturn(2);
 
         when(clubQueryPort.countSubscribersByClubIds(any()))
                 .thenReturn(Map.of(

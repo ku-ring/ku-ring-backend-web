@@ -13,15 +13,12 @@ import com.kustacks.kuring.club.application.port.in.dto.ClubDetailResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
-import com.kustacks.kuring.common.data.Cursor;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -64,20 +61,17 @@ public class ClubQueryApiV2 {
         return ResponseEntity.ok().body(new BaseResponse<>(CLUB_DIVISION_SEARCH_SUCCESS, response));
     }
 
-    @Operation(summary = "동아리 목록 조회", description = "필터 조건에 맞는 동아리 목록을 커서 페이징으로 조회합니다")
+    @Operation(summary = "동아리 목록 조회", description = "필터 조건에 맞는 동아리 목록을 조회합니다")
     @SecurityRequirement(name = JWT_TOKEN_HEADER_KEY)
     @GetMapping
     public ResponseEntity<BaseResponse<ClubListResponse>> getClubs(
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String division,
-            @RequestParam(required = false) String cursor,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(30) int size,
-            @RequestParam(defaultValue = "name") String sortBy,
             @RequestHeader(value = AuthorizationExtractor.AUTHORIZATION, required = false) String bearerToken
     ) {
         String email = resolveLoginEmail(bearerToken);
 
-        ClubListCommand command = new ClubListCommand(category, division, Cursor.from(cursor), size, sortBy, email);
+        ClubListCommand command = new ClubListCommand(category, division, email);
 
         ClubListResult result = clubQueryUseCase.getClubs(command);
 
