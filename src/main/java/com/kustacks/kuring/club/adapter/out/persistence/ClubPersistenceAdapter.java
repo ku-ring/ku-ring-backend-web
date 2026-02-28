@@ -92,7 +92,6 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
         return findClubsBetweenDates(startInclusive, endExclusive);
     }
 
-
     @Override
     public boolean existsSubscription(Long rootUserId, Long clubId) {
         return clubSubscribeRepository.existsByRootUserIdAndClubId(rootUserId, clubId);

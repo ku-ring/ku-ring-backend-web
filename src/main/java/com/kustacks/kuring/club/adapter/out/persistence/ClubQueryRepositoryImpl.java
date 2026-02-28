@@ -44,7 +44,6 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
         return end != null ? club.recruitEndAt.lt(end) : null;
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<ClubReadModel> searchClubs(
