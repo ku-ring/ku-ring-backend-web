@@ -59,27 +59,23 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
 
 
     @Override
-    public int countSubscribers(Long clubId) {
+    public Long countSubscribers(Long clubId) {
         return clubSubscribeRepository.countByClubId(clubId);
     }
 
     @Override
-    public Map<Long, Integer> countSubscribersByClubIds(List<Long> clubIds) {
+    public Map<Long, Long> countSubscribersByClubIds(List<Long> clubIds) {
 
         if (clubIds == null || clubIds.isEmpty()) {
             return Map.of();
         }
 
-        List<ClubSubscribe> subscriptions = clubSubscribeRepository.findByClubIdIn(clubIds);
+        List<Object[]> subscriptions = clubSubscribeRepository.countSubscribersByClubIds(clubIds);
 
-        // groupby로 해도 될듯
         return subscriptions.stream()
-                .collect(Collectors.groupingBy(
-                        sub -> sub.getClub().getId(),
-                        Collectors.collectingAndThen(
-                                Collectors.counting(),
-                                Long::intValue
-                        )
+                .collect(Collectors.toMap(
+                        row -> (Long) row[0],
+                        row -> (Long) row[1]
                 ));
     }
 
@@ -113,7 +109,7 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
     }
 
     @Override
-    public long countSubscriptions(Long rootUserId) {
+    public Long countSubscriptions(Long rootUserId) {
         return clubSubscribeRepository.countByRootUserId(rootUserId);
     }
 }

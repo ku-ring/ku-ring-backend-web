@@ -12,14 +12,14 @@ public record ClubItemResult(
         String category,
         String division,
         boolean isSubscribed,
-        int subscriberCount,
+        Long subscriberCount,
         LocalDateTime recruitStartDate,
         LocalDateTime recruitEndDate
 ) {
     public static ClubItemResult from(
             ClubReadModel clubReadModel,
             boolean isSubscribed,
-            int subscriberCount
+            Long subscriberCount
     ) {
         return new ClubItemResult(
                 clubReadModel.getId(),

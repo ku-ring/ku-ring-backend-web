@@ -6,6 +6,7 @@ import com.kustacks.kuring.club.application.port.in.dto.ClubDivisionResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
+import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
 import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.ClubCategory;
@@ -41,6 +42,9 @@ class ClubQueryServiceTest {
 
     @Mock
     private ClubQueryPort clubQueryPort;
+
+    @Mock
+    private ClubSubscriptionQueryPort clubSubscriptionQueryPort;
 
     @Mock
     private RootUserQueryPort rootUserQueryPort;
@@ -123,14 +127,14 @@ class ClubQueryServiceTest {
                 eq(divisionList)
         )).thenReturn(mockReadModels);
 
-        when(clubQueryPort.countSubscribersByClubIds(any()))
+        when(clubSubscriptionQueryPort.countSubscribersByClubIds(any()))
                 .thenReturn(Map.of(
-                        1L, 10,
-                        2L, 10,
-                        3L, 10
+                        1L, 10L,
+                        2L, 10L,
+                        3L, 10L
                 ));
 
-        when(clubQueryPort.findSubscribedClubIds(any(), anyLong()))
+        when(clubSubscriptionQueryPort.findSubscribedClubIds(any(), anyLong()))
                 .thenReturn(List.of(1L, 2L, 3L));
 
         // when
@@ -165,11 +169,11 @@ class ClubQueryServiceTest {
                 eq(divisionList)
         )).thenReturn(mockReadModels);
 
-        when(clubQueryPort.countSubscribersByClubIds(any()))
+        when(clubSubscriptionQueryPort.countSubscribersByClubIds(any()))
                 .thenReturn(Map.of(
-                        1L, 5,
-                        2L, 5,
-                        3L, 5
+                        1L, 5L,
+                        2L, 5L,
+                        3L, 5L
                 ));
 
         //when
@@ -177,7 +181,7 @@ class ClubQueryServiceTest {
 
         //then
         assertThat(result.clubs().get(0).isSubscribed()).isFalse();
-        verify(clubQueryPort, never()).findSubscribedClubIds(any(), anyLong());
+        verify(clubSubscriptionQueryPort, never()).findSubscribedClubIds(any(), anyLong());
     }
 
     @Test
@@ -221,10 +225,10 @@ class ClubQueryServiceTest {
         when(clubQueryPort.findClubDetailById(clubId))
                 .thenReturn(Optional.of(dto));
 
-        when(clubQueryPort.countSubscribers(clubId))
-                .thenReturn(10);
+        when(clubSubscriptionQueryPort.countSubscribers(clubId))
+                .thenReturn(10L);
 
-        when(clubQueryPort.existsSubscription(rootUserId, clubId))
+        when(clubSubscriptionQueryPort.existsSubscription(rootUserId, clubId))
                 .thenReturn(true);
 
         // when
@@ -245,8 +249,8 @@ class ClubQueryServiceTest {
 
         verify(rootUserQueryPort).findRootUserByEmail(email);
         verify(clubQueryPort).findClubDetailById(clubId);
-        verify(clubQueryPort).countSubscribers(clubId);
-        verify(clubQueryPort).existsSubscription(rootUserId, clubId);
+        verify(clubSubscriptionQueryPort).countSubscribers(clubId);
+        verify(clubSubscriptionQueryPort).existsSubscription(rootUserId, clubId);
     }
 
     @Test
@@ -273,16 +277,16 @@ class ClubQueryServiceTest {
         when(clubQueryPort.findClubDetailById(clubId))
                 .thenReturn(Optional.of(dto));
 
-        when(clubQueryPort.countSubscribers(clubId))
-                .thenReturn(5);
+        when(clubSubscriptionQueryPort.countSubscribers(clubId))
+                .thenReturn(5L);
 
         // when
         ClubDetailResult result = clubQueryService.getClubDetail(command);
 
         // then
         assertThat(result.isSubscribed()).isFalse();
-        verify(clubQueryPort).countSubscribers(clubId);
-        verify(clubQueryPort, never()).existsSubscription(anyLong(), any());
+        verify(clubSubscriptionQueryPort).countSubscribers(clubId);
+        verify(clubSubscriptionQueryPort, never()).existsSubscription(anyLong(), any());
         assertThat(result.subscriberCount()).isEqualTo(5);
     }
 }

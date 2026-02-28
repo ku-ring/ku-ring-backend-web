@@ -13,7 +13,7 @@ public record ClubDetailResult(
         String summary,
         ClubCategory category,
         ClubDivision division,
-        int subscriberCount,
+        Long subscriberCount,
         boolean isSubscribed,
         String instagramUrl,
         String youtubeUrl,
@@ -30,7 +30,7 @@ public record ClubDetailResult(
 
     public static ClubDetailResult from(
             ClubDetailDto clubDetailDto,
-            int subscriberCount,
+            Long subscriberCount,
             boolean isSubscribed,
             ClubRecruitmentStatus recruitmentStatus
     ) {

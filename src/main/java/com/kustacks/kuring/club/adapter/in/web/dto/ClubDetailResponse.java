@@ -10,7 +10,7 @@ public record ClubDetailResponse(
         String summary,
         String category,
         String division,
-        int subscriberCount,
+        Long subscriberCount,
         boolean isSubscribed,
         String instagramUrl,
         String youtubeUrl,

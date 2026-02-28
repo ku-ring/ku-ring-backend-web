@@ -8,6 +8,7 @@ import com.kustacks.kuring.club.application.port.in.dto.ClubItemResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
+import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
 import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.ClubCategory;
@@ -35,6 +36,7 @@ import static com.kustacks.kuring.common.exception.code.ErrorCode.CLUB_NOT_FOUND
 public class ClubQueryService implements ClubQueryUseCase {
 
     private final ClubQueryPort clubQueryPort;
+    private final ClubSubscriptionQueryPort clubSubscriptionQueryPort;
     private final RootUserQueryPort rootUserQueryPort;
 
     @Override
@@ -67,7 +69,7 @@ public class ClubQueryService implements ClubQueryUseCase {
                 .map(ClubReadModel::getId)
                 .toList();
 
-        Map<Long, Integer> subscriberCountMap = clubQueryPort.countSubscribersByClubIds(clubIds);
+        Map<Long, Long> subscriberCountMap = clubSubscriptionQueryPort.countSubscribersByClubIds(clubIds);
 
         Map<Long, Boolean> subscribedMap = getSubscribedMap(clubIds, rootUser);
 
@@ -76,7 +78,7 @@ public class ClubQueryService implements ClubQueryUseCase {
                         .map(r -> ClubItemResult.from(
                                 r,
                                 subscribedMap.getOrDefault(r.getId(), false),
-                                subscriberCountMap.getOrDefault(r.getId(), 0)
+                                subscriberCountMap.getOrDefault(r.getId(), 0L)
                         ))
                         .toList();
 
@@ -93,12 +95,12 @@ public class ClubQueryService implements ClubQueryUseCase {
         ClubDetailDto clubDetailDto = clubQueryPort.findClubDetailById(clubId)
                 .orElseThrow(() -> new NotFoundException(CLUB_NOT_FOUND));
 
-        int subscriberCount = clubQueryPort.countSubscribers(clubId);
+        Long subscriberCount = clubSubscriptionQueryPort.countSubscribers(clubId);
 
         boolean isSubscribed = false;
         if (rootUser.isPresent()) {
             Long rootUserId = rootUser.get().getId();
-            isSubscribed = clubQueryPort.existsSubscription(rootUserId, clubId);
+            isSubscribed = clubSubscriptionQueryPort.existsSubscription(rootUserId, clubId);
         }
 
         ClubRecruitmentStatus recruitmentStatus =
@@ -125,8 +127,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         Long rootUserId = rootUser.get().getId();
 
-        List<Long> subscribedClubIds =
-                clubQueryPort.findSubscribedClubIds(clubIds, rootUserId);
+        List<Long> subscribedClubIds = clubSubscriptionQueryPort.findSubscribedClubIds(clubIds, rootUserId);
 
         return subscribedClubIds.stream()
                 .collect(Collectors.toMap(id -> id, id -> true));

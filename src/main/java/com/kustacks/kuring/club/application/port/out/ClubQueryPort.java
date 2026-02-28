@@ -8,7 +8,6 @@ import com.kustacks.kuring.club.domain.ClubDivision;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface ClubQueryPort {
@@ -18,14 +17,6 @@ public interface ClubQueryPort {
     Optional<ClubDetailDto> findClubDetailById(Long id);
 
     List<ClubReadModel> searchClubs(ClubCategory category, List<ClubDivision> divisions);
-
-    boolean existsSubscription(Long rootUserId, Long clubId);
-
-    List<Long> findSubscribedClubIds(List<Long> clubIds, Long rootUserId);
-
-    int countSubscribers(Long clubId);
-
-    Map<Long, Integer> countSubscribersByClubIds(List<Long> clubIds);
 
     List<Club> findClubsBetweenDates(LocalDateTime start, LocalDateTime end);
 
