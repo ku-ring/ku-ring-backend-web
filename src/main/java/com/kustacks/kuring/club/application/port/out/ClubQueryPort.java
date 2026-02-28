@@ -17,9 +17,9 @@ public interface ClubQueryPort {
 
     List<ClubReadModel> searchClubs(String category, List<String> divisions);
 
-    boolean existsSubscription(Long clubId, Long loginUserId);
+    boolean existsSubscription(Long rootUserId, Long clubId);
 
-    List<Long> findSubscribedClubIds(List<Long> clubIds, Long loginUserId);
+    List<Long> findSubscribedClubIds(List<Long> clubIds, Long rootUserId);
 
     int countSubscribers(Long clubId);
 

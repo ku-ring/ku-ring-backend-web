@@ -17,9 +17,7 @@ interface ClubSubscribeRepository extends JpaRepository<ClubSubscribe, Long> {
 
     void deleteByRootUserAndClub(RootUser rootUser, Club club);
 
-    boolean existsByClubIdAndUser_LoginUserId(Long clubId, Long loginUserId);
-
     List<ClubSubscribe> findByClubIdIn(List<Long> clubIds);
 
-    List<ClubSubscribe> findByClubIdInAndUser_LoginUserId(List<Long> clubIds, Long loginUserId);
+    List<ClubSubscribe> findByClubIdInAndRootUserId(List<Long> clubIds, Long rootUserId);
 }

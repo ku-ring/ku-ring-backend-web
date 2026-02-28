@@ -59,8 +59,8 @@ public class ClubQueryService implements ClubQueryUseCase {
         // 구독 관련 메서드화 하면 좋을듯!
         List<Long> subscribedClubIds = List.of();
         if (rootUser.isPresent()) {
-            Long loginUserId = rootUser.get().getId();
-            subscribedClubIds = clubQueryPort.findSubscribedClubIds(clubIds, loginUserId);
+            Long rootUserId = rootUser.get().getId();
+            subscribedClubIds = clubQueryPort.findSubscribedClubIds(clubIds, rootUserId);
         }
 
         Map<Long, Boolean> subscribedMap = subscribedClubIds.stream()
@@ -87,21 +87,21 @@ public class ClubQueryService implements ClubQueryUseCase {
 
     @Override
     public ClubDetailResult getClubDetail(ClubDetailCommand command) {
-        Long id = command.clubId();
+        Long clubId = command.clubId();
         String email = command.email();
 
         Optional<RootUser> rootUser = rootUserQueryPort.findRootUserByEmail(email);
 
         // dto -> readmodel로 이름 수정
-        ClubDetailDto dto = clubQueryPort.findClubDetailById(id)
+        ClubDetailDto dto = clubQueryPort.findClubDetailById(clubId)
                 .orElseThrow(() -> new NotFoundException(CLUB_NOT_FOUND));
 
-        int subscriberCount = clubQueryPort.countSubscribers(id);
+        int subscriberCount = clubQueryPort.countSubscribers(clubId);
 
         boolean isSubscribed = false;
         if (rootUser.isPresent()) {
-            Long loginUserId = rootUser.get().getId();
-            isSubscribed = clubQueryPort.existsSubscription(id, loginUserId);
+            Long rootUserId = rootUser.get().getId();
+            isSubscribed = clubQueryPort.existsSubscription(rootUserId, clubId);
         }
 
         ClubDetailResult.Location location = dto.hasLocation() ?

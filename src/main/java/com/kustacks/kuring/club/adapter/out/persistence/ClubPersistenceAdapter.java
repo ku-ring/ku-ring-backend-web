@@ -38,11 +38,6 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
         return clubRepository.findClubDetailById(id);
     }
 
-//    @Override
-//    public boolean existsSubscription(Long clubId, Long loginUserId) {
-//        return clubSubscribeRepository.existsByClubIdAndUser_LoginUserId(clubId, loginUserId);
-//    }
-
     @Override
     public Optional<Club> findClubById(Long id) {
         return clubRepository.findById(id);
@@ -51,10 +46,10 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
     @Override
     public List<Long> findSubscribedClubIds(
             List<Long> clubIds,
-            Long loginUserId
+            Long rootUserId
     ) {
         return clubSubscribeRepository
-                .findByClubIdInAndUser_LoginUserId(clubIds, loginUserId)
+                .findByClubIdInAndRootUserId(clubIds, rootUserId)
                 .stream()
                 .map(sub -> sub.getClub().getId())
                 .toList();

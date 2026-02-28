@@ -107,10 +107,10 @@ class ClubQueryServiceTest {
         String divisions = "central,engineering";
 
         String email = "test@test.com";
-        Long loginUserId = 100L;
+        Long rootUserId = 100L;
 
         RootUser rootUser = mock(RootUser.class);
-        when(rootUser.getId()).thenReturn(loginUserId);
+        when(rootUser.getId()).thenReturn(rootUserId);
         when(rootUserQueryPort.findRootUserByEmail(email))
                 .thenReturn(Optional.of(rootUser));
 
@@ -184,12 +184,12 @@ class ClubQueryServiceTest {
         Long clubId = 1L;
 
         String email = "test@test.com";
-        Long loginUserId = 100L;
+        Long rootUserId = 100L;
 
         ClubDetailCommand command = new ClubDetailCommand(clubId, email);
 
         RootUser rootUser = mock(RootUser.class);
-        when(rootUser.getId()).thenReturn(loginUserId);
+        when(rootUser.getId()).thenReturn(rootUserId);
         when(rootUserQueryPort.findRootUserByEmail(email))
                 .thenReturn(Optional.of(rootUser));
 
@@ -221,7 +221,7 @@ class ClubQueryServiceTest {
         when(clubQueryPort.countSubscribers(clubId))
                 .thenReturn(10);
 
-        when(clubQueryPort.existsSubscription(clubId, loginUserId))
+        when(clubQueryPort.existsSubscription(rootUserId, clubId))
                 .thenReturn(true);
 
         // when
@@ -243,7 +243,7 @@ class ClubQueryServiceTest {
         verify(rootUserQueryPort).findRootUserByEmail(email);
         verify(clubQueryPort).findClubDetailById(clubId);
         verify(clubQueryPort).countSubscribers(clubId);
-        verify(clubQueryPort).existsSubscription(clubId, loginUserId);
+        verify(clubQueryPort).existsSubscription(rootUserId, clubId);
     }
 
     @Test
