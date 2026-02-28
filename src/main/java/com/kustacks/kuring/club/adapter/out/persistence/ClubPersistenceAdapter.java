@@ -6,6 +6,8 @@ import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
 import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.Club;
+import com.kustacks.kuring.club.domain.ClubCategory;
+import com.kustacks.kuring.club.domain.ClubDivision;
 import com.kustacks.kuring.club.domain.ClubSubscribe;
 import com.kustacks.kuring.common.annotation.PersistenceAdapter;
 import com.kustacks.kuring.user.domain.RootUser;
@@ -27,8 +29,8 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
 
     @Override
     public List<ClubReadModel> searchClubs(
-            String category,
-            List<String> divisions
+            ClubCategory category,
+            List<ClubDivision> divisions
     ) {
         return clubRepository.searchClubs(category, divisions);
     }

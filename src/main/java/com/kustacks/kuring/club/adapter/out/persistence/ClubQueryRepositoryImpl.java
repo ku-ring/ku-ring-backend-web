@@ -48,8 +48,8 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
     @Override
     @Transactional(readOnly = true)
     public List<ClubReadModel> searchClubs(
-            String category,
-            List<String> divisions
+            ClubCategory category,
+            List<ClubDivision> divisions
     ) {
         return queryFactory
                 .select(new QClubReadModel(
@@ -148,19 +148,14 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
         );
     }
 
-    private BooleanExpression categoryEq(String category) {
-        if (category == null) return null;
-        return club.category.eq(ClubCategory.fromName(category));
+    private BooleanExpression categoryEq(ClubCategory category) {
+        return category != null ? club.category.eq(category) : null;
     }
 
-    private BooleanExpression divisionIn(List<String> divisions) {
-        if (divisions == null || divisions.isEmpty()) return null;
-
-        return club.division.in(
-                divisions.stream()
-                        .map(ClubDivision::fromName)
-                        .toList()
-        );
+    private BooleanExpression divisionIn(List<ClubDivision> divisions) {
+        return divisions != null && !divisions.isEmpty()
+                ? club.division.in(divisions)
+                : null;
     }
 
 }

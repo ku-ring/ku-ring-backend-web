@@ -116,10 +116,10 @@ class ClubQueryServiceTest {
 
         ClubListCommand command = new ClubListCommand(category, divisions, email);
 
-        List<String> divisionList = List.of("central", "engineering");
+        List<ClubDivision> divisionList = List.of(ClubDivision.CENTRAL, ClubDivision.ENGINEERING);
 
         when(clubQueryPort.searchClubs(
-                eq(category),
+                eq(ClubCategory.ACADEMIC),
                 eq(divisionList)
         )).thenReturn(mockReadModels);
 
@@ -142,7 +142,10 @@ class ClubQueryServiceTest {
         assertThat(result.clubs().get(0).isSubscribed()).isTrue();
 
         verify(rootUserQueryPort).findRootUserByEmail(email);
-        verify(clubQueryPort).searchClubs(eq(category), eq(divisionList));
+        verify(clubQueryPort).searchClubs(
+                eq(ClubCategory.ACADEMIC),
+                eq(divisionList)
+        );
     }
 
     @Test
@@ -155,10 +158,10 @@ class ClubQueryServiceTest {
 
         ClubListCommand command = new ClubListCommand(category, divisions, email);
 
-        List<String> divisionList = List.of("central", "engineering");
+        List<ClubDivision> divisionList = List.of(ClubDivision.CENTRAL, ClubDivision.ENGINEERING);
 
         when(clubQueryPort.searchClubs(
-                eq(category),
+                eq(ClubCategory.ACADEMIC),
                 eq(divisionList)
         )).thenReturn(mockReadModels);
 

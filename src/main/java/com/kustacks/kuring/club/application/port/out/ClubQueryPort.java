@@ -3,6 +3,8 @@ package com.kustacks.kuring.club.application.port.out;
 import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.Club;
+import com.kustacks.kuring.club.domain.ClubCategory;
+import com.kustacks.kuring.club.domain.ClubDivision;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,7 +17,7 @@ public interface ClubQueryPort {
 
     Optional<ClubDetailDto> findClubDetailById(Long id);
 
-    List<ClubReadModel> searchClubs(String category, List<String> divisions);
+    List<ClubReadModel> searchClubs(ClubCategory category, List<ClubDivision> divisions);
 
     boolean existsSubscription(Long rootUserId, Long clubId);
 

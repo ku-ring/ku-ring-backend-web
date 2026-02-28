@@ -10,6 +10,7 @@ import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
 import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
+import com.kustacks.kuring.club.domain.ClubCategory;
 import com.kustacks.kuring.club.domain.ClubDivision;
 import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
 import com.kustacks.kuring.common.annotation.UseCase;
@@ -47,9 +48,19 @@ public class ClubQueryService implements ClubQueryUseCase {
     public ClubListResult getClubs(ClubListCommand command) {
         Optional<RootUser> rootUser = rootUserQueryPort.findRootUserByEmail(command.email());
 
+        ClubCategory category = command.category() != null
+                ? ClubCategory.fromName(command.category())
+                : null;
+
+        List<ClubDivision> divisions = command.divisionList() != null
+                ? command.divisionList().stream()
+                .map(ClubDivision::fromName)
+                .toList()
+                : null;
+
         List<ClubReadModel> clubReadModels = clubQueryPort.searchClubs(
-                command.category(),
-                command.divisionList()
+                category,
+                divisions
         );
 
         List<Long> clubIds = clubReadModels.stream()
