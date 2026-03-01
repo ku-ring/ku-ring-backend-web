@@ -26,5 +26,11 @@ interface ClubSubscribeRepository extends JpaRepository<ClubSubscribe, Long> {
             """)
     List<Object[]> countSubscribersByClubIds(List<Long> clubIds);
 
-    List<ClubSubscribe> findByClubIdInAndRootUserId(List<Long> clubIds, Long rootUserId);
+    @Query("""
+            select cs.club.id
+            from ClubSubscribe cs
+            where cs.club.id in :clubIds
+              and cs.rootUser.id = :rootUserId
+            """)
+    List<Long> findByClubIdInAndRootUserId(List<Long> clubIds, Long rootUserId);
 }

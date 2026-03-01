@@ -1,7 +1,5 @@
 package com.kustacks.kuring.club.adapter.out.persistence;
 
-import com.kustacks.kuring.club.domain.Club;
-import com.kustacks.kuring.club.domain.ClubSubscribe;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +15,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -106,21 +103,9 @@ class ClubPersistenceAdapterTest {
         Long rootUserId = 100L;
         List<Long> clubIds = List.of(1L, 2L);
 
-        Club club1 = mock(Club.class);
-        Club club2 = mock(Club.class);
-
-        when(club1.getId()).thenReturn(1L);
-        when(club2.getId()).thenReturn(2L);
-
-        ClubSubscribe subscribe1 = mock(ClubSubscribe.class);
-        ClubSubscribe subscribe2 = mock(ClubSubscribe.class);
-
-        when(subscribe1.getClub()).thenReturn(club1);
-        when(subscribe2.getClub()).thenReturn(club2);
-
         when(clubSubscribeRepository
                 .findByClubIdInAndRootUserId(clubIds, rootUserId))
-                .thenReturn(List.of(subscribe1, subscribe2));
+                .thenReturn(List.of(1L, 2L));
 
         // when
         List<Long> result = adapter.findSubscribedClubIds(clubIds, rootUserId);
@@ -130,5 +115,5 @@ class ClubPersistenceAdapterTest {
 
         verify(clubSubscribeRepository).findByClubIdInAndRootUserId(clubIds, rootUserId);
     }
-    
+
 }

@@ -50,11 +50,7 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
             List<Long> clubIds,
             Long rootUserId
     ) {
-        return clubSubscribeRepository
-                .findByClubIdInAndRootUserId(clubIds, rootUserId)
-                .stream()
-                .map(sub -> sub.getClub().getId())
-                .toList();
+        return clubSubscribeRepository.findByClubIdInAndRootUserId(clubIds, rootUserId);
     }
 
 
