@@ -75,7 +75,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         List<ClubItemResult> clubItemResults =
                 clubReadModels.stream()
-                        .map(r -> ClubItemResult.from(
+                        .map(r -> convertClubItemResult(
                                 r,
                                 subscribedMap.getOrDefault(r.getId(), false),
                                 subscriberCountMap.getOrDefault(r.getId(), 0L)
@@ -111,7 +111,7 @@ public class ClubQueryService implements ClubQueryUseCase {
                         LocalDateTime.now()
                 );
 
-        return ClubDetailResult.from(
+        return convertClubDetailResult(
                 clubDetailDto,
                 subscriberCount,
                 isSubscribed,
@@ -133,4 +133,60 @@ public class ClubQueryService implements ClubQueryUseCase {
                 .collect(Collectors.toMap(id -> id, id -> true));
     }
 
+    private ClubItemResult convertClubItemResult(
+            ClubReadModel clubReadModel,
+            boolean isSubscribed,
+            Long subscriberCount
+    ) {
+        return new ClubItemResult(
+                clubReadModel.getId(),
+                clubReadModel.getName(),
+                clubReadModel.getSummary(),
+                clubReadModel.getIconImageUrl(),
+                clubReadModel.getCategory().getName(),
+                clubReadModel.getDivision().getName(),
+                isSubscribed,
+                subscriberCount,
+                clubReadModel.getRecruitStartDate(),
+                clubReadModel.getRecruitEndDate()
+        );
+    }
+
+    private ClubDetailResult convertClubDetailResult(
+            ClubDetailDto clubDetailDto,
+            Long subscriberCount,
+            boolean isSubscribed,
+            ClubRecruitmentStatus recruitmentStatus
+    ) {
+        ClubDetailResult.Location location = null;
+        if (clubDetailDto.hasLocation()) {
+            location = new ClubDetailResult.Location(
+                    clubDetailDto.getBuilding(),
+                    clubDetailDto.getRoom(),
+                    clubDetailDto.getLon(),
+                    clubDetailDto.getLat()
+            );
+        }
+
+        return new ClubDetailResult(
+                clubDetailDto.getId(),
+                clubDetailDto.getName(),
+                clubDetailDto.getSummary(),
+                clubDetailDto.getCategory(),
+                clubDetailDto.getDivision(),
+                subscriberCount,
+                isSubscribed,
+                clubDetailDto.getInstagramUrl(),
+                clubDetailDto.getYoutubeUrl(),
+                clubDetailDto.getEtcUrl(),
+                clubDetailDto.getDescription(),
+                clubDetailDto.getQualifications(),
+                recruitmentStatus,
+                clubDetailDto.getRecruitStartAt(),
+                clubDetailDto.getRecruitEndAt(),
+                clubDetailDto.getApplyUrl(),
+                clubDetailDto.getPosterImagePath(),
+                location
+        );
+    }
 }
