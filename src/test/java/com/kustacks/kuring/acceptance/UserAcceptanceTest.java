@@ -520,7 +520,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
 
         var response = 동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, 99999L);
 
-        실패_응답_확인(response, HttpStatus.BAD_REQUEST);
+        실패_응답_확인(response, HttpStatus.NOT_FOUND);
     }
 
     @DisplayName("[v2] 사용자는 동아리 구독을 취소할 수 있다")
