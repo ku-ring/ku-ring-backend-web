@@ -70,9 +70,9 @@ class ClubPersistenceAdapterTest {
         Map<Long, Long> result = adapter.countSubscribersByClubIds(clubIds);
 
         //then
-        assertThat(result).hasSize(2);
-        assertThat(result.get(1L)).isEqualTo(5L);
-        assertThat(result.get(2L)).isEqualTo(3L);
+        assertThat(result).hasSize(2)
+                .containsEntry(1L, 5L)
+                .containsEntry(2L, 3L);
 
         verify(clubSubscribeRepository).countSubscribersByClubIds(clubIds);
     }
