@@ -14,7 +14,7 @@ import static com.kustacks.kuring.acceptance.ClubStep.지원하는_동아리_소
 import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
 
 @DisplayName("인수 : 동아리")
-public class ClubAcceptanceTest extends IntegrationTestSupport {
+class ClubAcceptanceTest extends IntegrationTestSupport {
 
     @DisplayName("[v2] 서버가 지원하는 동아리 소속 목록을 조회한다")
     @Test
@@ -42,7 +42,7 @@ public class ClubAcceptanceTest extends IntegrationTestSupport {
 
     @DisplayName("[v2] 존재하지 않는 category나 division로 동아리 목록 조회시 실패한다")
     @Test
-    void get_clubs_with_invalid_category() {
+    void get_clubs_with_invalid_category_division() {
         var 동아리_목록_조회_응답 = 동아리_목록_조회_요청("invalid-category", "invalid-division");
 
         실패_응답_확인(동아리_목록_조회_응답, HttpStatus.BAD_REQUEST);
