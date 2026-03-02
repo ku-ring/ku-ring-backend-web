@@ -47,13 +47,13 @@ public class ClubStep {
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo(CLUB_LIST_SEARCH_SUCCESS.getMessage()),
 
                 () -> assertThat(response.jsonPath().getList("data.clubs")).isNotEmpty(),
-                () -> assertThat(response.jsonPath().getLong("data.clubs[0].id")).isNotNull(),
+                () -> assertThat(response.jsonPath().getLong("data.clubs[0].id")).isPositive(),
                 () -> assertThat(response.jsonPath().getString("data.clubs[0].name")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getString("data.clubs[0].summary")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getString("data.clubs[0].category")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getString("data.clubs[0].division")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getBoolean("data.clubs[0].isSubscribed")).isNotNull(),
-                () -> assertThat(response.jsonPath().getLong("data.clubs[0].subscriberCount")).isNotNull()
+                () -> assertThat(response.jsonPath().getLong("data.clubs[0].subscriberCount")).isGreaterThanOrEqualTo(0)
         );
     }
 
@@ -76,7 +76,7 @@ public class ClubStep {
                 () -> assertThat(response.jsonPath().getString("data.summary")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getString("data.category")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getString("data.division")).isNotBlank(),
-                () -> assertThat(response.jsonPath().getLong("data.subscriberCount")).isNotNull(),
+                () -> assertThat(response.jsonPath().getLong("data.subscriberCount")).isGreaterThanOrEqualTo(0),
                 () -> assertThat(response.jsonPath().getBoolean("data.isSubscribed")).isNotNull(),
                 () -> assertThat(response.jsonPath().getString("data.recruitmentStatus")).isNotBlank()
         );
