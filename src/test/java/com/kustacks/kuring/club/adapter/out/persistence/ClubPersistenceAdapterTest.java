@@ -85,13 +85,13 @@ class ClubPersistenceAdapterTest {
         List<Long> emptyList = List.of();
 
         // when
-        Map<Long, Long> result_null = adapter.countSubscribersByClubIds(null);
+        Map<Long, Long> nullResult = adapter.countSubscribersByClubIds(null);
 
-        Map<Long, Long> result_empty = adapter.countSubscribersByClubIds(emptyList);
+        Map<Long, Long> emptyResult = adapter.countSubscribersByClubIds(emptyList);
 
         // then
-        assertThat(result_null).isEmpty();
-        assertThat(result_empty).isEmpty();
+        assertThat(nullResult).isEmpty();
+        assertThat(emptyResult).isEmpty();
 
         verify(clubSubscribeRepository, never()).countSubscribersByClubIds(any());
     }
