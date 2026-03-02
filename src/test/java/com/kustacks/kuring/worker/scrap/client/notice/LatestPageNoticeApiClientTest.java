@@ -2,7 +2,6 @@ package com.kustacks.kuring.worker.scrap.client.notice;
 
 import com.kustacks.kuring.support.TestFileLoader;
 import com.kustacks.kuring.worker.scrap.client.NormalJsoupClient;
-import org.assertj.core.api.SoftAssertions;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +17,7 @@ import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import com.kustacks.kuring.worker.dto.ScrapingResultDto;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -71,17 +71,12 @@ class LatestPageNoticeApiClientTest {
         assertThat(merged.select(".board-table > tbody > tr").size()).isEqualTo(total);
 
         // 호출을 모두 했는지 검증
-        SoftAssertions assertions = new SoftAssertions();
-        assertions.assertThatCode(() -> verify(jsoupClient).get(eq(totalUrl), anyInt()))
-                .as("totalUrl 호출").doesNotThrowAnyException();
-        assertions.assertThatCode(() -> verify(jsoupClient).get(eq(page1), anyInt()))
-                .as("page1 호출").doesNotThrowAnyException();
-        assertions.assertThatCode(() -> verify(jsoupClient).get(eq(page2), anyInt()))
-                .as("page2 호출").doesNotThrowAnyException();
-        assertions.assertThatCode(() -> verify(jsoupClient).get(eq(page3), anyInt()))
-                .as("page3 호출").doesNotThrowAnyException();
-
-        assertions.assertAll();
+        assertAll(
+                () -> verify(jsoupClient).get(eq(totalUrl), anyInt()),
+                () -> verify(jsoupClient).get(eq(page1), anyInt()),
+                () -> verify(jsoupClient).get(eq(page2), anyInt()),
+                () -> verify(jsoupClient).get(eq(page3), anyInt())
+        );
     }
 
     @DisplayName("base 페이지에 tbody가 없으면 InternalLogicException 에러를 발생시킨다.")
@@ -140,17 +135,12 @@ class LatestPageNoticeApiClientTest {
         assertThat(merged.select(".board-table > tbody > tr").size()).isEqualTo(total);
 
         // 호출 횟수/호출 여부 검증
-        SoftAssertions assertions = new SoftAssertions();
-        assertions.assertThatCode(() -> verify(jsoupClient, times(1)).get(eq(totalUrl), anyInt()))
-                .as("totalUrl 1회 호출").doesNotThrowAnyException();
-        assertions.assertThatCode(() -> verify(jsoupClient, times(1)).get(eq(page1), anyInt()))
-                .as("page1 1회 호출").doesNotThrowAnyException();
-        assertions.assertThatCode(() -> verify(jsoupClient, times(1)).get(eq(page2), anyInt()))
-                .as("page2 1회 호출").doesNotThrowAnyException();
-        assertions.assertThatCode(() -> verify(jsoupClient, never()).get(eq(page3), anyInt()))
-                .as("page3 호출되지 않음").doesNotThrowAnyException();
-
-        assertions.assertAll();
+        assertAll(
+                () -> verify(jsoupClient, times(1)).get(eq(totalUrl), anyInt()),
+                () -> verify(jsoupClient, times(1)).get(eq(page1), anyInt()),
+                () -> verify(jsoupClient, times(1)).get(eq(page2), anyInt()),
+                () -> verify(jsoupClient, never()).get(eq(page3), anyInt())
+        );
     }
 
     @DisplayName("최신 1페이지 요청 시 dto 1개를 반환한다")
