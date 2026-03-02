@@ -159,10 +159,11 @@ class LatestPageNoticeApiClientTest {
         List<ScrapingResultDto> result = apiClient.request(deptInfo);
 
         // then
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getDocument()).isNotNull();
-
-        verify(jsoupClient, times(1)).get(eq("https://example.com/list?page=1&row=100"), anyInt());
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result.get(0).getDocument()).isNotNull(),
+                () -> verify(jsoupClient, times(1)).get(eq("https://example.com/list?page=1&row=100"), anyInt())
+        );
     }
 
     @DisplayName("공지의 총 개수를 가져온다.")
