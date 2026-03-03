@@ -54,6 +54,14 @@ public class ClubStep {
         );
     }
 
+    public static void 동아리_카테고리_필터_검증(ExtractableResponse<Response> response, String expectedCategory) {
+        var categories = response.jsonPath().getList("data.clubs.category");
+
+        assertThat(categories)
+                .isNotEmpty()
+                .allMatch(expectedCategory::equals);
+    }
+
     public static ExtractableResponse<Response> 동아리_상세_조회_요청(Long clubId) {
         return RestAssured
                 .given().log().all()
