@@ -50,6 +50,10 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
             List<Long> clubIds,
             Long rootUserId
     ) {
+        if (clubIds == null || clubIds.isEmpty()) {
+            return List.of();
+        }
+
         return clubSubscribeRepository.findByClubIdInAndRootUserId(clubIds, rootUserId);
     }
 
