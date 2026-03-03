@@ -3,7 +3,7 @@ package com.kustacks.kuring.club.adapter.out.persistence;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
 import com.kustacks.kuring.club.application.port.out.ClubSubscriptionCommandPort;
 import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
-import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
+import com.kustacks.kuring.club.application.port.out.dto.ClubDetailReadModel;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.Club;
 import com.kustacks.kuring.club.domain.ClubCategory;
@@ -36,7 +36,7 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
     }
 
     @Override
-    public Optional<ClubDetailDto> findClubDetailById(Long id) {
+    public Optional<ClubDetailReadModel> findClubDetailById(Long id) {
         return clubRepository.findClubDetailById(id);
     }
 

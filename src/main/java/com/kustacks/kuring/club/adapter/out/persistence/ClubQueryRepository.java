@@ -1,6 +1,6 @@
 package com.kustacks.kuring.club.adapter.out.persistence;
 
-import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
+import com.kustacks.kuring.club.application.port.out.dto.ClubDetailReadModel;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.Club;
 import com.kustacks.kuring.club.domain.ClubCategory;
@@ -14,7 +14,7 @@ public interface ClubQueryRepository {
 
     List<ClubReadModel> searchClubs(ClubCategory category, List<ClubDivision> divisions);
 
-    Optional<ClubDetailDto> findClubDetailById(Long id);
+    Optional<ClubDetailReadModel> findClubDetailById(Long id);
 
     List<Club> findClubsBetweenDates(LocalDateTime start, LocalDateTime end);
 }

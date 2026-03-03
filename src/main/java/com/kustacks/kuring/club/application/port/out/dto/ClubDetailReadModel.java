@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ClubDetailDto {
+public class ClubDetailReadModel {
 
     private Long id;
     private String name;
@@ -39,7 +39,7 @@ public class ClubDetailDto {
     private Double lat;
 
     @QueryProjection
-    public ClubDetailDto(
+    public ClubDetailReadModel(
             Long id,
             String name,
             String summary,

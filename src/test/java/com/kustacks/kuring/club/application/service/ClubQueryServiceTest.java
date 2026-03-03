@@ -7,7 +7,7 @@ import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
 import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
-import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
+import com.kustacks.kuring.club.application.port.out.dto.ClubDetailReadModel;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.ClubCategory;
 import com.kustacks.kuring.club.domain.ClubDivision;
@@ -199,7 +199,7 @@ class ClubQueryServiceTest {
         when(rootUserQueryPort.findRootUserByEmail(email))
                 .thenReturn(Optional.of(rootUser));
 
-        ClubDetailDto dto = new ClubDetailDto(
+        ClubDetailReadModel clubDetailReadModel = new ClubDetailReadModel(
                 1L,
                 "쿠링",
                 "건국대 공지사항 앱 만드는 개발 동아리",
@@ -222,7 +222,7 @@ class ClubQueryServiceTest {
         );
 
         when(clubQueryPort.findClubDetailById(clubId))
-                .thenReturn(Optional.of(dto));
+                .thenReturn(Optional.of(clubDetailReadModel));
 
         when(clubSubscriptionQueryPort.countSubscribers(clubId))
                 .thenReturn(10L);
@@ -261,7 +261,7 @@ class ClubQueryServiceTest {
 
         ClubDetailCommand command = new ClubDetailCommand(clubId, email);
 
-        ClubDetailDto dto = new ClubDetailDto(
+        ClubDetailReadModel dto = new ClubDetailReadModel(
                 1L, "쿠링", "건국대 공지사항 앱 만드는 개발 동아리",
                 ClubCategory.ACADEMIC, ClubDivision.CENTRAL,
                 null, null, null,

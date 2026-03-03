@@ -1,6 +1,6 @@
 package com.kustacks.kuring.club.adapter.out.persistence;
 
-import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
+import com.kustacks.kuring.club.application.port.out.dto.ClubDetailReadModel;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.application.port.out.dto.QClubReadModel;
 import com.kustacks.kuring.club.domain.Club;
@@ -71,7 +71,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<ClubDetailDto> findClubDetailById(Long id) {
+    public Optional<ClubDetailReadModel> findClubDetailById(Long id) {
 
         List<Tuple> tuples = queryFactory
                 .select(
@@ -123,7 +123,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
         }
 
         return Optional.of(
-                new ClubDetailDto(
+                new ClubDetailReadModel(
                         first.get(club.id),
                         first.get(club.name),
                         first.get(club.summary),

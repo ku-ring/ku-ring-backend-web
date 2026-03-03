@@ -9,7 +9,7 @@ import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
 import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
-import com.kustacks.kuring.club.application.port.out.dto.ClubDetailDto;
+import com.kustacks.kuring.club.application.port.out.dto.ClubDetailReadModel;
 import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.ClubCategory;
 import com.kustacks.kuring.club.domain.ClubDivision;
@@ -91,7 +91,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         RootUser rootUser = rootUserQueryPort.findRootUserByEmail(email).orElse(null);
 
-        ClubDetailDto clubDetailDto = clubQueryPort.findClubDetailById(clubId)
+        ClubDetailReadModel clubDetailReadModel = clubQueryPort.findClubDetailById(clubId)
                 .orElseThrow(() -> new NotFoundException(CLUB_NOT_FOUND));
 
         Long subscriberCount = clubSubscriptionQueryPort.countSubscribers(clubId);
@@ -100,14 +100,14 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         ClubRecruitmentStatus recruitmentStatus =
                 ClubRecruitmentStatus.from(
-                        clubDetailDto.getRecruitStartAt(),
-                        clubDetailDto.getRecruitEndAt(),
-                        clubDetailDto.getIsAlways(),
+                        clubDetailReadModel.getRecruitStartAt(),
+                        clubDetailReadModel.getRecruitEndAt(),
+                        clubDetailReadModel.getIsAlways(),
                         LocalDateTime.now()
                 );
 
         return convertClubDetailResult(
-                clubDetailDto,
+                clubDetailReadModel,
                 subscriberCount,
                 isSubscribed,
                 recruitmentStatus
@@ -148,39 +148,39 @@ public class ClubQueryService implements ClubQueryUseCase {
     }
 
     private ClubDetailResult convertClubDetailResult(
-            ClubDetailDto clubDetailDto,
+            ClubDetailReadModel clubDetailReadModel,
             Long subscriberCount,
             boolean isSubscribed,
             ClubRecruitmentStatus recruitmentStatus
     ) {
         ClubDetailResult.Location location = null;
-        if (clubDetailDto.hasLocation()) {
+        if (clubDetailReadModel.hasLocation()) {
             location = new ClubDetailResult.Location(
-                    clubDetailDto.getBuilding(),
-                    clubDetailDto.getRoom(),
-                    clubDetailDto.getLon(),
-                    clubDetailDto.getLat()
+                    clubDetailReadModel.getBuilding(),
+                    clubDetailReadModel.getRoom(),
+                    clubDetailReadModel.getLon(),
+                    clubDetailReadModel.getLat()
             );
         }
 
         return new ClubDetailResult(
-                clubDetailDto.getId(),
-                clubDetailDto.getName(),
-                clubDetailDto.getSummary(),
-                clubDetailDto.getCategory(),
-                clubDetailDto.getDivision(),
+                clubDetailReadModel.getId(),
+                clubDetailReadModel.getName(),
+                clubDetailReadModel.getSummary(),
+                clubDetailReadModel.getCategory(),
+                clubDetailReadModel.getDivision(),
                 subscriberCount,
                 isSubscribed,
-                clubDetailDto.getInstagramUrl(),
-                clubDetailDto.getYoutubeUrl(),
-                clubDetailDto.getEtcUrl(),
-                clubDetailDto.getDescription(),
-                clubDetailDto.getQualifications(),
+                clubDetailReadModel.getInstagramUrl(),
+                clubDetailReadModel.getYoutubeUrl(),
+                clubDetailReadModel.getEtcUrl(),
+                clubDetailReadModel.getDescription(),
+                clubDetailReadModel.getQualifications(),
                 recruitmentStatus,
-                clubDetailDto.getRecruitStartAt(),
-                clubDetailDto.getRecruitEndAt(),
-                clubDetailDto.getApplyUrl(),
-                clubDetailDto.getPosterImagePath(),
+                clubDetailReadModel.getRecruitStartAt(),
+                clubDetailReadModel.getRecruitEndAt(),
+                clubDetailReadModel.getApplyUrl(),
+                clubDetailReadModel.getPosterImagePath(),
                 location
         );
     }
