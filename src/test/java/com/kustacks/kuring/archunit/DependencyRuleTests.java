@@ -9,146 +9,146 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 @DisplayName("헥사고날 아키텍처 검증")
 class DependencyRuleTests {
 
-    @DisplayName("User 아키텍처 검증")
-    @Test
-    void validateUserArchitecture() {
-        HexagonalArchitecture.boundedContext("com.kustacks.kuring.user")
+	@DisplayName("User 아키텍처 검증")
+	@Test
+	void validateUserArchitecture() {
+		HexagonalArchitecture.boundedContext("com.kustacks.kuring.user")
 
-                .withDomainLayer("domain")
+				.withDomainLayer("domain")
 
-                .withAdaptersLayer("adapter")
-                .incoming("in.web")
-                .outgoing("out.persistence")
-                .outgoing("out.event")
-                .and()
+				.withAdaptersLayer("adapter")
+				.incoming("in.web")
+				.outgoing("out.persistence")
+				.outgoing("out.event")
+				.and()
 
-                .withApplicationLayer("application")
-                .services("service")
-                .incomingPorts("port.in")
-                .outgoingPorts("port.out")
-                .and()
+				.withApplicationLayer("application")
+				.services("service")
+				.incomingPorts("port.in")
+				.outgoingPorts("port.out")
+				.and()
 
-                .withConfiguration("configuration")
-                .check(new ClassFileImporter()
-                        .importPackages("com.kustacks.kuring.user.."));
-    }
+				.withConfiguration("configuration")
+				.check(new ClassFileImporter()
+						.importPackages("com.kustacks.kuring.user.."));
+	}
 
-    @DisplayName("Notice 아키텍처 검증")
-    @Test
-    void validateNoticeArchitecture() {
-        HexagonalArchitecture.boundedContext("com.kustacks.kuring.notice")
+	@DisplayName("Notice 아키텍처 검증")
+	@Test
+	void validateNoticeArchitecture() {
+		HexagonalArchitecture.boundedContext("com.kustacks.kuring.notice")
 
-                .withDomainLayer("domain")
+				.withDomainLayer("domain")
 
-                .withAdaptersLayer("adapter")
-                .incoming("in.web")
-                .outgoing("out.persistence")
-                .and()
+				.withAdaptersLayer("adapter")
+				.incoming("in.web")
+				.outgoing("out.persistence")
+				.and()
 
-                .withApplicationLayer("application")
-                .services("service")
-                .incomingPorts("port.in")
-                .outgoingPorts("port.out")
-                .and()
+				.withApplicationLayer("application")
+				.services("service")
+				.incomingPorts("port.in")
+				.outgoingPorts("port.out")
+				.and()
 
-                .withConfiguration("configuration")
-                .check(new ClassFileImporter()
-                        .importPackages("com.kustacks.kuring.notice.."));
-    }
+				.withConfiguration("configuration")
+				.check(new ClassFileImporter()
+						.importPackages("com.kustacks.kuring.notice.."));
+	}
 
-    @DisplayName("Admin 아키텍처 검증")
-    @Test
-    void validateAdminArchitecture() {
-        HexagonalArchitecture.boundedContext("com.kustacks.kuring.admin")
+	@DisplayName("Admin 아키텍처 검증")
+	@Test
+	void validateAdminArchitecture() {
+		HexagonalArchitecture.boundedContext("com.kustacks.kuring.admin")
 
-                .withDomainLayer("domain")
+				.withDomainLayer("domain")
 
-                .withAdaptersLayer("adapter")
-                .incoming("in.web")
-                .outgoing("out.persistence")
-                .outgoing("out.event")
-                .and()
+				.withAdaptersLayer("adapter")
+				.incoming("in.web")
+				.outgoing("out.persistence")
+				.outgoing("out.event")
+				.and()
 
-                .withApplicationLayer("application")
-                .services("service")
-                .incomingPorts("port.in")
-                .outgoingPorts("port.out")
-                .and()
+				.withApplicationLayer("application")
+				.services("service")
+				.incomingPorts("port.in")
+				.outgoingPorts("port.out")
+				.and()
 
-                .withConfiguration("configuration")
-                .check(new ClassFileImporter()
-                        .importPackages("com.kustacks.kuring.admin.."));
-    }
+				.withConfiguration("configuration")
+				.check(new ClassFileImporter()
+						.importPackages("com.kustacks.kuring.admin.."));
+	}
 
-    @DisplayName("Staff 아키텍처 검증")
-    @Test
-    void validateStaffArchitecture() {
-        HexagonalArchitecture.boundedContext("com.kustacks.kuring.staff")
+	@DisplayName("Staff 아키텍처 검증")
+	@Test
+	void validateStaffArchitecture() {
+		HexagonalArchitecture.boundedContext("com.kustacks.kuring.staff")
 
-                .withDomainLayer("domain")
+				.withDomainLayer("domain")
 
-                .withAdaptersLayer("adapter")
-                .incoming("in.web")
-                .outgoing("out.persistence")
-                .and()
+				.withAdaptersLayer("adapter")
+				.incoming("in.web")
+				.outgoing("out.persistence")
+				.and()
 
-                .withApplicationLayer("application")
-                .services("service")
-                .incomingPorts("port.in")
-                .outgoingPorts("port.out")
-                .and()
+				.withApplicationLayer("application")
+				.services("service")
+				.incomingPorts("port.in")
+				.outgoingPorts("port.out")
+				.and()
 
-                .withConfiguration("configuration")
-                .check(new ClassFileImporter()
-                        .importPackages("com.kustacks.kuring.staff.."));
-    }
+				.withConfiguration("configuration")
+				.check(new ClassFileImporter()
+						.importPackages("com.kustacks.kuring.staff.."));
+	}
 
-    @DisplayName("Email 아키텍처 검증")
-    @Test
-    void validateEmailArchitecture() {
-        HexagonalArchitecture.boundedContext("com.kustacks.kuring.email")
+	@DisplayName("Email 아키텍처 검증")
+	@Test
+	void validateEmailArchitecture() {
+		HexagonalArchitecture.boundedContext("com.kustacks.kuring.email")
 
-                .withDomainLayer("domain")
+				.withDomainLayer("domain")
 
-                .withAdaptersLayer("adapter")
-                .incoming("in.web")
-                .outgoing("out.persistence")
-                .outgoing("out.email")
-                .and()
+				.withAdaptersLayer("adapter")
+				.incoming("in.web")
+				.outgoing("out.persistence")
+				.outgoing("out.email")
+				.and()
 
-                .withApplicationLayer("application")
-                .services("service")
-                .incomingPorts("port.in")
-                .outgoingPorts("port.out")
-                .and()
+				.withApplicationLayer("application")
+				.services("service")
+				.incomingPorts("port.in")
+				.outgoingPorts("port.out")
+				.and()
 
-                .withConfiguration("configuration")
-                .check(new ClassFileImporter()
-                        .importPackages("com.kustacks.kuring.email.."));
-    }
+				.withConfiguration("configuration")
+				.check(new ClassFileImporter()
+						.importPackages("com.kustacks.kuring.email.."));
+	}
 
-    @DisplayName("Report 아키텍처 검증")
-    @Test
-    void validateReportArchitecture() {
-        HexagonalArchitecture.boundedContext("com.kustacks.kuring.report")
+	@DisplayName("Report 아키텍처 검증")
+	@Test
+	void validateReportArchitecture() {
+		HexagonalArchitecture.boundedContext("com.kustacks.kuring.report")
 
-                .withDomainLayer("domain")
+				.withDomainLayer("domain")
 
-                .withAdaptersLayer("adapter")
-                .incoming("in.web")
-                .outgoing("out.persistence")
-                .and()
+				.withAdaptersLayer("adapter")
+				.incoming("in.web")
+				.outgoing("out.persistence")
+				.and()
 
-                .withApplicationLayer("application")
-                .services("service")
-                .incomingPorts("port.in")
-                .outgoingPorts("port.out")
-                .and()
+				.withApplicationLayer("application")
+				.services("service")
+				.incomingPorts("port.in")
+				.outgoingPorts("port.out")
+				.and()
 
-                .withConfiguration("configuration")
-                .check(new ClassFileImporter()
-                        .importPackages("com.kustacks.kuring.report.."));
-    }
+				.withConfiguration("configuration")
+				.check(new ClassFileImporter()
+						.importPackages("com.kustacks.kuring.report.."));
+	}
 
     @DisplayName("Calendar 아키텍처 검증")
     @Test
