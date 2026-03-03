@@ -18,13 +18,19 @@ interface ClubSubscribeRepository extends JpaRepository<ClubSubscribe, Long> {
 
     void deleteByRootUserAndClub(RootUser rootUser, Club club);
 
+    interface ClubSubscriberCountProjection {
+        Long getClubId();
+
+        Long getSubscriberCount();
+    }
+
     @Query("""
-               SELECT cs.club.id, COUNT(cs)
+               SELECT cs.club.id AS clubId, COUNT(cs) AS subscriberCount
                FROM ClubSubscribe cs
                WHERE cs.club.id IN :clubIds
                GROUP BY cs.club.id
             """)
-    List<Object[]> countSubscribersByClubIds(List<Long> clubIds);
+    List<ClubSubscriberCountProjection> countSubscribersByClubIds(List<Long> clubIds);
 
     @Query("""
             select cs.club.id

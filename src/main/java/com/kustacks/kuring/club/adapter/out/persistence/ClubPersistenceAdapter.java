@@ -66,12 +66,13 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
             return Map.of();
         }
 
-        List<Object[]> subscriptions = clubSubscribeRepository.countSubscribersByClubIds(clubIds);
+        List<ClubSubscribeRepository.ClubSubscriberCountProjection> subscriptions = clubSubscribeRepository.countSubscribersByClubIds(clubIds);
 
         return subscriptions.stream()
                 .collect(Collectors.toMap(
-                        row -> (Long) row[0],
-                        row -> (Long) row[1]
+                        ClubSubscribeRepository.ClubSubscriberCountProjection::getClubId,
+                        ClubSubscribeRepository.ClubSubscriberCountProjection::getSubscriberCount
+
                 ));
     }
 

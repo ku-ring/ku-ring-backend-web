@@ -15,6 +15,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,16 +56,22 @@ class ClubPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("countSubscribersByClubIds는 Object[]를 Map<Long, Long>으로 변환한다")
+    @DisplayName("countSubscribersByClubIds는 ClubSubscriberCountProjection를 Map<Long, Long>으로 변환한다")
     void countSubscribersByClubIds_mapping_success() {
         //given
         List<Long> clubIds = List.of(1L, 2L);
 
+        ClubSubscribeRepository.ClubSubscriberCountProjection projection1 = mock(ClubSubscribeRepository.ClubSubscriberCountProjection.class);
+        when(projection1.getClubId()).thenReturn(1L);
+        when(projection1.getSubscriberCount()).thenReturn(5L);
+
+        ClubSubscribeRepository.ClubSubscriberCountProjection projection2 = mock(ClubSubscribeRepository.ClubSubscriberCountProjection.class);
+        when(projection2.getClubId()).thenReturn(2L);
+        when(projection2.getSubscriberCount()).thenReturn(3L);
+
+
         when(clubSubscribeRepository.countSubscribersByClubIds(clubIds))
-                .thenReturn(List.of(
-                        new Object[]{1L, 5L},
-                        new Object[]{2L, 3L}
-                ));
+                .thenReturn(List.of(projection1, projection2));
 
         //when
         Map<Long, Long> result = adapter.countSubscribersByClubIds(clubIds);
