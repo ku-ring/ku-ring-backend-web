@@ -25,7 +25,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.kustacks.kuring.common.exception.code.ErrorCode.CLUB_NOT_FOUND;
@@ -48,7 +47,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
     @Override
     public ClubListResult getClubs(ClubListCommand command) {
-        Optional<RootUser> rootUser = rootUserQueryPort.findRootUserByEmail(command.email());
+        RootUser rootUser = rootUserQueryPort.findRootUserByEmail(command.email()).orElse(null);
 
         ClubCategory category = command.category() != null
                 ? ClubCategory.fromName(command.category())
@@ -90,18 +89,14 @@ public class ClubQueryService implements ClubQueryUseCase {
         Long clubId = command.clubId();
         String email = command.email();
 
-        Optional<RootUser> rootUser = rootUserQueryPort.findRootUserByEmail(email);
+        RootUser rootUser = rootUserQueryPort.findRootUserByEmail(email).orElse(null);
 
         ClubDetailDto clubDetailDto = clubQueryPort.findClubDetailById(clubId)
                 .orElseThrow(() -> new NotFoundException(CLUB_NOT_FOUND));
 
         Long subscriberCount = clubSubscriptionQueryPort.countSubscribers(clubId);
 
-        boolean isSubscribed = false;
-        if (rootUser.isPresent()) {
-            Long rootUserId = rootUser.get().getId();
-            isSubscribed = clubSubscriptionQueryPort.existsSubscription(rootUserId, clubId);
-        }
+        boolean isSubscribed = rootUser != null && clubSubscriptionQueryPort.existsSubscription(rootUser.getId(), clubId);
 
         ClubRecruitmentStatus recruitmentStatus =
                 ClubRecruitmentStatus.from(
@@ -119,13 +114,13 @@ public class ClubQueryService implements ClubQueryUseCase {
         );
     }
 
-    private Map<Long, Boolean> getSubscribedMap(List<Long> clubIds, Optional<RootUser> rootUser) {
+    private Map<Long, Boolean> getSubscribedMap(List<Long> clubIds, RootUser rootUser) {
 
-        if (rootUser.isEmpty()) {
+        if (rootUser == null) {
             return Map.of();
         }
 
-        Long rootUserId = rootUser.get().getId();
+        Long rootUserId = rootUser.getId();
 
         List<Long> subscribedClubIds = clubSubscriptionQueryPort.findSubscribedClubIds(clubIds, rootUserId);
 
