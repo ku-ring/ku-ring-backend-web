@@ -5,9 +5,6 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.springframework.http.HttpStatus;
 
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CLUB_DETAIL_SEARCH_SUCCESS;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CLUB_DIVISION_SEARCH_SUCCESS;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CLUB_LIST_SEARCH_SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -25,7 +22,7 @@ public class ClubStep {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getString("message")).isEqualTo(CLUB_DIVISION_SEARCH_SUCCESS.getMessage()),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("지원하는 동아리 소속 조회에 성공하였습니다"),
                 () -> assertThat(response.jsonPath().getList("data.divisions")).isNotEmpty()
         );
     }
@@ -44,7 +41,7 @@ public class ClubStep {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getString("message")).isEqualTo(CLUB_LIST_SEARCH_SUCCESS.getMessage()),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("동아리 목록 조회에 성공하였습니다"),
 
                 () -> assertThat(response.jsonPath().getList("data.clubs")).isNotEmpty(),
                 () -> assertThat(response.jsonPath().getLong("data.clubs[0].id")).isPositive(),
@@ -69,7 +66,7 @@ public class ClubStep {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
-                () -> assertThat(response.jsonPath().getString("message")).isEqualTo(CLUB_DETAIL_SEARCH_SUCCESS.getMessage()),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("동아리 상세 조회에 성공하였습니다"),
 
                 () -> assertThat(response.jsonPath().getLong("data.id")).isEqualTo(clubId),
                 () -> assertThat(response.jsonPath().getString("data.name")).isNotBlank(),
