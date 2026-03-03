@@ -54,8 +54,8 @@ public class ClubQueryService implements ClubQueryUseCase {
                 ? ClubCategory.fromName(command.category())
                 : null;
 
-        List<ClubDivision> divisions = command.divisionList() != null
-                ? command.divisionList().stream()
+        List<ClubDivision> divisions = command.divisions() != null
+                ? command.divisions().stream()
                 .map(ClubDivision::fromName)
                 .toList()
                 : null;

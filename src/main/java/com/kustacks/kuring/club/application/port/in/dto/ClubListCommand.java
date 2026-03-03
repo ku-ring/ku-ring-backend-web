@@ -6,9 +6,19 @@ import java.util.List;
 public record ClubListCommand(
         String category,
         String division,
-        String email
+        String email,
+        List<String> divisions
 ) {
-    public List<String> divisionList() {
+    public ClubListCommand(String category, String division, String email) {
+        this(
+                category,
+                division,
+                email,
+                divisionList(division)
+        );
+    }
+
+    private static List<String> divisionList(String division) {
         if (division == null || division.isBlank()) {
             return null;
         }
