@@ -12,6 +12,7 @@ import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.ClubCategory;
 import com.kustacks.kuring.club.domain.ClubDivision;
 import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
+import com.kustacks.kuring.storage.application.port.out.StoragePort;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.domain.RootUser;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -47,6 +49,9 @@ class ClubQueryServiceTest {
 
     @Mock
     private RootUserQueryPort rootUserQueryPort;
+
+    @Mock
+    private StoragePort storagePort;
 
     @InjectMocks
     private ClubQueryService clubQueryService;
@@ -136,6 +141,9 @@ class ClubQueryServiceTest {
         when(clubSubscriptionQueryPort.findSubscribedClubIds(any(), anyLong()))
                 .thenReturn(List.of(1L, 2L, 3L));
 
+        when(storagePort.getPresignedUrl(any()))
+                .thenReturn("presigned-icon-url");
+
         // when
         ClubListResult result = clubQueryService.getClubs(command);
 
@@ -149,6 +157,7 @@ class ClubQueryServiceTest {
                 ClubCategory.ACADEMIC,
                 divisionList
         );
+        verify(storagePort, times(3)).getPresignedUrl(any());
     }
 
     @Test
@@ -230,6 +239,9 @@ class ClubQueryServiceTest {
         when(clubSubscriptionQueryPort.existsSubscription(rootUserId, clubId))
                 .thenReturn(true);
 
+        when(storagePort.getPresignedUrl("poster-path"))
+                .thenReturn("presigned-poster-url");
+
         // when
         ClubDetailResult result = clubQueryService.getClubDetail(command);
 
@@ -245,11 +257,14 @@ class ClubQueryServiceTest {
                 .isEqualTo(ClubCategory.ACADEMIC);
         assertThat(result.division())
                 .isEqualTo(ClubDivision.CENTRAL);
+        assertThat(result.posterImageUrl())
+                .isEqualTo("presigned-poster-url");
 
         verify(rootUserQueryPort).findRootUserByEmail(email);
         verify(clubQueryPort).findClubDetailById(clubId);
         verify(clubSubscriptionQueryPort).countSubscribers(clubId);
         verify(clubSubscriptionQueryPort).existsSubscription(rootUserId, clubId);
+        verify(storagePort, times(1)).getPresignedUrl("poster-path");
     }
 
     @Test
@@ -288,4 +303,42 @@ class ClubQueryServiceTest {
         verify(clubSubscriptionQueryPort, never()).existsSubscription(anyLong(), any());
         assertThat(result.subscriberCount()).isEqualTo(5);
     }
+
+    @DisplayName("상세 조회 시 posterImagePath가 있으면 Presigned URL로 변환한다")
+    @Test
+    void getClubDetail_convert_posterImagePath_to_presignedUrl() {
+        // given
+        Long clubId = 1L;
+        String key = "club/poster/test.png";
+        String presignedUrl = "https://presigned-url";
+
+        ClubDetailReadModel readModel = mock(ClubDetailReadModel.class);
+
+        when(readModel.getId()).thenReturn(clubId);
+        when(readModel.getName()).thenReturn("쿠링");
+        when(readModel.getSummary()).thenReturn("건국대 공지사항 앱 만드는 개발 동아리");
+        when(readModel.getCategory()).thenReturn(ClubCategory.ACADEMIC);
+        when(readModel.getDivision()).thenReturn(ClubDivision.CENTRAL);
+        when(readModel.getRecruitStartAt()).thenReturn(LocalDateTime.now().minusDays(1));
+        when(readModel.getRecruitEndAt()).thenReturn(LocalDateTime.now().plusDays(1));
+        when(readModel.getIsAlways()).thenReturn(false);
+        when(readModel.getPosterImagePath()).thenReturn(key);
+        when(readModel.hasLocation()).thenReturn(false);
+
+        when(clubQueryPort.findClubDetailById(clubId)).thenReturn(Optional.of(readModel));
+
+        when(clubSubscriptionQueryPort.countSubscribers(clubId)).thenReturn(0L);
+
+        when(storagePort.getPresignedUrl(key)).thenReturn(presignedUrl);
+
+        ClubDetailCommand command = new ClubDetailCommand(clubId, null);
+
+        // when
+        var result = clubQueryService.getClubDetail(command);
+
+        // then
+        assertThat(result.posterImageUrl()).isEqualTo(presignedUrl);
+        verify(storagePort, times(1)).getPresignedUrl(key);
+    }
+
 }

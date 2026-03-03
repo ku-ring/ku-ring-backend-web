@@ -16,6 +16,7 @@ import com.kustacks.kuring.club.domain.ClubDivision;
 import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.NotFoundException;
+import com.kustacks.kuring.storage.application.port.out.StoragePort;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.domain.RootUser;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class ClubQueryService implements ClubQueryUseCase {
     private final ClubQueryPort clubQueryPort;
     private final ClubSubscriptionQueryPort clubSubscriptionQueryPort;
     private final RootUserQueryPort rootUserQueryPort;
+    private final StoragePort storagePort;
 
     @Override
     public List<ClubDivisionResult> getClubDivisions() {
@@ -133,11 +135,19 @@ public class ClubQueryService implements ClubQueryUseCase {
             boolean isSubscribed,
             Long subscriberCount
     ) {
+
+        String iconImageUrl = null;
+        String iconImagePath = clubReadModel.getIconImageUrl();
+
+        if (iconImagePath != null && !iconImagePath.isBlank()) {
+            iconImageUrl = storagePort.getPresignedUrl(iconImagePath);
+        }
+
         return new ClubItemResult(
                 clubReadModel.getId(),
                 clubReadModel.getName(),
                 clubReadModel.getSummary(),
-                clubReadModel.getIconImageUrl(),
+                iconImageUrl,
                 clubReadModel.getCategory().getName(),
                 clubReadModel.getDivision().getName(),
                 isSubscribed,
@@ -163,6 +173,13 @@ public class ClubQueryService implements ClubQueryUseCase {
             );
         }
 
+        String posterImageUrl = null;
+        String posterImagePath = clubDetailReadModel.getPosterImagePath();
+
+        if (posterImagePath != null && !posterImagePath.isBlank()) {
+            posterImageUrl = storagePort.getPresignedUrl(posterImagePath);
+        }
+
         return new ClubDetailResult(
                 clubDetailReadModel.getId(),
                 clubDetailReadModel.getName(),
@@ -180,7 +197,7 @@ public class ClubQueryService implements ClubQueryUseCase {
                 clubDetailReadModel.getRecruitStartAt(),
                 clubDetailReadModel.getRecruitEndAt(),
                 clubDetailReadModel.getApplyUrl(),
-                clubDetailReadModel.getPosterImagePath(),
+                posterImageUrl,
                 location
         );
     }
