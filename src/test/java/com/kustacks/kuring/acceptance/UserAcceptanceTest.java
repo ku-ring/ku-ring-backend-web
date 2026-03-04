@@ -449,7 +449,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
 
         // when
-        var 비밀번호_변경_응답 = 액세스_토큰으로_비밀번호_변경_요청(accessToken,"new_password");
+        var 비밀번호_변경_응답 = 액세스_토큰으로_비밀번호_변경_요청(accessToken, "new_password");
 
         // then
         비밀번호_변경_응답_확인(비밀번호_변경_응답);
@@ -520,7 +520,7 @@ class UserAcceptanceTest extends IntegrationTestSupport {
 
         var response = 동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, 99999L);
 
-        실패_응답_확인(response, HttpStatus.BAD_REQUEST);
+        실패_응답_확인(response, HttpStatus.NOT_FOUND);
     }
 
     @DisplayName("[v2] 사용자는 동아리 구독을 취소할 수 있다")

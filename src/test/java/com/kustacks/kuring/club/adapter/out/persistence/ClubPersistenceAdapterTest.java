@@ -10,10 +10,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -51,4 +54,73 @@ class ClubPersistenceAdapterTest {
                 () -> assertThat(endCaptor.getValue()).isEqualTo(LocalDateTime.of(2026, 2, 21, 0, 0, 0))
         );
     }
+
+    @Test
+    @DisplayName("countSubscribersByClubIds는 ClubSubscriberCountProjection를 Map<Long, Long>으로 변환한다")
+    void countSubscribersByClubIds_mapping_success() {
+        //given
+        List<Long> clubIds = List.of(1L, 2L);
+
+        ClubSubscribeRepository.ClubSubscriberCountProjection projection1 = mock(ClubSubscribeRepository.ClubSubscriberCountProjection.class);
+        when(projection1.getClubId()).thenReturn(1L);
+        when(projection1.getSubscriberCount()).thenReturn(5L);
+
+        ClubSubscribeRepository.ClubSubscriberCountProjection projection2 = mock(ClubSubscribeRepository.ClubSubscriberCountProjection.class);
+        when(projection2.getClubId()).thenReturn(2L);
+        when(projection2.getSubscriberCount()).thenReturn(3L);
+
+
+        when(clubSubscribeRepository.countSubscribersByClubIds(clubIds))
+                .thenReturn(List.of(projection1, projection2));
+
+        //when
+        Map<Long, Long> result = adapter.countSubscribersByClubIds(clubIds);
+
+        //then
+        assertThat(result).hasSize(2)
+                .containsEntry(1L, 5L)
+                .containsEntry(2L, 3L);
+
+        verify(clubSubscribeRepository).countSubscribersByClubIds(clubIds);
+    }
+
+    @Test
+    @DisplayName("countSubscribersByClubIds는 null 또는 빈 리스트면 빈 Map을 반환한다")
+    void countSubscribersByClubIds_empty_input() {
+
+        // given
+        List<Long> emptyList = List.of();
+
+        // when
+        Map<Long, Long> nullResult = adapter.countSubscribersByClubIds(null);
+
+        Map<Long, Long> emptyResult = adapter.countSubscribersByClubIds(emptyList);
+
+        // then
+        assertThat(nullResult).isEmpty();
+        assertThat(emptyResult).isEmpty();
+
+        verify(clubSubscribeRepository, never()).countSubscribersByClubIds(any());
+    }
+
+    @Test
+    @DisplayName("findSubscribedClubIds는 구독된 clubId 목록을 반환한다")
+    void findSubscribedClubIds_success() {
+        // given
+        Long rootUserId = 100L;
+        List<Long> clubIds = List.of(1L, 2L);
+
+        when(clubSubscribeRepository
+                .findByClubIdInAndRootUserId(clubIds, rootUserId))
+                .thenReturn(List.of(1L, 2L));
+
+        // when
+        List<Long> result = adapter.findSubscribedClubIds(clubIds, rootUserId);
+
+        // then
+        assertThat(result).containsExactly(1L, 2L);
+
+        verify(clubSubscribeRepository).findByClubIdInAndRootUserId(clubIds, rootUserId);
+    }
+
 }
