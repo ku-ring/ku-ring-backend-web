@@ -13,7 +13,7 @@ public class ClubReadModel {
     private final Long id;
     private final String name;
     private final String summary;
-    private final String iconImageUrl;
+    private final String iconImagePath;
     private final ClubCategory category;
     private final ClubDivision division;
     private final LocalDateTime recruitStartDate;
@@ -24,7 +24,7 @@ public class ClubReadModel {
             Long id,
             String name,
             String summary,
-            String iconImageUrl,
+            String iconImagePath,
             ClubCategory category,
             ClubDivision division,
             LocalDateTime recruitStartDate,
@@ -33,7 +33,7 @@ public class ClubReadModel {
         this.id = id;
         this.name = name;
         this.summary = summary;
-        this.iconImageUrl = iconImageUrl;
+        this.iconImagePath = iconImagePath;
         this.category = category;
         this.division = division;
         this.recruitStartDate = recruitStartDate;
