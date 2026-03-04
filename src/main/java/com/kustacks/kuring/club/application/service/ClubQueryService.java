@@ -137,7 +137,7 @@ public class ClubQueryService implements ClubQueryUseCase {
     ) {
 
         String iconImageUrl = null;
-        String iconImagePath = clubReadModel.getIconImageUrl();
+        String iconImagePath = clubReadModel.getIconImagePath();
 
         if (iconImagePath != null && !iconImagePath.isBlank()) {
             iconImageUrl = storagePort.getPresignedUrl(iconImagePath);

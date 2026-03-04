@@ -55,7 +55,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                         club.id,
                         club.name,
                         club.summary,
-                        club.posterImagePath,
+                        club.iconImagePath,
                         club.category,
                         club.division,
                         club.recruitStartAt,
