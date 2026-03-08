@@ -30,7 +30,7 @@ public class Club {
     @Column(length = 30, nullable = false)
     private String name;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 255, nullable = false)
     private String summary;
 
     @Column(columnDefinition = "TEXT")
