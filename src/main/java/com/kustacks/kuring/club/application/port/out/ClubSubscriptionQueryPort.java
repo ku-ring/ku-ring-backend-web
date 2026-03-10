@@ -11,6 +11,8 @@ public interface ClubSubscriptionQueryPort {
 
     List<Long> findSubscribedClubIds(List<Long> clubIds, Long rootUserId);
 
+    List<Long> findAllSubscribedClubIds(Long rootUserId);
+
     Long countSubscribers(Long clubId);
 
     Map<Long, Long> countSubscribersByClubIds(List<Long> clubIds);

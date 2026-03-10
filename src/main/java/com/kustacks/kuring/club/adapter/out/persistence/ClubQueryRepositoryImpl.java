@@ -71,6 +71,25 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
 
     @Override
     @Transactional(readOnly = true)
+    public List<ClubReadModel> findClubsByIds(List<Long> ids) {
+        return queryFactory
+                .select(new QClubReadModel(
+                        club.id,
+                        club.name,
+                        club.summary,
+                        club.iconImagePath,
+                        club.category,
+                        club.division,
+                        club.recruitStartAt,
+                        club.recruitEndAt
+                ))
+                .from(club)
+                .where(club.id.in(ids))
+                .fetch();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<ClubDetailReadModel> findClubDetailById(Long id) {
 
         List<Tuple> tuples = queryFactory

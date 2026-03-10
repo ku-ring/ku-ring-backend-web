@@ -41,6 +41,11 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
     }
 
     @Override
+    public List<ClubReadModel> findClubsByIds(List<Long> ids) {
+        return clubRepository.findClubsByIds(ids);
+    }
+
+    @Override
     public Optional<Club> findClubById(Long id) {
         return clubRepository.findById(id);
     }
@@ -57,6 +62,10 @@ public class ClubPersistenceAdapter implements ClubQueryPort, ClubSubscriptionCo
         return clubSubscribeRepository.findByClubIdInAndRootUserId(clubIds, rootUserId);
     }
 
+    @Override
+    public List<Long> findAllSubscribedClubIds(Long rootUserId) {
+        return clubSubscribeRepository.findClubIdsByRootUserId(rootUserId);
+    }
 
     @Override
     public Long countSubscribers(Long clubId) {

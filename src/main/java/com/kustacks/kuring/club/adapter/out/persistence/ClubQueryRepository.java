@@ -14,6 +14,8 @@ public interface ClubQueryRepository {
 
     List<ClubReadModel> searchClubs(ClubCategory category, List<ClubDivision> divisions);
 
+    List<ClubReadModel> findClubsByIds(List<Long> ids);
+
     Optional<ClubDetailReadModel> findClubDetailById(Long id);
 
     List<Club> findClubsBetweenDates(LocalDateTime start, LocalDateTime end);
