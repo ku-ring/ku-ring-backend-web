@@ -123,4 +123,21 @@ class ClubPersistenceAdapterTest {
         verify(clubSubscribeRepository).findByClubIdInAndRootUserId(clubIds, rootUserId);
     }
 
+    @Test
+    @DisplayName("findAllSubscribedClubIds는 rootUserId로 구독한 clubId 목록을 반환한다")
+    void findAllSubscribedClubIds_success() {
+        // given
+        Long rootUserId = 100L;
+
+        when(clubSubscribeRepository.findClubIdsByRootUserId(rootUserId))
+                .thenReturn(List.of(1L, 2L, 3L));
+
+        // when
+        List<Long> result = adapter.findAllSubscribedClubIds(rootUserId);
+
+        // then
+        assertThat(result).containsExactly(1L, 2L, 3L);
+
+        verify(clubSubscribeRepository).findClubIdsByRootUserId(rootUserId);
+    }
 }

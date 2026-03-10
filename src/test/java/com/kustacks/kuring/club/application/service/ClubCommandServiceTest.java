@@ -1,9 +1,12 @@
 package com.kustacks.kuring.club.application.service;
 
+import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubSubscriptionCommand;
+import com.kustacks.kuring.club.application.port.in.dto.SubscribedClubListCommand;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
 import com.kustacks.kuring.club.application.port.out.ClubSubscriptionCommandPort;
 import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
+import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.Club;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
@@ -23,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -177,6 +181,40 @@ class ClubCommandServiceTest {
                         .extracting(ex -> ((InvalidStateException) ex).getErrorCode())
                         .isEqualTo(ErrorCode.CLUB_NOT_FOUND),
                 () -> verify(userEventPort, never()).subscribeEvent(anyString(), anyString())
+        );
+    }
+
+
+    @DisplayName("구독한 동아리 목록 조회 성공")
+    @Test
+    void get_subscribed_clubs_success() {
+        // given
+        ClubReadModel readModel = new ClubReadModel(
+                1L,
+                "쿠링",
+                "건국대 공지사항 앱 만드는 개발 동아리",
+                null,
+                com.kustacks.kuring.club.domain.ClubCategory.ACADEMIC,
+                com.kustacks.kuring.club.domain.ClubDivision.CENTRAL,
+                null,
+                null
+        );
+
+        when(rootUserQueryPort.findRootUserByEmail("client@konkuk.ac.kr")).thenReturn(Optional.of(rootUser));
+        when(clubSubscriptionQueryPort.findAllSubscribedClubIds(1L)).thenReturn(List.of(1L));
+        when(clubQueryPort.findClubsByIds(List.of(1L))).thenReturn(List.of(readModel));
+        when(clubSubscriptionQueryPort.countSubscribersByClubIds(List.of(1L))).thenReturn(Map.of(1L, 5L));
+
+        // when
+        ClubListResult result = service.getSubscribedClubs(new SubscribedClubListCommand("client@konkuk.ac.kr"));
+
+        // then
+        assertAll(
+                () -> assertThat(result.clubs()).hasSize(1),
+                () -> assertThat(result.clubs().get(0).id()).isEqualTo(1L),
+                () -> assertThat(result.clubs().get(0).name()).isEqualTo("쿠링"),
+                () -> assertThat(result.clubs().get(0).isSubscribed()).isTrue(),
+                () -> assertThat(result.clubs().get(0).subscriberCount()).isEqualTo(5L)
         );
     }
 
