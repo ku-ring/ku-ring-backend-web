@@ -1,64 +1,20 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.message.application.port.in.dto.UserSubscribeCommand;
-import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
-import com.kustacks.kuring.support.IntegrationTestSupport;
-import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeRequest;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
+import com.kustacks.kuring.message.application.port.in.dto.*;
+import com.kustacks.kuring.message.application.service.exception.*;
+import com.kustacks.kuring.support.*;
+import com.kustacks.kuring.user.adapter.in.web.dto.*;
+import org.junit.jupiter.api.*;
+import org.springframework.http.*;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
-import static com.kustacks.kuring.acceptance.EmailStep.인증코드_인증_요청;
-import static com.kustacks.kuring.acceptance.EmailStep.회원가입_인증코드_이메일_전송_요청;
-import static com.kustacks.kuring.acceptance.UserStep.구독한_동아리_목록_조회_요청;
-import static com.kustacks.kuring.acceptance.UserStep.구독한_동아리_목록_조회_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.구독한_학과_목록_조회_요청;
-import static com.kustacks.kuring.acceptance.UserStep.남은_질문_횟수_조회;
-import static com.kustacks.kuring.acceptance.UserStep.동아리_구독_제거_성공_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.동아리_구독_제거_요청;
-import static com.kustacks.kuring.acceptance.UserStep.동아리_구독_추가_성공_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.동아리_구독_추가_요청;
-import static com.kustacks.kuring.acceptance.UserStep.로그아웃_요청;
-import static com.kustacks.kuring.acceptance.UserStep.로그아웃_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.로그인_요청;
-import static com.kustacks.kuring.acceptance.UserStep.로그인_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.루트유저_남은_질문_횟수_조회;
-import static com.kustacks.kuring.acceptance.UserStep.북마크_생성_요청;
-import static com.kustacks.kuring.acceptance.UserStep.북마크_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.북마크_조회_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.북마크한_공지_조회_요청;
-import static com.kustacks.kuring.acceptance.UserStep.비밀번호_변경_요청;
-import static com.kustacks.kuring.acceptance.UserStep.비밀번호_변경_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_로그인_되어_있음;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_정보_조회_요청;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_정보_조회_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_카테고리_구독_목록_조회_요청;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_학과_조회_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.사용자_회원가입_요청;
-import static com.kustacks.kuring.acceptance.UserStep.액세스_토큰으로_비밀번호_변경_요청;
-import static com.kustacks.kuring.acceptance.UserStep.질문_횟수_응답_검증;
-import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_목록_조회_요청_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_요청;
-import static com.kustacks.kuring.acceptance.UserStep.카테고리_구독_요청_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.피드백_요청_v2;
-import static com.kustacks.kuring.acceptance.UserStep.피드백_요청_응답_확인_v2;
-import static com.kustacks.kuring.acceptance.UserStep.학과_구독_요청;
-import static com.kustacks.kuring.acceptance.UserStep.학과_구독_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.학사일정_알림_토글_요청;
-import static com.kustacks.kuring.acceptance.UserStep.학사일정_알림_토글_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.회원_가입_요청;
-import static com.kustacks.kuring.acceptance.UserStep.회원_탈퇴_요청;
-import static com.kustacks.kuring.acceptance.UserStep.회원_탈퇴_응답_확인;
-import static com.kustacks.kuring.acceptance.UserStep.회원가입_응답_확인;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static com.kustacks.kuring.acceptance.CommonStep.*;
+import static com.kustacks.kuring.acceptance.EmailStep.*;
+import static com.kustacks.kuring.acceptance.UserStep.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @DisplayName("인수 : 사용자")
 class UserAcceptanceTest extends IntegrationTestSupport {
