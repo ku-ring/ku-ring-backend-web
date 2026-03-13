@@ -29,7 +29,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
     private final ServerProperties serverProperties;
     private final ClubQueryPort clubQueryPort;
     private final ClubSubscriptionCommandPort clubSubscriptionCommandPort;
-    private final ClubSubscriptionQueryPort countSubscriptionsQueryPort;
+    private final ClubSubscriptionQueryPort clubSubscriptionQueryPort;
     private final RootUserQueryPort rootUserQueryPort;
     private final UserQueryPort userQueryPort;
     private final UserEventPort userEventPort;
@@ -47,7 +47,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
         clubSubscriptionCommandPort.saveSubscription(rootUser, club);
         subscribeAllLoggedInDevices(rootUser.getId(), makeTopic(club));
 
-        return countSubscriptionsQueryPort.countSubscriptions(rootUser.getId());
+        return clubSubscriptionQueryPort.countSubscriptions(rootUser.getId());
     }
 
     @Override
@@ -61,7 +61,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
         clubSubscriptionCommandPort.deleteSubscription(rootUser, club);
         unsubscribeAllLoggedInDevices(rootUser.getId(), makeTopic(club));
 
-        return countSubscriptionsQueryPort.countSubscriptions(rootUser.getId());
+        return clubSubscriptionQueryPort.countSubscriptions(rootUser.getId());
     }
 
     @Override
@@ -70,7 +70,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
 
         RootUser rootUser = findRootUserByEmail(command.email());
 
-        List<Long> subscribedClubIds = countSubscriptionsQueryPort.findSubscribedClubIdsByRootUserId(rootUser.getId());
+        List<Long> subscribedClubIds = clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserId(rootUser.getId());
 
         if (subscribedClubIds.isEmpty()) {
             return new ClubListResult(List.of());
@@ -78,7 +78,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
 
         List<ClubReadModel> clubReadModels = clubQueryPort.findClubReadModelsByIds(subscribedClubIds);
 
-        Map<Long, Long> subscriberCountMap = countSubscriptionsQueryPort.countSubscribersByClubIds(subscribedClubIds);
+        Map<Long, Long> subscriberCountMap = clubSubscriptionQueryPort.countSubscribersByClubIds(subscribedClubIds);
 
         List<ClubItemResult> clubItemResults = clubReadModels.stream()
                 .map(r -> convertClubItemResult(
@@ -119,7 +119,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
     }
 
     private boolean isAlreadySubscription(RootUser rootUser, Club club) {
-        return countSubscriptionsQueryPort.existsSubscription(rootUser.getId(), club.getId());
+        return clubSubscriptionQueryPort.existsSubscription(rootUser.getId(), club.getId());
     }
 
     private RootUser findRootUserByEmail(String email) {
