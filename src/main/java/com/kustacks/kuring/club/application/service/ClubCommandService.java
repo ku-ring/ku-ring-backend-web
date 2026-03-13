@@ -70,7 +70,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
 
         RootUser rootUser = findRootUserByEmail(command.email());
 
-        List<Long> subscribedClubIds = countSubscriptionsQueryPort.findAllSubscribedClubIds(rootUser.getId());
+        List<Long> subscribedClubIds = countSubscriptionsQueryPort.findSubscribedClubIdsByRootUserId(rootUser.getId());
 
         if (subscribedClubIds.isEmpty()) {
             return new ClubListResult(List.of());

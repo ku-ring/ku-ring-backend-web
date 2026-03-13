@@ -185,7 +185,7 @@ class ClubCommandServiceTest {
         );
 
         when(rootUserQueryPort.findRootUserByEmail("client@konkuk.ac.kr")).thenReturn(Optional.of(rootUser));
-        when(clubSubscriptionQueryPort.findAllSubscribedClubIds(1L)).thenReturn(List.of(1L));
+        when(clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserId(1L)).thenReturn(List.of(1L));
         when(clubQueryPort.findClubReadModelsByIds(List.of(1L))).thenReturn(List.of(readModel));
         when(clubSubscriptionQueryPort.countSubscribersByClubIds(List.of(1L))).thenReturn(Map.of(1L, 5L));
 

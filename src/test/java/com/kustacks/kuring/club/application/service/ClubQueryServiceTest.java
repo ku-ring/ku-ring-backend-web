@@ -1,41 +1,23 @@
 package com.kustacks.kuring.club.application.service;
 
-import com.kustacks.kuring.club.application.port.in.dto.ClubDetailCommand;
-import com.kustacks.kuring.club.application.port.in.dto.ClubDetailResult;
-import com.kustacks.kuring.club.application.port.in.dto.ClubDivisionResult;
-import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
-import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
-import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
-import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
-import com.kustacks.kuring.club.application.port.out.dto.ClubDetailReadModel;
-import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
-import com.kustacks.kuring.club.domain.ClubCategory;
-import com.kustacks.kuring.club.domain.ClubDivision;
-import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
-import com.kustacks.kuring.storage.application.port.out.StoragePort;
-import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
-import com.kustacks.kuring.user.domain.RootUser;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import com.kustacks.kuring.club.application.port.in.dto.*;
+import com.kustacks.kuring.club.application.port.out.*;
+import com.kustacks.kuring.club.application.port.out.dto.*;
+import com.kustacks.kuring.club.domain.*;
+import com.kustacks.kuring.storage.application.port.out.*;
+import com.kustacks.kuring.user.application.port.out.*;
+import com.kustacks.kuring.user.domain.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
+import org.mockito.*;
+import org.mockito.junit.jupiter.*;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.*;
+import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @DisplayName("서비스 : ClubQueryService")
 @ExtendWith(MockitoExtension.class)
@@ -138,7 +120,7 @@ class ClubQueryServiceTest {
                         3L, 10L
                 ));
 
-        when(clubSubscriptionQueryPort.findSubscribedClubIds(any(), anyLong()))
+        when(clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserIdAndClubIds(any(), anyLong()))
                 .thenReturn(List.of(1L, 2L, 3L));
 
         when(storagePort.getPresignedUrl(any()))
@@ -189,7 +171,7 @@ class ClubQueryServiceTest {
 
         //then
         assertThat(result.clubs().get(0).isSubscribed()).isFalse();
-        verify(clubSubscriptionQueryPort, never()).findSubscribedClubIds(any(), anyLong());
+        verify(clubSubscriptionQueryPort, never()).findSubscribedClubIdsByRootUserIdAndClubIds(any(), anyLong());
     }
 
     @Test

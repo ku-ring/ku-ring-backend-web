@@ -1,7 +1,6 @@
 package com.kustacks.kuring.club.application.port.out;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public interface ClubSubscriptionQueryPort {
 
@@ -9,9 +8,9 @@ public interface ClubSubscriptionQueryPort {
 
     Long countSubscriptions(Long rootUserId);
 
-    List<Long> findSubscribedClubIds(List<Long> clubIds, Long rootUserId);
+    List<Long> findSubscribedClubIdsByRootUserIdAndClubIds(List<Long> clubIds, Long rootUserId);
 
-    List<Long> findAllSubscribedClubIds(Long rootUserId);
+    List<Long> findSubscribedClubIdsByRootUserId(Long rootUserId);
 
     Long countSubscribers(Long clubId);
 

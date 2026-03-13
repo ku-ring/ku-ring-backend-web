@@ -1,24 +1,17 @@
 package com.kustacks.kuring.club.adapter.out.persistence;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
+import org.mockito.*;
+import org.mockito.junit.jupiter.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
+import java.time.*;
+import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ClubPersistenceAdapter")
@@ -105,7 +98,7 @@ class ClubPersistenceAdapterTest {
 
     @Test
     @DisplayName("findSubscribedClubIds는 구독된 clubId 목록을 반환한다")
-    void findSubscribedClubIds_success() {
+    void findSubscribedClubIdsByRootUserIdAndClubIds_success() {
         // given
         Long rootUserId = 100L;
         List<Long> clubIds = List.of(1L, 2L);
@@ -115,7 +108,7 @@ class ClubPersistenceAdapterTest {
                 .thenReturn(List.of(1L, 2L));
 
         // when
-        List<Long> result = adapter.findSubscribedClubIds(clubIds, rootUserId);
+        List<Long> result = adapter.findSubscribedClubIdsByRootUserIdAndClubIds(clubIds, rootUserId);
 
         // then
         assertThat(result).containsExactly(1L, 2L);
@@ -125,7 +118,7 @@ class ClubPersistenceAdapterTest {
 
     @Test
     @DisplayName("findAllSubscribedClubIds는 rootUserId로 구독한 clubId 목록을 반환한다")
-    void findAllSubscribedClubIds_success() {
+    void findSubscribedClubIds_ByRootUserId_success() {
         // given
         Long rootUserId = 100L;
 
@@ -133,7 +126,7 @@ class ClubPersistenceAdapterTest {
                 .thenReturn(List.of(1L, 2L, 3L));
 
         // when
-        List<Long> result = adapter.findAllSubscribedClubIds(rootUserId);
+        List<Long> result = adapter.findSubscribedClubIdsByRootUserId(rootUserId);
 
         // then
         assertThat(result).containsExactly(1L, 2L, 3L);
