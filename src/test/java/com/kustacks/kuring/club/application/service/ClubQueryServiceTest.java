@@ -337,32 +337,39 @@ class ClubQueryServiceTest {
     @Test
     void get_subscribed_clubs_success() {
         // given
-        ClubReadModel readModel = new ClubReadModel(
-                1L,
-                "쿠링",
-                "건국대 공지사항 앱 만드는 개발 동아리",
-                null,
-                com.kustacks.kuring.club.domain.ClubCategory.ACADEMIC,
-                com.kustacks.kuring.club.domain.ClubDivision.CENTRAL,
-                null,
-                null
-        );
-
         when(rootUserQueryPort.findRootUserByEmail("client@konkuk.ac.kr")).thenReturn(Optional.of(rootUser));
-        when(clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserId(1L)).thenReturn(List.of(1L));
-        when(clubQueryPort.findClubReadModelsByIds(List.of(1L))).thenReturn(List.of(readModel));
-        when(clubSubscriptionQueryPort.countSubscribersByClubIds(List.of(1L))).thenReturn(Map.of(1L, 5L));
+        when(clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserId(1L)).thenReturn(List.of(1L, 2L, 3L));
+        when(clubQueryPort.findClubReadModelsByIds(List.of(1L, 2L, 3L))).thenReturn(mockReadModels);
+        when(clubSubscriptionQueryPort.countSubscribersByClubIds(List.of(1L, 2L, 3L))).thenReturn(Map.of(1L, 5L, 2L, 10L, 3L, 15L));
+
+        when(storagePort.getPresignedUrl("icon-url-1")).thenReturn("url-1");
+        when(storagePort.getPresignedUrl("icon-url-2")).thenReturn("url-2");
+        when(storagePort.getPresignedUrl("icon-url-3")).thenReturn("url-3");
 
         // when
         ClubListResult result = clubQueryService.getSubscribedClubs(new SubscribedClubListCommand("client@konkuk.ac.kr"));
 
         // then
         assertAll(
-                () -> assertThat(result.clubs()).hasSize(1),
-                () -> assertThat(result.clubs().get(0).id()).isEqualTo(1L),
-                () -> assertThat(result.clubs().get(0).name()).isEqualTo("쿠링"),
-                () -> assertThat(result.clubs().get(0).isSubscribed()).isTrue(),
-                () -> assertThat(result.clubs().get(0).subscriberCount()).isEqualTo(5L)
+                () -> assertThat(result.clubs()).hasSize(3),
+
+                () -> assertThat(result.clubs())
+                        .extracting(ClubItemResult::id)
+                        .containsExactlyInAnyOrder(1L, 2L, 3L),
+
+                () -> assertThat(result.clubs())
+                        .extracting(ClubItemResult::name)
+                        .containsExactlyInAnyOrder("쿠링", "쿠잇", "DIUS"),
+
+                () -> assertThat(result.clubs()).allMatch(ClubItemResult::isSubscribed),
+
+                () -> assertThat(result.clubs())
+                        .extracting(ClubItemResult::subscriberCount)
+                        .containsExactlyInAnyOrder(5L, 10L, 15L),
+
+                () -> assertThat(result.clubs())
+                        .extracting(ClubItemResult::iconImageUrl)
+                        .containsExactlyInAnyOrder("url-1", "url-2", "url-3")
         );
     }
 
