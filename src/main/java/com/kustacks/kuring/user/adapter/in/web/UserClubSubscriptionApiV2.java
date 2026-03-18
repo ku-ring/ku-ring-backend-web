@@ -1,37 +1,26 @@
 package com.kustacks.kuring.user.adapter.in.web;
 
-import com.kustacks.kuring.auth.authentication.AuthorizationExtractor;
-import com.kustacks.kuring.auth.authentication.AuthorizationType;
-import com.kustacks.kuring.auth.token.JwtTokenProvider;
-import com.kustacks.kuring.club.adapter.in.web.dto.ClubListResponse;
-import com.kustacks.kuring.club.application.port.in.ClubSubscriptionUseCase;
-import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
-import com.kustacks.kuring.club.application.port.in.dto.ClubSubscriptionCommand;
-import com.kustacks.kuring.club.application.port.in.dto.SubscribedClubListCommand;
-import com.kustacks.kuring.common.annotation.RestWebAdapter;
-import com.kustacks.kuring.common.dto.BaseResponse;
-import com.kustacks.kuring.common.exception.InvalidStateException;
-import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.user.adapter.in.web.dto.UserClubSubscriptionCountResponse;
-import com.kustacks.kuring.user.adapter.in.web.dto.UserClubSubscriptionRequest;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import com.kustacks.kuring.auth.authentication.*;
+import com.kustacks.kuring.auth.token.*;
+import com.kustacks.kuring.club.adapter.in.web.dto.*;
+import com.kustacks.kuring.club.application.port.in.*;
+import com.kustacks.kuring.club.application.port.in.dto.*;
+import com.kustacks.kuring.common.annotation.*;
+import com.kustacks.kuring.common.dto.*;
+import com.kustacks.kuring.common.exception.*;
+import com.kustacks.kuring.common.exception.code.*;
+import com.kustacks.kuring.user.adapter.in.web.dto.*;
+import io.swagger.v3.oas.annotations.*;
+import io.swagger.v3.oas.annotations.security.*;
+import io.swagger.v3.oas.annotations.tags.*;
+import jakarta.validation.*;
+import lombok.*;
+import org.springframework.http.*;
+import org.springframework.validation.annotation.*;
+import org.springframework.web.bind.annotation.*;
 
-import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extractAuthorizationValue;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CLUB_SUBSCRIPTION_ADD_SUCCESS;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CLUB_SUBSCRIPTION_DELETE_SUCCESS;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CLUB_SUBSCRIPTION_LIST_SEARCH_SUCCESS;
+import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.*;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
 
 @Tag(name = "User-Club-Subscription", description = "동아리 구독")
 @Validated
@@ -42,8 +31,9 @@ class UserClubSubscriptionApiV2 {
     private static final String FCM_TOKEN_HEADER_KEY = "User-Token";
     private static final String JWT_TOKEN_HEADER_KEY = "JWT";
 
-
     private final ClubSubscriptionUseCase clubSubscriptionUseCase;
+    private final ClubQueryUseCase clubQueryUseCase;
+
     private final JwtTokenProvider jwtTokenProvider;
 
     @Operation(summary = "사용자 동아리 구독 추가")
@@ -88,13 +78,12 @@ class UserClubSubscriptionApiV2 {
 
         SubscribedClubListCommand command = new SubscribedClubListCommand(email);
 
-        ClubListResult result = clubSubscriptionUseCase.getSubscribedClubs(command);
+        ClubListResult result = clubQueryUseCase.getSubscribedClubs(command);
 
         ClubListResponse response = ClubListResponse.from(result);
 
         return ResponseEntity.ok(new BaseResponse<>(CLUB_SUBSCRIPTION_LIST_SEARCH_SUCCESS, response));
     }
-
 
     private String validateJwtAndGetEmail(String jwtToken) {
         if (!jwtTokenProvider.validateToken(jwtToken)) {

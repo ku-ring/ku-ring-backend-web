@@ -11,11 +11,13 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
 import org.mockito.junit.jupiter.*;
+import org.springframework.test.util.*;
 
 import java.time.*;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -37,6 +39,8 @@ class ClubQueryServiceTest {
 
     @InjectMocks
     private ClubQueryService clubQueryService;
+
+    private RootUser rootUser;
 
     private List<ClubReadModel> mockReadModels =
             List.of(
@@ -71,6 +75,11 @@ class ClubQueryServiceTest {
                             LocalDateTime.of(2026, 2, 25, 23, 59)
                     )
             );
+
+    @BeforeEach
+    void setUp() {
+        rootUser = rootUser();
+    }
 
     @Test
     @DisplayName("동아리 소속 목록을 정상적으로 조회한다")
@@ -321,6 +330,46 @@ class ClubQueryServiceTest {
         // then
         assertThat(result.posterImageUrl()).isEqualTo(presignedUrl);
         verify(storagePort, times(1)).getPresignedUrl(key);
+    }
+
+
+    @DisplayName("구독한 동아리 목록 조회 성공")
+    @Test
+    void get_subscribed_clubs_success() {
+        // given
+        ClubReadModel readModel = new ClubReadModel(
+                1L,
+                "쿠링",
+                "건국대 공지사항 앱 만드는 개발 동아리",
+                null,
+                com.kustacks.kuring.club.domain.ClubCategory.ACADEMIC,
+                com.kustacks.kuring.club.domain.ClubDivision.CENTRAL,
+                null,
+                null
+        );
+
+        when(rootUserQueryPort.findRootUserByEmail("client@konkuk.ac.kr")).thenReturn(Optional.of(rootUser));
+        when(clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserId(1L)).thenReturn(List.of(1L));
+        when(clubQueryPort.findClubReadModelsByIds(List.of(1L))).thenReturn(List.of(readModel));
+        when(clubSubscriptionQueryPort.countSubscribersByClubIds(List.of(1L))).thenReturn(Map.of(1L, 5L));
+
+        // when
+        ClubListResult result = clubQueryService.getSubscribedClubs(new SubscribedClubListCommand("client@konkuk.ac.kr"));
+
+        // then
+        assertAll(
+                () -> assertThat(result.clubs()).hasSize(1),
+                () -> assertThat(result.clubs().get(0).id()).isEqualTo(1L),
+                () -> assertThat(result.clubs().get(0).name()).isEqualTo("쿠링"),
+                () -> assertThat(result.clubs().get(0).isSubscribed()).isTrue(),
+                () -> assertThat(result.clubs().get(0).subscriberCount()).isEqualTo(5L)
+        );
+    }
+
+    private RootUser rootUser() {
+        RootUser rootUser = new RootUser("client@konkuk.ac.kr", "password", "nickname");
+        ReflectionTestUtils.setField(rootUser, "id", 1L);
+        return rootUser;
     }
 
 }

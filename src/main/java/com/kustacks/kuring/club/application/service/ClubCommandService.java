@@ -3,7 +3,6 @@ package com.kustacks.kuring.club.application.service;
 import com.kustacks.kuring.club.application.port.in.*;
 import com.kustacks.kuring.club.application.port.in.dto.*;
 import com.kustacks.kuring.club.application.port.out.*;
-import com.kustacks.kuring.club.application.port.out.dto.*;
 import com.kustacks.kuring.club.domain.*;
 import com.kustacks.kuring.common.annotation.*;
 import com.kustacks.kuring.common.exception.*;
@@ -15,8 +14,6 @@ import com.kustacks.kuring.user.domain.*;
 import lombok.*;
 import lombok.extern.slf4j.*;
 import org.springframework.transaction.annotation.*;
-
-import java.util.*;
 
 @Slf4j
 @UseCase
@@ -62,60 +59,6 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
         unsubscribeAllLoggedInDevices(rootUser.getId(), makeTopic(club));
 
         return clubSubscriptionQueryPort.countSubscriptions(rootUser.getId());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public ClubListResult getSubscribedClubs(SubscribedClubListCommand command) {
-
-        RootUser rootUser = findRootUserByEmail(command.email());
-
-        List<Long> subscribedClubIds = clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserId(rootUser.getId());
-
-        if (subscribedClubIds.isEmpty()) {
-            return new ClubListResult(List.of());
-        }
-
-        List<ClubReadModel> clubReadModels = clubQueryPort.findClubReadModelsByIds(subscribedClubIds);
-
-        Map<Long, Long> subscriberCountMap = clubSubscriptionQueryPort.countSubscribersByClubIds(subscribedClubIds);
-
-        List<ClubItemResult> clubItemResults = clubReadModels.stream()
-                .map(r -> convertClubItemResult(
-                        r,
-                        true,
-                        subscriberCountMap.getOrDefault(r.getId(), 0L)
-                ))
-                .toList();
-
-        return new ClubListResult(clubItemResults);
-    }
-
-    private ClubItemResult convertClubItemResult(
-            ClubReadModel clubReadModel,
-            boolean isSubscribed,
-            Long subscriberCount
-    ) {
-
-        String iconImageUrl = null;
-        String iconImagePath = clubReadModel.getIconImagePath();
-
-        if (iconImagePath != null && !iconImagePath.isBlank()) {
-            iconImageUrl = storagePort.getPresignedUrl(iconImagePath);
-        }
-
-        return new ClubItemResult(
-                clubReadModel.getId(),
-                clubReadModel.getName(),
-                clubReadModel.getSummary(),
-                iconImageUrl,
-                clubReadModel.getCategory().getName(),
-                clubReadModel.getDivision().getName(),
-                isSubscribed,
-                subscriberCount,
-                clubReadModel.getRecruitStartDate(),
-                clubReadModel.getRecruitEndDate()
-        );
     }
 
     private boolean isAlreadySubscription(RootUser rootUser, Club club) {

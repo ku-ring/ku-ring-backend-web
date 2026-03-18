@@ -2,7 +2,6 @@ package com.kustacks.kuring.club.application.service;
 
 import com.kustacks.kuring.club.application.port.in.dto.*;
 import com.kustacks.kuring.club.application.port.out.*;
-import com.kustacks.kuring.club.application.port.out.dto.*;
 import com.kustacks.kuring.club.domain.*;
 import com.kustacks.kuring.common.exception.*;
 import com.kustacks.kuring.common.exception.code.*;
@@ -165,40 +164,6 @@ class ClubCommandServiceTest {
                         .extracting(ex -> ((InvalidStateException) ex).getErrorCode())
                         .isEqualTo(ErrorCode.CLUB_NOT_FOUND),
                 () -> verify(userEventPort, never()).subscribeEvent(anyString(), anyString())
-        );
-    }
-
-
-    @DisplayName("구독한 동아리 목록 조회 성공")
-    @Test
-    void get_subscribed_clubs_success() {
-        // given
-        ClubReadModel readModel = new ClubReadModel(
-                1L,
-                "쿠링",
-                "건국대 공지사항 앱 만드는 개발 동아리",
-                null,
-                com.kustacks.kuring.club.domain.ClubCategory.ACADEMIC,
-                com.kustacks.kuring.club.domain.ClubDivision.CENTRAL,
-                null,
-                null
-        );
-
-        when(rootUserQueryPort.findRootUserByEmail("client@konkuk.ac.kr")).thenReturn(Optional.of(rootUser));
-        when(clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserId(1L)).thenReturn(List.of(1L));
-        when(clubQueryPort.findClubReadModelsByIds(List.of(1L))).thenReturn(List.of(readModel));
-        when(clubSubscriptionQueryPort.countSubscribersByClubIds(List.of(1L))).thenReturn(Map.of(1L, 5L));
-
-        // when
-        ClubListResult result = service.getSubscribedClubs(new SubscribedClubListCommand("client@konkuk.ac.kr"));
-
-        // then
-        assertAll(
-                () -> assertThat(result.clubs()).hasSize(1),
-                () -> assertThat(result.clubs().get(0).id()).isEqualTo(1L),
-                () -> assertThat(result.clubs().get(0).name()).isEqualTo("쿠링"),
-                () -> assertThat(result.clubs().get(0).isSubscribed()).isTrue(),
-                () -> assertThat(result.clubs().get(0).subscriberCount()).isEqualTo(5L)
         );
     }
 

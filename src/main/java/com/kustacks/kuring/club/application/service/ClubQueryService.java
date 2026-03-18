@@ -7,6 +7,7 @@ import com.kustacks.kuring.club.application.port.out.dto.*;
 import com.kustacks.kuring.club.domain.*;
 import com.kustacks.kuring.common.annotation.*;
 import com.kustacks.kuring.common.exception.*;
+import com.kustacks.kuring.common.exception.code.*;
 import com.kustacks.kuring.storage.application.port.out.*;
 import com.kustacks.kuring.user.application.port.out.*;
 import com.kustacks.kuring.user.domain.*;
@@ -103,6 +104,39 @@ public class ClubQueryService implements ClubQueryUseCase {
                 isSubscribed,
                 recruitmentStatus
         );
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public ClubListResult getSubscribedClubs(SubscribedClubListCommand command) {
+
+        RootUser rootUser = findRootUserByEmail(command.email());
+
+        List<Long> subscribedClubIds = clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserId(rootUser.getId());
+
+        if (subscribedClubIds.isEmpty()) {
+            return new ClubListResult(List.of());
+        }
+
+        List<ClubReadModel> clubReadModels = clubQueryPort.findClubReadModelsByIds(subscribedClubIds);
+
+        Map<Long, Long> subscriberCountMap = clubSubscriptionQueryPort.countSubscribersByClubIds(subscribedClubIds);
+
+        List<ClubItemResult> clubItemResults = clubReadModels.stream()
+                .map(r -> convertClubItemResult(
+                        r,
+                        true,
+                        subscriberCountMap.getOrDefault(r.getId(), 0L)
+                ))
+                .toList();
+
+        return new ClubListResult(clubItemResults);
+    }
+
+    private RootUser findRootUserByEmail(String email) {
+        return rootUserQueryPort.findRootUserByEmail(email)
+                .orElseThrow(() -> new InvalidStateException(ErrorCode.ROOT_USER_NOT_FOUND));
     }
 
     private Map<Long, Boolean> getSubscribedMap(List<Long> clubIds, RootUser rootUser) {
