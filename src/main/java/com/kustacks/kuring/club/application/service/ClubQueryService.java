@@ -64,14 +64,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         Map<Long, Boolean> subscribedMap = getSubscribedMap(clubIds, rootUser);
 
-        List<ClubItemResult> clubItemResults =
-                clubReadModels.stream()
-                        .map(r -> convertClubItemResult(
-                                r,
-                                subscribedMap.getOrDefault(r.getId(), false),
-                                subscriberCountMap.getOrDefault(r.getId(), 0L)
-                        ))
-                        .toList();
+        List<ClubItemResult> clubItemResults = toClubItemResults(clubReadModels, subscribedMap, subscriberCountMap);
 
         return new ClubListResult(clubItemResults);
     }
@@ -123,13 +116,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         Map<Long, Long> subscriberCountMap = clubSubscriptionQueryPort.countSubscribersByClubIds(subscribedClubIds);
 
-        List<ClubItemResult> clubItemResults = clubReadModels.stream()
-                .map(r -> convertClubItemResult(
-                        r,
-                        true,
-                        subscriberCountMap.getOrDefault(r.getId(), 0L)
-                ))
-                .toList();
+        List<ClubItemResult> clubItemResults = toSubscribedClubItemResults(clubReadModels, subscriberCountMap);
 
         return new ClubListResult(clubItemResults);
     }
@@ -224,4 +211,33 @@ public class ClubQueryService implements ClubQueryUseCase {
                 location
         );
     }
+
+    private List<ClubItemResult> toClubItemResults(
+            List<ClubReadModel> clubReadModels,
+            Map<Long, Boolean> subscribedMap,
+            Map<Long, Long> subscriberCountMap
+    ) {
+        return clubReadModels.stream()
+                .map(r -> convertClubItemResult(
+                        r,
+                        subscribedMap.getOrDefault(r.getId(), false),
+                        subscriberCountMap.getOrDefault(r.getId(), 0L)
+                ))
+                .toList();
+    }
+
+    private List<ClubItemResult> toSubscribedClubItemResults(
+            List<ClubReadModel> clubReadModels,
+            Map<Long, Long> subscriberCountMap
+    ) {
+        return clubReadModels.stream()
+                .map(r -> convertClubItemResult(
+                        r,
+                        true,
+                        subscriberCountMap.getOrDefault(r.getId(), 0L)
+                ))
+                .toList();
+    }
+
+
 }
