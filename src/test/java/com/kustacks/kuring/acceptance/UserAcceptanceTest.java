@@ -21,6 +21,8 @@ class UserAcceptanceTest extends IntegrationTestSupport {
 
     public static final String NEW_EMAIL = "new-client@konkuk.ac.kr";
     private static final Long TEST_CLUB_ID = 1L;
+    private static final Long TEST_CLUB_ID_2 = 2L;
+    private static final Long TEST_CLUB_ID_3 = 3L;
 
     /**
      * Given: 가입되지 않은 사용자가 있다
@@ -546,11 +548,13 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
 
         동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID);
+        동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID_2);
+        동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID_3);
 
         // when
         var response = 구독한_동아리_목록_조회_요청(USER_FCM_TOKEN, accessToken);
 
         // then
-        구독한_동아리_목록_조회_응답_확인(response, List.of(TEST_CLUB_ID));
+        구독한_동아리_목록_조회_응답_확인(response, List.of(TEST_CLUB_ID, TEST_CLUB_ID_2, TEST_CLUB_ID_3));
     }
 }

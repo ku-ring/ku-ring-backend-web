@@ -1,46 +1,29 @@
 package com.kustacks.kuring.support;
 
-import com.kustacks.kuring.admin.adapter.out.persistence.AdminRepository;
-import com.kustacks.kuring.admin.domain.Admin;
-import com.kustacks.kuring.admin.domain.AdminRole;
-import com.kustacks.kuring.calendar.adapter.out.persistence.AcademicEventRepository;
-import com.kustacks.kuring.calendar.domain.AcademicEvent;
-import com.kustacks.kuring.calendar.domain.AcademicEventCategory;
-import com.kustacks.kuring.calendar.domain.Transparent;
-import com.kustacks.kuring.email.adapter.out.persistence.VerificationCodeRepository;
-import com.kustacks.kuring.email.domain.VerificationCode;
-import com.kustacks.kuring.notice.adapter.out.persistence.BadWordRepository;
-import com.kustacks.kuring.notice.adapter.out.persistence.NoticePersistenceAdapter;
-import com.kustacks.kuring.notice.adapter.out.persistence.WhitelistWordRepository;
-import com.kustacks.kuring.notice.domain.BadWord;
-import com.kustacks.kuring.notice.domain.BadWordCategory;
-import com.kustacks.kuring.notice.domain.CategoryName;
-import com.kustacks.kuring.notice.domain.DepartmentName;
-import com.kustacks.kuring.notice.domain.DepartmentNotice;
-import com.kustacks.kuring.notice.domain.Notice;
-import com.kustacks.kuring.notice.domain.WhiteWord;
-import com.kustacks.kuring.staff.adapter.out.persistence.StaffRepository;
-import com.kustacks.kuring.staff.domain.Staff;
-import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
-import com.kustacks.kuring.user.domain.RootUser;
-import com.kustacks.kuring.user.domain.User;
-import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import com.kustacks.kuring.admin.adapter.out.persistence.*;
+import com.kustacks.kuring.admin.domain.*;
+import com.kustacks.kuring.calendar.adapter.out.persistence.*;
+import com.kustacks.kuring.calendar.domain.*;
+import com.kustacks.kuring.email.adapter.out.persistence.*;
+import com.kustacks.kuring.email.domain.*;
+import com.kustacks.kuring.notice.adapter.out.persistence.*;
+import com.kustacks.kuring.notice.domain.*;
+import com.kustacks.kuring.staff.adapter.out.persistence.*;
+import com.kustacks.kuring.staff.domain.*;
+import com.kustacks.kuring.user.adapter.out.persistence.*;
+import com.kustacks.kuring.user.domain.*;
+import jakarta.transaction.*;
+import org.slf4j.*;
+import org.springframework.beans.factory.*;
+import org.springframework.jdbc.core.*;
+import org.springframework.security.crypto.password.*;
+import org.springframework.stereotype.*;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Stream;
+import javax.sql.*;
+import java.sql.*;
+import java.time.*;
+import java.util.*;
+import java.util.stream.*;
 
 @Component
 public class DatabaseConfigurator implements InitializingBean {
@@ -135,6 +118,22 @@ public class DatabaseConfigurator implements InitializingBean {
         jdbcTemplate.update(
                 "INSERT INTO club (name, summary, category, division, is_always) VALUES (?, ?, ?, ?, ?)",
                 "테스트동아리1",
+                "테스트 요약",
+                "ACADEMIC",
+                "CENTRAL",
+                false
+        );
+        jdbcTemplate.update(
+                "INSERT INTO club (name, summary, category, division, is_always) VALUES (?, ?, ?, ?, ?)",
+                "테스트동아리2",
+                "테스트 요약",
+                "ACADEMIC",
+                "CENTRAL",
+                false
+        );
+        jdbcTemplate.update(
+                "INSERT INTO club (name, summary, category, division, is_always) VALUES (?, ?, ?, ?, ?)",
+                "테스트동아리3",
                 "테스트 요약",
                 "ACADEMIC",
                 "CENTRAL",
