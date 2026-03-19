@@ -29,6 +29,7 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
 
     private static final String REGISTER_HTTP_METHOD = "POST";
 
+    @SuppressWarnings("unused")
     private final ServerProperties serverProperties;
     private final FirebaseWithUserUseCase firebaseService;
     private final UserCommandPort userCommandPort;
@@ -76,7 +77,7 @@ public class UserRegisterNonChainingFilter implements HandlerInterceptor {
     private UserSubscribeCommand makeSubscribeCommand(String userFcmToken, String topic) {
         return new UserSubscribeCommand(
                 userFcmToken,
-                serverProperties.ifDevThenAddSuffix(topic)
+                topic
         );
     }
 
