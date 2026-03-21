@@ -8,7 +8,6 @@ import com.kustacks.kuring.common.annotation.*;
 import com.kustacks.kuring.common.exception.*;
 import com.kustacks.kuring.common.exception.code.*;
 import com.kustacks.kuring.common.properties.*;
-import com.kustacks.kuring.storage.application.port.out.*;
 import com.kustacks.kuring.user.application.port.out.*;
 import com.kustacks.kuring.user.domain.*;
 import lombok.*;
@@ -30,7 +29,6 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
     private final RootUserQueryPort rootUserQueryPort;
     private final UserQueryPort userQueryPort;
     private final UserEventPort userEventPort;
-    private final StoragePort storagePort;
 
     @Override
     public long addSubscription(ClubSubscriptionCommand command) {
