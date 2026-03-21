@@ -1,26 +1,31 @@
 package com.kustacks.kuring.user.adapter.in.web;
 
-import com.kustacks.kuring.auth.authentication.*;
-import com.kustacks.kuring.auth.token.*;
+import com.kustacks.kuring.auth.authentication.AuthorizationExtractor;
+
+import com.kustacks.kuring.auth.authentication.AuthorizationType;
+import com.kustacks.kuring.auth.token.JwtTokenProvider;
 import com.kustacks.kuring.club.adapter.in.web.dto.*;
 import com.kustacks.kuring.club.application.port.in.*;
 import com.kustacks.kuring.club.application.port.in.dto.*;
-import com.kustacks.kuring.common.annotation.*;
-import com.kustacks.kuring.common.dto.*;
-import com.kustacks.kuring.common.exception.*;
-import com.kustacks.kuring.common.exception.code.*;
-import com.kustacks.kuring.user.adapter.in.web.dto.*;
-import io.swagger.v3.oas.annotations.*;
-import io.swagger.v3.oas.annotations.security.*;
-import io.swagger.v3.oas.annotations.tags.*;
-import jakarta.validation.*;
-import lombok.*;
-import org.springframework.http.*;
-import org.springframework.validation.annotation.*;
+import com.kustacks.kuring.common.annotation.RestWebAdapter;
+import com.kustacks.kuring.common.dto.BaseResponse;
+import com.kustacks.kuring.common.exception.InvalidStateException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserClubSubscriptionCountResponse;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserClubSubscriptionRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.*;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.*;
+import static com.kustacks.kuring.auth.authentication.AuthorizationExtractor.extractAuthorizationValue;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CLUB_SUBSCRIPTION_ADD_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CLUB_SUBSCRIPTION_DELETE_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CLUB_SUBSCRIPTION_LIST_SEARCH_SUCCESS;
 
 @Tag(name = "User-Club-Subscription", description = "동아리 구독")
 @Validated
