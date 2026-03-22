@@ -2,7 +2,6 @@ package com.kustacks.kuring.club.application.service;
 
 import com.kustacks.kuring.club.application.port.in.dto.ClubSubscriptionCommand;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
-import com.kustacks.kuring.club.application.port.out.ClubSubscriptionCommandPort;
 import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
 import com.kustacks.kuring.club.domain.Club;
 import com.kustacks.kuring.common.exception.InvalidStateException;
