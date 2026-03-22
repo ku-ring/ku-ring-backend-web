@@ -1,24 +1,37 @@
 package com.kustacks.kuring.club.application.service;
 
-import com.kustacks.kuring.club.application.port.in.*;
-import com.kustacks.kuring.club.application.port.in.dto.*;
-import com.kustacks.kuring.club.application.port.out.*;
-import com.kustacks.kuring.club.application.port.out.dto.*;
-import com.kustacks.kuring.club.domain.*;
-import com.kustacks.kuring.common.annotation.*;
-import com.kustacks.kuring.common.exception.*;
-import com.kustacks.kuring.common.exception.code.*;
-import com.kustacks.kuring.storage.application.port.out.*;
-import com.kustacks.kuring.user.application.port.out.*;
-import com.kustacks.kuring.user.domain.*;
-import lombok.*;
-import org.springframework.transaction.annotation.*;
+import com.kustacks.kuring.club.application.port.in.ClubQueryUseCase;
+import com.kustacks.kuring.club.application.port.in.dto.ClubDetailCommand;
+import com.kustacks.kuring.club.application.port.in.dto.ClubDetailResult;
+import com.kustacks.kuring.club.application.port.in.dto.ClubDivisionResult;
+import com.kustacks.kuring.club.application.port.in.dto.ClubItemResult;
+import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
+import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
+import com.kustacks.kuring.club.application.port.in.dto.SubscribedClubListCommand;
+import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
+import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
+import com.kustacks.kuring.club.application.port.out.dto.ClubDetailReadModel;
+import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
+import com.kustacks.kuring.club.domain.ClubCategory;
+import com.kustacks.kuring.club.domain.ClubDivision;
+import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
+import com.kustacks.kuring.common.annotation.UseCase;
+import com.kustacks.kuring.common.exception.InvalidStateException;
+import com.kustacks.kuring.common.exception.NotFoundException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.storage.application.port.out.StoragePort;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
+import com.kustacks.kuring.user.domain.RootUser;
+import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.*;
-import java.util.*;
-import java.util.stream.*;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import static com.kustacks.kuring.common.exception.code.ErrorCode.*;
+import static com.kustacks.kuring.common.exception.code.ErrorCode.CLUB_NOT_FOUND;
 
 @UseCase
 @Transactional(readOnly = true)

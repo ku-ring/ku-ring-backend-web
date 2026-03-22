@@ -1,18 +1,24 @@
 package com.kustacks.kuring.club.adapter.out.persistence;
 
-import com.kustacks.kuring.club.application.port.out.dto.*;
-import com.kustacks.kuring.club.domain.*;
-import com.querydsl.core.*;
-import com.querydsl.core.types.dsl.*;
-import com.querydsl.jpa.impl.*;
-import lombok.*;
-import org.springframework.transaction.annotation.*;
+import com.kustacks.kuring.club.application.port.out.dto.ClubDetailReadModel;
+import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
+import com.kustacks.kuring.club.application.port.out.dto.QClubReadModel;
+import com.kustacks.kuring.club.domain.Club;
+import com.kustacks.kuring.club.domain.ClubCategory;
+import com.kustacks.kuring.club.domain.ClubDivision;
+import com.kustacks.kuring.club.domain.ClubSnsType;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.*;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
-import static com.kustacks.kuring.club.domain.QClub.*;
-import static com.kustacks.kuring.club.domain.QClubSns.*;
+import static com.kustacks.kuring.club.domain.QClub.club;
+import static com.kustacks.kuring.club.domain.QClubSns.clubSns;
 
 @RequiredArgsConstructor
 class ClubQueryRepositoryImpl implements ClubQueryRepository {

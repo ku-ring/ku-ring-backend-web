@@ -1,10 +1,14 @@
 package com.kustacks.kuring.club.application.port.out;
 
-import com.kustacks.kuring.club.application.port.out.dto.*;
-import com.kustacks.kuring.club.domain.*;
+import com.kustacks.kuring.club.application.port.out.dto.ClubDetailReadModel;
+import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
+import com.kustacks.kuring.club.domain.Club;
+import com.kustacks.kuring.club.domain.ClubCategory;
+import com.kustacks.kuring.club.domain.ClubDivision;
 
-import java.time.*;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 public interface ClubQueryPort {
 

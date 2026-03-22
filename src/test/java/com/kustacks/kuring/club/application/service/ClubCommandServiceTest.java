@@ -1,25 +1,38 @@
 package com.kustacks.kuring.club.application.service;
 
-import com.kustacks.kuring.club.application.port.in.dto.*;
-import com.kustacks.kuring.club.application.port.out.*;
-import com.kustacks.kuring.club.domain.*;
-import com.kustacks.kuring.common.exception.*;
-import com.kustacks.kuring.common.exception.code.*;
-import com.kustacks.kuring.common.properties.*;
-import com.kustacks.kuring.user.application.port.out.*;
-import com.kustacks.kuring.user.domain.*;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.*;
-import org.mockito.*;
-import org.mockito.junit.jupiter.*;
-import org.springframework.test.util.*;
+import com.kustacks.kuring.club.application.port.in.dto.ClubSubscriptionCommand;
+import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
+import com.kustacks.kuring.club.application.port.out.ClubSubscriptionCommandPort;
+import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
+import com.kustacks.kuring.club.domain.Club;
+import com.kustacks.kuring.common.exception.InvalidStateException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.common.properties.ServerProperties;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
+import com.kustacks.kuring.user.application.port.out.UserEventPort;
+import com.kustacks.kuring.user.application.port.out.UserQueryPort;
+import com.kustacks.kuring.user.domain.RootUser;
+import com.kustacks.kuring.user.domain.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ClubSubscriptionCommandService")

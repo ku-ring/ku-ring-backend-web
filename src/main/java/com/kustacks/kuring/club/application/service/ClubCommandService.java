@@ -1,18 +1,22 @@
 package com.kustacks.kuring.club.application.service;
 
-import com.kustacks.kuring.club.application.port.in.*;
-import com.kustacks.kuring.club.application.port.in.dto.*;
-import com.kustacks.kuring.club.application.port.out.*;
-import com.kustacks.kuring.club.domain.*;
-import com.kustacks.kuring.common.annotation.*;
-import com.kustacks.kuring.common.exception.*;
-import com.kustacks.kuring.common.exception.code.*;
-import com.kustacks.kuring.common.properties.*;
-import com.kustacks.kuring.user.application.port.out.*;
-import com.kustacks.kuring.user.domain.*;
-import lombok.*;
-import lombok.extern.slf4j.*;
-import org.springframework.transaction.annotation.*;
+import com.kustacks.kuring.club.application.port.in.ClubSubscriptionUseCase;
+import com.kustacks.kuring.club.application.port.in.dto.ClubSubscriptionCommand;
+import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
+import com.kustacks.kuring.club.application.port.out.ClubSubscriptionCommandPort;
+import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
+import com.kustacks.kuring.club.domain.Club;
+import com.kustacks.kuring.common.annotation.UseCase;
+import com.kustacks.kuring.common.exception.InvalidStateException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
+import com.kustacks.kuring.common.properties.ServerProperties;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
+import com.kustacks.kuring.user.application.port.out.UserEventPort;
+import com.kustacks.kuring.user.application.port.out.UserQueryPort;
+import com.kustacks.kuring.user.domain.RootUser;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @UseCase

@@ -1,6 +1,7 @@
 package com.kustacks.kuring.club.application.port.out;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 public interface ClubSubscriptionQueryPort {
 

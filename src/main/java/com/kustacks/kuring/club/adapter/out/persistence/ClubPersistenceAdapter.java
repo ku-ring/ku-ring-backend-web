@@ -1,15 +1,24 @@
 package com.kustacks.kuring.club.adapter.out.persistence;
 
-import com.kustacks.kuring.club.application.port.out.*;
-import com.kustacks.kuring.club.application.port.out.dto.*;
-import com.kustacks.kuring.club.domain.*;
-import com.kustacks.kuring.common.annotation.*;
-import com.kustacks.kuring.user.domain.*;
-import lombok.*;
+import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
+import com.kustacks.kuring.club.application.port.out.ClubSubscriptionCommandPort;
+import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
+import com.kustacks.kuring.club.application.port.out.dto.ClubDetailReadModel;
+import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
+import com.kustacks.kuring.club.domain.Club;
+import com.kustacks.kuring.club.domain.ClubCategory;
+import com.kustacks.kuring.club.domain.ClubDivision;
+import com.kustacks.kuring.club.domain.ClubSubscribe;
+import com.kustacks.kuring.common.annotation.PersistenceAdapter;
+import com.kustacks.kuring.user.domain.RootUser;
+import lombok.RequiredArgsConstructor;
 
-import java.time.*;
-import java.util.*;
-import java.util.stream.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @PersistenceAdapter
 @RequiredArgsConstructor

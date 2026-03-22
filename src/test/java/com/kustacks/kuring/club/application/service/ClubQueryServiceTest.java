@@ -1,25 +1,46 @@
 package com.kustacks.kuring.club.application.service;
 
-import com.kustacks.kuring.club.application.port.in.dto.*;
-import com.kustacks.kuring.club.application.port.out.*;
-import com.kustacks.kuring.club.application.port.out.dto.*;
-import com.kustacks.kuring.club.domain.*;
-import com.kustacks.kuring.storage.application.port.out.*;
-import com.kustacks.kuring.user.application.port.out.*;
-import com.kustacks.kuring.user.domain.*;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.*;
-import org.mockito.*;
-import org.mockito.junit.jupiter.*;
-import org.springframework.test.util.*;
+import com.kustacks.kuring.club.application.port.in.dto.ClubDetailCommand;
+import com.kustacks.kuring.club.application.port.in.dto.ClubDetailResult;
+import com.kustacks.kuring.club.application.port.in.dto.ClubDivisionResult;
+import com.kustacks.kuring.club.application.port.in.dto.ClubItemResult;
+import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
+import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
+import com.kustacks.kuring.club.application.port.in.dto.SubscribedClubListCommand;
+import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
+import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
+import com.kustacks.kuring.club.application.port.out.dto.ClubDetailReadModel;
+import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
+import com.kustacks.kuring.club.domain.ClubCategory;
+import com.kustacks.kuring.club.domain.ClubDivision;
+import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
+import com.kustacks.kuring.storage.application.port.out.StoragePort;
+import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
+import com.kustacks.kuring.user.domain.RootUser;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.*;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @DisplayName("서비스 : ClubQueryService")
 @ExtendWith(MockitoExtension.class)
