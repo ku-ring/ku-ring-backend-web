@@ -48,9 +48,6 @@ class ClubCommandServiceTest {
     private ServerProperties serverProperties;
 
     @Mock
-    private ClubSubscriptionCommandPort clubSubscriptionCommandPort;
-
-    @Mock
     private ClubSubscriptionQueryPort clubSubscriptionQueryPort;
 
     @Mock
