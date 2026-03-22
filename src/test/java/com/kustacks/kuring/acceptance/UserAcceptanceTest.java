@@ -1,20 +1,25 @@
 package com.kustacks.kuring.acceptance;
 
-import com.kustacks.kuring.message.application.port.in.dto.*;
-import com.kustacks.kuring.message.application.service.exception.*;
-import com.kustacks.kuring.support.*;
-import com.kustacks.kuring.user.adapter.in.web.dto.*;
-import org.junit.jupiter.api.*;
-import org.springframework.http.*;
+import com.kustacks.kuring.message.application.port.in.dto.UserSubscribeCommand;
+import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
+import com.kustacks.kuring.support.IntegrationTestSupport;
+import com.kustacks.kuring.user.adapter.in.web.dto.UserCategoriesSubscribeRequest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
-import static com.kustacks.kuring.acceptance.CommonStep.*;
-import static com.kustacks.kuring.acceptance.EmailStep.*;
+import static com.kustacks.kuring.acceptance.CommonStep.실패_응답_확인;
+import static com.kustacks.kuring.acceptance.EmailStep.인증코드_인증_요청;
+import static com.kustacks.kuring.acceptance.EmailStep.회원가입_인증코드_이메일_전송_요청;
 import static com.kustacks.kuring.acceptance.UserStep.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 
 @DisplayName("인수 : 사용자")
 class UserAcceptanceTest extends IntegrationTestSupport {
