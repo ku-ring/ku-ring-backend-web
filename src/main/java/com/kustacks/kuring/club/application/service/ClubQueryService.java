@@ -7,6 +7,7 @@ import com.kustacks.kuring.club.application.port.in.dto.ClubDivisionResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubItemResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
+import com.kustacks.kuring.club.application.port.in.dto.SubscribedClubListCommand;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
 import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
 import com.kustacks.kuring.club.application.port.out.dto.ClubDetailReadModel;
@@ -15,7 +16,9 @@ import com.kustacks.kuring.club.domain.ClubCategory;
 import com.kustacks.kuring.club.domain.ClubDivision;
 import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
 import com.kustacks.kuring.common.annotation.UseCase;
+import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.NotFoundException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.storage.application.port.out.StoragePort;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.domain.RootUser;
@@ -74,14 +77,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         Map<Long, Boolean> subscribedMap = getSubscribedMap(clubIds, rootUser);
 
-        List<ClubItemResult> clubItemResults =
-                clubReadModels.stream()
-                        .map(r -> convertClubItemResult(
-                                r,
-                                subscribedMap.getOrDefault(r.getId(), false),
-                                subscriberCountMap.getOrDefault(r.getId(), 0L)
-                        ))
-                        .toList();
+        List<ClubItemResult> clubItemResults = toClubItemResults(clubReadModels, subscribedMap, subscriberCountMap);
 
         return new ClubListResult(clubItemResults);
     }
@@ -116,6 +112,33 @@ public class ClubQueryService implements ClubQueryUseCase {
         );
     }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public ClubListResult getSubscribedClubs(SubscribedClubListCommand command) {
+
+        RootUser rootUser = findRootUserByEmail(command.email());
+
+        List<Long> subscribedClubIds = clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserId(rootUser.getId());
+
+        if (subscribedClubIds.isEmpty()) {
+            return new ClubListResult(List.of());
+        }
+
+        List<ClubReadModel> clubReadModels = clubQueryPort.findClubReadModelsByIds(subscribedClubIds);
+
+        Map<Long, Long> subscriberCountMap = clubSubscriptionQueryPort.countSubscribersByClubIds(subscribedClubIds);
+
+        List<ClubItemResult> clubItemResults = toSubscribedClubItemResults(clubReadModels, subscriberCountMap);
+
+        return new ClubListResult(clubItemResults);
+    }
+
+    private RootUser findRootUserByEmail(String email) {
+        return rootUserQueryPort.findRootUserByEmail(email)
+                .orElseThrow(() -> new InvalidStateException(ErrorCode.ROOT_USER_NOT_FOUND));
+    }
+
     private Map<Long, Boolean> getSubscribedMap(List<Long> clubIds, RootUser rootUser) {
 
         if (rootUser == null) {
@@ -124,7 +147,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         Long rootUserId = rootUser.getId();
 
-        List<Long> subscribedClubIds = clubSubscriptionQueryPort.findSubscribedClubIds(clubIds, rootUserId);
+        List<Long> subscribedClubIds = clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserIdAndClubIds(clubIds, rootUserId);
 
         return subscribedClubIds.stream()
                 .collect(Collectors.toMap(id -> id, id -> true));
@@ -201,4 +224,33 @@ public class ClubQueryService implements ClubQueryUseCase {
                 location
         );
     }
+
+    private List<ClubItemResult> toClubItemResults(
+            List<ClubReadModel> clubReadModels,
+            Map<Long, Boolean> subscribedMap,
+            Map<Long, Long> subscriberCountMap
+    ) {
+        return clubReadModels.stream()
+                .map(r -> convertClubItemResult(
+                        r,
+                        subscribedMap.getOrDefault(r.getId(), false),
+                        subscriberCountMap.getOrDefault(r.getId(), 0L)
+                ))
+                .toList();
+    }
+
+    private List<ClubItemResult> toSubscribedClubItemResults(
+            List<ClubReadModel> clubReadModels,
+            Map<Long, Long> subscriberCountMap
+    ) {
+        return clubReadModels.stream()
+                .map(r -> convertClubItemResult(
+                        r,
+                        true,
+                        subscriberCountMap.getOrDefault(r.getId(), 0L)
+                ))
+                .toList();
+    }
+
+
 }

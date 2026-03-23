@@ -140,6 +140,22 @@ public class DatabaseConfigurator implements InitializingBean {
                 "CENTRAL",
                 false
         );
+        jdbcTemplate.update(
+                "INSERT INTO club (name, summary, category, division, is_always) VALUES (?, ?, ?, ?, ?)",
+                "테스트동아리2",
+                "테스트 요약",
+                "ACADEMIC",
+                "CENTRAL",
+                false
+        );
+        jdbcTemplate.update(
+                "INSERT INTO club (name, summary, category, division, is_always) VALUES (?, ?, ?, ?, ?)",
+                "테스트동아리3",
+                "테스트 요약",
+                "ACADEMIC",
+                "CENTRAL",
+                false
+        );
     }
 
     private void setCharsetAllTable() {

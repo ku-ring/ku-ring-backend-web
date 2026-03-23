@@ -27,7 +27,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
 
     private final ClubQueryPort clubQueryPort;
     private final ClubSubscriptionCommandPort clubSubscriptionCommandPort;
-    private final ClubSubscriptionQueryPort countSubscriptionsQueryPort;
+    private final ClubSubscriptionQueryPort clubSubscriptionQueryPort;
     private final RootUserQueryPort rootUserQueryPort;
     private final UserQueryPort userQueryPort;
     private final UserEventPort userEventPort;
@@ -44,7 +44,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
         clubSubscriptionCommandPort.saveSubscription(rootUser, club);
         subscribeAllLoggedInDevices(rootUser.getId(), makeTopic(club));
 
-        return countSubscriptionsQueryPort.countSubscriptions(rootUser.getId());
+        return clubSubscriptionQueryPort.countSubscriptions(rootUser.getId());
     }
 
     @Override
@@ -58,11 +58,11 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
         clubSubscriptionCommandPort.deleteSubscription(rootUser, club);
         unsubscribeAllLoggedInDevices(rootUser.getId(), makeTopic(club));
 
-        return countSubscriptionsQueryPort.countSubscriptions(rootUser.getId());
+        return clubSubscriptionQueryPort.countSubscriptions(rootUser.getId());
     }
 
     private boolean isAlreadySubscription(RootUser rootUser, Club club) {
-        return countSubscriptionsQueryPort.existsSubscription(rootUser.getId(), club.getId());
+        return clubSubscriptionQueryPort.existsSubscription(rootUser.getId(), club.getId());
     }
 
     private RootUser findRootUserByEmail(String email) {
