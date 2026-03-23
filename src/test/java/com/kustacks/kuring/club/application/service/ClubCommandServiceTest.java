@@ -7,7 +7,6 @@ import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
 import com.kustacks.kuring.club.domain.Club;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.application.port.out.UserEventPort;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
@@ -45,9 +44,6 @@ class ClubCommandServiceTest {
     private ClubQueryPort clubQueryPort;
 
     @Mock
-    private ServerProperties serverProperties;
-
-    @Mock
     private ClubSubscriptionCommandPort clubSubscriptionCommandPort;
 
     @Mock
@@ -80,7 +76,6 @@ class ClubCommandServiceTest {
         User user2 = new User("token-2");
 
         when(club.getId()).thenReturn(1L);
-        when(serverProperties.ifDevThenAddSuffix(anyString())).thenReturn("club.1");
         when(rootUserQueryPort.findRootUserByEmail("client@konkuk.ac.kr"))
                 .thenReturn(Optional.of(rootUser));
         when(clubQueryPort.findClubById(1L)).thenReturn(Optional.of(club));
@@ -125,7 +120,6 @@ class ClubCommandServiceTest {
         User user1 = new User("token-1");
 
         when(club.getId()).thenReturn(1L);
-        when(serverProperties.ifDevThenAddSuffix(anyString())).thenReturn("club.1");
         when(rootUserQueryPort.findRootUserByEmail("client@konkuk.ac.kr"))
                 .thenReturn(Optional.of(rootUser));
         when(clubQueryPort.findClubById(1L)).thenReturn(Optional.of(club));
