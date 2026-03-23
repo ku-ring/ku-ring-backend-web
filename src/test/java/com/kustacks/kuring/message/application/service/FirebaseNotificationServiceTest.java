@@ -84,6 +84,7 @@ class FirebaseNotificationServiceTest {
         assertAll(
                 () -> assertThat(getTopic(sent)).isEqualTo("student.dev"),
                 () -> assertThat(data).containsEntry("type", "notice"),
+                () -> assertThat(data).containsEntry("id", "1234"),
                 () -> assertThat(data).containsEntry("articleId", "1234"),
                 () -> assertThat(data).containsEntry("category", "student"),
                 () -> assertThat(data).containsEntry("subject", "테스트 공지입니다."),
