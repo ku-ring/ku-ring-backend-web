@@ -6,6 +6,7 @@ public interface AdminEventPort {
     void sendNotificationByAdmin(String title, String body, String url);
 
     void sendTestNotificationByAdmin(
+            String noticeId,
             String articleId,
             String postedDate,
             String categoryName,

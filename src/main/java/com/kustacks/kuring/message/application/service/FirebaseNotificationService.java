@@ -74,8 +74,7 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
                     serverProperties.addDevSuffix(ACADEMIC_EVENT_TOPIC),
                     ACADEMIC.getValue(),
                     command.title(),
-                    command.body(),
-                    null
+                    command.body()
             );
 
             firebaseMessagingPort.send(newMessage);
@@ -187,7 +186,7 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
 
     private static NoticeMessageDto convertDtoFromCommand(AdminTestNotificationCommand command) {
         return NoticeMessageDto.builder()
-                .id(command.articleId())
+                .id(command.noticeId())
                 .articleId(command.articleId())
                 .postedDate(command.postedDate())
                 .category(command.categoryName())
