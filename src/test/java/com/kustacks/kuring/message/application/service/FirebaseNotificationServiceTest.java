@@ -70,6 +70,7 @@ class FirebaseNotificationServiceTest {
 
         service.sendTestNotificationByAdmin(new AdminTestNotificationCommand(
                 "1234",
+                "1234",
                 "2026-03-17 12:00:00",
                 "student",
                 "테스트 공지입니다.",
