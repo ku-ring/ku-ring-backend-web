@@ -16,6 +16,8 @@ public interface ClubQueryPort {
 
     Optional<ClubDetailReadModel> findClubDetailById(Long id);
 
+    List<ClubReadModel> findClubReadModelsByIds(List<Long> ids);
+
     List<ClubReadModel> searchClubs(ClubCategory category, List<ClubDivision> divisions);
 
     List<Club> findClubsBetweenDates(LocalDateTime start, LocalDateTime end);

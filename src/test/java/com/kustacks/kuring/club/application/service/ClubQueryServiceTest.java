@@ -3,8 +3,10 @@ package com.kustacks.kuring.club.application.service;
 import com.kustacks.kuring.club.application.port.in.dto.ClubDetailCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubDetailResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubDivisionResult;
+import com.kustacks.kuring.club.application.port.in.dto.ClubItemResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
+import com.kustacks.kuring.club.application.port.in.dto.SubscribedClubListCommand;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
 import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
 import com.kustacks.kuring.club.application.port.out.dto.ClubDetailReadModel;
@@ -15,6 +17,7 @@ import com.kustacks.kuring.club.domain.ClubRecruitmentStatus;
 import com.kustacks.kuring.storage.application.port.out.StoragePort;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.domain.RootUser;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,8 +30,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -55,6 +60,8 @@ class ClubQueryServiceTest {
 
     @InjectMocks
     private ClubQueryService clubQueryService;
+
+    private RootUser rootUser;
 
     private List<ClubReadModel> mockReadModels =
             List.of(
@@ -89,6 +96,11 @@ class ClubQueryServiceTest {
                             LocalDateTime.of(2026, 2, 25, 23, 59)
                     )
             );
+
+    @BeforeEach
+    void setUp() {
+        rootUser = rootUser();
+    }
 
     @Test
     @DisplayName("동아리 소속 목록을 정상적으로 조회한다")
@@ -138,7 +150,7 @@ class ClubQueryServiceTest {
                         3L, 10L
                 ));
 
-        when(clubSubscriptionQueryPort.findSubscribedClubIds(any(), anyLong()))
+        when(clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserIdAndClubIds(any(), anyLong()))
                 .thenReturn(List.of(1L, 2L, 3L));
 
         when(storagePort.getPresignedUrl(any()))
@@ -189,7 +201,7 @@ class ClubQueryServiceTest {
 
         //then
         assertThat(result.clubs().get(0).isSubscribed()).isFalse();
-        verify(clubSubscriptionQueryPort, never()).findSubscribedClubIds(any(), anyLong());
+        verify(clubSubscriptionQueryPort, never()).findSubscribedClubIdsByRootUserIdAndClubIds(any(), anyLong());
     }
 
     @Test
@@ -339,6 +351,53 @@ class ClubQueryServiceTest {
         // then
         assertThat(result.posterImageUrl()).isEqualTo(presignedUrl);
         verify(storagePort, times(1)).getPresignedUrl(key);
+    }
+
+
+    @DisplayName("구독한 동아리 목록 조회 성공")
+    @Test
+    void get_subscribed_clubs_success() {
+        // given
+        when(rootUserQueryPort.findRootUserByEmail("client@konkuk.ac.kr")).thenReturn(Optional.of(rootUser));
+        when(clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserId(1L)).thenReturn(List.of(1L, 2L, 3L));
+        when(clubQueryPort.findClubReadModelsByIds(List.of(1L, 2L, 3L))).thenReturn(mockReadModels);
+        when(clubSubscriptionQueryPort.countSubscribersByClubIds(List.of(1L, 2L, 3L))).thenReturn(Map.of(1L, 5L, 2L, 10L, 3L, 15L));
+
+        when(storagePort.getPresignedUrl("icon-url-1")).thenReturn("url-1");
+        when(storagePort.getPresignedUrl("icon-url-2")).thenReturn("url-2");
+        when(storagePort.getPresignedUrl("icon-url-3")).thenReturn("url-3");
+
+        // when
+        ClubListResult result = clubQueryService.getSubscribedClubs(new SubscribedClubListCommand("client@konkuk.ac.kr"));
+
+        // then
+        assertAll(
+                () -> assertThat(result.clubs()).hasSize(3),
+
+                () -> assertThat(result.clubs())
+                        .extracting(ClubItemResult::id)
+                        .containsExactlyInAnyOrder(1L, 2L, 3L),
+
+                () -> assertThat(result.clubs())
+                        .extracting(ClubItemResult::name)
+                        .containsExactlyInAnyOrder("쿠링", "쿠잇", "DIUS"),
+
+                () -> assertThat(result.clubs()).allMatch(ClubItemResult::isSubscribed),
+
+                () -> assertThat(result.clubs())
+                        .extracting(ClubItemResult::subscriberCount)
+                        .containsExactlyInAnyOrder(5L, 10L, 15L),
+
+                () -> assertThat(result.clubs())
+                        .extracting(ClubItemResult::iconImageUrl)
+                        .containsExactlyInAnyOrder("url-1", "url-2", "url-3")
+        );
+    }
+
+    private RootUser rootUser() {
+        RootUser rootUser = new RootUser("client@konkuk.ac.kr", "password", "nickname");
+        ReflectionTestUtils.setField(rootUser, "id", 1L);
+        return rootUser;
     }
 
 }

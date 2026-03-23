@@ -39,4 +39,11 @@ interface ClubSubscribeRepository extends JpaRepository<ClubSubscribe, Long> {
               and cs.rootUser.id = :rootUserId
             """)
     List<Long> findByClubIdInAndRootUserId(List<Long> clubIds, Long rootUserId);
+
+    @Query("""
+            select cs.club.id 
+            from ClubSubscribe cs 
+            where cs.rootUser.id = :rootUserId
+            """)
+    List<Long> findClubIdsByRootUserId(Long rootUserId);
 }

@@ -132,6 +132,26 @@ public class UserStep {
         );
     }
 
+    public static ExtractableResponse<Response> 구독한_동아리_목록_조회_요청(String userToken, String accessToken) {
+        return RestAssured.given().log().all()
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("User-Token", userToken)
+                .header("Authorization", "Bearer " + accessToken)
+                .when().get("/api/v2/users/subscriptions/clubs")
+                .then().log().all()
+                .extract();
+    }
+
+
+    public static void 구독한_동아리_목록_조회_응답_확인(ExtractableResponse<Response> response, List<Long> clubIds) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getList("data.clubs.id", Long.class)).containsAll(clubIds),
+                () -> assertThat(response.jsonPath().getList("data.clubs.isSubscribed")).containsOnly(true)
+        );
+    }
+
     public static void 사용자_학과_조회_응답_확인(ExtractableResponse<Response> response, List<String> departments) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
@@ -326,6 +346,7 @@ public class UserStep {
                 .then().log().all()
                 .extract();
     }
+
     public static ExtractableResponse<Response> 비밀번호_변경_요청(String email, String newPassword) {
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -343,6 +364,7 @@ public class UserStep {
                 () -> assertThat(response.jsonPath().getString("data.email")).isEqualTo(email)
         );
     }
+
     public static ExtractableResponse<Response> 액세스_토큰으로_비밀번호_변경_요청(String jwtToken, String newPassword) {
         return RestAssured.given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)

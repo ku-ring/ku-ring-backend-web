@@ -5,6 +5,7 @@ import com.kustacks.kuring.club.application.port.in.dto.ClubDetailResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubDivisionResult;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListCommand;
 import com.kustacks.kuring.club.application.port.in.dto.ClubListResult;
+import com.kustacks.kuring.club.application.port.in.dto.SubscribedClubListCommand;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public interface ClubQueryUseCase {
 
     ClubListResult getClubs(ClubListCommand command);
 
-    ClubDetailResult getClubDetail(ClubDetailCommand command);
+    ClubListResult getSubscribedClubs(SubscribedClubListCommand command);
 
+    ClubDetailResult getClubDetail(ClubDetailCommand command);
 }

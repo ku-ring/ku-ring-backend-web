@@ -105,7 +105,7 @@ class ClubPersistenceAdapterTest {
 
     @Test
     @DisplayName("findSubscribedClubIds는 구독된 clubId 목록을 반환한다")
-    void findSubscribedClubIds_success() {
+    void findSubscribedClubIdsByRootUserIdAndClubIds_success() {
         // given
         Long rootUserId = 100L;
         List<Long> clubIds = List.of(1L, 2L);
@@ -115,7 +115,7 @@ class ClubPersistenceAdapterTest {
                 .thenReturn(List.of(1L, 2L));
 
         // when
-        List<Long> result = adapter.findSubscribedClubIds(clubIds, rootUserId);
+        List<Long> result = adapter.findSubscribedClubIdsByRootUserIdAndClubIds(clubIds, rootUserId);
 
         // then
         assertThat(result).containsExactly(1L, 2L);
@@ -123,4 +123,21 @@ class ClubPersistenceAdapterTest {
         verify(clubSubscribeRepository).findByClubIdInAndRootUserId(clubIds, rootUserId);
     }
 
+    @Test
+    @DisplayName("findAllSubscribedClubIds는 rootUserId로 구독한 clubId 목록을 반환한다")
+    void findSubscribedClubIds_ByRootUserId_success() {
+        // given
+        Long rootUserId = 100L;
+
+        when(clubSubscribeRepository.findClubIdsByRootUserId(rootUserId))
+                .thenReturn(List.of(1L, 2L, 3L));
+
+        // when
+        List<Long> result = adapter.findSubscribedClubIdsByRootUserId(rootUserId);
+
+        // then
+        assertThat(result).containsExactly(1L, 2L, 3L);
+
+        verify(clubSubscribeRepository).findClubIdsByRootUserId(rootUserId);
+    }
 }
