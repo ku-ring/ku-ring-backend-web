@@ -27,7 +27,7 @@ public class FirebaseDeviceTokenValidationAdapter implements DeviceTokenValidati
             firebaseMessaging.send(message, true);
             return true;
         } catch (Exception e) {
-            log.warn("유효하지 않은 FCM 토큰입니다. token={}", token, e);
+            log.warn("유효하지 않은 FCM 토큰입니다.", e);
             return false;
         }
     }

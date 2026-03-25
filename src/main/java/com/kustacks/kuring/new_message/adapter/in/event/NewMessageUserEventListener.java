@@ -48,14 +48,14 @@ public class NewMessageUserEventListener {
 
     @Recover
     public void recoverSubscribe(Exception e, UserSubscribeEvent event) {
-        log.error("토픽 구독 최종 실패. token={}, topic={}, message={}",
-                event.token(), event.topic(), e.getMessage(), e);
+        log.error("토픽 구독 최종 실패. topic={}, message={}",
+                event.topic(), e.getMessage(), e);
     }
 
     @Recover
     public void recoverUnsubscribe(Exception e, UserUnsubscribeEvent event) {
-        log.error("토픽 구독 해제 최종 실패. token={}, topic={}, message={}",
-                event.token(), event.topic(), e.getMessage(), e);
+        log.error("토픽 구독 해제 최종 실패. topic={}, message={}",
+                event.topic(), e.getMessage(), e);
     }
 
 }

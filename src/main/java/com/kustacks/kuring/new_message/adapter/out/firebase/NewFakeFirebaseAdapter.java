@@ -23,13 +23,13 @@ public class NewFakeFirebaseAdapter implements
 
     @Override
     public boolean validate(String token) {
-        log.info("NewFakeFirebaseAdapter.validate() token={}", token);
+        log.debug("NewFakeFirebaseAdapter.validate() token={}", token);
         return true;
     }
 
     @Override
     public void send(NotificationCommand command) throws MessageSendException {
-        log.info(
+        log.debug(
                 "NewFakeFirebaseAdapter.send() topic={}, title={}, body={}",
                 command.target().topic(),
                 command.content().title(),
@@ -39,11 +39,11 @@ public class NewFakeFirebaseAdapter implements
 
     @Override
     public void subscribe(String token, String topic) throws MessageSubscribeException {
-        log.info("NewFakeFirebaseAdapter.subscribe() token={}, topic={}", token, topic);
+        log.debug("NewFakeFirebaseAdapter.subscribe() token={}, topic={}", token, topic);
     }
 
     @Override
     public void unsubscribe(String token, String topic) throws MessageUnSubscribeException {
-        log.info("NewFakeFirebaseAdapter.unsubscribe() token={}, topic={}", token, topic);
+        log.debug("NewFakeFirebaseAdapter.unsubscribe() token={}, topic={}", token, topic);
     }
 }
