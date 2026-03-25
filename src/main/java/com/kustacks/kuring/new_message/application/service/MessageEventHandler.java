@@ -19,18 +19,26 @@ public class MessageEventHandler implements HandleMessageEventUseCase {
 
     @Override
     public int handle(MessageEvent event) {
+        if(event == null)
+            throw new IllegalArgumentException("MessageEventHandler.handle(), MessageEvent가 null 입니다.");
         List<NotificationCommand> commands = findAssembler(event).assemble(event);
         return sendNotificationUseCase.sendAll(commands);
     }
 
     @SuppressWarnings("unchecked")
     private <E extends MessageEvent> NotificationCommandAssembler<E> findAssembler(MessageEvent event) {
-        return (NotificationCommandAssembler<E>) assemblers.stream()
+        List <NotificationCommandAssembler<? extends MessageEvent>> matches = assemblers.stream()
                 .filter(assembler -> assembler.supports(event))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "지원하지 않는 메시지 이벤트 타입: " + event.getClass().getName())
-                );
+                .toList();
+
+        if (matches.isEmpty()) {
+            throw new IllegalArgumentException("지원하지 않는 메시지 이벤트 타입: " + event.getClass().getName());
+        }
+        if (matches.size() > 1) {
+            throw new IllegalStateException("중복 매칭된 메시지 이벤트 타입: " + event.getClass().getName());
+        }
+
+        return (NotificationCommandAssembler<E>) matches.get(0);
     }
 
 }
