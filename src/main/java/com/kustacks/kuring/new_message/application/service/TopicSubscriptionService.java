@@ -21,7 +21,7 @@ public class TopicSubscriptionService implements ManageTopicSubscriptionUseCase 
             topicSubscriptionGateway.subscribe(token, topic);
         } catch (MessageSubscribeException e) {
             log.error("토픽 구독 실패. topic={}",topic, e);
-            throw new MessageSubscribeException();
+            throw new MessageSubscribeException(e);
         }
     }
     @Override
@@ -30,7 +30,7 @@ public class TopicSubscriptionService implements ManageTopicSubscriptionUseCase 
             topicSubscriptionGateway.unsubscribe(token, topic);
         } catch (MessageUnSubscribeException e) {
             log.error("토픽 구독 해제 실패. topic={}", topic, e);
-            throw new MessageUnSubscribeException();
+            throw new MessageUnSubscribeException(e);
         }
     }
 

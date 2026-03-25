@@ -28,7 +28,7 @@ public class FirebasePushMessageAdapter implements PushMessagePort {
         try {
             firebaseMessaging.send(toMessage(command));
         } catch (FirebaseMessagingException e) {
-            throw new MessageSendException();
+            throw new MessageSendException(e);
         }
 
     }

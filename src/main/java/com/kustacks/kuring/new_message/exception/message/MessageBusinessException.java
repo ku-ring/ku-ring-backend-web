@@ -9,4 +9,8 @@ public class MessageBusinessException extends BusinessException {
     public MessageBusinessException(ErrorCode errorCode) {
         super(errorCode);
     }
+
+    public MessageBusinessException(ErrorCode errorCode, Exception e) {
+        super(errorCode, e);
+    }
 }

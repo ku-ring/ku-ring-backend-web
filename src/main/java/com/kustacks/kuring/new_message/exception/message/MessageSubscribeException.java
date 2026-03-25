@@ -8,4 +8,8 @@ public class MessageSubscribeException extends MessageBusinessException {
         super(ErrorCode.MESSAGE_SUBSCRIPTION_FAILED);
     }
 
+    public MessageSubscribeException(Exception e) {
+        super(ErrorCode.MESSAGE_SUBSCRIPTION_FAILED, e);
+    }
+
 }

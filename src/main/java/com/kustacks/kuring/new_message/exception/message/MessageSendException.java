@@ -8,4 +8,8 @@ public class MessageSendException extends MessageBusinessException {
         super(ErrorCode.MESSAGE_SEND_FAILED);
     }
 
+    public MessageSendException(Exception e) {
+        super(ErrorCode.MESSAGE_SEND_FAILED, e);
+    }
+
 }

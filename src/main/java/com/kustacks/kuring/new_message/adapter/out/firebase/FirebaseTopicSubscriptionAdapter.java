@@ -29,7 +29,7 @@ public class FirebaseTopicSubscriptionAdapter implements TopicSubscriptionPort {
                     serverProperties.ifDevThenAddSuffix(topic)
             );
         } catch (FirebaseMessagingException e) {
-            throw new MessageSubscribeException();
+            throw new MessageSubscribeException(e);
         }
     }
 
@@ -41,7 +41,7 @@ public class FirebaseTopicSubscriptionAdapter implements TopicSubscriptionPort {
                     serverProperties.ifDevThenAddSuffix(topic)
             );
         } catch (FirebaseMessagingException e) {
-            throw new MessageUnSubscribeException();
+            throw new MessageUnSubscribeException(e);
         }
     }
 }
