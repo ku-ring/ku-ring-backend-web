@@ -7,6 +7,9 @@ public record NotificationTarget(
         TopicSuffixPolicy topicSuffixPolicy
 ) {
     public NotificationTarget {
+        if(topic == null || topic.isBlank())
+            throw new IllegalArgumentException("topic이 비어있습니다");
+
         if (topicSuffixPolicy == null) {
             topicSuffixPolicy = TopicSuffixPolicy.IF_DEV_THEN_ADD_SUFFIX;
         }
