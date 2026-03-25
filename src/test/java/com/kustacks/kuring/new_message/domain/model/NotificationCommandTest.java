@@ -7,9 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class NotificationCommandTest {
 
@@ -96,5 +94,23 @@ class NotificationCommandTest {
                 () -> assertEquals("body-changed", merged.get("body")),
                 () -> assertEquals("type-changed", merged.get("messageType"))
         );
+    }
+
+    @Test
+    @DisplayName("target, content, messageType 중 하나라도 null이면 예외가 발생한다")
+    void constructor_fail_whenRequiredFieldIsNull() {
+        // when
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> new NotificationCommand(
+                        null,
+                        NotificationContent.of("title", "body"),
+                        MessageType.ADMIN,
+                        Map.of()
+                )
+        );
+
+        // then
+        assertEquals("target, content, messageType은 필수입니다.", exception.getMessage());
     }
 }

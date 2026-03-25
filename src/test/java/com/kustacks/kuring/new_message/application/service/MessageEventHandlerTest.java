@@ -22,6 +22,8 @@ import com.kustacks.kuring.new_message.domain.event.ClubDeadlineNotificationEven
 import com.kustacks.kuring.new_message.domain.event.MessageEvent;
 import com.kustacks.kuring.new_message.domain.event.NoticeBatchNotificationEvent;
 import com.kustacks.kuring.new_message.domain.model.NotificationCommand;
+import com.kustacks.kuring.new_message.domain.model.NotificationContent;
+import com.kustacks.kuring.new_message.domain.model.NotificationTarget;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -285,6 +287,31 @@ class MessageEventHandlerTest {
         assertTrue(exception.getMessage().contains("지원하지 않는 메시지 이벤트 타입"));
     }
 
+    @Test
+    @DisplayName("하나의 이벤트에 assembler가 중복 매칭되면 IllegalStateException이 발생한다")
+    void handle_duplicateMatchedAssembler() {
+        // given
+        NotificationCommandAssembler<MessageEvent> assembler1 = new DuplicateAssembler();
+        NotificationCommandAssembler<MessageEvent> assembler2 = new DuplicateAssembler();
+
+        messageEventHandler = new MessageEventHandler(
+                List.of(assembler1, assembler2),
+                sendNotificationUseCase
+        );
+
+        MessageEvent event = new MessageEvent() {
+        };
+
+        // when
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> messageEventHandler.handle(event)
+        );
+
+        // then
+        assertTrue(exception.getMessage().contains("중복 매칭된 메시지 이벤트 타입"));
+    }
+
     private NotificationCommand captureSingleCommand() {
         List<NotificationCommand> commands = captureCommands();
         return commands.get(0);
@@ -295,5 +322,25 @@ class MessageEventHandlerTest {
         ArgumentCaptor<List<NotificationCommand>> captor = ArgumentCaptor.forClass(List.class);
         verify(sendNotificationUseCase).sendAll(captor.capture());
         return captor.getValue();
+    }
+
+    private static class DuplicateAssembler implements NotificationCommandAssembler<MessageEvent> {
+
+        @Override
+        public boolean supports(MessageEvent event) {
+            return true;
+        }
+
+        @Override
+        public List<NotificationCommand> assemble(MessageEvent event) {
+            return List.of(
+                    new NotificationCommand(
+                            NotificationTarget.topic("topic"),
+                            NotificationContent.of("title", "body"),
+                            MessageType.ADMIN,
+                            java.util.Map.of()
+                    )
+            );
+        }
     }
 }

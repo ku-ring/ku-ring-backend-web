@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class NotificationTargetTest {
 
@@ -36,5 +37,17 @@ class NotificationTargetTest {
 
         // then
         assertEquals(TopicSuffixPolicy.ALWAYS_ADD_DEV_SUFFIX, target.topicSuffixPolicy());
+    }
+
+    @Test
+    @DisplayName("topic이 비어있으면 예외가 발생한다")
+    void constructor_fail_whenTopicIsBlank() {
+        // then
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> new NotificationTarget(" ", TopicSuffixPolicy.IF_DEV_THEN_ADD_SUFFIX)
+        );
+
+        assertEquals("topic이 비어있습니다", exception.getMessage());
     }
 }

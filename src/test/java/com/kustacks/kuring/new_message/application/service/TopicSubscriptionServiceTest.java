@@ -38,7 +38,7 @@ class TopicSubscriptionServiceTest {
     @DisplayName("토픽 구독 중 예외가 발생하면 MessageSubscribeException으로 감싼다")
     void subscribe_fail_wrapMessageSubscribeException() {
         // given
-        doThrow(new MessageSubscribeException()).when(topicSubscriptionPort).subscribe("token", "topic");
+        doThrow(new RuntimeException()).when(topicSubscriptionPort).subscribe("token", "topic");
 
         // when & then
         assertThrows(MessageSubscribeException.class, () -> topicSubscriptionService.subscribe("token", "topic"));
@@ -58,7 +58,7 @@ class TopicSubscriptionServiceTest {
     @DisplayName("토픽 구독 해제 중 예외가 발생하면 MessageUnSubscribeException으로 감싼다")
     void unsubscribe_fail_wrapMessageUnSubscribeException() {
         // given
-        doThrow(new MessageUnSubscribeException()).when(topicSubscriptionPort).unsubscribe("token", "topic");
+        doThrow(new RuntimeException()).when(topicSubscriptionPort).unsubscribe("token", "topic");
 
         // when & then
         assertThrows(MessageUnSubscribeException.class, () -> topicSubscriptionService.unsubscribe("token", "topic"));
