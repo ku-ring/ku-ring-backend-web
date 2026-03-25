@@ -26,6 +26,10 @@ public class NotificationSendService implements SendNotificationUseCase {
             log.error("푸시 알림 전송 실패. topic={}, title={}",
                     command.target().topic(), command.content().title(), e);
             return false;
+        } catch (Exception e) {
+            log.error("알 수 없는 이유로 푸시 알림 전송 실패. topic={}, title={}",
+                    command.target().topic(), command.content().title(), e);
+            return false;
         }
     }
 
