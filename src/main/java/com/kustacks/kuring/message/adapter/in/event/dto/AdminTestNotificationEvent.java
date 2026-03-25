@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record AdminTestNotificationEvent(
+         String noticeId,
          String type,
          String articleId,
          String postedDate,
@@ -15,6 +16,7 @@ public record AdminTestNotificationEvent(
 ) {
     public AdminTestNotificationCommand toCommand() {
         return new AdminTestNotificationCommand(
+                noticeId,
                 articleId,
                 postedDate,
                 category,

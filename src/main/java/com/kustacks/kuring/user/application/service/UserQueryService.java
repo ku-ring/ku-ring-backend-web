@@ -4,7 +4,6 @@ import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
@@ -41,8 +40,6 @@ class UserQueryService implements UserQueryUseCase {
     private final RootUserQueryPort rootUserQueryPort;
     private final NoticeQueryPort noticeQueryPort;
     private final UserEventPort userEventPort;
-    private final ServerProperties serverProperties;
-
     @Override
     public List<UserCategoryNameResult> lookupSubscribeCategories(String userToken) {
         User findUser = findUserByToken(userToken);
@@ -107,8 +104,8 @@ class UserQueryService implements UserQueryUseCase {
         Optional<User> optionalUser = userQueryPort.findByToken(token);
         if (optionalUser.isEmpty()) {
             optionalUser = Optional.of(userCommandPort.save(new User(token)));
-            userEventPort.subscribeEvent(token, serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
-            userEventPort.subscribeEvent(token, serverProperties.ifDevThenAddSuffix(ACADEMIC_EVENT_TOPIC));
+            userEventPort.subscribeEvent(token, ALL_DEVICE_SUBSCRIBED_TOPIC);
+            userEventPort.subscribeEvent(token, ACADEMIC_EVENT_TOPIC);
         }
 
         return optionalUser.orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));

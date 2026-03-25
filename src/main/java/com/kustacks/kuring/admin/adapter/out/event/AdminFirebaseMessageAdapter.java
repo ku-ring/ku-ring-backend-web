@@ -20,6 +20,7 @@ public class AdminFirebaseMessageAdapter implements AdminEventPort {
 
     @Override
     public void sendTestNotificationByAdmin(
+            String noticeId,
             String articleId,
             String postedDate,
             String categoryName,
@@ -29,6 +30,7 @@ public class AdminFirebaseMessageAdapter implements AdminEventPort {
     ) throws FirebaseMessageSendException {
         Events.raise(
                 AdminTestNotificationEvent.builder()
+                        .noticeId(noticeId)
                         .articleId(articleId)
                         .postedDate(postedDate)
                         .category(categoryName)

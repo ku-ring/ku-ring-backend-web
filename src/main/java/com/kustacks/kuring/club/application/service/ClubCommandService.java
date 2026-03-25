@@ -9,7 +9,6 @@ import com.kustacks.kuring.club.domain.Club;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.application.port.out.UserEventPort;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
@@ -26,7 +25,6 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
 
     private static final String CLUB_TOPIC_PREFIX = "club.";
 
-    private final ServerProperties serverProperties;
     private final ClubQueryPort clubQueryPort;
     private final ClubSubscriptionCommandPort clubSubscriptionCommandPort;
     private final ClubSubscriptionQueryPort clubSubscriptionQueryPort;
@@ -92,6 +90,6 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
     }
 
     private String makeTopic(Club club) {
-        return serverProperties.ifDevThenAddSuffix(CLUB_TOPIC_PREFIX + club.getId());
+        return CLUB_TOPIC_PREFIX + club.getId();
     }
 }

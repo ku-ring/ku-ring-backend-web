@@ -3,7 +3,6 @@ package com.kustacks.kuring.message.application.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.InternalLogicException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
@@ -15,6 +14,7 @@ import com.kustacks.kuring.message.application.port.in.dto.AdminTestNotification
 import com.kustacks.kuring.message.application.port.out.FirebaseMessagingPort;
 import com.kustacks.kuring.message.application.port.out.dto.NoticeMessageDto;
 import com.kustacks.kuring.message.application.service.exception.FirebaseMessageSendException;
+import com.kustacks.kuring.message.application.support.FirebaseMessageFactory;
 import com.kustacks.kuring.notice.domain.Notice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,18 +70,12 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
     @Override
     public void sendAcademicTestNotification(AcademicTestNotificationCommand command) {
         try {
-            Message newMessage = Message.builder()
-                    .setNotification(Notification.builder()
-                            .setTitle(command.title())
-                            .setBody(command.body())
-                            .build())
-                    .putAllData(Map.of(
-                            "title", command.title(),
-                            "body", command.body(),
-                            "messageType", ACADEMIC.getValue()
-                    ))
-                    .setTopic(serverProperties.addDevSuffix(ACADEMIC_EVENT_TOPIC))
-                    .build();
+            Message newMessage = FirebaseMessageFactory.create(
+                    serverProperties.addDevSuffix(ACADEMIC_EVENT_TOPIC),
+                    ACADEMIC.getValue(),
+                    command.title(),
+                    command.body()
+            );
 
             firebaseMessagingPort.send(newMessage);
         } catch (FirebaseMessagingException exception) {
@@ -149,29 +143,27 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
     }
 
     private Message createMessageFromCommand(AdminNotificationCommand command) {
-        return Message.builder()
-                .setNotification(Notification
-                        .builder()
-                        .setTitle(command.title())
-                        .setBody(command.body())
-                        .build())
-                .putAllData(objectMapper.convertValue(command, Map.class))
-                .putData("messageType", ADMIN.getValue())
-                .setTopic(serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC))
-                .build();
+        Map<String, String> data = objectMapper.convertValue(command, Map.class);
+        return FirebaseMessageFactory.create(
+                serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC),
+                ADMIN.getValue(),
+                command.title(),
+                command.body(),
+                data
+        );
     }
 
     private Message createMessageFromDto(NoticeMessageDto messageDto, UnaryOperator<String> suffixUtil) {
-        return Message.builder()
-                .setNotification(Notification
-                        .builder()
-                        .setTitle(buildTitle(messageDto.getCategoryKorName()))
-                        .setBody(messageDto.getSubject())
-                        .build())
-                .putAllData(objectMapper.convertValue(messageDto, Map.class))
-                .putData("messageType", NOTICE.getValue())
-                .setTopic(suffixUtil.apply(messageDto.getCategory()))
-                .build();
+        String title = buildTitle(messageDto.getCategoryKorName());
+        String body = messageDto.getSubject();
+        Map<String, String> data = objectMapper.convertValue(messageDto, Map.class);
+        return FirebaseMessageFactory.create(
+                suffixUtil.apply(messageDto.getCategory()),
+                NOTICE.getValue(),
+                title,
+                body,
+                data
+        );
     }
 
     private List<NoticeMessageDto> createNotification(List<? extends Notice> willBeNotiNotices) {
@@ -194,6 +186,7 @@ public class FirebaseNotificationService implements FirebaseWithAdminUseCase {
 
     private static NoticeMessageDto convertDtoFromCommand(AdminTestNotificationCommand command) {
         return NoticeMessageDto.builder()
+                .id(command.noticeId())
                 .articleId(command.articleId())
                 .postedDate(command.postedDate())
                 .category(command.categoryName())

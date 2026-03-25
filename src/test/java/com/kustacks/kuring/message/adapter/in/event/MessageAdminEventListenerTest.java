@@ -52,6 +52,7 @@ class MessageAdminEventListenerTest extends IntegrationTestSupport {
         TestNotificationCommand command = new TestNotificationCommand(
                 CategoryName.STUDENT.getName(),
                 "test body",
+                "1234",
                 "test url"
         );
 

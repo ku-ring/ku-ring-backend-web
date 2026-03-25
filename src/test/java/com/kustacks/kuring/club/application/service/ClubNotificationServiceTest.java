@@ -71,12 +71,18 @@ class ClubNotificationServiceTest {
 
         Message sent = captor.getAllValues().get(0); // 1번 ID에 대한 Club 메시지
         String topic = (String) ReflectionTestUtils.getField(sent, "topic");
+        Map<String, Object> apnsPayload = (Map<String, Object>) ReflectionTestUtils.getField(
+                ReflectionTestUtils.getField(sent, "apnsConfig"),
+                "payload"
+        );
 
         Map<String, String> data = (Map<String, String>) ReflectionTestUtils.getField(sent, "data");
         assertAll(
                 () -> assertThat(topic).isEqualTo("club.1.dev"),
                 () -> assertThat(data).containsEntry("clubId", "1"),
-                () -> assertThat(data).containsEntry("messageType", "club")
+                () -> assertThat(data).containsEntry("type", "club"),
+                () -> assertThat(apnsPayload).containsKey("aps"),
+                () -> assertThat((Map<String, Object>) apnsPayload.get("aps")).containsEntry("mutable-content", 1)
         );
     }
 

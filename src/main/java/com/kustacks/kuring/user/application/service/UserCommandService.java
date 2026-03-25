@@ -5,7 +5,6 @@ import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.common.utils.generator.NicknameGenerator;
 import com.kustacks.kuring.message.application.service.exception.FirebaseSubscribeException;
 import com.kustacks.kuring.message.application.service.exception.FirebaseUnSubscribeException;
@@ -56,7 +55,6 @@ class UserCommandService implements UserCommandUseCase {
     private final RootUserCommandPort rootUserCommandPort;
     private final RootUserQueryPort rootUserQueryPort;
     private final UserEventPort userEventPort;
-    private final ServerProperties serverProperties;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -378,12 +376,10 @@ class UserCommandService implements UserCommandUseCase {
     private void editAcademicEventNotificationEnabled(String userToken, boolean enabled) {
         if (enabled) {
             // 알림 활성화 -> 토픽 구독
-            userEventPort.subscribeEvent(userToken,
-                    serverProperties.ifDevThenAddSuffix(ACADEMIC_EVENT_TOPIC));
+            userEventPort.subscribeEvent(userToken, ACADEMIC_EVENT_TOPIC);
         } else {
             // 알림 비활성화 -> 토픽 구독 해제
-            userEventPort.unsubscribeEvent(userToken,
-                    serverProperties.ifDevThenAddSuffix(ACADEMIC_EVENT_TOPIC));
+            userEventPort.unsubscribeEvent(userToken, ACADEMIC_EVENT_TOPIC);
         }
     }
 
@@ -392,8 +388,8 @@ class UserCommandService implements UserCommandUseCase {
         if (optionalUser.isEmpty()) {
             User newUser = new User(token);
             optionalUser = Optional.of(userCommandPort.save(newUser));
-            userEventPort.subscribeEvent(token, serverProperties.ifDevThenAddSuffix(ALL_DEVICE_SUBSCRIBED_TOPIC));
-            userEventPort.subscribeEvent(token, serverProperties.ifDevThenAddSuffix(ACADEMIC_EVENT_TOPIC));
+            userEventPort.subscribeEvent(token, ALL_DEVICE_SUBSCRIBED_TOPIC);
+            userEventPort.subscribeEvent(token, ACADEMIC_EVENT_TOPIC);
         }
 
         return optionalUser.orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
