@@ -115,8 +115,8 @@ class MessageDomainEventIntegrationTest {
     }
 
     @Test
-    @DisplayName("AcademicScheduleNotificationEvent end-to-end")
-    void academicScheduleNotificationEvent_endToEnd() throws Exception {
+    @DisplayName("AcademicScheduleNotificationEvent 통합 테스트")
+    void academicScheduleNotificationEvent_integration() throws Exception {
         // given
         AcademicScheduleNotificationEvent event = new AcademicScheduleNotificationEvent("학사 일정 내용");
 
@@ -139,8 +139,8 @@ class MessageDomainEventIntegrationTest {
     }
 
     @Test
-    @DisplayName("ClubDeadlineNotificationEvent end-to-end")
-    void clubDeadlineNotificationEvent_endToEnd() throws Exception {
+    @DisplayName("ClubDeadlineNotificationEvent 통합 테스트")
+    void clubDeadlineNotificationEvent_integration() throws Exception {
         // given
         ClubDeadlineNotificationEvent event = new ClubDeadlineNotificationEvent(1L, "club-name");
 
@@ -160,8 +160,8 @@ class MessageDomainEventIntegrationTest {
     }
 
     @Test
-    @DisplayName("NoticeBatchNotificationEvent end-to-end")
-    void noticeBatchNotificationEvent_endToEnd() throws Exception {
+    @DisplayName("NoticeBatchNotificationEvent 통합 테스트")
+    void noticeBatchNotificationEvent_integration() throws Exception {
         // given
         NoticeBatchNotificationEvent event = new NoticeBatchNotificationEvent(
                 List.of(

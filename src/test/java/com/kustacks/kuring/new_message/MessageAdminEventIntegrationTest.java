@@ -122,8 +122,8 @@ class MessageAdminEventIntegrationTest {
     }
 
     @Test
-    @DisplayName("AdminNotificationEvent end-to-end")
-    void adminNotificationEvent_endToEnd() throws Exception {
+    @DisplayName("AdminNotificationEvent 통합 테스트")
+    void adminNotificationEvent_integration() throws Exception {
         // given
         AdminNotificationEvent event = new AdminNotificationEvent(
                 "admin-title",
@@ -150,8 +150,8 @@ class MessageAdminEventIntegrationTest {
     }
 
     @Test
-    @DisplayName("AdminTestNotificationEvent end-to-end")
-    void adminTestNotificationEvent_endToEnd() throws Exception {
+    @DisplayName("AdminTestNotificationEvent 통합 테스트")
+    void adminTestNotificationEvent_integration() throws Exception {
         // given
         AdminTestNotificationEvent event = new AdminTestNotificationEvent(
                 "article-id",
@@ -183,8 +183,8 @@ class MessageAdminEventIntegrationTest {
     }
 
     @Test
-    @DisplayName("AlertSendEvent end-to-end")
-    void alertSendEvent_endToEnd() throws Exception {
+    @DisplayName("AlertSendEvent 통합 테스트")
+    void alertSendEvent_integration() throws Exception {
         // given
         AlertSendEvent event = new AlertSendEvent(
                 "alert-title",
@@ -210,8 +210,8 @@ class MessageAdminEventIntegrationTest {
     }
 
     @Test
-    @DisplayName("AcademicTestNotificationEvent end-to-end")
-    void academicTestNotificationEvent_endToEnd() throws Exception {
+    @DisplayName("AcademicTestNotificationEvent 통합 테스트")
+    void academicTestNotificationEvent_integration() throws Exception {
         // given
         AcademicTestNotificationEvent event = new AcademicTestNotificationEvent(
                 "academic-title",

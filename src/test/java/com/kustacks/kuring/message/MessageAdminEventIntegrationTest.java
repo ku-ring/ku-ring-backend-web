@@ -16,6 +16,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -35,6 +37,7 @@ import static org.mockito.Mockito.when;
 @DisplayName("MessageAdminEvent 전체 통합 테스트")
 class MessageAdminEventIntegrationTest {
 
+    private static final Logger log = LoggerFactory.getLogger(MessageAdminEventIntegrationTest.class);
     @Resource
     private MessageAdminEventListener messageAdminEventListener;
 
@@ -90,8 +93,8 @@ class MessageAdminEventIntegrationTest {
     }
 
     @Test
-    @DisplayName("AdminNotificationEvent end-to-end")
-    void adminNotificationEvent_endToEnd() throws Exception {
+    @DisplayName("AdminNotificationEvent 통합 테스트")
+    void adminNotificationEvent_integration() throws Exception {
         // given
         AdminNotificationEvent event = new AdminNotificationEvent(
                 "admin-title",
@@ -104,6 +107,8 @@ class MessageAdminEventIntegrationTest {
 
         // then
         CapturedMessage actual = extractMessage(captureSingleMessage());
+
+        log.info(actual.data().toString());
 
         assertAll(
                 () -> assertEquals("allDevice.dev", actual.topic()),
@@ -154,8 +159,8 @@ class MessageAdminEventIntegrationTest {
 //    }
 
     @Test
-    @DisplayName("AlertSendEvent end-to-end")
-    void alertSendEvent_endToEnd() throws Exception {
+    @DisplayName("AlertSendEvent 통합 테스트")
+    void alertSendEvent_integration() throws Exception {
         // given
         AlertSendEvent event = new AlertSendEvent(
                 "alert-title",
@@ -181,8 +186,8 @@ class MessageAdminEventIntegrationTest {
     }
 
     @Test
-    @DisplayName("AcademicTestNotificationEvent end-to-end")
-    void academicTestNotificationEvent_endToEnd() throws Exception {
+    @DisplayName("AcademicTestNotificationEvent 통합 테스트")
+    void academicTestNotificationEvent_integration() throws Exception {
         // given
         AcademicTestNotificationEvent event = new AcademicTestNotificationEvent(
                 "academic-title",

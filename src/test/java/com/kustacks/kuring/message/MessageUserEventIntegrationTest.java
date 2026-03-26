@@ -103,8 +103,8 @@ class MessageUserEventIntegrationTest {
     }
 
     @Test
-    @DisplayName("UserSubscribeEvent end-to-end")
-    void userSubscribeEvent_endToEnd() throws Exception {
+    @DisplayName("UserSubscribeEvent 통합 테스트")
+    void userSubscribeEvent_integration() throws Exception {
         // given
         UserSubscribeEvent event = new UserSubscribeEvent("token-1", "topic-1");
 
@@ -116,8 +116,8 @@ class MessageUserEventIntegrationTest {
     }
 
     @Test
-    @DisplayName("UserUnsubscribeEvent end-to-end")
-    void userUnsubscribeEvent_endToEnd() throws Exception {
+    @DisplayName("UserUnsubscribeEvent 통합 테스트")
+    void userUnsubscribeEvent_integration() throws Exception {
         // given
         UserUnsubscribeEvent event = new UserUnsubscribeEvent("token-2", "topic-2");
 
