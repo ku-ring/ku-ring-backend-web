@@ -7,6 +7,7 @@ import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.message.adapter.in.event.MessageAdminEventListener;
 import com.kustacks.kuring.message.adapter.in.event.dto.AcademicTestNotificationEvent;
 import com.kustacks.kuring.message.adapter.in.event.dto.AdminNotificationEvent;
+import com.kustacks.kuring.message.adapter.in.event.dto.AdminTestNotificationEvent;
 import com.kustacks.kuring.message.adapter.in.event.dto.AlertSendEvent;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithAdminUseCase;
 import com.kustacks.kuring.message.application.port.out.FirebaseMessagingPort;
@@ -108,8 +109,6 @@ class MessageAdminEventIntegrationTest {
         // then
         CapturedMessage actual = extractMessage(captureSingleMessage());
 
-        log.info(actual.data().toString());
-
         assertAll(
                 () -> assertEquals("allDevice.dev", actual.topic()),
                 () -> assertEquals("admin-title", actual.title()),
@@ -117,46 +116,43 @@ class MessageAdminEventIntegrationTest {
                 () -> assertEquals("admin", actual.data().get("type")),
                 () -> assertEquals("admin-title", actual.data().get("title")),
                 () -> assertEquals("admin-body", actual.data().get("body")),
-                () -> assertEquals("https://admin-url", actual.data().get("url")),
-                () -> assertEquals("admin", actual.data().get("messageType"))
+                () -> assertEquals("https://admin-url", actual.data().get("url"))
         );
     }
 
-    // 테스트 공지 알림 noticeId 필드 추가 시 주석 풀기
+    @Test
+    @DisplayName("AdminTestNotificationEvent 통합 테스트")
+    void adminTestNotificationEvent_integration() throws Exception {
+        // given
+        AdminTestNotificationEvent event = AdminTestNotificationEvent.builder()
+                .noticeId("1")
+                .type("notice")
+                .articleId("article-id")
+                .postedDate("2026-03-24")
+                .subject("subject")
+                .category("category-name")
+                .categoryKorName("카테고리")
+                .baseUrl("https://admin-test-url")
+                .build();
 
-//    @Test
-//    @DisplayName("AdminTestNotificationEvent end-to-end")
-//    void adminTestNotificationEvent_endToEnd() throws Exception {
-//        // given
-//        AdminTestNotificationEvent event = AdminTestNotificationEvent.builder()
-//                .type("notice")
-//                .articleId("article-id")
-//                .postedDate("2026-03-24")
-//                .subject("subject")
-//                .category("category-name")
-//                .categoryKorName("카테고리")
-//                .baseUrl("https://admin-test-url")
-//                .build();
-//
-//        // when
-//        messageAdminEventListener.sendTestNotificationEvent(event);
-//
-//        // then
-//        CapturedMessage actual = extractMessage(captureSingleMessage());
-//
-//        assertAll(
-//                () -> assertEquals("category-name.dev", actual.topic()),
-//                () -> assertEquals("[카테고리] 새로운 공지가 왔어요!", actual.title()),
-//                () -> assertEquals("subject", actual.body()),
-//                () -> assertEquals("article-id", actual.data().get("articleId")),
-//                () -> assertEquals("2026-03-24", actual.data().get("postedDate")),
-//                () -> assertEquals("subject", actual.data().get("subject")),
-//                () -> assertEquals("category-name", actual.data().get("category")),
-//                () -> assertEquals("카테고리", actual.data().get("categoryKorName")),
-//                () -> assertEquals("https://admin-test-url", actual.data().get("baseUrl")),
-//                () -> assertEquals("notice", actual.data().get("messageType"))
-//        );
-//    }
+        // when
+        messageAdminEventListener.sendTestNotificationEvent(event);
+
+        // then
+        CapturedMessage actual = extractMessage(captureSingleMessage());
+
+        assertAll(
+                () -> assertEquals("category-name.dev", actual.topic()),
+                () -> assertEquals("[카테고리] 새로운 공지가 왔어요!", actual.title()),
+                () -> assertEquals("subject", actual.body()),
+                () -> assertEquals("article-id", actual.data().get("articleId")),
+                () -> assertEquals("2026-03-24", actual.data().get("postedDate")),
+                () -> assertEquals("subject", actual.data().get("subject")),
+                () -> assertEquals("category-name", actual.data().get("category")),
+                () -> assertEquals("카테고리", actual.data().get("categoryKorName")),
+                () -> assertEquals("https://admin-test-url", actual.data().get("baseUrl"))
+        );
+    }
 
     @Test
     @DisplayName("AlertSendEvent 통합 테스트")
@@ -180,8 +176,7 @@ class MessageAdminEventIntegrationTest {
                 () -> assertEquals("admin", actual.data().get("type")),
                 () -> assertEquals("alert-title", actual.data().get("title")),
                 () -> assertEquals("alert-content", actual.data().get("body")),
-                () -> assertEquals("", actual.data().get("url")),
-                () -> assertEquals("admin", actual.data().get("messageType"))
+                () -> assertEquals("", actual.data().get("url"))
         );
     }
 
@@ -205,8 +200,7 @@ class MessageAdminEventIntegrationTest {
                 () -> assertEquals("academic-title", actual.title()),
                 () -> assertEquals("academic-body", actual.body()),
                 () -> assertEquals("academic-title", actual.data().get("title")),
-                () -> assertEquals("academic-body", actual.data().get("body")),
-                () -> assertEquals("academic", actual.data().get("messageType"))
+                () -> assertEquals("academic-body", actual.data().get("body"))
         );
     }
 
