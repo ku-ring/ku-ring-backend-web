@@ -1,6 +1,7 @@
 package com.kustacks.kuring.club.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -44,7 +45,7 @@ public class Club {
     @Column(nullable = false)
     private ClubDivision division;
 
-    @OneToMany(mappedBy = "club")
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClubSns> homepageUrls = new ArrayList<>();
 
     @Column(name = "poster_image_path", length = 255)
