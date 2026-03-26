@@ -59,6 +59,7 @@ public class AdminCommandService implements AdminCommandUseCase {
         CategoryName testCategoryName = CategoryName.fromStringName(command.category());
 
         adminEventPort.sendTestNotificationByAdmin(
+                command.noticeId(),
                 command.articleId(),
                 testNoticePostedDate,
                 testCategoryName.getName(),

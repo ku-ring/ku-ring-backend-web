@@ -107,7 +107,7 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .body(new TestNotificationRequest("bachelor", "테스트 공지입니다", "1234"))
+                .body(new TestNotificationRequest("bachelor", "테스트 공지입니다", "1234","1234"))
                 .when().post("/api/v2/admin/notices/dev")
                 .then().log().all()
                 .extract();

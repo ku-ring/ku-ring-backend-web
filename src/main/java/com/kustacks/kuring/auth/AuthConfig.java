@@ -15,7 +15,6 @@ import com.kustacks.kuring.auth.interceptor.BearerTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.FirebaseTokenAuthenticationFilter;
 import com.kustacks.kuring.auth.interceptor.UserRegisterNonChainingFilter;
 import com.kustacks.kuring.auth.token.JwtTokenProvider;
-import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.message.application.port.in.FirebaseWithUserUseCase;
 import com.kustacks.kuring.user.adapter.out.persistence.UserPersistenceAdapter;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +42,6 @@ public class AuthConfig implements WebMvcConfigurer {
     private final AdminDetailsService adminDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
     private final ObjectMapper objectMapper;
-    private final ServerProperties serverProperties;
     private final FirebaseWithUserUseCase firebaseService;
     private final UserPersistenceAdapter userPersistenceAdapter;
 
@@ -88,7 +86,7 @@ public class AuthConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/v2/admin/login");
 
         registry.addInterceptor(new UserRegisterNonChainingFilter(
-                        serverProperties, firebaseService, userPersistenceAdapter, objectMapper,
+                        firebaseService, userPersistenceAdapter, objectMapper,
                         userRegisterSuccessHandler(), userRegisterFailureHandler()))
                 .addPathPatterns("/api/v2/users");
 

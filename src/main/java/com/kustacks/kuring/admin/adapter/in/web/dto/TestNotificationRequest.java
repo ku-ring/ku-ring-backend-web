@@ -5,10 +5,11 @@ import com.kustacks.kuring.admin.application.port.in.dto.TestNotificationCommand
 public record TestNotificationRequest(
         String category,
         String subject,
+        String noticeId,
         String articleId
 ) {
 
     public TestNotificationCommand toCommand() {
-        return new TestNotificationCommand(category, subject, articleId);
+        return new TestNotificationCommand(category, subject, noticeId, articleId);
     }
 }

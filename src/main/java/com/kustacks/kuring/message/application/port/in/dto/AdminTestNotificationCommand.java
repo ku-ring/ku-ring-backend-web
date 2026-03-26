@@ -1,6 +1,7 @@
 package com.kustacks.kuring.message.application.port.in.dto;
 
 public record AdminTestNotificationCommand(
+        String noticeId,
         String articleId,
         String postedDate,
         String categoryName,
