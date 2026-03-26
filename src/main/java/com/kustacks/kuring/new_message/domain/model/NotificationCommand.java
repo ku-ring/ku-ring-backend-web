@@ -28,7 +28,7 @@ public record NotificationCommand(
         Map<String, String> merged = new HashMap<>(data);
         merged.putIfAbsent("title", content.title());
         merged.putIfAbsent("body", content.body());
-        merged.putIfAbsent("messageType", messageType.getValue());
+        merged.putIfAbsent("type", messageType.getValue());
         return merged;
     }
 }

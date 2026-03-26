@@ -31,7 +31,6 @@ public class AdminNotificationAssembler implements NotificationCommandAssembler<
         String body = event.body();
         String topic = TopicNames.ALL_DEVICE_SUBSCRIBED_TOPIC;
         Map<String, String> data = objectMapper.convertValue(event, Map.class);
-        data.put("type", MessageType.ADMIN.getValue());
 
         NotificationCommand command = new NotificationCommand(
                 NotificationTarget.topic(topic),

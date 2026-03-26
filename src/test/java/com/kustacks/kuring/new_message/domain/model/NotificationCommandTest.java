@@ -66,7 +66,7 @@ class NotificationCommandTest {
                 () -> assertEquals("value", merged.get("custom")),
                 () -> assertEquals("title", merged.get("title")),
                 () -> assertEquals("body", merged.get("body")),
-                () -> assertEquals("admin", merged.get("messageType"))
+                () -> assertEquals("admin", merged.get("type"))
         );
     }
 

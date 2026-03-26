@@ -134,7 +134,7 @@ class MessageDomainEventIntegrationTest {
                 () -> assertEquals("오늘은 학사 일정 내용 일정이 있어요", actual.body()),
                 () -> assertEquals("[학사 일정 내용]", actual.data().get("title")),
                 () -> assertEquals("오늘은 학사 일정 내용 일정이 있어요", actual.data().get("body")),
-                () -> assertEquals("academic", actual.data().get("messageType"))
+                () -> assertEquals("academic", actual.data().get("type"))
         );
     }
 
@@ -155,7 +155,7 @@ class MessageDomainEventIntegrationTest {
                 () -> assertEquals("[D-1] club-name 동아리 모집", actual.title()),
                 () -> assertEquals("내일 마감되기 전에 지원하세요!", actual.body()),
                 () -> assertEquals("1", actual.data().get("clubId")),
-                () -> assertEquals("club", actual.data().get("messageType"))
+                () -> assertEquals("club", actual.data().get("type"))
         );
     }
 
@@ -205,7 +205,7 @@ class MessageDomainEventIntegrationTest {
                         "category", "category-1",
                         "categoryKorName", "카테고리1",
                         "baseUrl", "https://notice-url-1",
-                        "messageType", "notice"
+                        "type", "notice"
                 )
         );
 
@@ -221,7 +221,7 @@ class MessageDomainEventIntegrationTest {
                         "category", "category-2",
                         "categoryKorName", "카테고리2",
                         "baseUrl", "https://notice-url-2",
-                        "messageType", "notice"
+                        "type", "notice"
                 )
         );
     }

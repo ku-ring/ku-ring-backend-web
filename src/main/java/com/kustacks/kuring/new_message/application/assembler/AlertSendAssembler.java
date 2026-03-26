@@ -26,7 +26,6 @@ public class AlertSendAssembler implements NotificationCommandAssembler<AlertSen
         String body = event.content();
         String topic = TopicNames.ALL_DEVICE_SUBSCRIBED_TOPIC;
         Map<String, String> data = Map.of(
-                "type", MessageType.ADMIN.getValue(),
                 "url", ""
         );
 

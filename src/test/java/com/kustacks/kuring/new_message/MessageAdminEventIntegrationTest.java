@@ -141,11 +141,10 @@ class MessageAdminEventIntegrationTest {
                 () -> assertEquals("allDevice.dev", actual.topic()),
                 () -> assertEquals("admin-title", actual.title()),
                 () -> assertEquals("admin-body", actual.body()),
-                () -> assertEquals("admin", actual.data().get("type")),
                 () -> assertEquals("admin-title", actual.data().get("title")),
                 () -> assertEquals("admin-body", actual.data().get("body")),
-                () -> assertEquals("https://admin-url", actual.data().get("url")),
-                () -> assertEquals("admin", actual.data().get("messageType"))
+                () -> assertEquals("admin", actual.data().get("type")),
+                () -> assertEquals("https://admin-url", actual.data().get("url"))
         );
     }
 
@@ -154,6 +153,7 @@ class MessageAdminEventIntegrationTest {
     void adminTestNotificationEvent_integration() throws Exception {
         // given
         AdminTestNotificationEvent event = new AdminTestNotificationEvent(
+                "1",
                 "article-id",
                 "2026-03-24",
                 "category-name",
@@ -172,13 +172,16 @@ class MessageAdminEventIntegrationTest {
                 () -> assertEquals("category-name.dev", actual.topic()),
                 () -> assertEquals("[카테고리] 새로운 공지가 왔어요!", actual.title()),
                 () -> assertEquals("subject", actual.body()),
+                () -> assertEquals("[카테고리] 새로운 공지가 왔어요!", actual.data().get("title")),
+                () -> assertEquals("subject", actual.data().get("body")),
+                () -> assertEquals("notice", actual.data().get("type")),
+                () -> assertEquals("1", actual.data().get("id")),
                 () -> assertEquals("article-id", actual.data().get("articleId")),
                 () -> assertEquals("2026-03-24", actual.data().get("postedDate")),
                 () -> assertEquals("subject", actual.data().get("subject")),
                 () -> assertEquals("category-name", actual.data().get("category")),
                 () -> assertEquals("카테고리", actual.data().get("categoryKorName")),
-                () -> assertEquals("https://admin-test-url", actual.data().get("baseUrl")),
-                () -> assertEquals("notice", actual.data().get("messageType"))
+                () -> assertEquals("https://admin-test-url", actual.data().get("baseUrl"))
         );
     }
 
@@ -201,11 +204,10 @@ class MessageAdminEventIntegrationTest {
                 () -> assertEquals("allDevice.dev", actual.topic()),
                 () -> assertEquals("alert-title", actual.title()),
                 () -> assertEquals("alert-content", actual.body()),
-                () -> assertEquals("admin", actual.data().get("type")),
                 () -> assertEquals("alert-title", actual.data().get("title")),
                 () -> assertEquals("alert-content", actual.data().get("body")),
-                () -> assertEquals("", actual.data().get("url")),
-                () -> assertEquals("admin", actual.data().get("messageType"))
+                () -> assertEquals("admin", actual.data().get("type")),
+                () -> assertEquals("", actual.data().get("url"))
         );
     }
 
@@ -230,7 +232,7 @@ class MessageAdminEventIntegrationTest {
                 () -> assertEquals("academic-body", actual.body()),
                 () -> assertEquals("academic-title", actual.data().get("title")),
                 () -> assertEquals("academic-body", actual.data().get("body")),
-                () -> assertEquals("academic", actual.data().get("messageType"))
+                () -> assertEquals("academic", actual.data().get("type"))
         );
     }
 
