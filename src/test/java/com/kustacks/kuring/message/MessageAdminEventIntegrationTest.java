@@ -17,8 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -38,7 +36,6 @@ import static org.mockito.Mockito.when;
 @DisplayName("MessageAdminEvent 전체 통합 테스트")
 class MessageAdminEventIntegrationTest {
 
-    private static final Logger log = LoggerFactory.getLogger(MessageAdminEventIntegrationTest.class);
     @Resource
     private MessageAdminEventListener messageAdminEventListener;
 
