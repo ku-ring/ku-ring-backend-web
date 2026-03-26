@@ -45,7 +45,7 @@ class NewMessageAdminEventListenerTest {
     void sendAdminTestNotification_success() {
         // given
         AdminTestNotificationEvent event = new AdminTestNotificationEvent(
-                "articleId", "2026-03-22", "category", "subject", "카테고리", "baseUrl"
+                "1","articleId", "2026-03-22", "category", "subject", "카테고리", "baseUrl"
         );
         when(handleMessageEventUseCase.handle(event)).thenReturn(1);
 
@@ -103,6 +103,7 @@ class NewMessageAdminEventListenerTest {
                         newMessageAdminEventListener.recoverAdminTestNotification(
                                 exception,
                                 new AdminTestNotificationEvent(
+                                        "1",
                                         "articleId",
                                         "2026-03-24",
                                         "category",

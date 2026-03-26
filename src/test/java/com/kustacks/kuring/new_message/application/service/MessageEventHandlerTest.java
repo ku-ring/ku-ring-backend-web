@@ -99,6 +99,7 @@ class MessageEventHandlerTest {
     void handle_adminTestNotificationEvent() {
         // given
         AdminTestNotificationEvent event = new AdminTestNotificationEvent(
+                "1",
                 "article-id",
                 "2026-03-16",
                 "category-name",
@@ -117,6 +118,7 @@ class MessageEventHandlerTest {
         assertAll(
                 () -> assertEquals(1, result),
                 () -> assertEquals(MessageType.NOTICE, command.messageType()),
+                () -> assertEquals("1", command.data().get("id")),
                 () -> assertEquals("article-id", command.data().get("articleId")),
                 () -> assertEquals("2026-03-16", command.data().get("postedDate")),
                 () -> assertEquals("category-name", command.data().get("category")),
@@ -198,7 +200,7 @@ class MessageEventHandlerTest {
                 () -> assertEquals(MessageType.ADMIN, command.messageType()),
                 () -> assertEquals("alert-title", command.content().title()),
                 () -> assertEquals("alert-content", command.content().body()),
-                () -> assertEquals(2, command.data().size()),
+                () -> assertEquals(1, command.data().size()),
                 () -> assertEquals(TopicNames.ALL_DEVICE_SUBSCRIBED_TOPIC, command.target().topic()),
                 () -> assertEquals(TopicSuffixPolicy.IF_DEV_THEN_ADD_SUFFIX, command.target().topicSuffixPolicy())
         );

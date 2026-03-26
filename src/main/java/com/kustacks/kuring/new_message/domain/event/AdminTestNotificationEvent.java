@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record AdminTestNotificationEvent(
+        String id,
         String articleId,
         String postedDate,
         String category,
