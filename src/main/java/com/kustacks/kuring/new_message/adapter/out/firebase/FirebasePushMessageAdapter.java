@@ -1,9 +1,6 @@
 package com.kustacks.kuring.new_message.adapter.out.firebase;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 
 import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.new_message.application.port.out.PushMessagePort;
@@ -41,6 +38,15 @@ public class FirebasePushMessageAdapter implements PushMessagePort {
                         .setBody(command.content().body())
                         .build())
                 .putAllData(command.mergedData())
+                .setApnsConfig(buildApnsConfig())
+                .build();
+    }
+
+    private static ApnsConfig buildApnsConfig() {
+        return ApnsConfig.builder()
+                .setAps(Aps.builder()
+                        .setMutableContent(true)
+                        .build())
                 .build();
     }
 

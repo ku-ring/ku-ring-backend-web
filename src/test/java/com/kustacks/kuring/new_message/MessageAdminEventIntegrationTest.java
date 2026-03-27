@@ -144,7 +144,8 @@ class MessageAdminEventIntegrationTest {
                 () -> assertEquals("admin-title", actual.data().get("title")),
                 () -> assertEquals("admin-body", actual.data().get("body")),
                 () -> assertEquals("admin", actual.data().get("type")),
-                () -> assertEquals("https://admin-url", actual.data().get("url"))
+                () -> assertEquals("https://admin-url", actual.data().get("url")),
+                () -> assertEquals(1, actual.aps().get("mutable-content"))
         );
     }
 
@@ -181,7 +182,8 @@ class MessageAdminEventIntegrationTest {
                 () -> assertEquals("subject", actual.data().get("subject")),
                 () -> assertEquals("category-name", actual.data().get("category")),
                 () -> assertEquals("카테고리", actual.data().get("categoryKorName")),
-                () -> assertEquals("https://admin-test-url", actual.data().get("baseUrl"))
+                () -> assertEquals("https://admin-test-url", actual.data().get("baseUrl")),
+                () -> assertEquals(1, actual.aps().get("mutable-content"))
         );
     }
 
@@ -207,7 +209,8 @@ class MessageAdminEventIntegrationTest {
                 () -> assertEquals("alert-title", actual.data().get("title")),
                 () -> assertEquals("alert-content", actual.data().get("body")),
                 () -> assertEquals("admin", actual.data().get("type")),
-                () -> assertEquals("", actual.data().get("url"))
+                () -> assertEquals("", actual.data().get("url")),
+                () -> assertEquals(1, actual.aps().get("mutable-content"))
         );
     }
 
@@ -232,7 +235,8 @@ class MessageAdminEventIntegrationTest {
                 () -> assertEquals("academic-body", actual.body()),
                 () -> assertEquals("academic-title", actual.data().get("title")),
                 () -> assertEquals("academic-body", actual.data().get("body")),
-                () -> assertEquals("academic", actual.data().get("type"))
+                () -> assertEquals("academic", actual.data().get("type")),
+                () -> assertEquals(1, actual.aps().get("mutable-content"))
         );
     }
 
@@ -246,7 +250,8 @@ class MessageAdminEventIntegrationTest {
             String topic,
             String title,
             String body,
-            Map<String, String> data
+            Map<String, String> data,
+            Map<String, Object> aps
     ) {
     }
 
@@ -261,6 +266,15 @@ class MessageAdminEventIntegrationTest {
         @SuppressWarnings("unchecked")
         Map<String, String> data = (Map<String, String>) ReflectionTestUtils.getField(message, "data");
 
-        return new CapturedMessage(topic, title, body, data);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> apnsPayload = (Map<String, Object>) ReflectionTestUtils.getField(
+                ReflectionTestUtils.getField(message, "apnsConfig"),
+                "payload"
+        );
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> aps = (Map<String, Object>) apnsPayload.get("aps");
+
+        return new CapturedMessage(topic, title, body, data, aps);
     }
 }

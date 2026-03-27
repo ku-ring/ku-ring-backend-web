@@ -134,7 +134,8 @@ class MessageDomainEventIntegrationTest {
                 () -> assertEquals("오늘은 학사 일정 내용 일정이 있어요", actual.body()),
                 () -> assertEquals("[학사 일정 내용]", actual.data().get("title")),
                 () -> assertEquals("오늘은 학사 일정 내용 일정이 있어요", actual.data().get("body")),
-                () -> assertEquals("academic", actual.data().get("type"))
+                () -> assertEquals("academic", actual.data().get("type")),
+                () -> assertEquals(1, actual.aps().get("mutable-content"))
         );
     }
 
@@ -155,7 +156,8 @@ class MessageDomainEventIntegrationTest {
                 () -> assertEquals("[D-1] club-name 동아리 모집", actual.title()),
                 () -> assertEquals("내일 마감되기 전에 지원하세요!", actual.body()),
                 () -> assertEquals("1", actual.data().get("clubId")),
-                () -> assertEquals("club", actual.data().get("type"))
+                () -> assertEquals("club", actual.data().get("type")),
+                () -> assertEquals(1, actual.aps().get("mutable-content"))
         );
     }
 
@@ -193,36 +195,33 @@ class MessageDomainEventIntegrationTest {
         Message first = messages.get(0);
         Message second = messages.get(1);
 
-        assertMessage(
-                first,
-                "category-1.dev",
-                "[카테고리1] 새로운 공지가 왔어요!",
-                "subject-1",
-                Map.of(
-                        "articleId", "article-id-1",
-                        "postedDate", "2026-03-24",
-                        "subject", "subject-1",
-                        "category", "category-1",
-                        "categoryKorName", "카테고리1",
-                        "baseUrl", "https://notice-url-1",
-                        "type", "notice"
-                )
-        );
+        CapturedMessage firstActual = extractMessage(first);
+        CapturedMessage secondActual = extractMessage(second);
 
-        assertMessage(
-                second,
-                "category-2.dev",
-                "[카테고리2] 새로운 공지가 왔어요!",
-                "subject-2",
-                Map.of(
-                        "articleId", "article-id-2",
-                        "postedDate", "2026-03-25",
-                        "subject", "subject-2",
-                        "category", "category-2",
-                        "categoryKorName", "카테고리2",
-                        "baseUrl", "https://notice-url-2",
-                        "type", "notice"
-                )
+        assertAll(
+                () -> assertEquals("category-1.dev", firstActual.topic()),
+                () -> assertEquals("[카테고리1] 새로운 공지가 왔어요!", firstActual.title()),
+                () -> assertEquals("subject-1", firstActual.body()),
+                () -> assertEquals("article-id-1", firstActual.data().get("articleId")),
+                () -> assertEquals("2026-03-24", firstActual.data().get("postedDate")),
+                () -> assertEquals("subject-1", firstActual.data().get("subject")),
+                () -> assertEquals("category-1", firstActual.data().get("category")),
+                () -> assertEquals("카테고리1", firstActual.data().get("categoryKorName")),
+                () -> assertEquals("https://notice-url-1", firstActual.data().get("baseUrl")),
+                () -> assertEquals("notice", firstActual.data().get("type")),
+                () -> assertEquals(1, firstActual.aps().get("mutable-content")),
+
+                () -> assertEquals("category-2.dev", secondActual.topic()),
+                () -> assertEquals("[카테고리2] 새로운 공지가 왔어요!", secondActual.title()),
+                () -> assertEquals("subject-2", secondActual.body()),
+                () -> assertEquals("article-id-2", secondActual.data().get("articleId")),
+                () -> assertEquals("2026-03-25", secondActual.data().get("postedDate")),
+                () -> assertEquals("subject-2", secondActual.data().get("subject")),
+                () -> assertEquals("category-2", secondActual.data().get("category")),
+                () -> assertEquals("카테고리2", secondActual.data().get("categoryKorName")),
+                () -> assertEquals("https://notice-url-2", secondActual.data().get("baseUrl")),
+                () -> assertEquals("notice", secondActual.data().get("type")),
+                () -> assertEquals(1, secondActual.aps().get("mutable-content"))
         );
     }
 
@@ -242,25 +241,9 @@ class MessageDomainEventIntegrationTest {
             String topic,
             String title,
             String body,
-            Map<String, String> data
+            Map<String, String> data,
+            Map<String, Object> aps
     ) {
-    }
-
-    private void assertMessage(
-            Message actual,
-            String expectedTopic,
-            String expectedTitle,
-            String expectedBody,
-            Map<String, String> expectedData
-    ) {
-        CapturedMessage capturedMessage = extractMessage(actual);
-
-        assertAll(
-                () -> assertEquals(expectedTopic, capturedMessage.topic()),
-                () -> assertEquals(expectedTitle, capturedMessage.title()),
-                () -> assertEquals(expectedBody, capturedMessage.body()),
-                () -> expectedData.forEach((key, value) -> assertEquals(value, capturedMessage.data().get(key)))
-        );
     }
 
     private CapturedMessage extractMessage(Message message) {
@@ -274,6 +257,15 @@ class MessageDomainEventIntegrationTest {
         @SuppressWarnings("unchecked")
         Map<String, String> data = (Map<String, String>) ReflectionTestUtils.getField(message, "data");
 
-        return new CapturedMessage(topic, title, body, data);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> apnsPayload = (Map<String, Object>) ReflectionTestUtils.getField(
+                ReflectionTestUtils.getField(message, "apnsConfig"),
+                "payload"
+        );
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> aps = (Map<String, Object>) apnsPayload.get("aps");
+
+        return new CapturedMessage(topic, title, body, data, aps);
     }
 }
