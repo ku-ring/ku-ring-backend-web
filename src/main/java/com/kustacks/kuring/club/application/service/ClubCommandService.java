@@ -44,7 +44,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
         clubSubscriptionCommandPort.saveSubscription(rootUser, club);
         subscribeAllLoggedInDevices(rootUser.getId(), makeTopic(club));
 
-        return clubSubscriptionQueryPort.countSubscriptions(rootUser.getId());
+        return clubSubscriptionQueryPort.countSubscribers(club.getId());
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
         clubSubscriptionCommandPort.deleteSubscription(rootUser, club);
         unsubscribeAllLoggedInDevices(rootUser.getId(), makeTopic(club));
 
-        return clubSubscriptionQueryPort.countSubscriptions(rootUser.getId());
+        return clubSubscriptionQueryPort.countSubscribers(club.getId());
     }
 
     private boolean isAlreadySubscription(RootUser rootUser, Club club) {
