@@ -536,6 +536,31 @@ class UserAcceptanceTest extends IntegrationTestSupport {
         동아리_구독_제거_성공_응답_확인(response, 0L);
     }
 
+    @DisplayName("[v2] 서로 다른 동아리를 구독해도 응답 카운트는 각 동아리 기준으로 반환한다")
+    @Test
+    void add_club_subscription_returns_updated_count_for_each_club() {
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        var firstResponse = 동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID);
+        var secondResponse = 동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID_2);
+
+        동아리_구독_추가_성공_응답_확인(firstResponse, 1L);
+        동아리_구독_추가_성공_응답_확인(secondResponse, 1L);
+    }
+
+    @DisplayName("[v2] 특정 동아리 구독을 취소하면 해당 동아리의 최신 구독자 수를 반환한다")
+    @Test
+    void remove_club_subscription_returns_updated_count_for_target_club() {
+        String accessToken = 사용자_로그인_되어_있음(USER_FCM_TOKEN, USER_EMAIL, USER_PASSWORD);
+
+        동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID);
+        동아리_구독_추가_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID_2);
+
+        var response = 동아리_구독_제거_요청(USER_FCM_TOKEN, accessToken, TEST_CLUB_ID);
+
+        동아리_구독_제거_성공_응답_확인(response, 0L);
+    }
+
     @DisplayName("[v2] 구독하지 않은 동아리 취소는 실패한다")
     @Test
     void remove_club_subscription_fail_when_not_subscribed() {

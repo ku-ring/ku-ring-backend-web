@@ -80,7 +80,7 @@ class ClubCommandServiceTest {
                 .thenReturn(Optional.of(rootUser));
         when(clubQueryPort.findClubById(1L)).thenReturn(Optional.of(club));
         when(userQueryPort.findByLoggedInUserId(1L)).thenReturn(List.of(user1, user2));
-        when(clubSubscriptionQueryPort.countSubscriptions(1L)).thenReturn(1L);
+        when(clubSubscriptionQueryPort.countSubscribers(1L)).thenReturn(1L);
 
         //when
         long count = service.addSubscription(new ClubSubscriptionCommand("client@konkuk.ac.kr", 1L));
@@ -89,7 +89,8 @@ class ClubCommandServiceTest {
         assertAll(
                 () -> assertThat(count).isEqualTo(1L),
                 () -> verify(userEventPort).subscribeEvent("token-1", "club.1"),
-                () -> verify(userEventPort).subscribeEvent("token-2", "club.1")
+                () -> verify(userEventPort).subscribeEvent("token-2", "club.1"),
+                () -> verify(clubSubscriptionQueryPort).countSubscribers(1L)
         );
     }
 
@@ -125,6 +126,7 @@ class ClubCommandServiceTest {
         when(clubQueryPort.findClubById(1L)).thenReturn(Optional.of(club));
         when(clubSubscriptionQueryPort.existsSubscription(1L, club.getId())).thenReturn(Boolean.TRUE);
         when(userQueryPort.findByLoggedInUserId(1L)).thenReturn(List.of(user1));
+        when(clubSubscriptionQueryPort.countSubscribers(1L)).thenReturn(0L);
 
         //when
         long count = service.removeSubscription(new ClubSubscriptionCommand("client@konkuk.ac.kr", 1L));
@@ -132,7 +134,8 @@ class ClubCommandServiceTest {
         //then
         assertAll(
                 () -> assertThat(count).isEqualTo(0L),
-                () -> verify(userEventPort).unsubscribeEvent("token-1", "club.1")
+                () -> verify(userEventPort).unsubscribeEvent("token-1", "club.1"),
+                () -> verify(clubSubscriptionQueryPort).countSubscribers(1L)
         );
     }
 
