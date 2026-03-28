@@ -9,7 +9,6 @@ import com.kustacks.kuring.club.domain.Club;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.exception.InvalidStateException;
 import com.kustacks.kuring.common.exception.code.ErrorCode;
-import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.user.application.port.out.RootUserQueryPort;
 import com.kustacks.kuring.user.application.port.out.UserEventPort;
 import com.kustacks.kuring.user.application.port.out.UserQueryPort;
@@ -26,10 +25,9 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
 
     private static final String CLUB_TOPIC_PREFIX = "club.";
 
-    private final ServerProperties serverProperties;
     private final ClubQueryPort clubQueryPort;
     private final ClubSubscriptionCommandPort clubSubscriptionCommandPort;
-    private final ClubSubscriptionQueryPort countSubscriptionsQueryPort;
+    private final ClubSubscriptionQueryPort clubSubscriptionQueryPort;
     private final RootUserQueryPort rootUserQueryPort;
     private final UserQueryPort userQueryPort;
     private final UserEventPort userEventPort;
@@ -46,7 +44,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
         clubSubscriptionCommandPort.saveSubscription(rootUser, club);
         subscribeAllLoggedInDevices(rootUser.getId(), makeTopic(club));
 
-        return countSubscriptionsQueryPort.countSubscriptions(rootUser.getId());
+        return clubSubscriptionQueryPort.countSubscribers(club.getId());
     }
 
     @Override
@@ -60,11 +58,11 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
         clubSubscriptionCommandPort.deleteSubscription(rootUser, club);
         unsubscribeAllLoggedInDevices(rootUser.getId(), makeTopic(club));
 
-        return countSubscriptionsQueryPort.countSubscriptions(rootUser.getId());
+        return clubSubscriptionQueryPort.countSubscribers(club.getId());
     }
 
     private boolean isAlreadySubscription(RootUser rootUser, Club club) {
-        return countSubscriptionsQueryPort.existsSubscription(rootUser.getId(), club.getId());
+        return clubSubscriptionQueryPort.existsSubscription(rootUser.getId(), club.getId());
     }
 
     private RootUser findRootUserByEmail(String email) {
@@ -92,6 +90,6 @@ public class ClubCommandService implements ClubSubscriptionUseCase {
     }
 
     private String makeTopic(Club club) {
-        return serverProperties.ifDevThenAddSuffix(CLUB_TOPIC_PREFIX + club.getId());
+        return CLUB_TOPIC_PREFIX + club.getId();
     }
 }

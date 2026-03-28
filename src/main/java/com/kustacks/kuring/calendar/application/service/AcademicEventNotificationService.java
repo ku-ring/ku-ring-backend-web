@@ -2,18 +2,19 @@ package com.kustacks.kuring.calendar.application.service;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 import com.kustacks.kuring.calendar.application.port.in.AcademicEventNotificationUseCase;
 import com.kustacks.kuring.calendar.application.port.out.AcademicEventQueryPort;
 import com.kustacks.kuring.calendar.application.port.out.dto.AcademicEventReadModel;
 import com.kustacks.kuring.common.annotation.UseCase;
 import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.message.application.port.out.FirebaseMessagingPort;
+import com.kustacks.kuring.message.application.support.FirebaseMessageFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static com.kustacks.kuring.message.application.service.FirebaseSubscribeService.ACADEMIC_EVENT_TOPIC;
 import static com.kustacks.kuring.message.domain.MessageType.ACADEMIC;
@@ -92,15 +93,12 @@ public class AcademicEventNotificationService implements AcademicEventNotificati
     }
 
     private Message makeMessage(String title, String body) {
-        return Message.builder()
-                .setNotification(Notification.builder()
-                        .setTitle(title)
-                        .setBody(body)
-                        .build())
-                .setTopic(serverProperties.ifDevThenAddSuffix(ACADEMIC_EVENT_TOPIC))
-                .putData("title", title)
-                .putData("body", body)
-                .putData("messageType", ACADEMIC.getValue())
-                .build();
+        return FirebaseMessageFactory.create(
+                serverProperties.ifDevThenAddSuffix(ACADEMIC_EVENT_TOPIC),
+                ACADEMIC.getValue(),
+                title,
+                body,
+                Map.of()
+        );
     }
 }

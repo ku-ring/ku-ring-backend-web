@@ -8,11 +8,11 @@ import com.kustacks.kuring.worker.scrap.deptinfo.DeptInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -21,6 +21,7 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
 
     private static final int START_PAGE_NUM = 1; // page는 인자가 1부터 시작
     private static final int ROW_NUMBERS_PER_PAGE = 20;
+    private static final int ROW_NUMBERS_PER_PAGE_ALL = 100;
     private static final int LATEST_SCRAP_TIMEOUT = 2000; // 2초
     private static final int LATEST_SCRAP_ALL_TIMEOUT = 60000; // 1분
 
@@ -45,18 +46,23 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
     @Override
     public List<ScrapingResultDto> requestAll(DeptInfo deptInfo) throws InternalLogicException {
         try {
-            String url = buildUrlForTotalNoticeCount(deptInfo);
-            int totalNoticeSize = getTotalNoticeSize(url);
+            // 1) 총 공지 개수 및 페이지 수 계산
+            int totalPageSize = calculateTotalPageSize(deptInfo);
 
-            ScrapingResultDto resultDto = getScrapingResultDto(deptInfo, totalNoticeSize, LATEST_SCRAP_ALL_TIMEOUT);
-            return List.of(resultDto);
+            // 2) 첫 페이지를 base로 가져오기(1 page)
+            Document baseDoc = fetchPageDoc(deptInfo, START_PAGE_NUM, ROW_NUMBERS_PER_PAGE_ALL);
+
+            // 3) 반복문을 돌며 baseTbody에 뒷 페이지의 tr들 합치기(2 page~)
+            appendRemainRows(deptInfo, totalPageSize, baseDoc);
+
+            // 4) 합쳐진 Document을 ScrapingResultDto로 가공하여 반환
+            return List.of(new ScrapingResultDto(baseDoc, deptInfo.createUndergraduateViewUrl()));
+
         } catch (IOException e) {
-            log.warn("Department Scrap all IOException: {}", e.getMessage());
+            throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_SCRAP, e);
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             throw new InternalLogicException(ErrorCode.NOTICE_SCRAPER_CANNOT_PARSE, e);
         }
-
-        return Collections.emptyList();
     }
 
     @Override
@@ -76,6 +82,47 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
         return Integer.parseInt(totalNoticeSizeElement.ownText());
     }
 
+    private void appendRemainRows(DeptInfo deptInfo, int totalPageSize, Document baseDoc) throws IOException {
+        Element baseTbody = extractTbodyFromDocument(baseDoc);
+
+        for(int page = START_PAGE_NUM + 1; page <= totalPageSize; page++){
+            Document doc = fetchPageDoc(deptInfo, page, ROW_NUMBERS_PER_PAGE_ALL);
+            Elements trs = extractTrsFromDocument(doc);
+
+            if(trs.isEmpty()) break;
+            for (Element tr : trs) {
+                baseTbody.appendChild(tr.clone());
+            }
+        }
+    }
+
+    private int calculateTotalPageSize(DeptInfo deptInfo) throws IOException {
+        String totalUrl = buildUrlForTotalNoticeCount(deptInfo);
+        int totalNoticeSize = getTotalNoticeSize(totalUrl);
+        return (int) Math.ceil((double) totalNoticeSize / ROW_NUMBERS_PER_PAGE_ALL);
+    }
+
+    private Element extractTbodyFromDocument(Document doc){
+        return doc.selectFirst(".board-table > tbody");
+    }
+
+    private Elements extractTrsFromDocument(Document doc){
+        Element tbody = extractTbodyFromDocument(doc);
+        if(tbody == null){
+            return new Elements();
+        }
+        return tbody.select("tr");
+    }
+
+    private Document getDocumentPerPage(String url, int timeout) throws IOException{
+        return jsoupClient.get(url, timeout);
+    }
+
+    private Document fetchPageDoc(DeptInfo deptInfo, int page, int row) throws IOException {
+        String url = deptInfo.createUndergraduateRequestUrl(page, row);
+        return getDocumentPerPage(url, LATEST_SCRAP_ALL_TIMEOUT);
+    }
+
     private String buildUrlForTotalNoticeCount(DeptInfo deptInfo) {
         return deptInfo.createUndergraduateRequestUrl(1, 1);
     }
@@ -91,7 +138,6 @@ public class LatestPageNoticeApiClient implements NoticeApiClient<ScrapingResult
 
         stopWatch.stop();
         log.debug("[{}] takes {}millis to respond", deptInfo.getDeptName(), stopWatch.getTotalTimeMillis());
-
         return new ScrapingResultDto(document, viewUrl);
     }
 }

@@ -1,5 +1,6 @@
 package com.kustacks.kuring.message.application.port.out.dto;
 
+import com.kustacks.kuring.message.domain.MessageType;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.Notice;
 import lombok.AccessLevel;
@@ -38,7 +39,7 @@ public class NoticeMessageDto {
         Assert.notNull(categoryKorName, "categoryKorName must not be null");
         Assert.notNull(baseUrl, "baseUrl must not be null");
 
-        this.type = "notice";
+        this.type = MessageType.NOTICE.getValue();
         this.id = id;
         this.articleId = articleId;
         this.postedDate = postedDate;
@@ -72,4 +73,3 @@ public class NoticeMessageDto {
                 .build();
     }
 }
-

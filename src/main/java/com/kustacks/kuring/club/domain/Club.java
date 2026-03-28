@@ -30,7 +30,7 @@ public class Club {
     @Column(length = 30, nullable = false)
     private String name;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 255, nullable = false)
     private String summary;
 
     @Column(columnDefinition = "TEXT")
@@ -49,6 +49,9 @@ public class Club {
 
     @Column(name = "poster_image_path", length = 255)
     private String posterImagePath;
+
+    @Column(name = "icon_image_path", length = 255)
+    private String iconImagePath;
 
     @Column(length = 30)
     private String building;

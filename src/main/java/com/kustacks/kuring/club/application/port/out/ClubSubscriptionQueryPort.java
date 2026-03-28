@@ -1,8 +1,20 @@
 package com.kustacks.kuring.club.application.port.out;
 
+import java.util.List;
+import java.util.Map;
+
 public interface ClubSubscriptionQueryPort {
 
     boolean existsSubscription(Long rootUserId, Long clubId);
 
-    long countSubscriptions(Long rootUserId);
+    Long countSubscriptions(Long rootUserId);
+
+    List<Long> findSubscribedClubIdsByRootUserIdAndClubIds(List<Long> clubIds, Long rootUserId);
+
+    List<Long> findSubscribedClubIdsByRootUserId(Long rootUserId);
+
+    Long countSubscribers(Long clubId);
+
+    Map<Long, Long> countSubscribersByClubIds(List<Long> clubIds);
+
 }
