@@ -2,6 +2,7 @@ package com.kustacks.kuring.new_message.adapter.out.firebase;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
 import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.new_message.exception.message.MessageSubscribeException;
 import com.kustacks.kuring.new_message.exception.message.MessageUnSubscribeException;
@@ -15,12 +16,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class FirebaseTopicSubscriptionAdapterTest {
+class FirebaseSubscriptionAdapterTest {
 
     @Mock
     private FirebaseMessaging firebaseMessaging;
@@ -29,7 +32,7 @@ class FirebaseTopicSubscriptionAdapterTest {
     private ServerProperties serverProperties;
 
     @InjectMocks
-    private FirebaseTopicSubscriptionAdapter firebaseTopicSubscriptionAdapter;
+    private FirebaseSubscriptionAdapter firebaseSubscriptionAdapter;
 
     @Test
     @DisplayName("구독 시 ifDevThenAddSuffix로 변환한 토픽으로 Firebase를 호출한다")
@@ -38,7 +41,7 @@ class FirebaseTopicSubscriptionAdapterTest {
         when(serverProperties.ifDevThenAddSuffix("topic")).thenReturn("topic.dev");
 
         // when
-        assertDoesNotThrow(() -> firebaseTopicSubscriptionAdapter.subscribe("token", "topic"));
+        assertDoesNotThrow(() -> firebaseSubscriptionAdapter.subscribe("token", "topic"));
 
         // then
         assertAll(
@@ -57,7 +60,7 @@ class FirebaseTopicSubscriptionAdapterTest {
 
         // when & then
         assertThrows(MessageSubscribeException.class,
-                () -> firebaseTopicSubscriptionAdapter.subscribe("token", "topic"));
+                () -> firebaseSubscriptionAdapter.subscribe("token", "topic"));
     }
 
     @Test
@@ -67,7 +70,7 @@ class FirebaseTopicSubscriptionAdapterTest {
         when(serverProperties.ifDevThenAddSuffix("topic")).thenReturn("topic.dev");
 
         // when
-        assertDoesNotThrow(() -> firebaseTopicSubscriptionAdapter.unsubscribe("token", "topic"));
+        assertDoesNotThrow(() -> firebaseSubscriptionAdapter.unsubscribe("token", "topic"));
 
         // then
         assertAll(
@@ -86,6 +89,40 @@ class FirebaseTopicSubscriptionAdapterTest {
 
         // when & then
         assertThrows(MessageUnSubscribeException.class,
-                () -> firebaseTopicSubscriptionAdapter.unsubscribe("token", "topic"));
+                () -> firebaseSubscriptionAdapter.unsubscribe("token", "topic"));
+    }
+
+    @Test
+    @DisplayName("dry-run 전송에 성공하면 true를 반환한다")
+    void validate_success() throws Exception {
+        // given
+        String token = "valid-token";
+
+        // when
+        boolean result = firebaseSubscriptionAdapter.validate(token);
+
+        // then
+        assertAll(
+                () -> assertTrue(result),
+                () -> verify(firebaseMessaging).send(any(Message.class), eq(true))
+        );
+    }
+
+    @Test
+    @DisplayName("dry-run 전송 중 예외가 발생하면 false를 반환한다")
+    void validate_fail() throws Exception {
+        // given
+        String token = "invalid-token";
+        when(firebaseMessaging.send(any(Message.class), eq(true)))
+                .thenThrow(new RuntimeException("invalid token"));
+
+        // when
+        boolean result = firebaseSubscriptionAdapter.validate(token);
+
+        // then
+        assertAll(
+                () -> assertFalse(result),
+                () -> verify(firebaseMessaging).send(any(Message.class), eq(true))
+        );
     }
 }

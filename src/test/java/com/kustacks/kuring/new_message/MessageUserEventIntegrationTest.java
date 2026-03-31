@@ -3,7 +3,7 @@ package com.kustacks.kuring.new_message;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.kustacks.kuring.common.properties.ServerProperties;
 import com.kustacks.kuring.new_message.adapter.in.event.NewMessageUserEventListener;
-import com.kustacks.kuring.new_message.adapter.out.firebase.FirebaseTopicSubscriptionAdapter;
+import com.kustacks.kuring.new_message.adapter.out.firebase.FirebaseSubscriptionAdapter;
 import com.kustacks.kuring.new_message.application.port.in.ManageTopicSubscriptionUseCase;
 import com.kustacks.kuring.new_message.application.port.out.TopicSubscriptionPort;
 import com.kustacks.kuring.new_message.application.service.TopicSubscriptionService;
@@ -54,7 +54,7 @@ class MessageUserEventIntegrationTest {
 
         @Bean
         TopicSubscriptionPort topicSubscriptionPort(FirebaseMessaging firebaseMessaging, ServerProperties serverProperties) {
-            return new FirebaseTopicSubscriptionAdapter(firebaseMessaging, serverProperties);
+            return new FirebaseSubscriptionAdapter(firebaseMessaging, serverProperties);
         }
 
         @Bean
