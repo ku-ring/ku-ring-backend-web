@@ -3,7 +3,6 @@ package com.kustacks.kuring.new_message.domain.model;
 import com.kustacks.kuring.new_message.domain.enums.MessageType;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public record NotificationCommand(
