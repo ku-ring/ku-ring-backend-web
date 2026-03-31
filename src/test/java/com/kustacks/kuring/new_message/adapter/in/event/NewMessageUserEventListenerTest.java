@@ -49,21 +49,4 @@ class NewMessageUserEventListenerTest {
         verify(manageTopicSubscriptionUseCase).unsubscribe("token", "topic");
     }
 
-    @Test
-    @DisplayName("recover 메서드는 예외 없이 종료된다")
-    void recover_methods() {
-        // given
-        Exception exception = new RuntimeException("fail");
-
-        // when & then
-        assertAll(
-                () -> assertDoesNotThrow(() ->
-                        newMessageUserEventListener.recoverSubscribe(exception, new UserSubscribeEvent("token", "topic"))
-                ),
-
-                () -> assertDoesNotThrow(() ->
-                        newMessageUserEventListener.recoverUnsubscribe(exception, new UserUnsubscribeEvent("token", "topic"))
-                )
-        );
-    }
 }

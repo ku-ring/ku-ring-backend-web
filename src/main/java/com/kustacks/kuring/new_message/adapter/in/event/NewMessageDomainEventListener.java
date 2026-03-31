@@ -23,53 +23,20 @@ public class NewMessageDomainEventListener {
 
     @Async
     @EventListener
-    @Retryable(
-            retryFor = { Exception.class },
-            maxAttempts = 5,
-            backoff = @Backoff(delay = 5000, multiplier = 2.0),
-            recover = "recoverAcademicScheduleNotification"
-    )
     public void sendAcademicScheduleNotification(AcademicScheduleNotificationEvent event) {
         handleMessageEventUseCase.handle(event);
     }
 
     @Async
     @EventListener
-    @Retryable(
-            retryFor = { Exception.class },
-            maxAttempts = 5,
-            backoff = @Backoff(delay = 5000, multiplier = 2.0),
-            recover = "recoverClubDeadlineNotification"
-    )
     public void sendClubDeadlineNotification(ClubDeadlineNotificationEvent event) {
         handleMessageEventUseCase.handle(event);
     }
 
     @Async
     @EventListener
-    @Retryable(
-            retryFor = { Exception.class },
-            maxAttempts = 5,
-            backoff = @Backoff(delay = 5000, multiplier = 2.0),
-            recover = "recoverNoticeBatchNotification"
-    )
     public void sendNoticeBatchNotification(NoticeBatchNotificationEvent event) {
         handleMessageEventUseCase.handle(event);
     }
 
-
-    @Recover
-    public void recoverAcademicScheduleNotification(Exception e, AcademicScheduleNotificationEvent event) {
-        log.error("AcademicScheduleNotification 전송 최종 실패. event={}, message={}", event, e.getMessage(), e);
-    }
-
-    @Recover
-    public void recoverClubDeadlineNotification(Exception e, ClubDeadlineNotificationEvent event) {
-        log.error("ClubDeadlineNotification 전송 최종 실패. event={}, message={}", event, e.getMessage(), e);
-    }
-
-    @Recover
-    public void recoverNoticeBatchNotification(Exception e, NoticeBatchNotificationEvent event) {
-        log.error("NoticeBatchNotification 전송 최종 실패. event={}, message={}", event, e.getMessage(), e);
-    }
 }

@@ -23,39 +23,14 @@ public class NewMessageUserEventListener {
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Retryable(
-            retryFor = { Exception.class },
-            maxAttempts = 5,
-            backoff = @Backoff(delay = 5000, multiplier = 2.0),
-            recover = "recoverSubscribe"
-    )
     public void subscribeEvent(UserSubscribeEvent event) {
         manageTopicSubscriptionUseCase.subscribe(event.token(), event.topic());
     }
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Retryable(
-            retryFor = { Exception.class },
-            maxAttempts = 5,
-            backoff = @Backoff(delay = 5000, multiplier = 2.0),
-            recover = "recoverUnsubscribe"
-    )
     public void unsubscribeEvent(UserUnsubscribeEvent event) {
         manageTopicSubscriptionUseCase.unsubscribe(event.token(), event.topic());
-    }
-
-
-    @Recover
-    public void recoverSubscribe(Exception e, UserSubscribeEvent event) {
-        log.error("토픽 구독 최종 실패. topic={}, message={}",
-                event.topic(), e.getMessage(), e);
-    }
-
-    @Recover
-    public void recoverUnsubscribe(Exception e, UserUnsubscribeEvent event) {
-        log.error("토픽 구독 해제 최종 실패. topic={}, message={}",
-                event.topic(), e.getMessage(), e);
     }
 
 }

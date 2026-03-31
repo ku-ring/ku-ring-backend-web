@@ -84,49 +84,4 @@ class NewMessageAdminEventListenerTest {
         verify(handleMessageEventUseCase).handle(event);
     }
 
-    @Test
-    @DisplayName("recover 메서드는 예외 없이 종료된다")
-    void recover_methods() {
-        // given
-        Exception exception = new RuntimeException();
-
-        // when & then
-        assertAll(
-                () -> assertDoesNotThrow(() ->
-                        newMessageAdminEventListener.recoverAdminNotification(
-                                exception,
-                                new AdminNotificationEvent("title", "body", "url")
-                        )
-                ),
-
-                () -> assertDoesNotThrow(() ->
-                        newMessageAdminEventListener.recoverAdminTestNotification(
-                                exception,
-                                new AdminTestNotificationEvent(
-                                        "1",
-                                        "articleId",
-                                        "2026-03-24",
-                                        "category",
-                                        "subject",
-                                        "카테고리",
-                                        "baseUrl"
-                                )
-                        )
-                ),
-
-                () -> assertDoesNotThrow(() ->
-                        newMessageAdminEventListener.recoverAlert(
-                                exception,
-                                new AlertSendEvent("title", "content")
-                        )
-                ),
-
-                () -> assertDoesNotThrow(() ->
-                        newMessageAdminEventListener.recoverAcademicTestNotification(
-                                exception,
-                                new AcademicTestNotificationEvent("title", "body")
-                        )
-                )
-        );
-    }
 }

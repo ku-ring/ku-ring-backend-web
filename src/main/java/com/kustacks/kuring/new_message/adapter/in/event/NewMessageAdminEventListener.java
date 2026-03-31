@@ -21,71 +21,26 @@ public class NewMessageAdminEventListener {
 
     @Async
     @EventListener
-    @Retryable(
-            retryFor = { Exception.class },
-            maxAttempts = 5,
-            backoff = @Backoff(delay = 5000, multiplier = 2.0),
-            recover = "recoverAdminNotification"
-    )
     public void sendAdminNotification(AdminNotificationEvent event) {
         handleMessageEventUseCase.handle(event);
     }
 
     @Async
     @EventListener
-    @Retryable(
-            retryFor = { Exception.class },
-            maxAttempts = 5,
-            backoff = @Backoff(delay = 5000, multiplier = 2.0),
-            recover = "recoverAdminTestNotification"
-    )
     public void sendAdminTestNotification(AdminTestNotificationEvent event) {
         handleMessageEventUseCase.handle(event);
     }
 
     @Async
     @EventListener
-    @Retryable(
-            retryFor = { Exception.class },
-            maxAttempts = 5,
-            backoff = @Backoff(delay = 5000, multiplier = 2.0),
-            recover = "recoverAlert"
-    )
     public void sendAlert(AlertSendEvent event) {
         handleMessageEventUseCase.handle(event);
     }
 
     @Async
     @EventListener
-    @Retryable(
-            retryFor = { Exception.class },
-            maxAttempts = 5,
-            backoff = @Backoff(delay = 5000, multiplier = 2.0),
-            recover = "recoverAcademicTestNotification"
-    )
     public void sendAcademicTestNotification(AcademicTestNotificationEvent event) {
         handleMessageEventUseCase.handle(event);
-    }
-
-
-    @Recover
-    public void recoverAdminNotification(Exception e, AdminNotificationEvent event) {
-        log.error("AdminNotification 전송 최종 실패. event={}, message={}", event, e.getMessage(), e);
-    }
-
-    @Recover
-    public void recoverAdminTestNotification(Exception e, AdminTestNotificationEvent event) {
-        log.error("AdminTestNotification 전송 최종 실패. event={}, message={}", event, e.getMessage(), e);
-    }
-
-    @Recover
-    public void recoverAlert(Exception e, AlertSendEvent event) {
-        log.error("Alert 전송 최종 실패. event={}, message={}", event, e.getMessage(), e);
-    }
-
-    @Recover
-    public void recoverAcademicTestNotification(Exception e, AcademicTestNotificationEvent event) {
-        log.error("AcademicTestNotification 전송 최종 실패. event={}, message={}", event, e.getMessage(), e);
     }
 
 }

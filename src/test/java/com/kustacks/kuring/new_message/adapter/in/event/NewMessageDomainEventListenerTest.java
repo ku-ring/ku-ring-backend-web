@@ -78,43 +78,4 @@ class NewMessageDomainEventListenerTest {
         verify(handleMessageEventUseCase).handle(event);
     }
 
-    @Test
-    @DisplayName("recover 메서드는 예외 없이 종료된다")
-    void recover_methods() {
-        // given
-        Exception exception = new RuntimeException("fail");
-
-        // when & then
-        assertAll(
-                () -> assertDoesNotThrow(() ->
-                        newMessageDomainEventListener.recoverAcademicScheduleNotification(
-                                exception,
-                                new AcademicScheduleNotificationEvent("수강신청")
-                        )
-                ),
-
-                () -> assertDoesNotThrow(() ->
-                        newMessageDomainEventListener.recoverClubDeadlineNotification(
-                                exception,
-                                new ClubDeadlineNotificationEvent(1L, "KUSTACKS")
-                        )
-                ),
-
-                () -> assertDoesNotThrow(() ->
-                        newMessageDomainEventListener.recoverNoticeBatchNotification(
-                                exception,
-                                new NoticeBatchNotificationEvent(
-                                        List.of(new NoticeBatchNotificationEvent.NoticeMessageDto(
-                                                "articleId",
-                                                "2026-03-24",
-                                                "subject",
-                                                "category",
-                                                "카테고리",
-                                                "baseUrl"
-                                        ))
-                                )
-                        )
-                )
-        );
-    }
 }
