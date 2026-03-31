@@ -23,31 +23,24 @@ public class FirebasePushMessageAdapter implements PushMessagePort {
     @Override
     public void send(NotificationCommand command) throws MessageSendException {
         try {
-            firebaseMessaging.send(toMessage(command));
+            String resolvedTopic = resolveTopic(
+                    command.target().topic(),
+                    command.target().topicSuffixPolicy()
+            );
+
+            Message message = FirebaseMessageFactory.create(
+                    resolvedTopic,
+                    command.messageType().getValue(),
+                    command.content().title(),
+                    command.content().body(),
+                    command.data()
+            );
+
+            firebaseMessaging.send(message);
         } catch (FirebaseMessagingException e) {
             throw new MessageSendException(e);
         }
 
-    }
-
-    private Message toMessage(NotificationCommand command) {
-        return Message.builder()
-                .setTopic(resolveTopic(command.target().topic(), command.target().topicSuffixPolicy()))
-                .setNotification(Notification.builder()
-                        .setTitle(command.content().title())
-                        .setBody(command.content().body())
-                        .build())
-                .putAllData(command.mergedData())
-                .setApnsConfig(buildApnsConfig())
-                .build();
-    }
-
-    private static ApnsConfig buildApnsConfig() {
-        return ApnsConfig.builder()
-                .setAps(Aps.builder()
-                        .setMutableContent(true)
-                        .build())
-                .build();
     }
 
     private String resolveTopic(String topic, TopicSuffixPolicy policy) {
