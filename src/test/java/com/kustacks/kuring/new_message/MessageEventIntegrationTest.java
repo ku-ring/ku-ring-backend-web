@@ -4,9 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.kustacks.kuring.common.properties.ServerProperties;
-import com.kustacks.kuring.new_message.adapter.in.event.NewMessageDomainEventListener;
+import com.kustacks.kuring.new_message.adapter.in.event.NewMessageEventListener;
 import com.kustacks.kuring.new_message.adapter.out.firebase.FirebasePushMessageAdapter;
 import com.kustacks.kuring.new_message.application.assembler.AcademicScheduleNotificationAssembler;
+import com.kustacks.kuring.new_message.application.assembler.AcademicTestNotificationAssembler;
+import com.kustacks.kuring.new_message.application.assembler.AdminNotificationAssembler;
+import com.kustacks.kuring.new_message.application.assembler.AdminTestNotificationAssembler;
+import com.kustacks.kuring.new_message.application.assembler.AlertSendAssembler;
 import com.kustacks.kuring.new_message.application.assembler.ClubDeadlineNotificationAssembler;
 import com.kustacks.kuring.new_message.application.assembler.NoticeBatchNotificationAssembler;
 import com.kustacks.kuring.new_message.application.assembler.NotificationCommandAssembler;
@@ -16,6 +20,10 @@ import com.kustacks.kuring.new_message.application.port.out.PushMessagePort;
 import com.kustacks.kuring.new_message.application.service.MessageEventHandler;
 import com.kustacks.kuring.new_message.application.service.NotificationSendService;
 import com.kustacks.kuring.new_message.domain.event.AcademicScheduleNotificationEvent;
+import com.kustacks.kuring.new_message.domain.event.AcademicTestNotificationEvent;
+import com.kustacks.kuring.new_message.domain.event.AdminNotificationEvent;
+import com.kustacks.kuring.new_message.domain.event.AdminTestNotificationEvent;
+import com.kustacks.kuring.new_message.domain.event.AlertSendEvent;
 import com.kustacks.kuring.new_message.domain.event.ClubDeadlineNotificationEvent;
 import com.kustacks.kuring.new_message.domain.event.MessageEvent;
 import com.kustacks.kuring.new_message.domain.event.NoticeBatchNotificationEvent;
@@ -25,8 +33,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -35,14 +45,15 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@SpringJUnitConfig(classes = MessageDomainEventIntegrationTest.TestConfig.class)
-@DisplayName("MessageDomainEvent 전체 통합 테스트")
-class MessageDomainEventIntegrationTest {
+@SpringJUnitConfig(classes = MessageEventIntegrationTest.TestConfig.class)
+@DisplayName("MessageEvent 전체 통합 테스트")
+class MessageEventIntegrationTest {
 
     @Resource
-    private NewMessageDomainEventListener newMessageDomainEventListener;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Resource
     private FirebaseMessaging firebaseMessaging;
@@ -53,6 +64,7 @@ class MessageDomainEventIntegrationTest {
     }
 
     @Configuration
+    @EnableAsync
     static class TestConfig {
 
         @Bean
@@ -94,6 +106,26 @@ class MessageDomainEventIntegrationTest {
         }
 
         @Bean
+        AdminNotificationAssembler adminNotificationAssembler(ObjectMapper objectMapper) {
+            return new AdminNotificationAssembler(objectMapper);
+        }
+
+        @Bean
+        AdminTestNotificationAssembler adminTestNotificationAssembler(ObjectMapper objectMapper) {
+            return new AdminTestNotificationAssembler(objectMapper);
+        }
+
+        @Bean
+        AlertSendAssembler alertSendAssembler() {
+            return new AlertSendAssembler();
+        }
+
+        @Bean
+        AcademicTestNotificationAssembler academicTestNotificationAssembler() {
+            return new AcademicTestNotificationAssembler();
+        }
+
+        @Bean
         AcademicScheduleNotificationAssembler academicScheduleNotificationAssembler() {
             return new AcademicScheduleNotificationAssembler();
         }
@@ -109,9 +141,128 @@ class MessageDomainEventIntegrationTest {
         }
 
         @Bean
-        NewMessageDomainEventListener messageDomainEventListener(HandleMessageEventUseCase handleMessageEventUseCase) {
-            return new NewMessageDomainEventListener(handleMessageEventUseCase);
+        NewMessageEventListener messageEventListener(HandleMessageEventUseCase handleMessageEventUseCase) {
+            return new NewMessageEventListener(handleMessageEventUseCase);
         }
+    }
+
+    @Test
+    @DisplayName("AdminNotificationEvent 통합 테스트")
+    void adminNotificationEvent_integration() throws Exception {
+        // given
+        AdminNotificationEvent event = new AdminNotificationEvent(
+                "admin-title",
+                "admin-body",
+                "https://admin-url"
+        );
+
+        // when
+        applicationEventPublisher.publishEvent(event);
+
+        // then
+        CapturedMessage actual = extractMessage(captureSingleMessage());
+
+        assertAll(
+                () -> assertEquals("allDevice.dev", actual.topic()),
+                () -> assertEquals("admin-title", actual.title()),
+                () -> assertEquals("admin-body", actual.body()),
+                () -> assertEquals("admin-title", actual.data().get("title")),
+                () -> assertEquals("admin-body", actual.data().get("body")),
+                () -> assertEquals("admin", actual.data().get("type")),
+                () -> assertEquals("https://admin-url", actual.data().get("url")),
+                () -> assertEquals(1, actual.aps().get("mutable-content"))
+        );
+    }
+
+    @Test
+    @DisplayName("AdminTestNotificationEvent 통합 테스트")
+    void adminTestNotificationEvent_integration() throws Exception {
+        // given
+        AdminTestNotificationEvent event = new AdminTestNotificationEvent(
+                "1",
+                "article-id",
+                "2026-03-24",
+                "category-name",
+                "subject",
+                "카테고리",
+                "https://admin-test-url"
+        );
+
+        // when
+        applicationEventPublisher.publishEvent(event);
+
+        // then
+        CapturedMessage actual = extractMessage(captureSingleMessage());
+
+        assertAll(
+                () -> assertEquals("category-name.dev", actual.topic()),
+                () -> assertEquals("[카테고리] 새로운 공지가 왔어요!", actual.title()),
+                () -> assertEquals("subject", actual.body()),
+                () -> assertEquals("[카테고리] 새로운 공지가 왔어요!", actual.data().get("title")),
+                () -> assertEquals("subject", actual.data().get("body")),
+                () -> assertEquals("notice", actual.data().get("type")),
+                () -> assertEquals("1", actual.data().get("id")),
+                () -> assertEquals("article-id", actual.data().get("articleId")),
+                () -> assertEquals("2026-03-24", actual.data().get("postedDate")),
+                () -> assertEquals("subject", actual.data().get("subject")),
+                () -> assertEquals("category-name", actual.data().get("category")),
+                () -> assertEquals("카테고리", actual.data().get("categoryKorName")),
+                () -> assertEquals("https://admin-test-url", actual.data().get("baseUrl")),
+                () -> assertEquals(1, actual.aps().get("mutable-content"))
+        );
+    }
+
+    @Test
+    @DisplayName("AlertSendEvent 통합 테스트")
+    void alertSendEvent_integration() throws Exception {
+        // given
+        AlertSendEvent event = new AlertSendEvent(
+                "alert-title",
+                "alert-content"
+        );
+
+        // when
+        applicationEventPublisher.publishEvent(event);
+
+        // then
+        CapturedMessage actual = extractMessage(captureSingleMessage());
+
+        assertAll(
+                () -> assertEquals("allDevice.dev", actual.topic()),
+                () -> assertEquals("alert-title", actual.title()),
+                () -> assertEquals("alert-content", actual.body()),
+                () -> assertEquals("alert-title", actual.data().get("title")),
+                () -> assertEquals("alert-content", actual.data().get("body")),
+                () -> assertEquals("admin", actual.data().get("type")),
+                () -> assertEquals("", actual.data().get("url")),
+                () -> assertEquals(1, actual.aps().get("mutable-content"))
+        );
+    }
+
+    @Test
+    @DisplayName("AcademicTestNotificationEvent 통합 테스트")
+    void academicTestNotificationEvent_integration() throws Exception {
+        // given
+        AcademicTestNotificationEvent event = new AcademicTestNotificationEvent(
+                "academic-title",
+                "academic-body"
+        );
+
+        // when
+        applicationEventPublisher.publishEvent(event);
+
+        // then
+        CapturedMessage actual = extractMessage(captureSingleMessage());
+
+        assertAll(
+                () -> assertEquals("academicEvent.dev", actual.topic()),
+                () -> assertEquals("academic-title", actual.title()),
+                () -> assertEquals("academic-body", actual.body()),
+                () -> assertEquals("academic-title", actual.data().get("title")),
+                () -> assertEquals("academic-body", actual.data().get("body")),
+                () -> assertEquals("academic", actual.data().get("type")),
+                () -> assertEquals(1, actual.aps().get("mutable-content"))
+        );
     }
 
     @Test
@@ -121,7 +272,7 @@ class MessageDomainEventIntegrationTest {
         AcademicScheduleNotificationEvent event = new AcademicScheduleNotificationEvent("학사 일정 내용");
 
         // when
-        newMessageDomainEventListener.sendAcademicScheduleNotification(event);
+        applicationEventPublisher.publishEvent(event);
 
         // then
         CapturedMessage actual = extractMessage(captureSingleMessage());
@@ -146,7 +297,7 @@ class MessageDomainEventIntegrationTest {
         ClubDeadlineNotificationEvent event = new ClubDeadlineNotificationEvent(1L, "club-name");
 
         // when
-        newMessageDomainEventListener.sendClubDeadlineNotification(event);
+        applicationEventPublisher.publishEvent(event);
 
         // then
         CapturedMessage actual = extractMessage(captureSingleMessage());
@@ -187,7 +338,7 @@ class MessageDomainEventIntegrationTest {
         );
 
         // when
-        newMessageDomainEventListener.sendNoticeBatchNotification(event);
+        applicationEventPublisher.publishEvent(event);
 
         // then
         List<Message> messages = captureMessages(2);
@@ -227,13 +378,13 @@ class MessageDomainEventIntegrationTest {
 
     private Message captureSingleMessage() throws Exception {
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
-        verify(firebaseMessaging).send(captor.capture());
+        verify(firebaseMessaging, timeout(1000)).send(captor.capture());
         return captor.getValue();
     }
 
     private List<Message> captureMessages(int count) throws Exception {
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
-        verify(firebaseMessaging, times(count)).send(captor.capture());
+        verify(firebaseMessaging, timeout(1000).times(count)).send(captor.capture());
         return captor.getAllValues();
     }
 
