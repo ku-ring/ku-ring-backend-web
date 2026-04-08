@@ -18,8 +18,8 @@ public class AcademicScheduleNotificationAssembler implements NotificationComman
     private static final String MESSAGE_DEFAULT = "오늘은 %s 일정이 있어요";
 
     @Override
-    public boolean supports(MessageEvent event) {
-        return event instanceof AcademicScheduleNotificationEvent;
+    public Class<AcademicScheduleNotificationEvent> supportEventType() {
+        return AcademicScheduleNotificationEvent.class;
     }
 
     @Override

@@ -19,8 +19,8 @@ public class ClubDeadlineNotificationAssembler implements NotificationCommandAss
     private static final String D_DAY_1_BODY = "내일 마감되기 전에 지원하세요!";
 
     @Override
-    public boolean supports(MessageEvent event) {
-        return event instanceof ClubDeadlineNotificationEvent;
+    public Class<ClubDeadlineNotificationEvent> supportEventType() {
+        return ClubDeadlineNotificationEvent.class;
     }
 
     @Override

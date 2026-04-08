@@ -21,8 +21,8 @@ public class AdminNotificationAssembler implements NotificationCommandAssembler<
     private final ObjectMapper objectMapper;
 
     @Override
-    public boolean supports(MessageEvent event) {
-        return event instanceof AdminNotificationEvent;
+    public Class<AdminNotificationEvent> supportEventType() {
+        return AdminNotificationEvent.class;
     }
 
     @Override

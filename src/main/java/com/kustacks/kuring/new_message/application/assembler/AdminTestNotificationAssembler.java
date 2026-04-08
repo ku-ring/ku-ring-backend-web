@@ -23,8 +23,8 @@ public class AdminTestNotificationAssembler implements NotificationCommandAssemb
     private final ObjectMapper objectMapper;
 
     @Override
-    public boolean supports(MessageEvent event) {
-        return event instanceof AdminTestNotificationEvent;
+    public Class<AdminTestNotificationEvent> supportEventType() {
+        return AdminTestNotificationEvent.class;
     }
 
     @Override

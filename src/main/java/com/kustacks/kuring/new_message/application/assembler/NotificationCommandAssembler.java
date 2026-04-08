@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface NotificationCommandAssembler<E extends MessageEvent> {
 
-    boolean supports(MessageEvent event);
+    Class<E> supportEventType();
 
     List<NotificationCommand> assemble(E event);
 

@@ -16,8 +16,8 @@ import java.util.Map;
 public class AlertSendAssembler implements NotificationCommandAssembler<AlertSendEvent> {
 
     @Override
-    public boolean supports(MessageEvent event) {
-        return event instanceof AlertSendEvent;
+    public Class<AlertSendEvent> supportEventType() {
+        return AlertSendEvent.class;
     }
 
     @Override

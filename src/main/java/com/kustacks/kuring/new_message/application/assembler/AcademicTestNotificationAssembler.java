@@ -17,8 +17,8 @@ import java.util.Map;
 public class AcademicTestNotificationAssembler implements NotificationCommandAssembler<AcademicTestNotificationEvent> {
 
     @Override
-    public boolean supports(MessageEvent event) {
-        return event instanceof AcademicTestNotificationEvent;
+    public Class<AcademicTestNotificationEvent> supportEventType() {
+        return AcademicTestNotificationEvent.class;
     }
 
     @Override

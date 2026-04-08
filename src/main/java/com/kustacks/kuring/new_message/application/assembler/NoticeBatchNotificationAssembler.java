@@ -22,8 +22,8 @@ public class NoticeBatchNotificationAssembler implements NotificationCommandAsse
     private final ObjectMapper objectMapper;
 
     @Override
-    public boolean supports(MessageEvent event) {
-        return event instanceof NoticeBatchNotificationEvent;
+    public Class<NoticeBatchNotificationEvent> supportEventType() {
+        return NoticeBatchNotificationEvent.class;
     }
 
     @Override
