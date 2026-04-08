@@ -67,6 +67,7 @@ class MessageEventHandlerTest {
                 assemblers,
                 sendNotificationUseCase
         );
+        messageEventHandler.init();
     }
 
     @Test
@@ -269,7 +270,7 @@ class MessageEventHandlerTest {
                 () -> assertEquals("subject", command.data().get("subject")),
                 () -> assertEquals("category", command.data().get("category")),
                 () -> assertEquals("카테고리", command.data().get("categoryKorName")),
-        () -> assertEquals(TopicNames.noticeTopic("category"), command.target().topic()),
+                () -> assertEquals(TopicNames.noticeTopic("category"), command.target().topic()),
                 () -> assertEquals(TopicSuffixPolicy.IF_DEV_THEN_ADD_SUFFIX, command.target().topicSuffixPolicy())
         );
     }
@@ -278,8 +279,7 @@ class MessageEventHandlerTest {
     @DisplayName("지원하지 않는 이벤트면 IllegalArgumentException이 발생한다")
     void handle_unsupportedEvent() {
         // given
-        MessageEvent unsupportedEvent = new MessageEvent() {
-        };
+        MessageEvent unsupportedEvent = new UnsupportedEvent();
 
         // when
         IllegalArgumentException exception =
@@ -301,17 +301,14 @@ class MessageEventHandlerTest {
                 sendNotificationUseCase
         );
 
-        MessageEvent event = new MessageEvent() {
-        };
-
         // when
         IllegalStateException exception = assertThrows(
                 IllegalStateException.class,
-                () -> messageEventHandler.handle(event)
+                () -> messageEventHandler.init()
         );
 
         // then
-        assertTrue(exception.getMessage().contains("중복 매칭된 메시지 이벤트 타입"));
+        assertTrue(exception.getMessage().contains("중복 등록된 메시지 이벤트 타입"));
     }
 
     private NotificationCommand captureSingleCommand() {
@@ -326,11 +323,14 @@ class MessageEventHandlerTest {
         return captor.getValue();
     }
 
+    private static class UnsupportedEvent implements MessageEvent {
+    }
+
     private static class DuplicateAssembler implements NotificationCommandAssembler<MessageEvent> {
 
         @Override
-        public boolean supports(MessageEvent event) {
-            return true;
+        public Class<MessageEvent> supportEventType() {
+            return MessageEvent.class;
         }
 
         @Override
