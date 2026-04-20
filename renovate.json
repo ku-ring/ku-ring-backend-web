@@ -3,6 +3,7 @@
   "baseBranchPatterns": ["develop"],
   "enabledManagers": ["gradle", "gradle-wrapper", "github-actions"],
   "dependencyDashboard": true,
+  "vulnerabilityAlerts": true,
   "prConcurrentLimit": 2,
   "prHourlyLimit": 1,
   "packageRules": [
