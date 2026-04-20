@@ -4,7 +4,8 @@ CREATE TABLE building
     id   BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(30) NOT NULL,
     lat  DOUBLE,
-    lon  DOUBLE
+    lon  DOUBLE,
+    CONSTRAINT uk_building_name UNIQUE (name)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;
