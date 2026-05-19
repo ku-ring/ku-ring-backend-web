@@ -163,7 +163,7 @@ public class ClubQueryService implements ClubQueryUseCase {
         String iconImagePath = clubReadModel.getIconImagePath();
 
         if (iconImagePath != null && !iconImagePath.isBlank()) {
-            iconImageUrl = storagePort.getPresignedUrl(iconImagePath);
+            iconImageUrl = storagePort.getTemporaryReadUrl(iconImagePath);
         }
 
         return new ClubItemResult(
@@ -200,7 +200,7 @@ public class ClubQueryService implements ClubQueryUseCase {
         String posterImagePath = clubDetailReadModel.getPosterImagePath();
 
         if (posterImagePath != null && !posterImagePath.isBlank()) {
-            posterImageUrl = storagePort.getPresignedUrl(posterImagePath);
+            posterImageUrl = storagePort.getTemporaryReadUrl(posterImagePath);
         }
 
         return new ClubDetailResult(

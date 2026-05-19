@@ -1,6 +1,6 @@
 package com.kustacks.kuring.storage.adapter.out;
 
-import com.kustacks.kuring.common.properties.CloudStorageProperties;
+import com.kustacks.kuring.common.properties.AwsS3Properties;
 import com.kustacks.kuring.storage.application.port.out.StoragePort;
 import com.kustacks.kuring.storage.exception.CloudStorageException;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +22,16 @@ import java.time.Duration;
 
 import static com.kustacks.kuring.common.exception.code.ErrorCode.STORAGE_S3_SDK_PROBLEM;
 
-@Profile("dev | prod")
+@Profile("prod")
 @Service
 @RequiredArgsConstructor
-public class S3CompatibleStorageAdapter implements StoragePort {
+public class AwsS3StorageAdapter implements StoragePort {
+
+    private static final Duration TEMPORARY_READ_URL_DURATION = Duration.ofHours(1);
 
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;
-    private final CloudStorageProperties properties;
+    private final AwsS3Properties properties;
 
     @Override
     public void upload(InputStream inputStream, String key, String contentType, long contentLength) {
@@ -41,15 +43,14 @@ public class S3CompatibleStorageAdapter implements StoragePort {
                     .contentLength(contentLength)
                     .build();
 
-                s3Client.putObject(putObjectRequest,
-                        RequestBody.fromInputStream(inputStream, contentLength));
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, contentLength));
         } catch (S3Exception | SdkClientException e) {
             throw new CloudStorageException(STORAGE_S3_SDK_PROBLEM);
         }
     }
 
     @Override
-    public String getPresignedUrl(String key) {
+    public String getTemporaryReadUrl(String key) {
         try {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                     .bucket(properties.bucket())
@@ -57,12 +58,11 @@ public class S3CompatibleStorageAdapter implements StoragePort {
                     .build();
 
             GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofHours(1)) // 1 hour expiry
+                    .signatureDuration(TEMPORARY_READ_URL_DURATION)
                     .getObjectRequest(getObjectRequest)
                     .build();
 
             PresignedGetObjectRequest presignedGetObjectRequest = s3Presigner.presignGetObject(presignRequest);
-
             return presignedGetObjectRequest.url().toString();
         } catch (S3Exception | SdkClientException e) {
             throw new CloudStorageException(STORAGE_S3_SDK_PROBLEM);

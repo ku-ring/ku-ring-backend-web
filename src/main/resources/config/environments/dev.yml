@@ -27,3 +27,15 @@ decorator:
   datasource:
     p6spy:
       enable-logging: true
+
+cloud:
+  storage:
+    oci:
+      region: ${CLOUD_STORAGE_OCI_REGION}
+      bucket: ${CLOUD_STORAGE_OCI_BUCKET}
+      namespace: ${CLOUD_STORAGE_OCI_NAMESPACE}
+      tenancy-id: ${CLOUD_STORAGE_OCI_TENANCY_ID}
+      user-id: ${CLOUD_STORAGE_OCI_USER_ID}
+      fingerprint: ${CLOUD_STORAGE_OCI_FINGERPRINT}
+      private-key: ${CLOUD_STORAGE_OCI_PRIVATE_KEY}
+      passphrase: ${CLOUD_STORAGE_OCI_PASSPHRASE:}

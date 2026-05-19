@@ -10,3 +10,12 @@ decorator:
 
 cors:
   allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
+cloud:
+  storage:
+    aws:
+      region: ${CLOUD_STORAGE_AWS_REGION}
+      bucket: ${CLOUD_STORAGE_AWS_BUCKET}
+      credentials:
+        access-key: ${CLOUD_STORAGE_AWS_ACCESS_KEY}
+        secret-key: ${CLOUD_STORAGE_AWS_SECRET_KEY}

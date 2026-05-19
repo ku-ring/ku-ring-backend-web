@@ -94,15 +94,6 @@ aws:
     profile: ${AWS_APPCONFIG_PROFILE}
     region: ${AWS_APPCONFIG_REGION}
 
-cloud:
-  storage:
-    region: ${CLOUD_STORAGE_REGION}
-    endpoint: ${CLOUD_STORAGE_ENDPOINT}
-    bucket: ${CLOUD_STORAGE_BUCKET}
-    credentials:
-      access-key: ${CLOUD_STORAGE_ACCESS_KEY}
-      secret-key: ${CLOUD_STORAGE_SECRET_KEY}
-
 springdoc:
   swagger-ui:
     # 각 API의 그룹 표시 순서

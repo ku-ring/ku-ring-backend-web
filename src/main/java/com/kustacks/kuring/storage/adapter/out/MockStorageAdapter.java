@@ -20,7 +20,7 @@ public class MockStorageAdapter implements StoragePort {
     }
 
     @Override
-    public String getPresignedUrl(String key) {
+    public String getTemporaryReadUrl(String key) {
         return MOCK_SERVER + key;
     }
 

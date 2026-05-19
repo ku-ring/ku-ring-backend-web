@@ -4,6 +4,6 @@ import java.io.InputStream;
 
 public interface StoragePort {
     void upload(InputStream inputStream, String key, String contentType, long contentLength);
-    String getPresignedUrl(String key);
+    String getTemporaryReadUrl(String key);
     void delete(String key);
 }

@@ -34,6 +34,7 @@ sonarqube {
 
 ext {
     set('springAiVersion', "1.0.0-M1")
+    set('ociJavaSdkVersion', "3.81.2")
 }
 
 dependencies {
@@ -69,6 +70,8 @@ dependencies {
     implementation 'software.amazon.awssdk:s3'
     implementation 'software.amazon.awssdk:appconfig'
     implementation 'software.amazon.awssdk:appconfigdata'
+    implementation "com.oracle.oci.sdk:oci-java-sdk-objectstorage:${ociJavaSdkVersion}"
+    implementation "com.oracle.oci.sdk:oci-java-sdk-common-httpclient-jersey3:${ociJavaSdkVersion}"
 
     // password encoder
     implementation 'org.springframework.security:spring-security-crypto:5.7.5'
