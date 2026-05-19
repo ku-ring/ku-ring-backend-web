@@ -153,23 +153,25 @@ class ClubQueryServiceTest {
         when(clubSubscriptionQueryPort.findSubscribedClubIdsByRootUserIdAndClubIds(any(), anyLong()))
                 .thenReturn(List.of(1L, 2L, 3L));
 
-        when(storagePort.getPresignedUrl(any()))
+        when(storagePort.getTemporaryReadUrl(any()))
                 .thenReturn("presigned-icon-url");
 
         // when
         ClubListResult result = clubQueryService.getClubs(command);
 
         // then
-        assertThat(result.clubs()).hasSize(3);
-        assertThat(result.clubs().get(0).subscriberCount()).isEqualTo(10);
-        assertThat(result.clubs().get(0).isSubscribed()).isTrue();
+        assertAll(
+                () -> assertThat(result.clubs()).hasSize(3),
+                () -> assertThat(result.clubs().get(0).subscriberCount()).isEqualTo(10),
+                () -> assertThat(result.clubs().get(0).isSubscribed()).isTrue()
+        );
 
         verify(rootUserQueryPort).findRootUserByEmail(email);
         verify(clubQueryPort).searchClubs(
                 ClubCategory.ACADEMIC,
                 divisionList
         );
-        verify(storagePort, times(3)).getPresignedUrl(any());
+        verify(storagePort, times(3)).getTemporaryReadUrl(any());
     }
 
     @Test
@@ -251,32 +253,30 @@ class ClubQueryServiceTest {
         when(clubSubscriptionQueryPort.existsSubscription(rootUserId, clubId))
                 .thenReturn(true);
 
-        when(storagePort.getPresignedUrl("poster-path"))
+        when(storagePort.getTemporaryReadUrl("poster-path"))
                 .thenReturn("presigned-poster-url");
 
         // when
         ClubDetailResult result = clubQueryService.getClubDetail(command);
 
         // then
-        assertThat(result.id()).isEqualTo(1L);
-        assertThat(result.name()).isEqualTo("쿠링");
-        assertThat(result.subscriberCount()).isEqualTo(10);
-        assertThat(result.isSubscribed()).isTrue();
-        assertThat(result.location().building()).isEqualTo("공학관");
-        assertThat(result.recruitmentStatus())
-                .isEqualTo(ClubRecruitmentStatus.BEFORE);
-        assertThat(result.category())
-                .isEqualTo(ClubCategory.ACADEMIC);
-        assertThat(result.division())
-                .isEqualTo(ClubDivision.CENTRAL);
-        assertThat(result.posterImageUrl())
-                .isEqualTo("presigned-poster-url");
+        assertAll(
+                () -> assertThat(result.id()).isEqualTo(1L),
+                () -> assertThat(result.name()).isEqualTo("쿠링"),
+                () -> assertThat(result.subscriberCount()).isEqualTo(10),
+                () -> assertThat(result.isSubscribed()).isTrue(),
+                () -> assertThat(result.location().building()).isEqualTo("공학관"),
+                () -> assertThat(result.recruitmentStatus()).isEqualTo(ClubRecruitmentStatus.BEFORE),
+                () -> assertThat(result.category()).isEqualTo(ClubCategory.ACADEMIC),
+                () -> assertThat(result.division()).isEqualTo(ClubDivision.CENTRAL),
+                () -> assertThat(result.posterImageUrl()).isEqualTo("presigned-poster-url")
+        );
 
         verify(rootUserQueryPort).findRootUserByEmail(email);
         verify(clubQueryPort).findClubDetailById(clubId);
         verify(clubSubscriptionQueryPort).countSubscribers(clubId);
         verify(clubSubscriptionQueryPort).existsSubscription(rootUserId, clubId);
-        verify(storagePort, times(1)).getPresignedUrl("poster-path");
+        verify(storagePort, times(1)).getTemporaryReadUrl("poster-path");
     }
 
     @Test
@@ -310,10 +310,12 @@ class ClubQueryServiceTest {
         ClubDetailResult result = clubQueryService.getClubDetail(command);
 
         // then
-        assertThat(result.isSubscribed()).isFalse();
+        assertAll(
+                () -> assertThat(result.isSubscribed()).isFalse(),
+                () -> assertThat(result.subscriberCount()).isEqualTo(5)
+        );
         verify(clubSubscriptionQueryPort).countSubscribers(clubId);
         verify(clubSubscriptionQueryPort, never()).existsSubscription(anyLong(), any());
-        assertThat(result.subscriberCount()).isEqualTo(5);
     }
 
     @DisplayName("상세 조회 시 posterImagePath가 있으면 Presigned URL로 변환한다")
@@ -341,7 +343,7 @@ class ClubQueryServiceTest {
 
         when(clubSubscriptionQueryPort.countSubscribers(clubId)).thenReturn(0L);
 
-        when(storagePort.getPresignedUrl(key)).thenReturn(presignedUrl);
+        when(storagePort.getTemporaryReadUrl(key)).thenReturn(presignedUrl);
 
         ClubDetailCommand command = new ClubDetailCommand(clubId, null);
 
@@ -350,7 +352,7 @@ class ClubQueryServiceTest {
 
         // then
         assertThat(result.posterImageUrl()).isEqualTo(presignedUrl);
-        verify(storagePort, times(1)).getPresignedUrl(key);
+        verify(storagePort, times(1)).getTemporaryReadUrl(key);
     }
 
 
@@ -363,9 +365,9 @@ class ClubQueryServiceTest {
         when(clubQueryPort.findClubReadModelsByIds(List.of(1L, 2L, 3L))).thenReturn(mockReadModels);
         when(clubSubscriptionQueryPort.countSubscribersByClubIds(List.of(1L, 2L, 3L))).thenReturn(Map.of(1L, 5L, 2L, 10L, 3L, 15L));
 
-        when(storagePort.getPresignedUrl("icon-url-1")).thenReturn("url-1");
-        when(storagePort.getPresignedUrl("icon-url-2")).thenReturn("url-2");
-        when(storagePort.getPresignedUrl("icon-url-3")).thenReturn("url-3");
+        when(storagePort.getTemporaryReadUrl("icon-url-1")).thenReturn("url-1");
+        when(storagePort.getTemporaryReadUrl("icon-url-2")).thenReturn("url-2");
+        when(storagePort.getTemporaryReadUrl("icon-url-3")).thenReturn("url-3");
 
         // when
         ClubListResult result = clubQueryService.getSubscribedClubs(new SubscribedClubListCommand("client@konkuk.ac.kr"));
