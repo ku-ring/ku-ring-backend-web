@@ -17,7 +17,7 @@ import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
-import static com.kustacks.kuring.common.exception.code.ErrorCode.STORAGE_S3_SDK_PROBLEM;
+import static com.kustacks.kuring.common.exception.code.ErrorCode.STORAGE_SDK_PROBLEM;
 
 @Profile("dev")
 @Service
@@ -41,7 +41,7 @@ public class OciStorageAdapter implements StoragePort {
 
             objectStorage.putObject(putObjectRequest);
         } catch (BmcException e) {
-            throw new CloudStorageException(STORAGE_S3_SDK_PROBLEM);
+            throw new CloudStorageException(STORAGE_SDK_PROBLEM);
         }
     }
 
@@ -67,7 +67,7 @@ public class OciStorageAdapter implements StoragePort {
 
             return canonicalEndpoint() + accessUri;
         } catch (BmcException e) {
-            throw new CloudStorageException(STORAGE_S3_SDK_PROBLEM);
+            throw new CloudStorageException(STORAGE_SDK_PROBLEM);
         }
     }
 
@@ -82,7 +82,7 @@ public class OciStorageAdapter implements StoragePort {
 
             objectStorage.deleteObject(deleteObjectRequest);
         } catch (BmcException e) {
-            throw new CloudStorageException(STORAGE_S3_SDK_PROBLEM);
+            throw new CloudStorageException(STORAGE_SDK_PROBLEM);
         }
     }
 

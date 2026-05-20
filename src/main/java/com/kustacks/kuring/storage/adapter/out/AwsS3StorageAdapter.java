@@ -20,7 +20,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 import java.io.InputStream;
 import java.time.Duration;
 
-import static com.kustacks.kuring.common.exception.code.ErrorCode.STORAGE_S3_SDK_PROBLEM;
+import static com.kustacks.kuring.common.exception.code.ErrorCode.STORAGE_SDK_PROBLEM;
 
 @Profile("prod")
 @Service
@@ -45,7 +45,7 @@ public class AwsS3StorageAdapter implements StoragePort {
 
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, contentLength));
         } catch (S3Exception | SdkClientException e) {
-            throw new CloudStorageException(STORAGE_S3_SDK_PROBLEM);
+            throw new CloudStorageException(STORAGE_SDK_PROBLEM);
         }
     }
 
@@ -65,7 +65,7 @@ public class AwsS3StorageAdapter implements StoragePort {
             PresignedGetObjectRequest presignedGetObjectRequest = s3Presigner.presignGetObject(presignRequest);
             return presignedGetObjectRequest.url().toString();
         } catch (S3Exception | SdkClientException e) {
-            throw new CloudStorageException(STORAGE_S3_SDK_PROBLEM);
+            throw new CloudStorageException(STORAGE_SDK_PROBLEM);
         }
     }
 
@@ -79,7 +79,7 @@ public class AwsS3StorageAdapter implements StoragePort {
 
             s3Client.deleteObject(deleteObjectRequest);
         } catch (S3Exception | SdkClientException e) {
-            throw new CloudStorageException(STORAGE_S3_SDK_PROBLEM);
+            throw new CloudStorageException(STORAGE_SDK_PROBLEM);
         }
     }
 }
