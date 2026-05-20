@@ -141,18 +141,6 @@ class OciStorageAdapterTest {
                 .isInstanceOf(CloudStorageException.class);
     }
 
-    @DisplayName("OCI 임시 읽기 URL 생성 시 namespace가 없으면 예외를 던진다")
-    @Test
-    void getTemporaryReadUrlWithoutNamespace() {
-        // given
-        when(properties.namespace()).thenReturn(" ");
-
-        // when, then
-        assertThatThrownBy(() -> ociStorageAdapter.getTemporaryReadUrl(fileKey))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("cloud.storage.oci.namespace");
-    }
-
     @DisplayName("OCI 파일을 삭제한다")
     @Test
     void deleteFile() {
@@ -184,18 +172,6 @@ class OciStorageAdapterTest {
         // when, then
         assertThatThrownBy(() -> ociStorageAdapter.delete(fileKey))
                 .isInstanceOf(CloudStorageException.class);
-    }
-
-    @DisplayName("OCI 파일 삭제 시 namespace가 없으면 예외를 던진다")
-    @Test
-    void deleteFileWithoutNamespace() {
-        // given
-        when(properties.namespace()).thenReturn(" ");
-
-        // when, then
-        assertThatThrownBy(() -> ociStorageAdapter.delete(fileKey))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("cloud.storage.oci.namespace");
     }
 
     private void mockBucketProperties() {

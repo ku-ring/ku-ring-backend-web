@@ -24,7 +24,7 @@ import static com.kustacks.kuring.common.exception.code.ErrorCode.STORAGE_S3_SDK
 @RequiredArgsConstructor
 public class OciStorageAdapter implements StoragePort {
 
-    private static final String TEMPORARY_READ_REQUEST_PREFIX = "temporary-read-";
+    private static final String OBJECT_STORAGE_ENDPOINT_FORMAT = "https://objectstorage.%s.oraclecloud.com";
 
     private final ObjectStorage objectStorage;
     private final OciStorageProperties properties;
@@ -50,17 +50,15 @@ public class OciStorageAdapter implements StoragePort {
     @Override
     public String getTemporaryReadUrl(String key) {
         try {
-            String namespace = requireNamespace();
-
             CreatePreauthenticatedRequestDetails details = CreatePreauthenticatedRequestDetails.builder()
-                    .name(TEMPORARY_READ_REQUEST_PREFIX + key)
+                    .name("temporary-read-" + key)
                     .accessType(CreatePreauthenticatedRequestDetails.AccessType.ObjectRead)
                     .objectName(key)
                     .timeExpires(Date.from(OffsetDateTime.now().plusHours(1).toInstant()))
                     .build();
 
             CreatePreauthenticatedRequestRequest request = CreatePreauthenticatedRequestRequest.builder()
-                    .namespaceName(namespace)
+                    .namespaceName(properties.namespace())
                     .bucketName(properties.bucket())
                     .createPreauthenticatedRequestDetails(details)
                     .build();
@@ -78,10 +76,8 @@ public class OciStorageAdapter implements StoragePort {
     @Override
     public void delete(String key) {
         try {
-            String namespace = requireNamespace();
-
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                    .namespaceName(namespace)
+                    .namespaceName(properties.namespace())
                     .bucketName(properties.bucket())
                     .objectName(key)
                     .build();
@@ -93,13 +89,6 @@ public class OciStorageAdapter implements StoragePort {
     }
 
     private String canonicalEndpoint() {
-        return "https://objectstorage.%s.oraclecloud.com".formatted(properties.region());
-    }
-
-    private String requireNamespace() {
-        if (properties.namespace() == null || properties.namespace().isBlank()) {
-            throw new IllegalStateException("cloud.storage.oci.namespace is required for dev profile");
-        }
-        return properties.namespace();
+        return OBJECT_STORAGE_ENDPOINT_FORMAT.formatted(properties.region());
     }
 }
