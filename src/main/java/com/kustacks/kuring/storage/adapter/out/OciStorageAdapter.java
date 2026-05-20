@@ -24,8 +24,6 @@ import static com.kustacks.kuring.common.exception.code.ErrorCode.STORAGE_S3_SDK
 @RequiredArgsConstructor
 public class OciStorageAdapter implements StoragePort {
 
-    private static final String OBJECT_STORAGE_ENDPOINT_FORMAT = "https://objectstorage.%s.oraclecloud.com";
-
     private final ObjectStorage objectStorage;
     private final OciStorageProperties properties;
 
@@ -89,6 +87,6 @@ public class OciStorageAdapter implements StoragePort {
     }
 
     private String canonicalEndpoint() {
-        return OBJECT_STORAGE_ENDPOINT_FORMAT.formatted(properties.region());
+        return objectStorage.getEndpoint();
     }
 }

@@ -45,7 +45,7 @@ class OciStorageAdapterTest {
 
     private final String namespace = "test-namespace";
     private final String bucketName = "test-bucket";
-    private final String region = "test-region";
+    private final String endpoint = "https://objectstorage.test-region.oraclecloud.com";
     private final String fileKey = "test-object-key";
     private final byte[] testFile = "test-file".getBytes();
 
@@ -91,7 +91,7 @@ class OciStorageAdapterTest {
     void getTemporaryReadUrl() {
         // given
         mockBucketProperties();
-        when(properties.region()).thenReturn(region);
+        when(objectStorage.getEndpoint()).thenReturn(endpoint);
 
         PreauthenticatedRequest preauthenticatedRequest = PreauthenticatedRequest.builder()
                 .accessUri("/p/test-par-token/n/test-namespace/b/test-bucket/o/test-object-key")
@@ -118,7 +118,7 @@ class OciStorageAdapterTest {
 
         assertAll(
                 () -> assertThat(actual)
-                        .isEqualTo("https://objectstorage.test-region.oraclecloud.com/p/test-par-token/n/test-namespace/b/test-bucket/o/test-object-key"),
+                        .isEqualTo(endpoint + "/p/test-par-token/n/test-namespace/b/test-bucket/o/test-object-key"),
                 () -> assertThat(actualRequest.getNamespaceName()).isEqualTo(namespace),
                 () -> assertThat(actualRequest.getBucketName()).isEqualTo(bucketName),
                 () -> assertThat(actualDetails.getName()).isEqualTo("temporary-read-" + fileKey),
