@@ -1,0 +1,50 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "baseBranchPatterns": ["develop"],
+  "enabledManagers": ["gradle", "gradle-wrapper", "github-actions"],
+  "dependencyDashboard": true,
+  "vulnerabilityAlerts": true,
+  "prConcurrentLimit": 2,
+  "prHourlyLimit": 1,
+  "packageRules": [
+    {
+      "description": "아래에서 명시적으로 다시 허용한 항목 외에는 일반 Gradle 의존성 업데이트를 비활성화한다.",
+      "matchManagers": ["gradle"],
+      "enabled": false
+    },
+    {
+      "description": "Gradle wrapper와 GitHub Actions는 major가 아닌 업데이트를 무시한다.",
+      "matchManagers": ["gradle-wrapper", "github-actions"],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "enabled": false
+    },
+    {
+      "description": "Spring Boot는 major 업데이트만 허용한다.",
+      "matchManagers": ["gradle"],
+      "matchPackageNames": ["org.springframework.boot"],
+      "matchUpdateTypes": ["major"],
+      "enabled": true,
+      "groupName": "spring-boot-major"
+    },
+    {
+      "description": "Testcontainers는 major 업데이트만 허용한다.",
+      "matchManagers": ["gradle"],
+      "matchPackageNames": ["/^org\\.testcontainers:/"],
+      "matchUpdateTypes": ["major"],
+      "enabled": true,
+      "groupName": "testcontainers-major"
+    },
+    {
+      "description": "Gradle wrapper는 major 업데이트만 허용한다.",
+      "matchManagers": ["gradle-wrapper"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "gradle-wrapper-major"
+    },
+    {
+      "description": "GitHub Actions는 major 업데이트만 허용한다.",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "github-actions-major"
+    }
+  ]
+}

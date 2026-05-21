@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.kustacks.kuring.building.domain.QBuilding.building;
 import static com.kustacks.kuring.club.domain.QClub.club;
 import static com.kustacks.kuring.club.domain.QClubSns.clubSns;
 
@@ -91,7 +92,6 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
     @Override
     @Transactional(readOnly = true)
     public Optional<ClubDetailReadModel> findClubDetailById(Long id) {
-
         List<Tuple> tuples = queryFactory
                 .select(
                         club.id,
@@ -106,14 +106,15 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                         club.isAlways,
                         club.applyUrl,
                         club.posterImagePath,
-                        club.building,
+                        building.name,
                         club.room,
-                        club.lon,
-                        club.lat,
+                        building.lon,
+                        building.lat,
                         clubSns.type,
                         clubSns.url
                 )
                 .from(club)
+                .leftJoin(club.building, building)
                 .leftJoin(club.homepageUrls, clubSns)
                 .where(club.id.eq(id))
                 .fetch();
@@ -158,10 +159,10 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                         first.get(club.isAlways),
                         first.get(club.applyUrl),
                         first.get(club.posterImagePath),
-                        first.get(club.building),
+                        first.get(building.name),
                         first.get(club.room),
-                        first.get(club.lon),
-                        first.get(club.lat)
+                        first.get(building.lon),
+                        first.get(building.lat)
                 )
         );
     }

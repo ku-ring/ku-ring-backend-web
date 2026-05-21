@@ -1,0 +1,67 @@
+name: CI Canary
+
+# 이 워크플로는 Github Actions에서 CI/CD 과정 수행 전에 조기에 문제를 감지하기 위한 용도다.
+on:
+  workflow_dispatch:
+  schedule:
+    # 매주 월요일 오전 9시 (KST)
+    - cron: '0 0 * * 1'
+
+env:
+  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+jobs:
+  canary:
+    name: Run tests on ubuntu-latest
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Decrypt secrets
+        id: decrypt
+        run: sh .github/workflows/decrypt.sh
+
+      - name: Run test task
+        id: test_task
+        run: ./gradlew test --info
+
+      - name: Notify Discord on failure
+        id: notify
+        if: failure()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          SHORT_SHA="$(printf '%s' "${GITHUB_SHA}" | cut -c1-7)"
+          FAILED_STEP="unknown"
+
+          if [ "${{ steps.decrypt.outcome }}" = "failure" ]; then
+            FAILED_STEP="Decrypt secrets"
+          elif [ "${{ steps.test_task.outcome }}" = "failure" ]; then
+            FAILED_STEP="Run test task"
+          fi
+
+          MESSAGE="$(
+            printf '%s\n' \
+              'CI Canary failed' \
+              '- Repo: ${{ github.repository }}' \
+              '- Ref: ${{ github.ref_name }}' \
+              '- Trigger: ${{ github.event_name }}' \
+              '- Actor: ${{ github.actor }}' \
+              "- Failed step: ${FAILED_STEP}" \
+              "- Commit: ${SHORT_SHA}" \
+              "- Run: ${RUN_URL}"
+          )"
+
+          PAYLOAD="$(MESSAGE="${MESSAGE}" python3 -c 'import json, os; print(json.dumps({"content": os.environ["MESSAGE"]}))')"
+          curl \
+            -H "Content-Type: application/json" \
+            -d "${PAYLOAD}" \
+            "$DISCORD_WEBHOOK_URL"
