@@ -10,7 +10,6 @@ import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -52,14 +51,11 @@ public class AwsS3StorageAdapter implements StoragePort {
     @Override
     public String getTemporaryReadUrl(String key) {
         try {
-            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                    .bucket(properties.bucket())
-                    .key(key)
-                    .build();
-
             GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
                     .signatureDuration(TEMPORARY_READ_URL_DURATION)
-                    .getObjectRequest(getObjectRequest)
+                    .getObjectRequest(builder -> builder
+                            .bucket(properties.bucket())
+                            .key(key))
                     .build();
 
             PresignedGetObjectRequest presignedGetObjectRequest = s3Presigner.presignGetObject(presignRequest);
