@@ -18,6 +18,10 @@ cd $PROJECT_ROOT
 
 # jar 파일 실행
 chmod 755 $JAR_FILE
+echo "$TIME_NOW > Java runtime version" >> $DEPLOY_LOG
+java -version >> $DEPLOY_LOG 2>&1
+echo "$TIME_NOW > JAVA_HOME=$JAVA_HOME" >> $DEPLOY_LOG
+echo "$TIME_NOW > PATH=$PATH" >> $DEPLOY_LOG
 echo "$TIME_NOW > $JAR_FILE 파일 실행" >> $DEPLOY_LOG
 nohup java -jar -Dspring.profiles.active=prod -Xms256m -Xmx256m $JAR_FILE > "$APP_LOG" 2>&1 < /dev/null &
 
