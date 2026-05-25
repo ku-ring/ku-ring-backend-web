@@ -60,7 +60,8 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                         club.category,
                         club.division,
                         club.recruitStartAt,
-                        club.recruitEndAt
+                        club.recruitEndAt,
+                        club.isAlways
                 ))
                 .from(club)
                 .where(
@@ -82,7 +83,8 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                         club.category,
                         club.division,
                         club.recruitStartAt,
-                        club.recruitEndAt
+                        club.recruitEndAt,
+                        club.isAlways
                 ))
                 .from(club)
                 .where(club.id.in(ids))

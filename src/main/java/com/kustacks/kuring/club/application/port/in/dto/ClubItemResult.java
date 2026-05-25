@@ -12,6 +12,7 @@ public record ClubItemResult(
         boolean isSubscribed,
         Long subscriberCount,
         LocalDateTime recruitStartDate,
-        LocalDateTime recruitEndDate
+        LocalDateTime recruitEndDate,
+        String recruitmentStatus
 ) {
 }

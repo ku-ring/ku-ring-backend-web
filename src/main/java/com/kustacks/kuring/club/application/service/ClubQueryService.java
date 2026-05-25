@@ -166,6 +166,14 @@ public class ClubQueryService implements ClubQueryUseCase {
             iconImageUrl = storagePort.getPresignedUrl(iconImagePath);
         }
 
+        ClubRecruitmentStatus recruitmentStatus = ClubRecruitmentStatus.from(
+                clubReadModel.getRecruitStartDate(),
+                clubReadModel.getRecruitEndDate(),
+                clubReadModel.getIsAlways(),
+                LocalDateTime.now()
+        );
+
+
         return new ClubItemResult(
                 clubReadModel.getId(),
                 clubReadModel.getName(),
@@ -176,7 +184,8 @@ public class ClubQueryService implements ClubQueryUseCase {
                 isSubscribed,
                 subscriberCount,
                 clubReadModel.getRecruitStartDate(),
-                clubReadModel.getRecruitEndDate()
+                clubReadModel.getRecruitEndDate(),
+                recruitmentStatus.getValue()
         );
     }
 
