@@ -68,5 +68,5 @@ jobs:
             echo "[2] 새 JAR 실행"
             cd /home/ubuntu/dev-app
             JAR_FILE=$(ls -t build/libs/*.jar | grep -m1 -v 'plain')
-            nohup java -jar "$JAR_FILE" --spring.profiles.active=dev > /home/ubuntu/dev-app.log 2>&1 &
+            source ~/.bash_profile && nohup java -jar "$JAR_FILE" --spring.profiles.active=dev > /home/ubuntu/dev-app.log 2>&1 &
             echo "✅ 개발 서버 재시작 완료!"
