@@ -5,10 +5,10 @@ import com.kustacks.kuring.ai.application.port.out.QueryVectorStorePort;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.worker.parser.notice.PageTextDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.ai.chroma.vectorstore.ChromaVectorStore;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.TextReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
-import org.springframework.ai.vectorstore.ChromaVectorStore;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ByteArrayResource;
@@ -31,9 +31,9 @@ public class ChromaVectorStoreAdapter implements QueryVectorStorePort, CommandVe
     @Override
     public List<String> findSimilarityContents(String question) {
         return chromaVectorStore.similaritySearch(
-                        SearchRequest.query(question).withTopK(TOP_K)
+                        SearchRequest.builder().query(question).topK(TOP_K).build()
                 ).stream()
-                .map(Document::getContent)
+                .map(Document::getText)
                 .toList();
     }
 

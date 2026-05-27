@@ -31,7 +31,7 @@ public class InMemoryVectorStoreAdapter implements QueryVectorStorePort, Command
         Document document = createDocument(metadata);
 
         return Stream.of(document)
-                .map(Document::getContent)
+                .map(Document::getText)
                 .toList();
     }
 

@@ -20,8 +20,8 @@ public class QueryAiModelAdapter implements QueryAiModelPort {
     @Override
     public Flux<String> call(Prompt prompt) {
         return openAiChatModel.stream(prompt)
-                .filter(chatResponse -> chatResponse.getResult().getOutput().getContent() != null)
-                .flatMap(chatResponse -> Flux.just(chatResponse.getResult().getOutput().getContent()))
+                .filter(chatResponse -> chatResponse.getResult().getOutput().getText() != null)
+                .flatMap(chatResponse -> Flux.just(chatResponse.getResult().getOutput().getText()))
                 .doOnError(throwable -> log.error("[RAGQueryAiModelAdapter] {}", throwable.getMessage()));
     }
 }
