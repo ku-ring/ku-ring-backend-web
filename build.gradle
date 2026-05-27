@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '3.2.3'
-    id 'io.spring.dependency-management' version '1.1.5'
+    id 'org.springframework.boot' version '3.5.14'
+    id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
     id 'org.asciidoctor.jvm.convert' version "3.3.2"
     id 'org.sonarqube' version '4.4.1.3373' // sonarqube gradle plugin 의존성
@@ -39,7 +39,7 @@ sonarqube {
 }
 
 ext {
-    set('springAiVersion', "1.0.0-M1")
+    set('springAiVersion', "1.1.7")
 }
 
 dependencies {
@@ -55,8 +55,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     // AI
-    implementation "org.springframework.ai:spring-ai-openai-spring-boot-starter:${springAiVersion}"
-    implementation "org.springframework.ai:spring-ai-chroma-store-spring-boot-starter:${springAiVersion}"
+    implementation platform("org.springframework.ai:spring-ai-bom:${springAiVersion}")
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+    implementation 'org.springframework.ai:spring-ai-starter-vector-store-chroma'
 
     // DB
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -131,12 +132,6 @@ dependencies {
     testImplementation "org.testcontainers:testcontainers-chromadb:2.0.2"
     testImplementation "org.apache.commons:commons-lang3:3.18.0"
     testImplementation 'io.projectreactor:reactor-test'
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
-    }
 }
 
 // Swagger force conflict resolution

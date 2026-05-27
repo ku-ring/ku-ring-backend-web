@@ -5,6 +5,8 @@ server:
 
 spring:
   ai:
+    vectorstore:
+      type: none
     openai:
       api-key: "temp_ai_api_key"
       chat:

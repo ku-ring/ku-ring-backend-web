@@ -44,11 +44,12 @@ spring:
         options:
           model: ${AI_EMBEDDING_MODEL}
     vectorstore:
+      type: chroma
       chroma:
         client:
           key-token: ${CHROMA_API_KEY}
-        store:
-          collection-name: ${CHROMA_COLLECTION_NAME}
+        collection-name: ${CHROMA_COLLECTION_NAME}
+        initialize-schema: false
 
   mail:
     host: ${MAIL_SMTP_HOST}

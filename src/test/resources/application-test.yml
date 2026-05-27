@@ -30,6 +30,8 @@ spring:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
   ai:
+    vectorstore:
+      type: none
     openai:
       api-key: "invalid_ai_api_key"
       chat:
