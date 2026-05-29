@@ -18,6 +18,7 @@ public class ClubReadModel {
     private final ClubDivision division;
     private final LocalDateTime recruitStartDate;
     private final LocalDateTime recruitEndDate;
+    private final Boolean isAlways;
 
     @QueryProjection
     public ClubReadModel(
@@ -28,7 +29,8 @@ public class ClubReadModel {
             ClubCategory category,
             ClubDivision division,
             LocalDateTime recruitStartDate,
-            LocalDateTime recruitEndDate
+            LocalDateTime recruitEndDate,
+            Boolean isAlways
     ) {
         this.id = id;
         this.name = name;
@@ -38,5 +40,6 @@ public class ClubReadModel {
         this.division = division;
         this.recruitStartDate = recruitStartDate;
         this.recruitEndDate = recruitEndDate;
+        this.isAlways = isAlways;
     }
 }
