@@ -16,10 +16,8 @@ public record AdminClubCreateCommand(
         String instagramUrl,
         String youtubeUrl,
         String etcUrl,
-        String building,
+        Long buildingId,
         String room,
-        Double lat,
-        Double lon,
         MultipartFile iconImage,
         MultipartFile posterImage
 ) {
