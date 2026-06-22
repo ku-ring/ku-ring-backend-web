@@ -1,5 +1,6 @@
 package com.kustacks.kuring.club.adapter.out.persistence;
 
+import com.kustacks.kuring.club.application.port.out.ClubCommandPort;
 import com.kustacks.kuring.club.application.port.out.ClubQueryPort;
 import com.kustacks.kuring.club.application.port.out.ClubSubscriptionCommandPort;
 import com.kustacks.kuring.club.application.port.out.ClubSubscriptionQueryPort;
@@ -8,6 +9,7 @@ import com.kustacks.kuring.club.application.port.out.dto.ClubReadModel;
 import com.kustacks.kuring.club.domain.Club;
 import com.kustacks.kuring.club.domain.ClubCategory;
 import com.kustacks.kuring.club.domain.ClubDivision;
+import com.kustacks.kuring.club.domain.ClubSns;
 import com.kustacks.kuring.club.domain.ClubSubscribe;
 import com.kustacks.kuring.common.annotation.PersistenceAdapter;
 import com.kustacks.kuring.user.domain.RootUser;
