@@ -20,10 +20,8 @@ public record AdminClubCreateRequest(
         String instagramUrl,
         String youtubeUrl,
         String etcUrl,
-        @Size(max = 30) String building,
-        @Size(max = 30) String room,
-        Double lat,
-        Double lon
+        Long buildingId,
+        @Size(max = 30) String room
 ) {
     public AdminClubCreateCommand toCommand(MultipartFile iconImage, MultipartFile posterImage) {
         return new AdminClubCreateCommand(
@@ -40,10 +38,8 @@ public record AdminClubCreateRequest(
                 instagramUrl,
                 youtubeUrl,
                 etcUrl,
-                building,
+                buildingId,
                 room,
-                lat,
-                lon,
                 iconImage,
                 posterImage
         );

@@ -113,7 +113,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                         building.lon,
                         building.lat,
                         clubSns.type,
-                        clubSns.url
+                        clubSns.url.value
                 )
                 .from(club)
                 .leftJoin(club.building, building)
@@ -133,7 +133,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
 
         for (Tuple t : tuples) {
             ClubSnsType type = t.get(clubSns.type);
-            String url = t.get(clubSns.url);
+            String url = t.get(clubSns.url.value);
 
             if (type == null) continue;
 

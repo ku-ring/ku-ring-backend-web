@@ -1,5 +1,6 @@
 package com.kustacks.kuring.admin.adapter.in.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.database.annotations.NotNull;
 import com.kustacks.kuring.admin.adapter.in.web.dto.AcademicTestNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.AdminAlertCreateRequest;
@@ -23,9 +24,12 @@ import com.kustacks.kuring.common.utils.validator.BadWordInitProcessor;
 import com.kustacks.kuring.common.utils.validator.WhitelistWordInitProcessor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_CLUB_CREATE_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.ADMIN_EMBEDDING_NOTICE_SUCCESS;
@@ -59,6 +64,8 @@ public class AdminCommandApiV2 {
     private final ClubCreateAdminUseCase clubCreateAdminUseCase;
     private final BadWordInitProcessor badWordinitProcessor;
     private final WhitelistWordInitProcessor whitelistWordInitProcessor;
+    private final ObjectMapper objectMapper;
+    private final Validator validator;
 
     @Operation(summary = "테스트 공지 전송", description = "테스트 공지를 전송합니다, 실제 운영시 사용하지 않습니다")
     @SecurityRequirement(name = "JWT")
@@ -140,10 +147,21 @@ public class AdminCommandApiV2 {
     @Secured(AdminRole.ROLE_ROOT)
     @PostMapping(value = "/clubs", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BaseResponse<AdminClubCreateResponse>> createClub(
-            @Valid @RequestPart("request") AdminClubCreateRequest request,
-            @RequestPart(name = "iconImage", required = true) MultipartFile iconImage,
-            @RequestPart(name = "posterImage", required = false) MultipartFile posterImage
+            @Parameter(content = @Content(schema = @Schema(implementation = AdminClubCreateRequest.class)))
+            @RequestParam("request") String requestJson,
+            @RequestParam(name = "iconImage", required = false) MultipartFile iconImage,
+            @RequestParam(name = "posterImage", required = false) MultipartFile posterImage
     ) {
+        AdminClubCreateRequest request;
+        try {
+            request = objectMapper.readValue(requestJson, AdminClubCreateRequest.class);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request JSON");
+        }
+        var violations = validator.validate(request);
+        if (!violations.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, violations.iterator().next().getMessage());
+        }
         clubCreateAdminUseCase.createClub(request.toCommand(iconImage, posterImage));
 
         return ResponseEntity.status(ADMIN_CLUB_CREATE_SUCCESS.getCode())

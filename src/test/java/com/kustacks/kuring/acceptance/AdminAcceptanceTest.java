@@ -110,7 +110,7 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .body(new TestNotificationRequest("bachelor", "테스트 공지입니다", "1234","1234"))
+                .body(new TestNotificationRequest("bachelor", "테스트 공지입니다", "1234", "1234"))
                 .when().post("/api/v2/admin/notices/dev")
                 .then().log().all()
                 .extract();
@@ -425,10 +425,8 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
                 "https://www.instagram.com/kuring_test",
                 "https://www.youtube.com/@kuringtest",
                 "https://kuring-test.example.com",
-                "제2학생회관",
-                "107호",
-                37.5400,
-                127.0780
+                null,
+                null
         );
 
         // when
