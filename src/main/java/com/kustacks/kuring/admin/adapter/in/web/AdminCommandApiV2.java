@@ -162,10 +162,10 @@ public class AdminCommandApiV2 {
         if (!violations.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, violations.iterator().next().getMessage());
         }
-        clubCreateAdminUseCase.createClub(request.toCommand(iconImage, posterImage));
+        Long clubId = clubCreateAdminUseCase.createClub(request.toCommand(iconImage, posterImage));
 
         return ResponseEntity.status(ADMIN_CLUB_CREATE_SUCCESS.getCode())
-                .body(new BaseResponse<>(ADMIN_CLUB_CREATE_SUCCESS, null));
+                .body(new BaseResponse<>(ADMIN_CLUB_CREATE_SUCCESS, new AdminClubCreateResponse(clubId)));
     }
 
     @Operation(summary = "금칙어 로드", description = "어드민은 DB에 있는 금칙어를 수동으로 로드할 수 있다.")

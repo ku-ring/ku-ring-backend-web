@@ -92,7 +92,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase, ClubCreateAd
     }
 
     @Override
-    public void createClub(AdminClubCreateCommand command) {
+    public Long createClub(AdminClubCreateCommand command) {
         //동아리 저장.
         MultipartFile iconImage = command.iconImage();
         validateRequiredIconImage(iconImage);
@@ -132,6 +132,7 @@ public class ClubCommandService implements ClubSubscriptionUseCase, ClubCreateAd
         //이미지 업로드
         clubEventPort.publishClubCreate(savedClub.getId(), iconImage, command.posterImage(), iconImagePath, posterImagePath);
 
+        return savedClub.getId();
     }
 
     private static Club createClub(AdminClubCreateCommand command, ClubCategory category, ClubDivision division, Building building, LocalDateTime recruitStartAt, LocalDateTime recruitEndAt, String applyUrl, String iconImagePath, String posterImagePath) {
