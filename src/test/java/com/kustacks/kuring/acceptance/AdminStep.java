@@ -181,7 +181,7 @@ public class AdminStep {
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(201),
                 () -> assertThat(response.jsonPath().getString("message")).isEqualTo("동아리 생성에 성공하였습니다"),
-                () -> assertThat(response.jsonPath().getString("data")).isNull()
+                () -> assertThat(response.jsonPath().getLong("data.clubId")).isPositive()
         );
     }
 
