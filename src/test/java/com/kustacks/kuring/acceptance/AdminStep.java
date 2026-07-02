@@ -170,7 +170,7 @@ public class AdminStep {
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .multiPart("request", "request.json", requestJson, MediaType.APPLICATION_JSON_VALUE)
                 .multiPart("iconImage", "icon.png", "icon-bytes".getBytes(StandardCharsets.UTF_8), "image/png")
-                .multiPart("postImage", "post.png", "post-bytes".getBytes(StandardCharsets.UTF_8), "image/png")
+                .multiPart("posterImage", "post.png", "post-bytes".getBytes(StandardCharsets.UTF_8), "image/png")
                 .when().post("/api/v2/admin/clubs")
                 .then().log().all()
                 .extract();
