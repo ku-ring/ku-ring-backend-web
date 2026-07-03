@@ -1,6 +1,8 @@
 package com.kustacks.kuring.club.domain;
 
+import com.kustacks.kuring.notice.domain.Url;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -29,10 +31,16 @@ public class ClubSns {
     @Column(nullable = false)
     private ClubSnsType type;
 
-    @Column(nullable = false, length = 255)
-    private String url;
+    @Embedded
+    private Url url;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id", nullable = false)
     private Club club;
+
+    public ClubSns(ClubSnsType type, String url, Club club) {
+        this.type = type;
+        this.url = new Url(url);
+        this.club = club;
+    }
 }

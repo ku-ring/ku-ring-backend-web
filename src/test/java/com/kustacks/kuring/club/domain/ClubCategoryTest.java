@@ -16,7 +16,7 @@ class ClubCategoryTest {
     @DisplayName("name을 받아 해당 ClubCategory enum으로 변환한다")
     @ParameterizedTest
     @CsvSource({"academic,ACADEMIC", "culture_art,CULTURE_ART", "social_value,SOCIAL_VALUE", "activity,ACTIVITY"})
-    void fromName(String name, ClubCategory clubCategory) {
+    void fromKorNameName(String name, ClubCategory clubCategory) {
         // when
         ClubCategory result = ClubCategory.fromName(name);
 
@@ -26,7 +26,7 @@ class ClubCategoryTest {
 
     @DisplayName("존재하지 않는 name으로 ClubCategory를 찾으려 하면 예외가 발생한다")
     @Test
-    void fromNameException() {
+    void fromKorNameNameException() {
         // given
         String name = "invalid";
 

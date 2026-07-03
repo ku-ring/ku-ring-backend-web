@@ -80,4 +80,35 @@ public class Club {
     @Column(columnDefinition = "TEXT")
     private String qualifications;
 
+    public Club(
+            String name,
+            String summary,
+            String description,
+            ClubCategory category,
+            ClubDivision division,
+            Building building,
+            String room,
+            LocalDateTime recruitStartAt,
+            LocalDateTime recruitEndAt,
+            boolean isAlways,
+            String applyUrl,
+            String qualifications,
+            String iconImagePath,
+            String posterImagePath
+    ) {
+        this.name = name;
+        this.summary = summary;
+        this.description = description;
+        this.category = category;
+        this.division = division;
+        this.building = building;
+        this.room = room;
+        this.recruitStartAt = recruitStartAt;
+        this.recruitEndAt = recruitEndAt;
+        this.isAlways = isAlways;
+        this.applyUrl = applyUrl;
+        this.qualifications = qualifications;
+        this.iconImagePath = iconImagePath;
+        this.posterImagePath = posterImagePath;
+    }
 }
