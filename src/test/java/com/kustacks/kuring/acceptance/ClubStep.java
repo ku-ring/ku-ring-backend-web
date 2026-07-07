@@ -50,8 +50,7 @@ public class ClubStep {
                 () -> assertThat(response.jsonPath().getString("data.clubs[0].category")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getString("data.clubs[0].division")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getBoolean("data.clubs[0].isSubscribed")).isInstanceOf(Boolean.class),
-                () -> assertThat(response.jsonPath().getLong("data.clubs[0].subscriberCount")).isGreaterThanOrEqualTo(0),
-                () -> assertThat(response.jsonPath().getString("data.clubs[0].recruitmentStatus")).isNotBlank()
+                () -> assertThat(response.jsonPath().getLong("data.clubs[0].subscriberCount")).isGreaterThanOrEqualTo(0)
         );
     }
 

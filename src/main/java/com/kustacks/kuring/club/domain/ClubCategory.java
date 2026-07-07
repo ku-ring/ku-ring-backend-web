@@ -20,14 +20,10 @@ public enum ClubCategory {
     ACTIVITY("activity", "야외활동");
 
     private static final Map<String, String> NAME_MAP;
-    private static final Map<String, String> KOR_NAME_MAP;
 
     static {
         NAME_MAP = Collections.unmodifiableMap(Arrays.stream(ClubCategory.values())
                 .collect(Collectors.toMap(ClubCategory::getName, ClubCategory::name))
-        );
-        KOR_NAME_MAP = Collections.unmodifiableMap(Arrays.stream(ClubCategory.values())
-                .collect(Collectors.toMap(ClubCategory::getKorName, ClubCategory::name))
         );
     }
 
@@ -41,12 +37,6 @@ public enum ClubCategory {
 
     public static ClubCategory fromName(String name) {
         String findName = Optional.ofNullable(NAME_MAP.get(name))
-                .orElseThrow(() -> new NotFoundException(CLUB_CATEGORY_NOT_SUPPORTED));
-        return ClubCategory.valueOf(findName);
-    }
-
-    public static ClubCategory fromKorName(String name) {
-        String findName = Optional.ofNullable(KOR_NAME_MAP.get(name))
                 .orElseThrow(() -> new NotFoundException(CLUB_CATEGORY_NOT_SUPPORTED));
         return ClubCategory.valueOf(findName);
     }

@@ -77,8 +77,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         Map<Long, Boolean> subscribedMap = getSubscribedMap(clubIds, rootUser);
 
-        LocalDateTime now = LocalDateTime.now();
-        List<ClubItemResult> clubItemResults = toClubItemResults(clubReadModels, subscribedMap, subscriberCountMap, now);
+        List<ClubItemResult> clubItemResults = toClubItemResults(clubReadModels, subscribedMap, subscriberCountMap);
 
         return new ClubListResult(clubItemResults);
     }
@@ -130,8 +129,7 @@ public class ClubQueryService implements ClubQueryUseCase {
 
         Map<Long, Long> subscriberCountMap = clubSubscriptionQueryPort.countSubscribersByClubIds(subscribedClubIds);
 
-        LocalDateTime now = LocalDateTime.now();
-        List<ClubItemResult> clubItemResults = toSubscribedClubItemResults(clubReadModels, subscriberCountMap, now);
+        List<ClubItemResult> clubItemResults = toSubscribedClubItemResults(clubReadModels, subscriberCountMap);
 
         return new ClubListResult(clubItemResults);
     }
@@ -158,8 +156,7 @@ public class ClubQueryService implements ClubQueryUseCase {
     private ClubItemResult convertClubItemResult(
             ClubReadModel clubReadModel,
             boolean isSubscribed,
-            Long subscriberCount,
-            LocalDateTime now
+            Long subscriberCount
     ) {
 
         String iconImageUrl = null;
@@ -168,14 +165,6 @@ public class ClubQueryService implements ClubQueryUseCase {
         if (iconImagePath != null && !iconImagePath.isBlank()) {
             iconImageUrl = storagePort.getPresignedUrl(iconImagePath);
         }
-
-        ClubRecruitmentStatus recruitmentStatus = ClubRecruitmentStatus.from(
-                clubReadModel.getRecruitStartDate(),
-                clubReadModel.getRecruitEndDate(),
-                clubReadModel.getIsAlways(),
-                now
-        );
-
 
         return new ClubItemResult(
                 clubReadModel.getId(),
@@ -187,8 +176,7 @@ public class ClubQueryService implements ClubQueryUseCase {
                 isSubscribed,
                 subscriberCount,
                 clubReadModel.getRecruitStartDate(),
-                clubReadModel.getRecruitEndDate(),
-                recruitmentStatus.getValue()
+                clubReadModel.getRecruitEndDate()
         );
     }
 
@@ -240,30 +228,26 @@ public class ClubQueryService implements ClubQueryUseCase {
     private List<ClubItemResult> toClubItemResults(
             List<ClubReadModel> clubReadModels,
             Map<Long, Boolean> subscribedMap,
-            Map<Long, Long> subscriberCountMap,
-            LocalDateTime now
+            Map<Long, Long> subscriberCountMap
     ) {
         return clubReadModels.stream()
                 .map(r -> convertClubItemResult(
                         r,
                         subscribedMap.getOrDefault(r.getId(), false),
-                        subscriberCountMap.getOrDefault(r.getId(), 0L),
-                        now
+                        subscriberCountMap.getOrDefault(r.getId(), 0L)
                 ))
                 .toList();
     }
 
     private List<ClubItemResult> toSubscribedClubItemResults(
             List<ClubReadModel> clubReadModels,
-            Map<Long, Long> subscriberCountMap,
-            LocalDateTime now
+            Map<Long, Long> subscriberCountMap
     ) {
         return clubReadModels.stream()
                 .map(r -> convertClubItemResult(
                         r,
                         true,
-                        subscriberCountMap.getOrDefault(r.getId(), 0L),
-                        now
+                        subscriberCountMap.getOrDefault(r.getId(), 0L)
                 ))
                 .toList();
     }
