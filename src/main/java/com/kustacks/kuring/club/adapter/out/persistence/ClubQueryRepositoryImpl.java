@@ -60,7 +60,8 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                         club.category,
                         club.division,
                         club.recruitStartAt,
-                        club.recruitEndAt
+                        club.recruitEndAt,
+                        club.isAlways
                 ))
                 .from(club)
                 .where(
@@ -82,7 +83,8 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                         club.category,
                         club.division,
                         club.recruitStartAt,
-                        club.recruitEndAt
+                        club.recruitEndAt,
+                        club.isAlways
                 ))
                 .from(club)
                 .where(club.id.in(ids))
@@ -111,7 +113,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
                         building.lon,
                         building.lat,
                         clubSns.type,
-                        clubSns.url
+                        clubSns.url.value
                 )
                 .from(club)
                 .leftJoin(club.building, building)
@@ -131,7 +133,7 @@ class ClubQueryRepositoryImpl implements ClubQueryRepository {
 
         for (Tuple t : tuples) {
             ClubSnsType type = t.get(clubSns.type);
-            String url = t.get(clubSns.url);
+            String url = t.get(clubSns.url.value);
 
             if (type == null) continue;
 

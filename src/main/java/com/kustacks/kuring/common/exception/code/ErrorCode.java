@@ -59,9 +59,12 @@ public enum ErrorCode {
 
     CLUB_CATEGORY_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "서버에서 지원하지 않는 동아리 카테고리입니다."),
     CLUB_DIVISION_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "서버에서 지원하지 않는 동아리 소속입니다."),
+    CLUB_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 동아리입니다."),
     CLUB_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 동아리를 찾을 수 없습니다."),
     CLUB_ALREADY_SUBSCRIBED(HttpStatus.BAD_REQUEST, "이미 구독한 동아리입니다."),
     CLUB_NOT_SUBSCRIBED(HttpStatus.BAD_REQUEST, "구독하지 않은 동아리입니다."),
+
+    BUILDING_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 건물을 찾을 수 없습니다."),
 
 
     STAFF_SCRAPER_EXCEED_RETRY_LIMIT("교직원 업데이트 재시도 횟수를 초과했습니다."),

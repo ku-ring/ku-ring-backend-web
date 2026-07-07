@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface ClubQueryPort {
+public interface
+ClubQueryPort {
 
     Optional<Club> findClubById(Long id);
 
@@ -23,4 +24,6 @@ public interface ClubQueryPort {
     List<Club> findClubsBetweenDates(LocalDateTime start, LocalDateTime end);
 
     List<Club> findNextDayRecruitEndClubs(LocalDateTime now);
+
+    boolean existsByNameAndDivision(String name, ClubDivision division);
 }
