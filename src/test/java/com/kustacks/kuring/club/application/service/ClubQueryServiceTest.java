@@ -73,8 +73,7 @@ class ClubQueryServiceTest {
                             ClubCategory.ACADEMIC,
                             ClubDivision.CENTRAL,
                             LocalDateTime.of(2026, 3, 1, 0, 0),
-                            LocalDateTime.of(2026, 3, 31, 23, 59),
-                            false
+                            LocalDateTime.of(2026, 3, 31, 23, 59)
                     ),
                     new ClubReadModel(
                             2L,
@@ -84,8 +83,7 @@ class ClubQueryServiceTest {
                             ClubCategory.ACADEMIC,
                             ClubDivision.ENGINEERING,
                             LocalDateTime.of(2026, 3, 1, 0, 0),
-                            LocalDateTime.of(2026, 3, 31, 23, 59),
-                            false
+                            LocalDateTime.of(2026, 3, 31, 23, 59)
                     ),
                     new ClubReadModel(
                             3L,
@@ -95,8 +93,7 @@ class ClubQueryServiceTest {
                             ClubCategory.CULTURE_ART,
                             ClubDivision.ENGINEERING,
                             LocalDateTime.of(2026, 2, 10, 0, 0),
-                            LocalDateTime.of(2026, 2, 25, 23, 59),
-                            false
+                            LocalDateTime.of(2026, 2, 25, 23, 59)
                     )
             );
 
@@ -166,7 +163,6 @@ class ClubQueryServiceTest {
         assertThat(result.clubs()).hasSize(3);
         assertThat(result.clubs().get(0).subscriberCount()).isEqualTo(10);
         assertThat(result.clubs().get(0).isSubscribed()).isTrue();
-        assertThat(result.clubs().get(0).recruitmentStatus()).isNotNull();
 
         verify(rootUserQueryPort).findRootUserByEmail(email);
         verify(clubQueryPort).searchClubs(
