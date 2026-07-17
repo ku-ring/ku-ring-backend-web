@@ -77,11 +77,11 @@ public class CampusMapQueryApiV1 {
     ) {
         var response = CampusMapMockFixture.findBuildingDetail(buildingId);
 
-        if (response.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+        return response.map(buildingDetailResponse
+                -> ok("캠퍼스 건물 상세 조회에 성공하였습니다", buildingDetailResponse))
+                .orElseGet(() -> ResponseEntity.status(404)
+                .body(new BaseResponse<>(404, "캠퍼스 건물을 찾을 수 없습니다", null)));
 
-        return ok("캠퍼스 건물 상세 조회에 성공하였습니다", response.get());
     }
 
     private static <T> ResponseEntity<BaseResponse<T>> ok(String message, T data) {
