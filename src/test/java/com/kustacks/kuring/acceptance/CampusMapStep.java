@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 public final class CampusMapStep {
 
-    private static final String BASE_URL = "/api/v1/map";
+    private static final String BASE_URL = "/api/v2/maps";
 
     private CampusMapStep() {
     }
