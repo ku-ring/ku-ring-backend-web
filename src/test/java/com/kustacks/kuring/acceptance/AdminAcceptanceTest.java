@@ -2,6 +2,7 @@ package com.kustacks.kuring.acceptance;
 
 import com.kustacks.kuring.admin.adapter.in.web.dto.AcademicTestNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.AdminAlertCreateRequest;
+import com.kustacks.kuring.admin.adapter.in.web.dto.AdminClubCreateRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.RealNotificationRequest;
 import com.kustacks.kuring.admin.adapter.in.web.dto.TestNotificationRequest;
 import com.kustacks.kuring.support.IntegrationTestSupport;
@@ -20,6 +21,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 import static com.kustacks.kuring.acceptance.AdminStep.금칙어_로드_요청;
+import static com.kustacks.kuring.acceptance.AdminStep.동아리_생성_요청;
+import static com.kustacks.kuring.acceptance.AdminStep.동아리_생성_응답_확인;
 import static com.kustacks.kuring.acceptance.AdminStep.사용자_토픽_재구독_요청;
 import static com.kustacks.kuring.acceptance.AdminStep.사용자_토픽_재구독_응답_확인;
 import static com.kustacks.kuring.acceptance.AdminStep.사용자_피드백_조회_요청;
@@ -107,7 +110,7 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .body(new TestNotificationRequest("bachelor", "테스트 공지입니다", "1234","1234"))
+                .body(new TestNotificationRequest("bachelor", "테스트 공지입니다", "1234", "1234"))
                 .when().post("/api/v2/admin/notices/dev")
                 .then().log().all()
                 .extract();
@@ -401,6 +404,36 @@ class AdminAcceptanceTest extends IntegrationTestSupport {
 
         // then
         사용자_토픽_재구독_응답_확인(재구독_응답);
+    }
+
+    @DisplayName("[v2] 동아리 정보 업로드")
+    @Test
+    void role_root_admin_create_club() {
+        // given
+        String accessToken = 로그인_되어_있음(ADMIN_LOGIN_ID, ADMIN_PASSWORD);
+        AdminClubCreateRequest request = new AdminClubCreateRequest(
+                "테스트동아리2",
+                "테스트 요약",
+                "테스트 설명",
+                "academic",
+                "central",
+                false,
+                "2026-03-03 00:00:00",
+                "2026-03-15 23:59:00",
+                "https://forms.gle/club-test",
+                "건국대 재학생",
+                "https://www.instagram.com/kuring_test",
+                "https://www.youtube.com/@kuringtest",
+                "https://kuring-test.example.com",
+                null,
+                null
+        );
+
+        // when
+        var response = 동아리_생성_요청(accessToken, request);
+
+        // then
+        동아리_생성_응답_확인(response);
     }
 
     private void 댓글_작성_및_신고() {
