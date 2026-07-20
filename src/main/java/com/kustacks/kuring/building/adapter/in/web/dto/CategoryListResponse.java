@@ -1,10 +1,10 @@
 package com.kustacks.kuring.building.adapter.in.web.dto;
 
-import com.kustacks.kuring.building.adapter.in.web.dto.model.CategoryItem;
+import com.kustacks.kuring.building.adapter.in.web.dto.model.CategoryDto;
 
 import java.util.List;
 
 public record CategoryListResponse(
-        List<CategoryItem> categories
+        List<CategoryDto> categories
 ) {
 }

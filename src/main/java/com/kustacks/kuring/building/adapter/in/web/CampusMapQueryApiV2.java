@@ -25,8 +25,8 @@ import java.util.List;
 @Slf4j
 @Tag(name = "Campus Map-Query", description = "캠퍼스맵 정보 조회")
 @Validated
-@RestWebAdapter(path = "/api/v1/map")
-public class CampusMapQueryApiV1 {
+@RestWebAdapter(path = "/api/v2/maps")
+public class CampusMapQueryApiV2 {
 
     @Operation(summary = "캠퍼스맵 카테고리 목록 조회")
     @GetMapping("/categories")

@@ -1,6 +1,6 @@
 package com.kustacks.kuring.building.adapter.in.web.dto.model;
 
-public record CategoryItem(
+public record CategoryDto(
         String name,
         String korName,
         Integer displayOrder
