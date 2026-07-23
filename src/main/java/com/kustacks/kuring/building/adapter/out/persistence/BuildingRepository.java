@@ -15,9 +15,15 @@ public interface BuildingRepository extends JpaRepository<Building, Long> {
             select distinct building
             from Building building
             left join building.keywords keyword
-            where lower(building.name) like lower(concat('%', :keyword, '%'))
-               or lower(building.address) like lower(concat('%', :keyword, '%'))
-               or lower(keyword.keyword) like lower(concat('%', :keyword, '%'))
+            where lower(building.name) like lower(concat(
+                    '%', replace(replace(replace(:keyword, '\\', '\\\\'), '%', '\\%'), '_', '\\_'), '%'
+                  )) escape '\\'
+               or lower(building.address) like lower(concat(
+                    '%', replace(replace(replace(:keyword, '\\', '\\\\'), '%', '\\%'), '_', '\\_'), '%'
+                  )) escape '\\'
+               or lower(keyword.keyword) like lower(concat(
+                    '%', replace(replace(replace(:keyword, '\\', '\\\\'), '%', '\\%'), '_', '\\_'), '%'
+                  )) escape '\\'
             order by building.id asc
             """)
     List<Building> searchByKeyword(@Param("keyword") String keyword);
