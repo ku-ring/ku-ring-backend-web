@@ -71,6 +71,14 @@ public enum ResponseCodeAndMessages {
     CLUB_SUBSCRIPTION_DELETE_SUCCESS(HttpStatus.OK.value(), "구독이 취소되었습니다."),
     CLUB_SUBSCRIPTION_LIST_SEARCH_SUCCESS(HttpStatus.OK.value(), "구독한 동아리 목록 조회에 성공하였습니다"),
 
+    /* Campus Map */
+    CAMPUS_MAP_CATEGORY_LIST_SEARCH_SUCCESS(HttpStatus.OK.value(), "장소 카테고리 목록 조회에 성공하였습니다"),
+    CAMPUS_MAP_BUILDING_LIST_SEARCH_SUCCESS(HttpStatus.OK.value(), "캠퍼스 건물 목록 조회에 성공하였습니다"),
+    CAMPUS_MAP_BUILDING_SEARCH_SUCCESS(HttpStatus.OK.value(), "캠퍼스 건물 검색에 성공하였습니다"),
+    CAMPUS_MAP_PLACE_LIST_SEARCH_SUCCESS(HttpStatus.OK.value(), "카테고리 기반 시설 목록 조회에 성공하였습니다"),
+    CAMPUS_MAP_BUILDING_DETAIL_SEARCH_SUCCESS(HttpStatus.OK.value(), "캠퍼스 건물 상세 조회에 성공하였습니다"),
+    CAMPUS_MAP_BUILDING_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "캠퍼스 건물을 찾을 수 없습니다"),
+
     /**
      * ErrorCodes about auth
      */

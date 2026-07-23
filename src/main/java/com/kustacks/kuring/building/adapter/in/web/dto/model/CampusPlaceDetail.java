@@ -1,5 +1,7 @@
 package com.kustacks.kuring.building.adapter.in.web.dto.model;
 
+import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
+
 public record CampusPlaceDetail(
         Long id,
         String name,
@@ -13,4 +15,20 @@ public record CampusPlaceDetail(
         CurrentOperatingHours currentOperatingHours,
         String externalUrl
 ) {
+
+    public static CampusPlaceDetail from(CampusPlaceResult result) {
+        return new CampusPlaceDetail(
+                result.id(),
+                result.name(),
+                result.category(),
+                result.categoryKorName(),
+                result.imageUrl(),
+                result.locationType().name(),
+                result.floor(),
+                result.locationDetail(),
+                result.quantity(),
+                CurrentOperatingHours.from(result.currentOperatingHours()),
+                result.externalUrl()
+        );
+    }
 }

@@ -5,15 +5,17 @@ import com.kustacks.kuring.building.adapter.in.web.dto.BuildingListResponse;
 import com.kustacks.kuring.building.adapter.in.web.dto.BuildingSearchResponse;
 import com.kustacks.kuring.building.adapter.in.web.dto.CampusPlaceListResponse;
 import com.kustacks.kuring.building.adapter.in.web.dto.CategoryListResponse;
-import com.kustacks.kuring.building.adapter.in.web.mock.CampusMapMockFixture;
+import com.kustacks.kuring.building.application.port.in.CampusMapQueryUseCase;
+import com.kustacks.kuring.building.application.port.in.dto.BuildingDetailResult;
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.dto.BaseResponse;
+import com.kustacks.kuring.common.dto.ResponseCodeAndMessages;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,19 +23,29 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 
-@Slf4j
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_BUILDING_DETAIL_SEARCH_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_BUILDING_LIST_SEARCH_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_BUILDING_NOT_FOUND;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_BUILDING_SEARCH_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_CATEGORY_LIST_SEARCH_SUCCESS;
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_PLACE_LIST_SEARCH_SUCCESS;
+
 @Tag(name = "Campus Map-Query", description = "캠퍼스맵 정보 조회")
 @Validated
+@RequiredArgsConstructor
 @RestWebAdapter(path = "/api/v2/maps")
 public class CampusMapQueryApiV2 {
+
+    private final CampusMapQueryUseCase campusMapQueryUseCase;
 
     @Operation(summary = "캠퍼스맵 카테고리 목록 조회")
     @GetMapping("/categories")
     public ResponseEntity<BaseResponse<CategoryListResponse>> getCategories() {
         return ok(
-                "장소 카테고리 목록 조회에 성공하였습니다",
-                CampusMapMockFixture.categories()
+                CAMPUS_MAP_CATEGORY_LIST_SEARCH_SUCCESS,
+                CategoryListResponse.from(campusMapQueryUseCase.getCategories())
         );
     }
 
@@ -41,20 +53,20 @@ public class CampusMapQueryApiV2 {
     @GetMapping("/buildings")
     public ResponseEntity<BaseResponse<BuildingListResponse>> getBuildings() {
         return ok(
-                "캠퍼스 건물 목록 조회에 성공하였습니다",
-                CampusMapMockFixture.buildings()
+                CAMPUS_MAP_BUILDING_LIST_SEARCH_SUCCESS,
+                BuildingListResponse.from(campusMapQueryUseCase.getBuildings())
         );
     }
 
     @Operation(summary = "캠퍼스맵 건물 키워드 검색")
     @GetMapping("/buildings/search")
     public ResponseEntity<BaseResponse<BuildingSearchResponse>> searchBuildings(
-            @Parameter(description = "건물명 또는 건물에 등록된 검색 키워드")
+            @Parameter(description = "건물명, 주소 또는 건물에 등록된 검색 키워드")
             @RequestParam(name = "keyword") @NotBlank String keyword
     ) {
         return ok(
-                "캠퍼스 건물 검색에 성공하였습니다",
-                CampusMapMockFixture.searchBuildings(keyword)
+                CAMPUS_MAP_BUILDING_SEARCH_SUCCESS,
+                BuildingSearchResponse.from(campusMapQueryUseCase.searchBuildings(keyword))
         );
     }
 
@@ -65,8 +77,8 @@ public class CampusMapQueryApiV2 {
             @RequestParam(name = "categories") @NotEmpty List<String> categories
     ) {
         return ok(
-                "카테고리 기반 시설 목록 조회에 성공하였습니다",
-                CampusMapMockFixture.campusPlaces(categories)
+                CAMPUS_MAP_PLACE_LIST_SEARCH_SUCCESS,
+                CampusPlaceListResponse.from(campusMapQueryUseCase.getCampusPlaces(categories))
         );
     }
 
@@ -75,16 +87,21 @@ public class CampusMapQueryApiV2 {
     public ResponseEntity<BaseResponse<BuildingDetailResponse>> getBuildingDetail(
             @PathVariable Long buildingId
     ) {
-        var response = CampusMapMockFixture.findBuildingDetail(buildingId);
+        Optional<BuildingDetailResult> result = campusMapQueryUseCase.getBuildingDetail(buildingId);
 
-        return response.map(buildingDetailResponse
-                -> ok("캠퍼스 건물 상세 조회에 성공하였습니다", buildingDetailResponse))
-                .orElseGet(() -> ResponseEntity.status(404)
-                .body(new BaseResponse<>(404, "캠퍼스 건물을 찾을 수 없습니다", null)));
+        if (result.isEmpty()) {
+            return ResponseEntity.status(CAMPUS_MAP_BUILDING_NOT_FOUND.getCode())
+                    .body(new BaseResponse<>(CAMPUS_MAP_BUILDING_NOT_FOUND, null));
+        }
 
+        BuildingDetailResponse response = BuildingDetailResponse.from(result.get());
+        return ok(CAMPUS_MAP_BUILDING_DETAIL_SEARCH_SUCCESS, response);
     }
 
-    private static <T> ResponseEntity<BaseResponse<T>> ok(String message, T data) {
-        return ResponseEntity.ok(new BaseResponse<>(200, message, data));
+    private static <T> ResponseEntity<BaseResponse<T>> ok(
+            ResponseCodeAndMessages response,
+            T data
+    ) {
+        return ResponseEntity.ok(new BaseResponse<>(response, data));
     }
 }
