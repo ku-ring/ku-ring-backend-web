@@ -195,6 +195,29 @@ class DependencyRuleTests {
 						.importPackages("com.kustacks.kuring.club.."));
 	}
 
+    @DisplayName("NewMessage 아키텍처 검증")
+    @Test
+    void validateNewMessageArchitecture() {
+        HexagonalArchitecture.boundedContext("com.kustacks.kuring.new_message")
+
+                .withDomainLayer("domain")
+
+                .withAdaptersLayer("adapter")
+                .incoming("in.event")
+                .outgoing("out.firebase")
+                .and()
+
+                .withApplicationLayer("application")
+                .services("service")
+                .incomingPorts("port.in")
+                .outgoingPorts("port.out")
+                .and()
+
+                .withConfiguration("configuration")
+                .check(new ClassFileImporter()
+                        .importPackages("com.kustacks.kuring.new_message.."));
+    }
+
 	@DisplayName("테스트 페키지 의존성 검증")
 	@Test
 	void testPackageDependencies() {

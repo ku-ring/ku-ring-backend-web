@@ -76,6 +76,11 @@ public enum ErrorCode {
     NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 공지를 찾을 수 없습니다."),
 
 
+    MESSAGE_SUBSCRIPTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "토픽 구독에 실패했습니다."),
+    MESSAGE_UNSUBSCRIPTION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "토픽 구독 해제에 실패했습니다."),
+    MESSAGE_ROLLBACK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "알림 처리 중 롤백에 실패했습니다."),
+    MESSAGE_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "알림 전송에 실패했습니다."),
+
     FB_FAIL_SUBSCRIBE(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 구독에 실패했습니다."),
     FB_FAIL_UNSUBSCRIBE(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 구독 해제에 실패했습니다."),
     FB_FAIL_ROLLBACK(HttpStatus.INTERNAL_SERVER_ERROR, "카테고리 편집 중 transaction fail이 발생했고, 이를 복구하는데 실패했습니다."),
