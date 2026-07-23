@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -199,8 +198,10 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
     }
 
     private boolean isWeekend(LocalDate date) {
-        return date.getDayOfWeek() == DayOfWeek.SATURDAY
-                || date.getDayOfWeek() == DayOfWeek.SUNDAY;
+        return switch (date.getDayOfWeek()) {
+            case SATURDAY, SUNDAY -> true;
+            default -> false;
+        };
     }
 
     private String resolveImageUrl(String imagePath) {
