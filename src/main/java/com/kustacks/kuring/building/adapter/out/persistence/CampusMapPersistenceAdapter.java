@@ -2,6 +2,7 @@ package com.kustacks.kuring.building.adapter.out.persistence;
 
 import com.kustacks.kuring.building.application.port.out.CampusMapQueryPort;
 import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceCategoryReadModel;
+import com.kustacks.kuring.building.domain.Building;
 import com.kustacks.kuring.common.annotation.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CampusMapPersistenceAdapter implements CampusMapQueryPort {
 
+    private final BuildingRepository buildingRepository;
     private final CampusPlaceCategoryRepository categoryRepository;
 
     @Override
@@ -22,5 +24,10 @@ public class CampusMapPersistenceAdapter implements CampusMapQueryPort {
                         category.getDisplayOrder()
                 ))
                 .toList();
+    }
+
+    @Override
+    public List<Building> findBuildings() {
+        return buildingRepository.findAllByOrderByIdAsc();
     }
 }

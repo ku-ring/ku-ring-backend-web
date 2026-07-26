@@ -1,5 +1,6 @@
 package com.kustacks.kuring.building.adapter.in.web;
 
+import com.kustacks.kuring.building.adapter.in.web.dto.BuildingListResponse;
 import com.kustacks.kuring.building.adapter.in.web.dto.CategoryListResponse;
 import com.kustacks.kuring.building.application.port.in.CampusMapQueryUseCase;
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_BUILDING_LIST_SEARCH_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_CATEGORY_LIST_SEARCH_SUCCESS;
 
 @Tag(name = "Campus Map-Query", description = "캠퍼스맵 정보 조회")
@@ -33,6 +35,15 @@ public class CampusMapQueryApiV2 {
         return ResponseEntity.ok(new BaseResponse<>(
                 CAMPUS_MAP_CATEGORY_LIST_SEARCH_SUCCESS,
                 CategoryListResponse.from(campusMapQueryUseCase.getCategories())
+        ));
+    }
+
+    @Operation(summary = "캠퍼스맵 전체 건물 목록 조회")
+    @GetMapping("/buildings")
+    public ResponseEntity<BaseResponse<BuildingListResponse>> getBuildings() {
+        return ResponseEntity.ok(new BaseResponse<>(
+                CAMPUS_MAP_BUILDING_LIST_SEARCH_SUCCESS,
+                BuildingListResponse.from(campusMapQueryUseCase.getBuildings())
         ));
     }
 }
