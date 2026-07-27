@@ -91,6 +91,9 @@ public class Building {
         if (campusPlace == null) {
             throw new IllegalArgumentException("캠퍼스 시설은 필수입니다.");
         }
+        if (campusPlace.getBuilding() != this) {
+            throw new IllegalArgumentException("다른 건물의 캠퍼스 시설은 추가할 수 없습니다.");
+        }
         campusPlaces.add(campusPlace);
     }
 
