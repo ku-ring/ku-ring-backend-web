@@ -82,7 +82,7 @@ public class CampusPlace {
             String externalUrl,
             int displayOrder
     ) {
-        validateRequiredFields(building, category, name, locationType);
+        validateRequiredFields(building, category, name, locationType, displayOrder);
         validateQuantity(quantity);
 
         this.building = building;
@@ -106,7 +106,8 @@ public class CampusPlace {
             Building building,
             CampusPlaceCategory category,
             String name,
-            CampusPlaceLocationType locationType
+            CampusPlaceLocationType locationType,
+            int displayOrder
     ) {
         if (building == null) {
             throw new IllegalArgumentException(ErrorCode.BUILDING_REQUIRED.getMessage());
@@ -119,6 +120,9 @@ public class CampusPlace {
         }
         if (locationType == null) {
             throw new IllegalArgumentException(ErrorCode.CAMPUS_PLACE_LOCATION_TYPE_REQUIRED.getMessage());
+        }
+        if (displayOrder <= 0) {
+            throw new IllegalArgumentException(ErrorCode.CAMPUS_PLACE_DISPLAY_ORDER_INVALID.getMessage());
         }
     }
 
