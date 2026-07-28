@@ -1,5 +1,6 @@
 package com.kustacks.kuring.building.domain;
 
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -108,28 +109,28 @@ public class CampusPlace {
             CampusPlaceLocationType locationType
     ) {
         if (building == null) {
-            throw new IllegalArgumentException("건물은 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.BUILDING_REQUIRED.getMessage());
         }
         if (category == null) {
-            throw new IllegalArgumentException("캠퍼스 시설 카테고리는 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.CAMPUS_PLACE_CATEGORY_REQUIRED.getMessage());
         }
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("캠퍼스 시설명은 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.CAMPUS_PLACE_NAME_REQUIRED.getMessage());
         }
         if (locationType == null) {
-            throw new IllegalArgumentException("캠퍼스 시설 위치 유형은 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.CAMPUS_PLACE_LOCATION_TYPE_REQUIRED.getMessage());
         }
     }
 
     private static void validateQuantity(Integer quantity) {
         if (quantity != null && quantity <= 0) {
-            throw new IllegalArgumentException("캠퍼스 시설 수량은 양수여야 합니다.");
+            throw new IllegalArgumentException(ErrorCode.CAMPUS_PLACE_QUANTITY_INVALID.getMessage());
         }
     }
 
     private void validateOperatingHours(OperatingHours hours) {
         if (hours == null) {
-            throw new IllegalArgumentException("운영시간은 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.OPERATING_HOURS_REQUIRED.getMessage());
         }
 
         boolean alreadyExists = operatingHours.stream()
@@ -139,9 +140,7 @@ public class CampusPlace {
                 ));
 
         if (alreadyExists) {
-            throw new IllegalArgumentException(
-                    "같은 기간과 요일의 운영시간은 중복될 수 없습니다."
-            );
+            throw new IllegalArgumentException(ErrorCode.OPERATING_HOURS_DUPLICATED.getMessage());
         }
     }
 }

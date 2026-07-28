@@ -1,5 +1,6 @@
 package com.kustacks.kuring.building.domain;
 
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,10 +33,10 @@ public class BuildingSearchKeyword {
 
     BuildingSearchKeyword(Building building, String keyword) {
         if (building == null) {
-            throw new IllegalArgumentException("건물은 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.BUILDING_REQUIRED.getMessage());
         }
         if (keyword == null || keyword.isBlank()) {
-            throw new IllegalArgumentException("건물 검색어는 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.BUILDING_SEARCH_KEYWORD_REQUIRED.getMessage());
         }
 
         this.building = building;

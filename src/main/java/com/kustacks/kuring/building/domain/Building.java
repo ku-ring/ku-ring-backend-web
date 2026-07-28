@@ -1,5 +1,6 @@
 package com.kustacks.kuring.building.domain;
 
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -89,10 +90,10 @@ public class Building {
 
     public void addCampusPlace(CampusPlace campusPlace) {
         if (campusPlace == null) {
-            throw new IllegalArgumentException("캠퍼스 시설은 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.CAMPUS_PLACE_REQUIRED.getMessage());
         }
         if (campusPlace.getBuilding() != this) {
-            throw new IllegalArgumentException("다른 건물의 캠퍼스 시설은 추가할 수 없습니다.");
+            throw new IllegalArgumentException(ErrorCode.CAMPUS_PLACE_BUILDING_MISMATCH.getMessage());
         }
         campusPlaces.add(campusPlace);
     }
@@ -104,7 +105,7 @@ public class Building {
 
     private void validateOperatingHours(OperatingHours hours) {
         if (hours == null) {
-            throw new IllegalArgumentException("운영시간은 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.OPERATING_HOURS_REQUIRED.getMessage());
         }
 
         boolean alreadyExists = operatingHours.stream()
@@ -114,18 +115,16 @@ public class Building {
                 ));
 
         if (alreadyExists) {
-            throw new IllegalArgumentException(
-                    "같은 기간과 요일의 운영시간은 중복될 수 없습니다."
-            );
+            throw new IllegalArgumentException(ErrorCode.OPERATING_HOURS_DUPLICATED.getMessage());
         }
     }
 
     private static void validateRequiredFields(String name, String address) {
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("건물명은 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.BUILDING_NAME_REQUIRED.getMessage());
         }
         if (address == null || address.isBlank()) {
-            throw new IllegalArgumentException("건물 주소는 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.BUILDING_ADDRESS_REQUIRED.getMessage());
         }
     }
 }

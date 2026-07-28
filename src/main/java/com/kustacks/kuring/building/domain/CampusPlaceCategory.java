@@ -1,5 +1,6 @@
 package com.kustacks.kuring.building.domain;
 
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -45,13 +46,13 @@ public class CampusPlaceCategory {
 
     private static void validate(String code, String korName, int displayOrder) {
         if (code == null || code.isBlank()) {
-            throw new IllegalArgumentException("캠퍼스 시설 카테고리 코드는 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.CAMPUS_PLACE_CATEGORY_CODE_REQUIRED.getMessage());
         }
         if (korName == null || korName.isBlank()) {
-            throw new IllegalArgumentException("캠퍼스 시설 카테고리 한글명은 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.CAMPUS_PLACE_CATEGORY_KOREAN_NAME_REQUIRED.getMessage());
         }
         if (displayOrder <= 0) {
-            throw new IllegalArgumentException("카테고리 노출 순서는 양수여야 합니다.");
+            throw new IllegalArgumentException(ErrorCode.CAMPUS_PLACE_CATEGORY_DISPLAY_ORDER_INVALID.getMessage());
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.kustacks.kuring.building.domain;
 
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -62,13 +63,13 @@ public class OperatingHours {
             OperatingHoursStatus status
     ) {
         if (period == null) {
-            throw new IllegalArgumentException("운영 기간은 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.OPERATING_PERIOD_REQUIRED.getMessage());
         }
         if (dayGroup == null) {
-            throw new IllegalArgumentException("운영 요일 구분은 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.OPERATING_DAY_GROUP_REQUIRED.getMessage());
         }
         if (status == null) {
-            throw new IllegalArgumentException("운영시간 상태는 필수입니다.");
+            throw new IllegalArgumentException(ErrorCode.OPERATING_HOURS_STATUS_REQUIRED.getMessage());
         }
     }
 
@@ -79,19 +80,19 @@ public class OperatingHours {
     ) {
         if (status == OperatingHoursStatus.SCHEDULED) {
             if (opensAt == null) {
-                throw new IllegalArgumentException("지정 운영시간에는 시작 시간이 필요합니다.");
+                throw new IllegalArgumentException(ErrorCode.OPERATING_HOURS_OPEN_TIME_REQUIRED.getMessage());
             }
             if (closesAt == null) {
-                throw new IllegalArgumentException("지정 운영시간에는 종료 시간이 필요합니다.");
+                throw new IllegalArgumentException(ErrorCode.OPERATING_HOURS_CLOSE_TIME_REQUIRED.getMessage());
             }
             return;
         }
 
         if (opensAt != null) {
-            throw new IllegalArgumentException("지정 운영시간이 아닌 경우 시작 시간을 입력할 수 없습니다.");
+            throw new IllegalArgumentException(ErrorCode.OPERATING_HOURS_OPEN_TIME_NOT_ALLOWED.getMessage());
         }
         if (closesAt != null) {
-            throw new IllegalArgumentException("지정 운영시간이 아닌 경우 종료 시간을 입력할 수 없습니다.");
+            throw new IllegalArgumentException(ErrorCode.OPERATING_HOURS_CLOSE_TIME_NOT_ALLOWED.getMessage());
         }
     }
 }
