@@ -1,5 +1,7 @@
 package com.kustacks.kuring.building.adapter.in.web.dto.model;
 
+import java.util.List;
+
 public record CampusPlaceItem(
         Long id,
         String name,
@@ -10,7 +12,7 @@ public record CampusPlaceItem(
         String floor,
         String locationDetail,
         Integer quantity,
-        CurrentOperatingHours currentOperatingHours,
+        List<OperatingHoursDto> operatingHours,
         String externalUrl,
         BuildingSummary building
 ) {
