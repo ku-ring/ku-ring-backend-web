@@ -534,7 +534,7 @@ public final class CampusMapMockFixture {
                 "흡연부스",
                 MOCK_SMOKING_BOOTH_IMAGE_URL,
                 CampusPlaceLocationType.OUTDOOR.toString(),
-                "OUTDOOR",
+                null,
                 locationDetail,
                 1,
                 MOCK_OPEN_24_HOURS,
