@@ -37,6 +37,7 @@ public final class CampusMapMockFixture {
     private static final String MOCK_CAFE_IMAGE_URL = "https://placehold.co/600x400/png?text=Cafe";
     private static final String MOCK_RESTAURANT_IMAGE_URL = "https://placehold.co/600x400/png?text=Restaurant";
     private static final String MOCK_PRINTER_IMAGE_URL = "https://placehold.co/600x400/png?text=Printer";
+    private static final String MOCK_SMOKING_BOOTH_IMAGE_URL = "https://placehold.co/600x400/png?text=Smoking+Booth";
     private static final String MOCK_CONVENIENCE_STORE_IMAGE_URL = "https://placehold.co/600x400/png?text=Convenience+Store";
     private static final String MOCK_LOUNGE_IMAGE_URL = "https://placehold.co/600x400/png?text=Lounge";
     private static final String MOCK_KCUBE_IMAGE_URL = "https://placehold.co/600x400/png?text=K-Cube";
@@ -255,27 +256,37 @@ public final class CampusMapMockFixture {
             SCIENCE_BUILDING
     );
 
-    private static final Map<Long, List<String>> BUILDING_SEARCH_KEYWORDS = Map.of(
-            LAW_BUILDING.id(), List.of("종강", "종합강의동"),
-            STUDENT_CENTER_BUILDING.id(), List.of("학관", "제1학생회관")
+    private static final Map<Long, List<String>> BUILDING_SEARCH_KEYWORDS = Map.ofEntries(
+            Map.entry(BUSINESS_BUILDING.id(), List.of("경영대")),
+            Map.entry(LAW_BUILDING.id(), List.of("종강", "종합강의동", "법대")),
+            Map.entry(STUDENT_CENTER_BUILDING.id(), List.of("학관", "1학관", "제1학관", "제1학생회관")),
+            Map.entry(SANGHUH_RESEARCH_BUILDING.id(), List.of("상허관")),
+            Map.entry(EDUCATION_SCIENCE_BUILDING.id(), List.of("사범대", "사대")),
+            Map.entry(ARTS_AND_DESIGN_BUILDING.id(), List.of("예문관", "예디대")),
+            Map.entry(LANGUAGE_INSTITUTE_BUILDING.id(), List.of("언어원")),
+            Map.entry(SANGHUH_LIBRARY_BUILDING.id(), List.of("상허도서관", "중앙도서관", "중도")),
+            Map.entry(ANIMAL_SCIENCES_BUILDING.id(), List.of("동생대")),
+            Map.entry(ARCHITECTURE_BUILDING.id(), List.of("건축대")),
+            Map.entry(SCIENCE_BUILDING.id(), List.of("이과대"))
     );
 
     private static final List<CampusPlaceItem> CAMPUS_PLACES = List.of(
             cafe(201L, "카페 레스티오", "1F", "경영관 1층", BUSINESS_BUILDING),
             convenienceStore(202L, "CU 경영관점", "1F", "경영관 1층", BUSINESS_BUILDING),
             kcube(203L, "경영관 K-Hub", "1F", "경영관 1층", BUSINESS_BUILDING),
-            lounge(204L, "경영관 휴게실", null, "경영관 내부", BUSINESS_BUILDING),
+            lounge(204L, "경영관 휴게실", "1F", "경영관 1층", 1, BUSINESS_BUILDING),
+            smokingBooth(205L, "경영관 흡연부스", "경영관 CU 앞", BUSINESS_BUILDING),
 
-            printer(301L, "법학관 인쇄소", "B1", "법학관 지하 1층", LAW_BUILDING),
-            lounge(302L, "법학관 휴게실", null, "법학관 내부", LAW_BUILDING),
+            printer(301L, "법학관 인쇄소", "B1", "법학관 지하 1층", 1, LAW_BUILDING),
+            lounge(302L, "법학관 휴게실", "1F", "법학관 1층", 1, LAW_BUILDING),
 
             convenienceStore(401L, "CU 학생회관점", "1F", "학생회관 1층", STUDENT_CENTER_BUILDING),
-            printer(402L, "학생회관 복사실", "1F", "학생회관 1층", STUDENT_CENTER_BUILDING),
+            printer(402L, "학생회관 복사실", "1F", "학생회관 1층", 2, STUDENT_CENTER_BUILDING),
             restaurant(403L, "KU's Kitchen", "1F", "학생회관 1층", STUDENT_CENTER_BUILDING),
             restaurant(404L, "구시아 푸드마켓", "B1", "학생회관 지하 1층", STUDENT_CENTER_BUILDING),
             cafe(405L, "1847 샐러드카페", "1F", "학생회관 1층", STUDENT_CENTER_BUILDING),
 
-            printer(501L, "상허연구관 복사실", "1F", "상허연구관 1층", SANGHUH_RESEARCH_BUILDING),
+            printer(501L, "상허연구관 복사실", "1F", "상허연구관 1층", 1, SANGHUH_RESEARCH_BUILDING),
             cafe(502L, "카페 블루포트", "1F", "상허연구관 1층", SANGHUH_RESEARCH_BUILDING),
             kcube(503L, "상허연구관 K-Cube", "3F", "상허연구관 3층", SANGHUH_RESEARCH_BUILDING),
 
@@ -293,15 +304,17 @@ public final class CampusMapMockFixture {
             kcube(1302L, "동물생명과학관 K-Cube", "1F", "동물생명과학관 1층", ANIMAL_SCIENCES_BUILDING),
 
             convenienceStore(1501L, "이마트24 산학협동관점", "1F", "산학협동관 1층", INDUSTRY_COOPERATION_BUILDING),
-            printer(1502L, "산학협동관 복사실", "2F", "산학협동관 2층", INDUSTRY_COOPERATION_BUILDING),
+            printer(1502L, "산학협동관 복사실", "2F", "산학협동관 2층", 2, INDUSTRY_COOPERATION_BUILDING),
 
             restaurant(1601L, "KU's Dining", "B1", "새천년관 지하 1층", NEW_MILLENNIUM_BUILDING),
 
             kcube(1701L, "건축관 K-Hub", "1F", "건축관 1층", ARCHITECTURE_BUILDING),
+            smokingBooth(1702L, "건축관 흡연부스", "건축관 뒤", ARCHITECTURE_BUILDING),
 
             cafe(1801L, "카페 ING", "1F", "해봉부동산학관 1층", REAL_ESTATE_BUILDING),
 
-            kcube(2001L, "과학관 K-Hub", "1F", "과학관 1층", SCIENCE_BUILDING)
+            kcube(2001L, "과학관 K-Hub", "1F", "과학관 1층", SCIENCE_BUILDING),
+            smokingBooth(2002L, "과학관 흡연부스", "과학관 주차장", SCIENCE_BUILDING)
     );
 
     private static final CampusPlaceDetail STUDENT_CENTER_BANK = new CampusPlaceDetail(
@@ -489,6 +502,7 @@ public final class CampusMapMockFixture {
             String name,
             String floor,
             String locationDetail,
+            Integer quantity,
             BuildingSummary building
     ) {
         return new CampusPlaceItem(
@@ -500,8 +514,30 @@ public final class CampusMapMockFixture {
                 CampusPlaceLocationType.INDOOR.toString(),
                 floor,
                 locationDetail,
-                null,
+                quantity,
                 MOCK_STORE_HOURS,
+                null,
+                building
+        );
+    }
+
+    private static CampusPlaceItem smokingBooth(
+            Long id,
+            String name,
+            String locationDetail,
+            BuildingSummary building
+    ) {
+        return new CampusPlaceItem(
+                id,
+                name,
+                "smoking_booth",
+                "흡연부스",
+                MOCK_SMOKING_BOOTH_IMAGE_URL,
+                CampusPlaceLocationType.OUTDOOR.toString(),
+                "OUTDOOR",
+                locationDetail,
+                1,
+                MOCK_OPEN_24_HOURS,
                 null,
                 building
         );
@@ -535,6 +571,7 @@ public final class CampusMapMockFixture {
             String name,
             String floor,
             String locationDetail,
+            Integer quantity,
             BuildingSummary building
     ) {
         return new CampusPlaceItem(
@@ -546,7 +583,7 @@ public final class CampusMapMockFixture {
                 CampusPlaceLocationType.INDOOR.toString(),
                 floor,
                 locationDetail,
-                null,
+                quantity,
                 MOCK_OPEN_24_HOURS,
                 null,
                 building
