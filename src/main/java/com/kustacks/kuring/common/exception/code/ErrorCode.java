@@ -65,6 +65,32 @@ public enum ErrorCode {
     CLUB_NOT_SUBSCRIBED(HttpStatus.BAD_REQUEST, "구독하지 않은 동아리입니다."),
 
     BUILDING_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 건물을 찾을 수 없습니다."),
+    BUILDING_REQUIRED(HttpStatus.BAD_REQUEST, "건물은 필수입니다."),
+    BUILDING_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "건물명은 필수입니다."),
+    BUILDING_ADDRESS_REQUIRED(HttpStatus.BAD_REQUEST, "건물 주소는 필수입니다."),
+    BUILDING_SEARCH_KEYWORD_REQUIRED(HttpStatus.BAD_REQUEST, "건물 검색어는 필수입니다."),
+
+    CAMPUS_PLACE_REQUIRED(HttpStatus.BAD_REQUEST, "캠퍼스 시설은 필수입니다."),
+    CAMPUS_PLACE_BUILDING_MISMATCH(HttpStatus.BAD_REQUEST, "다른 건물의 캠퍼스 시설은 추가할 수 없습니다."),
+    CAMPUS_PLACE_CATEGORY_REQUIRED(HttpStatus.BAD_REQUEST, "캠퍼스 시설 카테고리는 필수입니다."),
+    CAMPUS_PLACE_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "캠퍼스 시설명은 필수입니다."),
+    CAMPUS_PLACE_LOCATION_TYPE_REQUIRED(HttpStatus.BAD_REQUEST, "캠퍼스 시설 위치 유형은 필수입니다."),
+    CAMPUS_PLACE_QUANTITY_INVALID(HttpStatus.BAD_REQUEST, "캠퍼스 시설 수량은 양수여야 합니다."),
+    CAMPUS_PLACE_DISPLAY_ORDER_INVALID(HttpStatus.BAD_REQUEST, "캠퍼스 시설 노출 순서는 양수여야 합니다."),
+
+    CAMPUS_PLACE_CATEGORY_CODE_REQUIRED(HttpStatus.BAD_REQUEST, "캠퍼스 시설 카테고리 코드는 필수입니다."),
+    CAMPUS_PLACE_CATEGORY_KOREAN_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "캠퍼스 시설 카테고리 한글명은 필수입니다."),
+    CAMPUS_PLACE_CATEGORY_DISPLAY_ORDER_INVALID(HttpStatus.BAD_REQUEST, "카테고리 노출 순서는 양수여야 합니다."),
+
+    OPERATING_HOURS_REQUIRED(HttpStatus.BAD_REQUEST, "운영시간은 필수입니다."),
+    OPERATING_HOURS_DUPLICATED(HttpStatus.BAD_REQUEST, "같은 기간과 요일의 운영시간은 중복될 수 없습니다."),
+    OPERATING_PERIOD_REQUIRED(HttpStatus.BAD_REQUEST, "운영 기간은 필수입니다."),
+    OPERATING_DAY_GROUP_REQUIRED(HttpStatus.BAD_REQUEST, "운영 요일 구분은 필수입니다."),
+    OPERATING_HOURS_STATUS_REQUIRED(HttpStatus.BAD_REQUEST, "운영시간 상태는 필수입니다."),
+    OPERATING_HOURS_OPEN_TIME_REQUIRED(HttpStatus.BAD_REQUEST, "지정 운영시간에는 시작 시간이 필요합니다."),
+    OPERATING_HOURS_CLOSE_TIME_REQUIRED(HttpStatus.BAD_REQUEST, "지정 운영시간에는 종료 시간이 필요합니다."),
+    OPERATING_HOURS_OPEN_TIME_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "지정 운영시간이 아닌 경우 시작 시간을 입력할 수 없습니다."),
+    OPERATING_HOURS_CLOSE_TIME_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "지정 운영시간이 아닌 경우 종료 시간을 입력할 수 없습니다."),
 
 
     STAFF_SCRAPER_EXCEED_RETRY_LIMIT("교직원 업데이트 재시도 횟수를 초과했습니다."),
