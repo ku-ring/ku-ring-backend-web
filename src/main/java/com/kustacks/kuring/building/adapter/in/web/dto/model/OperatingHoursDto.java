@@ -1,10 +1,11 @@
 package com.kustacks.kuring.building.adapter.in.web.dto.model;
 
-public record CurrentOperatingHours(
+public record OperatingHoursDto(
         String period,
         String dayGroup,
         String status,
         String opensAt,
-        String closesAt
+        String closesAt,
+        boolean isCurrent
 ) {
 }

@@ -1,7 +1,7 @@
 package com.kustacks.kuring.building.adapter.in.web.dto;
 
 import com.kustacks.kuring.building.adapter.in.web.dto.model.CampusPlaceDetail;
-import com.kustacks.kuring.building.adapter.in.web.dto.model.CurrentOperatingHours;
+import com.kustacks.kuring.building.adapter.in.web.dto.model.OperatingHoursDto;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public record BuildingDetailResponse(
         Double latitude,
         Double longitude,
         String imageUrl,
-        CurrentOperatingHours currentOperatingHours,
+        List<OperatingHoursDto> operatingHours,
         List<CampusPlaceDetail> campusPlaces
 ) {
 }

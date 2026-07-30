@@ -33,7 +33,7 @@ public class CampusMapQueryApiV2 {
     public ResponseEntity<BaseResponse<CategoryListResponse>> getCategories() {
         return ok(
                 "장소 카테고리 목록 조회에 성공하였습니다",
-                CampusMapMockFixture.categories()
+                CampusMapMockFixture.mockCategories()
         );
     }
 
@@ -42,7 +42,7 @@ public class CampusMapQueryApiV2 {
     public ResponseEntity<BaseResponse<BuildingListResponse>> getBuildings() {
         return ok(
                 "캠퍼스 건물 목록 조회에 성공하였습니다",
-                CampusMapMockFixture.buildings()
+                CampusMapMockFixture.mockBuildings()
         );
     }
 
@@ -54,7 +54,7 @@ public class CampusMapQueryApiV2 {
     ) {
         return ok(
                 "캠퍼스 건물 검색에 성공하였습니다",
-                CampusMapMockFixture.searchBuildings(keyword)
+                CampusMapMockFixture.mockBuildingSearchResult(keyword)
         );
     }
 
@@ -62,11 +62,11 @@ public class CampusMapQueryApiV2 {
     @GetMapping("/campus-places")
     public ResponseEntity<BaseResponse<CampusPlaceListResponse>> getCampusPlaces(
             @Parameter(description = "쉼표로 구분된 시설 카테고리")
-            @RequestParam(name = "categories") @NotEmpty List<String> categories
+            @RequestParam(name = "categories") @NotEmpty List<@NotBlank String> categories
     ) {
         return ok(
                 "카테고리 기반 시설 목록 조회에 성공하였습니다",
-                CampusMapMockFixture.campusPlaces(categories)
+                CampusMapMockFixture.mockCampusPlaces(categories)
         );
     }
 
@@ -75,7 +75,7 @@ public class CampusMapQueryApiV2 {
     public ResponseEntity<BaseResponse<BuildingDetailResponse>> getBuildingDetail(
             @PathVariable Long buildingId
     ) {
-        var response = CampusMapMockFixture.findBuildingDetail(buildingId);
+        var response = CampusMapMockFixture.findMockBuildingDetail(buildingId);
 
         return response.map(buildingDetailResponse
                 -> ok("캠퍼스 건물 상세 조회에 성공하였습니다", buildingDetailResponse))
