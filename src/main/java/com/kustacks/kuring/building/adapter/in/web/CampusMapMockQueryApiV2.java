@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,11 +22,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@Slf4j
 @Tag(name = "Campus Map-Query", description = "캠퍼스맵 정보 조회")
 @Validated
+@ConditionalOnProperty(
+        prefix = "campus-map",
+        name = "source",
+        havingValue = "mock",
+        matchIfMissing = true
+)
 @RestWebAdapter(path = "/api/v2/maps")
-public class CampusMapQueryApiV2 {
+public class CampusMapMockQueryApiV2 {
+
+    // TODO: 실제 캠퍼스맵 데이터 등록 및 API 전환이 완료되면 제거한다.
 
     @Operation(summary = "캠퍼스맵 카테고리 목록 조회")
     @GetMapping("/categories")
