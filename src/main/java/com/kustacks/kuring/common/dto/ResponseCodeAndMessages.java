@@ -71,6 +71,9 @@ public enum ResponseCodeAndMessages {
     CLUB_SUBSCRIPTION_DELETE_SUCCESS(HttpStatus.OK.value(), "구독이 취소되었습니다."),
     CLUB_SUBSCRIPTION_LIST_SEARCH_SUCCESS(HttpStatus.OK.value(), "구독한 동아리 목록 조회에 성공하였습니다"),
 
+    /* Campus Map */
+    CAMPUS_MAP_CATEGORY_LIST_SEARCH_SUCCESS(HttpStatus.OK.value(), "장소 카테고리 목록 조회에 성공하였습니다"),
+
     /**
      * ErrorCodes about auth
      */
