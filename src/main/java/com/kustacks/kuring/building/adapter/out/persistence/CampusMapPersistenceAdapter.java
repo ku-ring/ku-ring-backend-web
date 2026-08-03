@@ -1,6 +1,7 @@
 package com.kustacks.kuring.building.adapter.out.persistence;
 
 import com.kustacks.kuring.building.application.port.out.CampusMapQueryPort;
+import com.kustacks.kuring.building.application.port.out.dto.BuildingSummaryReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceCategoryReadModel;
 import com.kustacks.kuring.building.domain.Building;
 import com.kustacks.kuring.common.annotation.PersistenceAdapter;
@@ -27,7 +28,19 @@ public class CampusMapPersistenceAdapter implements CampusMapQueryPort {
     }
 
     @Override
-    public List<Building> findBuildings() {
-        return buildingRepository.findAllByOrderByIdAsc();
+    public List<BuildingSummaryReadModel> findBuildings() {
+        return buildingRepository.findAllByOrderByIdAsc().stream()
+                .map(this::toBuildingSummaryReadModel)
+                .toList();
+    }
+
+    private BuildingSummaryReadModel toBuildingSummaryReadModel(Building building) {
+        return new BuildingSummaryReadModel(
+                building.getId(),
+                building.getName(),
+                building.getAddress(),
+                building.getLat(),
+                building.getLon()
+        );
     }
 }

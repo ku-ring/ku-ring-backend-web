@@ -4,8 +4,8 @@ import com.kustacks.kuring.building.application.port.in.CampusMapQueryUseCase;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
 import com.kustacks.kuring.building.application.port.out.CampusMapQueryPort;
+import com.kustacks.kuring.building.application.port.out.dto.BuildingSummaryReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceCategoryReadModel;
-import com.kustacks.kuring.building.domain.Building;
 import com.kustacks.kuring.common.annotation.UseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,13 +41,13 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
         );
     }
 
-    private BuildingSummaryResult toBuildingSummaryResult(Building building) {
+    private BuildingSummaryResult toBuildingSummaryResult(BuildingSummaryReadModel building) {
         return new BuildingSummaryResult(
-                building.getId(),
-                building.getName(),
-                building.getAddress(),
-                building.getLat(),
-                building.getLon()
+                building.id(),
+                building.name(),
+                building.address(),
+                building.latitude(),
+                building.longitude()
         );
     }
 }
