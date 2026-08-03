@@ -1,5 +1,6 @@
 package com.kustacks.kuring.building.adapter.out.persistence;
 
+import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceCategoryReadModel;
 import com.kustacks.kuring.building.domain.CampusPlaceCategory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,10 +37,13 @@ class CampusMapPersistenceAdapterTest {
                 .thenReturn(categories);
 
         // when
-        List<CampusPlaceCategory> result = campusMapPersistenceAdapter.findFilterCategories();
+        List<CampusPlaceCategoryReadModel> result = campusMapPersistenceAdapter.findFilterCategories();
 
         // then
-        assertThat(result).containsExactlyElementsOf(categories);
+        assertThat(result).containsExactly(
+                new CampusPlaceCategoryReadModel("cafe", "카페", 1),
+                new CampusPlaceCategoryReadModel("restaurant", "식당", 2)
+        );
         verify(categoryRepository).findByFilterEnabledTrueOrderByDisplayOrderAscIdAsc();
     }
 }
