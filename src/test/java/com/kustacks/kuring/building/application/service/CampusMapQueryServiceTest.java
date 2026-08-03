@@ -91,4 +91,34 @@ class CampusMapQueryServiceTest {
         );
         verify(campusMapQueryPort).findBuildings();
     }
+
+    @Test
+    @DisplayName("건물 검색어의 앞뒤 공백을 제거하여 조회한다")
+    void search_buildings_with_trimmed_keyword() {
+        // given
+        when(campusMapQueryPort.searchBuildings("학관")).thenReturn(List.of(
+                new BuildingSummaryReadModel(
+                        4L,
+                        "학생회관",
+                        "서울특별시 광진구 능동로 120",
+                        37.5412,
+                        127.0784
+                )
+        ));
+
+        // when
+        List<BuildingSummaryResult> result = campusMapQueryService.searchBuildings("  학관  ");
+
+        // then
+        assertThat(result).containsExactly(
+                new BuildingSummaryResult(
+                        4L,
+                        "학생회관",
+                        "서울특별시 광진구 능동로 120",
+                        37.5412,
+                        127.0784
+                )
+        );
+        verify(campusMapQueryPort).searchBuildings("학관");
+    }
 }

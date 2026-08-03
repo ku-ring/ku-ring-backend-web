@@ -110,4 +110,44 @@ class CampusMapQueryApiV2Test {
                         )
         );
     }
+
+    @Test
+    @DisplayName("캠퍼스맵 건물을 키워드로 검색한다")
+    void search_buildings() {
+        // given
+        when(campusMapQueryUseCase.searchBuildings("학관")).thenReturn(List.of(
+                new BuildingSummaryResult(
+                        4L,
+                        "학생회관",
+                        "서울특별시 광진구 능동로 120",
+                        37.5412,
+                        127.0784
+                )
+        ));
+
+        // when
+        var response = campusMapQueryApiV2.searchBuildings("학관");
+
+        // then
+        var body = response.getBody();
+        if (body == null) {
+            throw new AssertionError("Response body must not be null");
+        }
+
+        assertAll(
+                () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
+                () -> assertThat(body)
+                        .extracting(BaseResponse::getCode, BaseResponse::getMessage)
+                        .containsExactly(200, "캠퍼스 건물 검색에 성공하였습니다"),
+                () -> assertThat(body.getData().buildings())
+                        .extracting(
+                                BuildingSummary::id,
+                                BuildingSummary::name,
+                                BuildingSummary::address
+                        )
+                        .containsExactly(
+                                tuple(4L, "학생회관", "서울특별시 광진구 능동로 120")
+                        )
+        );
+    }
 }
