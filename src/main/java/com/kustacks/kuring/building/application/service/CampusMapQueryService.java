@@ -33,6 +33,15 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
                 .toList();
     }
 
+    @Override
+    public List<BuildingSummaryResult> searchBuildings(String keyword) {
+        String normalizedKeyword = keyword.trim();
+
+        return campusMapQueryPort.searchBuildings(normalizedKeyword).stream()
+                .map(this::toBuildingSummaryResult)
+                .toList();
+    }
+
     private CategoryResult toCategoryResult(CampusPlaceCategoryReadModel category) {
         return new CategoryResult(
                 category.code(),
