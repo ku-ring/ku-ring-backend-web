@@ -89,9 +89,7 @@ class CampusMapQueryApiV2Test {
 
         // then
         var body = response.getBody();
-        if (body == null) {
-            throw new AssertionError("Response body must not be null");
-        }
+        assertThat(body).isNotNull();
 
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
@@ -130,9 +128,7 @@ class CampusMapQueryApiV2Test {
 
         // then
         var body = response.getBody();
-        if (body == null) {
-            throw new AssertionError("Response body must not be null");
-        }
+        assertThat(body).isNotNull();
 
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),

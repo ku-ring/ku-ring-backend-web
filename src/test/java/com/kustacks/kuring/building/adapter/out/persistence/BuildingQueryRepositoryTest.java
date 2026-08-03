@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("리포지토리 : BuildingQueryRepository")
 class BuildingQueryRepositoryTest extends IntegrationTestSupport {
@@ -31,15 +32,17 @@ class BuildingQueryRepositoryTest extends IntegrationTestSupport {
         buildingRepository.saveAndFlush(lawBuilding);
 
         // when & then
-        assertThat(buildingRepository.searchByKeyword("법학"))
-                .extracting(Building::getName)
-                .containsExactly("법학관");
-        assertThat(buildingRepository.searchByKeyword("능동로"))
-                .extracting(Building::getName)
-                .containsExactly("법학관");
-        assertThat(buildingRepository.searchByKeyword("종강"))
-                .extracting(Building::getName)
-                .containsExactly("법학관");
+        assertAll(
+                () -> assertThat(buildingRepository.searchByKeyword("법학"))
+                        .extracting(Building::getName)
+                        .containsExactly("법학관"),
+                () -> assertThat(buildingRepository.searchByKeyword("능동로"))
+                        .extracting(Building::getName)
+                        .containsExactly("법학관"),
+                () -> assertThat(buildingRepository.searchByKeyword("종강"))
+                        .extracting(Building::getName)
+                        .containsExactly("법학관")
+        );
     }
 
     @Test
@@ -58,15 +61,17 @@ class BuildingQueryRepositoryTest extends IntegrationTestSupport {
         ));
 
         // when & then
-        assertThat(buildingRepository.searchByKeyword("%"))
-                .extracting(Building::getName)
-                .containsExactly("100%관");
-        assertThat(buildingRepository.searchByKeyword("_"))
-                .extracting(Building::getName)
-                .containsExactly("A_B관");
-        assertThat(buildingRepository.searchByKeyword("\\"))
-                .extracting(Building::getName)
-                .containsExactly("A\\B관");
+        assertAll(
+                () -> assertThat(buildingRepository.searchByKeyword("%"))
+                        .extracting(Building::getName)
+                        .containsExactly("100%관"),
+                () -> assertThat(buildingRepository.searchByKeyword("_"))
+                        .extracting(Building::getName)
+                        .containsExactly("A_B관"),
+                () -> assertThat(buildingRepository.searchByKeyword("\\"))
+                        .extracting(Building::getName)
+                        .containsExactly("A\\B관")
+        );
     }
 
     private Building building(String name) {
