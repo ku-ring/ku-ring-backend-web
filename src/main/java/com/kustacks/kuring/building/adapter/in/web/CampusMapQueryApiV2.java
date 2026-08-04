@@ -70,7 +70,7 @@ public class CampusMapQueryApiV2 {
     @Operation(summary = "캠퍼스맵 카테고리 기반 시설 목록 조회")
     @GetMapping("/campus-places")
     public ResponseEntity<BaseResponse<CampusPlaceListResponse>> getCampusPlaces(
-            @RequestParam(name = "categories") @NotEmpty List<String> categories
+            @RequestParam(name = "categories") @NotEmpty List<@NotBlank String> categories
     ) {
         return ResponseEntity.ok(new BaseResponse<>(
                 CAMPUS_MAP_PLACE_LIST_SEARCH_SUCCESS,
