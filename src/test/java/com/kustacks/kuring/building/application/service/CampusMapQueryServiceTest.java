@@ -205,7 +205,7 @@ class CampusMapQueryServiceTest {
 
         // when
         List<CampusPlaceResult> results = campusMapQueryService.getCampusPlaces(
-                List.of(" Printer, cafe ", "printer")
+                List.of(" Printer ", "cafe", "printer")
         );
 
         // then

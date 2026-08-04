@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -135,7 +134,6 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
 
     private List<String> normalizeCategories(List<String> categories) {
         return categories.stream()
-                .flatMap(category -> Arrays.stream(category.split(",")))
                 .map(String::trim)
                 .map(category -> category.toLowerCase(Locale.ROOT))
                 .filter(category -> !category.isBlank())
