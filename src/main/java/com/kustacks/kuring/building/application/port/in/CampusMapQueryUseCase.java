@@ -1,6 +1,7 @@
 package com.kustacks.kuring.building.application.port.in;
 
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
+import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
 
 import java.util.List;
@@ -12,4 +13,6 @@ public interface CampusMapQueryUseCase {
     List<BuildingSummaryResult> getBuildings();
 
     List<BuildingSummaryResult> searchBuildings(String keyword);
+
+    List<CampusPlaceResult> getCampusPlaces(List<String> categories);
 }

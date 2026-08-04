@@ -3,7 +3,11 @@ package com.kustacks.kuring.building.adapter.out.persistence;
 import com.kustacks.kuring.building.application.port.out.CampusMapQueryPort;
 import com.kustacks.kuring.building.application.port.out.dto.BuildingSummaryReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceCategoryReadModel;
+import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceReadModel;
+import com.kustacks.kuring.building.application.port.out.dto.OperatingHoursReadModel;
 import com.kustacks.kuring.building.domain.Building;
+import com.kustacks.kuring.building.domain.CampusPlace;
+import com.kustacks.kuring.building.domain.OperatingHours;
 import com.kustacks.kuring.common.annotation.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 
@@ -14,6 +18,7 @@ import java.util.List;
 public class CampusMapPersistenceAdapter implements CampusMapQueryPort {
 
     private final BuildingRepository buildingRepository;
+    private final CampusPlaceRepository campusPlaceRepository;
     private final CampusPlaceCategoryRepository categoryRepository;
 
     @Override
@@ -39,6 +44,46 @@ public class CampusMapPersistenceAdapter implements CampusMapQueryPort {
         return buildingRepository.searchByKeyword(keyword).stream()
                 .map(this::toBuildingSummaryReadModel)
                 .toList();
+    }
+
+    @Override
+    public List<CampusPlaceReadModel> findCampusPlacesByCategories(List<String> categoryCodes) {
+        if (categoryCodes.isEmpty()) {
+            return List.of();
+        }
+
+        return campusPlaceRepository.findByFilterCategories(categoryCodes).stream()
+                .map(this::toCampusPlaceReadModel)
+                .toList();
+    }
+
+    private CampusPlaceReadModel toCampusPlaceReadModel(CampusPlace place) {
+        return new CampusPlaceReadModel(
+                place.getId(),
+                place.getName(),
+                place.getCategory().getCode(),
+                place.getCategory().getKorName(),
+                place.getImagePath(),
+                place.getLocationType(),
+                place.getFloor(),
+                place.getLocationDetail(),
+                place.getQuantity(),
+                place.getOperatingHours().stream()
+                        .map(this::toOperatingHoursReadModel)
+                        .toList(),
+                place.getExternalUrl(),
+                toBuildingSummaryReadModel(place.getBuilding())
+        );
+    }
+
+    private OperatingHoursReadModel toOperatingHoursReadModel(OperatingHours operatingHours) {
+        return new OperatingHoursReadModel(
+                operatingHours.getPeriod(),
+                operatingHours.getDayGroup(),
+                operatingHours.getStatus(),
+                operatingHours.getOpensAt(),
+                operatingHours.getClosesAt()
+        );
     }
 
     private BuildingSummaryReadModel toBuildingSummaryReadModel(Building building) {
