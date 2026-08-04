@@ -170,7 +170,11 @@ class CampusMapPersistenceAdapterTest {
     @Test
     @DisplayName("카테고리가 비어 있으면 캠퍼스 시설을 조회하지 않는다")
     void return_empty_campus_places_when_categories_are_empty() {
-        assertThat(campusMapPersistenceAdapter.findCampusPlacesByCategories(List.of())).isEmpty();
+        // when
+        List<CampusPlaceReadModel> result = campusMapPersistenceAdapter.findCampusPlacesByCategories(List.of());
+
+        // then
+        assertThat(result).isEmpty();
     }
 
     private Building building(Long id, String name, Double latitude, Double longitude) {
