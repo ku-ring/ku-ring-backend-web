@@ -1,9 +1,10 @@
 package com.kustacks.kuring.building.adapter.out.calendar;
 
-import com.kustacks.kuring.building.application.port.out.AcademicPeriodPort;
+import com.kustacks.kuring.building.application.port.out.AcademicPeriodQueryPort;
 import com.kustacks.kuring.building.domain.OperatingPeriod;
-import com.kustacks.kuring.calendar.application.port.out.AcademicEventQueryPort;
-import com.kustacks.kuring.calendar.application.port.out.dto.AcademicEventReadModel;
+import com.kustacks.kuring.calendar.application.port.in.AcademicEventQueryUseCase;
+import com.kustacks.kuring.calendar.application.port.in.dto.AcademicEventLookupCommand;
+import com.kustacks.kuring.calendar.application.port.in.dto.AcademicEventResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,17 +16,19 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class AcademicEventPeriodAdapter implements AcademicPeriodPort {
+public class AcademicEventPeriodAdapter implements AcademicPeriodQueryPort {
 
     private static final int RECENT_BOUNDARY_MONTHS = 5;
 
-    private final AcademicEventQueryPort academicEventQueryPort;
+    private final AcademicEventQueryUseCase academicEventQueryUseCase;
 
     @Override
-    public OperatingPeriod resolve(LocalDate date) {
+    public OperatingPeriod determineOperatingPeriod(LocalDate date) {
         LocalDateTime recentBoundaryThreshold = date.minusMonths(RECENT_BOUNDARY_MONTHS).atStartOfDay();
 
-        return academicEventQueryPort.findEventsBefore(date).stream()
+        return academicEventQueryUseCase.getAcademicEventsByDateRange(
+                        new AcademicEventLookupCommand(null, date)
+                ).stream()
                 .map(this::toBoundary)
                 .flatMap(Optional::stream)
                 .filter(boundary -> !boundary.startsAt().isBefore(recentBoundaryThreshold))
@@ -34,7 +37,7 @@ public class AcademicEventPeriodAdapter implements AcademicPeriodPort {
                 .orElseGet(() -> resolveFallback(date));
     }
 
-    private Optional<PeriodBoundary> toBoundary(AcademicEventReadModel event) {
+    private Optional<PeriodBoundary> toBoundary(AcademicEventResult event) {
         String summary = event.summary()
                 .replaceAll("\\s", "")
                 .toLowerCase(Locale.ROOT);

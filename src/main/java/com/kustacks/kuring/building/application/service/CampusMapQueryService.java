@@ -5,7 +5,7 @@ import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResul
 import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
 import com.kustacks.kuring.building.application.port.in.dto.OperatingHoursResult;
-import com.kustacks.kuring.building.application.port.out.AcademicPeriodPort;
+import com.kustacks.kuring.building.application.port.out.AcademicPeriodQueryPort;
 import com.kustacks.kuring.building.application.port.out.CampusMapQueryPort;
 import com.kustacks.kuring.building.application.port.out.dto.BuildingSummaryReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceCategoryReadModel;
@@ -33,7 +33,7 @@ import static com.kustacks.kuring.common.utils.TimeUtils.isWeekend;
 public class CampusMapQueryService implements CampusMapQueryUseCase {
 
     private final CampusMapQueryPort campusMapQueryPort;
-    private final AcademicPeriodPort academicPeriodPort;
+    private final AcademicPeriodQueryPort academicPeriodQueryPort;
     private final StoragePort storagePort;
     private final Clock clock;
 
@@ -128,8 +128,8 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
 
     private OperatingContext currentOperatingContext() {
         LocalDate today = LocalDate.now(clock);
-        OperatingPeriod period = academicPeriodPort.resolve(today);
-        OperatingDayGroup dayGroup = isWeekend(today)? OperatingDayGroup.WEEKEND : OperatingDayGroup.WEEKDAY;
+        OperatingPeriod period = academicPeriodQueryPort.determineOperatingPeriod(today);
+        OperatingDayGroup dayGroup = isWeekend(today) ? OperatingDayGroup.WEEKEND : OperatingDayGroup.WEEKDAY;
 
         return new OperatingContext(period, dayGroup);
     }

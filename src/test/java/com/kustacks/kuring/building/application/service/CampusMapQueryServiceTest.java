@@ -3,7 +3,7 @@ package com.kustacks.kuring.building.application.service;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
 import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
-import com.kustacks.kuring.building.application.port.out.AcademicPeriodPort;
+import com.kustacks.kuring.building.application.port.out.AcademicPeriodQueryPort;
 import com.kustacks.kuring.building.application.port.out.CampusMapQueryPort;
 import com.kustacks.kuring.building.application.port.out.dto.BuildingSummaryReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceCategoryReadModel;
@@ -45,7 +45,7 @@ class CampusMapQueryServiceTest {
     private CampusMapQueryPort campusMapQueryPort;
 
     @Mock
-    private AcademicPeriodPort academicPeriodPort;
+    private AcademicPeriodQueryPort academicPeriodQueryPort;
 
     @Mock
     private StoragePort storagePort;
@@ -56,7 +56,7 @@ class CampusMapQueryServiceTest {
     void setUp() {
         campusMapQueryService = new CampusMapQueryService(
                 campusMapQueryPort,
-                academicPeriodPort,
+                academicPeriodQueryPort,
                 storagePort,
                 MONDAY_CLOCK
         );
@@ -157,10 +157,90 @@ class CampusMapQueryServiceTest {
     }
 
     @Test
-    @DisplayName("카테고리를 정규화하고 전체 운영시간과 현재 적용 여부를 반환한다")
+    @DisplayName("시설 카테고리의 앞뒤 공백을 제거하여 조회한다")
+    void get_campus_places_with_trimmed_category() {
+        // given
+        givenCurrentOperatingPeriod();
+
+        // when
+        campusMapQueryService.getCampusPlaces(List.of(" printer "));
+
+        // then
+        verify(campusMapQueryPort).findCampusPlacesByCategories(List.of("printer"));
+    }
+
+    @Test
+    @DisplayName("시설 카테고리를 소문자로 변환하여 조회한다")
+    void get_campus_places_with_lowercase_category() {
+        // given
+        givenCurrentOperatingPeriod();
+
+        // when
+        campusMapQueryService.getCampusPlaces(List.of("PRINTER"));
+
+        // then
+        verify(campusMapQueryPort).findCampusPlacesByCategories(List.of("printer"));
+    }
+
+    @Test
+    @DisplayName("중복된 시설 카테고리를 제거하여 조회한다")
+    void get_campus_places_with_distinct_categories() {
+        // given
+        givenCurrentOperatingPeriod();
+
+        // when
+        campusMapQueryService.getCampusPlaces(List.of("printer", "printer"));
+
+        // then
+        verify(campusMapQueryPort).findCampusPlacesByCategories(List.of("printer"));
+    }
+
+    @Test
+    @DisplayName("시설의 전체 운영시간과 현재 적용 여부를 반환한다")
     void get_campus_places_with_operating_hours() {
         // given
-        CampusPlaceReadModel place = new CampusPlaceReadModel(
+        CampusPlaceReadModel place = campusPlaceReadModel();
+        when(academicPeriodQueryPort.determineOperatingPeriod(
+                MONDAY_CLOCK.instant().atZone(MONDAY_CLOCK.getZone()).toLocalDate()
+        )).thenReturn(OperatingPeriod.VACATION);
+        when(campusMapQueryPort.findCampusPlacesByCategories(List.of("printer")))
+                .thenReturn(List.of(place));
+        when(storagePort.getPresignedUrl("campus-map/printer.png"))
+                .thenReturn("https://storage.example.com/printer.png");
+
+        // when
+        List<CampusPlaceResult> results = campusMapQueryService.getCampusPlaces(
+                List.of("printer")
+        );
+
+        // then
+        assertThat(results)
+                .singleElement()
+                .satisfies(result -> assertAll(
+                        () -> assertThat(result.imageUrl()).isEqualTo("https://storage.example.com/printer.png"),
+                        () -> assertThat(result.operatingHours()).hasSize(2),
+                        () -> assertThat(result.operatingHours().get(0).period())
+                                .isEqualTo(OperatingPeriod.SEMESTER),
+                        () -> assertThat(result.operatingHours().get(0).isCurrent()).isFalse(),
+                        () -> assertThat(result.operatingHours().get(1).period())
+                                .isEqualTo(OperatingPeriod.VACATION),
+                        () -> assertThat(result.operatingHours().get(1).dayGroup())
+                                .isEqualTo(OperatingDayGroup.WEEKDAY),
+                        () -> assertThat(result.operatingHours().get(1).status())
+                                .isEqualTo(OperatingHoursStatus.OPEN_24_HOURS),
+                        () -> assertThat(result.operatingHours().get(1).isCurrent()).isTrue()
+                ));
+        verify(campusMapQueryPort).findCampusPlacesByCategories(List.of("printer"));
+    }
+
+    private void givenCurrentOperatingPeriod() {
+        when(academicPeriodQueryPort.determineOperatingPeriod(
+                MONDAY_CLOCK.instant().atZone(MONDAY_CLOCK.getZone()).toLocalDate()
+        )).thenReturn(OperatingPeriod.VACATION);
+    }
+
+    private CampusPlaceReadModel campusPlaceReadModel() {
+        return new CampusPlaceReadModel(
                 10L,
                 "학생회관 프린터",
                 "printer",
@@ -195,33 +275,5 @@ class CampusMapQueryServiceTest {
                         127.0784
                 )
         );
-        when(academicPeriodPort.resolve(
-                MONDAY_CLOCK.instant().atZone(MONDAY_CLOCK.getZone()).toLocalDate()
-        )).thenReturn(OperatingPeriod.VACATION);
-        when(campusMapQueryPort.findCampusPlacesByCategories(List.of("printer", "cafe")))
-                .thenReturn(List.of(place));
-        when(storagePort.getPresignedUrl("campus-map/printer.png"))
-                .thenReturn("https://storage.example.com/printer.png");
-
-        // when
-        List<CampusPlaceResult> results = campusMapQueryService.getCampusPlaces(
-                List.of(" Printer ", "cafe", "printer")
-        );
-
-        // then
-        CampusPlaceResult result = results.get(0);
-        assertAll(
-                () -> assertThat(results).hasSize(1),
-                () -> assertThat(result.imageUrl()).isEqualTo("https://storage.example.com/printer.png"),
-                () -> assertThat(result.operatingHours()).hasSize(2),
-                () -> assertThat(result.operatingHours().get(0).period()).isEqualTo(OperatingPeriod.SEMESTER),
-                () -> assertThat(result.operatingHours().get(0).isCurrent()).isFalse(),
-                () -> assertThat(result.operatingHours().get(1).period()).isEqualTo(OperatingPeriod.VACATION),
-                () -> assertThat(result.operatingHours().get(1).dayGroup()).isEqualTo(OperatingDayGroup.WEEKDAY),
-                () -> assertThat(result.operatingHours().get(1).status())
-                        .isEqualTo(OperatingHoursStatus.OPEN_24_HOURS),
-                () -> assertThat(result.operatingHours().get(1).isCurrent()).isTrue()
-        );
-        verify(campusMapQueryPort).findCampusPlacesByCategories(List.of("printer", "cafe"));
     }
 }

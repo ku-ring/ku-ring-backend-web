@@ -4,7 +4,7 @@ import com.kustacks.kuring.building.domain.OperatingPeriod;
 
 import java.time.LocalDate;
 
-public interface AcademicPeriodPort {
+public interface AcademicPeriodQueryPort {
 
-    OperatingPeriod resolve(LocalDate date);
+    OperatingPeriod determineOperatingPeriod(LocalDate date);
 }
