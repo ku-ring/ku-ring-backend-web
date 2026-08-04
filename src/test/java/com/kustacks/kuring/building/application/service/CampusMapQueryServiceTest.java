@@ -1,20 +1,34 @@
 package com.kustacks.kuring.building.application.service;
 
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
+import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
+import com.kustacks.kuring.building.application.port.out.AcademicPeriodPort;
 import com.kustacks.kuring.building.application.port.out.CampusMapQueryPort;
 import com.kustacks.kuring.building.application.port.out.dto.BuildingSummaryReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceCategoryReadModel;
+import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceReadModel;
+import com.kustacks.kuring.building.application.port.out.dto.OperatingHoursReadModel;
+import com.kustacks.kuring.building.domain.CampusPlaceLocationType;
+import com.kustacks.kuring.building.domain.OperatingDayGroup;
+import com.kustacks.kuring.building.domain.OperatingHoursStatus;
+import com.kustacks.kuring.building.domain.OperatingPeriod;
+import com.kustacks.kuring.storage.application.port.out.StoragePort;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,11 +36,31 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CampusMapQueryServiceTest {
 
+    private static final Clock MONDAY_CLOCK = Clock.fixed(
+            Instant.parse("2026-07-20T00:00:00Z"),
+            ZoneId.of("Asia/Seoul")
+    );
+
     @Mock
     private CampusMapQueryPort campusMapQueryPort;
 
-    @InjectMocks
+    @Mock
+    private AcademicPeriodPort academicPeriodPort;
+
+    @Mock
+    private StoragePort storagePort;
+
     private CampusMapQueryService campusMapQueryService;
+
+    @BeforeEach
+    void setUp() {
+        campusMapQueryService = new CampusMapQueryService(
+                campusMapQueryPort,
+                academicPeriodPort,
+                storagePort,
+                MONDAY_CLOCK
+        );
+    }
 
     @Test
     @DisplayName("필터에 노출되는 캠퍼스맵 카테고리 목록을 조회한다")
@@ -120,5 +154,74 @@ class CampusMapQueryServiceTest {
                 )
         );
         verify(campusMapQueryPort).searchBuildings("학관");
+    }
+
+    @Test
+    @DisplayName("카테고리를 정규화하고 전체 운영시간과 현재 적용 여부를 반환한다")
+    void get_campus_places_with_operating_hours() {
+        // given
+        CampusPlaceReadModel place = new CampusPlaceReadModel(
+                10L,
+                "학생회관 프린터",
+                "printer",
+                "프린터",
+                "campus-map/printer.png",
+                CampusPlaceLocationType.INDOOR,
+                "1F",
+                "라운지 안쪽",
+                3,
+                List.of(
+                        new OperatingHoursReadModel(
+                                OperatingPeriod.SEMESTER,
+                                OperatingDayGroup.WEEKDAY,
+                                OperatingHoursStatus.SCHEDULED,
+                                LocalTime.of(8, 0),
+                                LocalTime.of(22, 0)
+                        ),
+                        new OperatingHoursReadModel(
+                                OperatingPeriod.VACATION,
+                                OperatingDayGroup.WEEKDAY,
+                                OperatingHoursStatus.OPEN_24_HOURS,
+                                null,
+                                null
+                        )
+                ),
+                null,
+                new BuildingSummaryReadModel(
+                        4L,
+                        "학생회관",
+                        "서울특별시 광진구 능동로 120",
+                        37.5412,
+                        127.0784
+                )
+        );
+        when(academicPeriodPort.resolve(
+                MONDAY_CLOCK.instant().atZone(MONDAY_CLOCK.getZone()).toLocalDate()
+        )).thenReturn(OperatingPeriod.VACATION);
+        when(campusMapQueryPort.findCampusPlacesByCategories(List.of("printer", "cafe")))
+                .thenReturn(List.of(place));
+        when(storagePort.getPresignedUrl("campus-map/printer.png"))
+                .thenReturn("https://storage.example.com/printer.png");
+
+        // when
+        List<CampusPlaceResult> results = campusMapQueryService.getCampusPlaces(
+                List.of(" Printer, cafe ", "printer")
+        );
+
+        // then
+        CampusPlaceResult result = results.get(0);
+        assertAll(
+                () -> assertThat(results).hasSize(1),
+                () -> assertThat(result.imageUrl()).isEqualTo("https://storage.example.com/printer.png"),
+                () -> assertThat(result.operatingHours()).hasSize(2),
+                () -> assertThat(result.operatingHours().get(0).period()).isEqualTo(OperatingPeriod.SEMESTER),
+                () -> assertThat(result.operatingHours().get(0).isCurrent()).isFalse(),
+                () -> assertThat(result.operatingHours().get(1).period()).isEqualTo(OperatingPeriod.VACATION),
+                () -> assertThat(result.operatingHours().get(1).dayGroup()).isEqualTo(OperatingDayGroup.WEEKDAY),
+                () -> assertThat(result.operatingHours().get(1).status())
+                        .isEqualTo(OperatingHoursStatus.OPEN_24_HOURS),
+                () -> assertThat(result.operatingHours().get(1).isCurrent()).isTrue()
+        );
+        verify(campusMapQueryPort).findCampusPlacesByCategories(List.of("printer", "cafe"));
     }
 }
