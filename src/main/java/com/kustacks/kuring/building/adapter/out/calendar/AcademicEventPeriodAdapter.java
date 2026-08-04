@@ -17,16 +17,21 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AcademicEventPeriodAdapter implements AcademicPeriodPort {
 
+    private static final int RECENT_BOUNDARY_MONTHS = 5;
+
     private final AcademicEventQueryPort academicEventQueryPort;
 
     @Override
     public OperatingPeriod resolve(LocalDate date) {
+        LocalDateTime recentBoundaryThreshold = date.minusMonths(RECENT_BOUNDARY_MONTHS).atStartOfDay();
+
         return academicEventQueryPort.findEventsBefore(date).stream()
                 .map(this::toBoundary)
                 .flatMap(Optional::stream)
+                .filter(boundary -> !boundary.startsAt().isBefore(recentBoundaryThreshold))
                 .max(Comparator.comparing(PeriodBoundary::startsAt))
                 .map(PeriodBoundary::period)
-                .orElse(OperatingPeriod.SEMESTER);
+                .orElseGet(() -> resolveFallback(date));
     }
 
     private Optional<PeriodBoundary> toBoundary(AcademicEventReadModel event) {
@@ -43,6 +48,13 @@ public class AcademicEventPeriodAdapter implements AcademicPeriodPort {
         }
 
         return Optional.empty();
+    }
+
+    private OperatingPeriod resolveFallback(LocalDate date) {
+        return switch (date.getMonth()) {
+            case JANUARY, FEBRUARY, JULY, AUGUST -> OperatingPeriod.VACATION;
+            default -> OperatingPeriod.SEMESTER;
+        };
     }
 
     private record PeriodBoundary(LocalDateTime startsAt, OperatingPeriod period) {

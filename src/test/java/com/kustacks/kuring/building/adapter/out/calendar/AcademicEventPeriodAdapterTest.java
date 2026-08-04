@@ -47,7 +47,7 @@ class AcademicEventPeriodAdapterTest {
     }
 
     @Test
-    @DisplayName("판단할 학사일정이 없으면 학기중으로 판단한다")
+    @DisplayName("판단할 학사일정이 없으면 날짜를 기준으로 운영기간을 판단한다")
     void resolve_semester_when_boundary_does_not_exist() {
         // given
         LocalDate today = LocalDate.of(2026, 3, 2);
@@ -58,6 +58,22 @@ class AcademicEventPeriodAdapterTest {
 
         // then
         assertThat(period).isEqualTo(OperatingPeriod.SEMESTER);
+    }
+
+    @Test
+    @DisplayName("가장 최근 학사일정이 5개월보다 오래되면 날짜를 기준으로 운영기간을 판단한다")
+    void resolve_period_from_date_when_boundary_is_stale() {
+        // given
+        LocalDate today = LocalDate.of(2026, 8, 20);
+        when(academicEventQueryPort.findEventsBefore(today)).thenReturn(List.of(
+                event(1L, "2025학년도 2학기 개강", LocalDateTime.of(2025, 9, 1, 0, 0))
+        ));
+
+        // when
+        OperatingPeriod period = academicEventPeriodAdapter.resolve(today);
+
+        // then
+        assertThat(period).isEqualTo(OperatingPeriod.VACATION);
     }
 
     private AcademicEventReadModel event(Long id, String summary, LocalDateTime startsAt) {
