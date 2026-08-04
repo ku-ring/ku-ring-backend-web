@@ -10,4 +10,6 @@ public interface CampusMapQueryUseCase {
     List<CategoryResult> getCategories();
 
     List<BuildingSummaryResult> getBuildings();
+
+    List<BuildingSummaryResult> searchBuildings(String keyword);
 }

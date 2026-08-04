@@ -85,6 +85,30 @@ class CampusMapPersistenceAdapterTest {
         verify(buildingRepository).findAllByOrderByIdAsc();
     }
 
+    @Test
+    @DisplayName("건물 검색 결과를 조회한다")
+    void search_buildings() {
+        // given
+        Building studentCenter = building(4L, "학생회관", 37.5412, 127.0784);
+        when(buildingRepository.searchByKeyword("학관"))
+                .thenReturn(List.of(studentCenter));
+
+        // when
+        List<BuildingSummaryReadModel> result = campusMapPersistenceAdapter.searchBuildings("학관");
+
+        // then
+        assertThat(result).containsExactly(
+                new BuildingSummaryReadModel(
+                        4L,
+                        "학생회관",
+                        "서울특별시 광진구 능동로 120",
+                        37.5412,
+                        127.0784
+                )
+        );
+        verify(buildingRepository).searchByKeyword("학관");
+    }
+
     private Building building(Long id, String name, Double latitude, Double longitude) {
         Building building = new Building(
                 name,

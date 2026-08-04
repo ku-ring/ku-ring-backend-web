@@ -34,6 +34,13 @@ public class CampusMapPersistenceAdapter implements CampusMapQueryPort {
                 .toList();
     }
 
+    @Override
+    public List<BuildingSummaryReadModel> searchBuildings(String keyword) {
+        return buildingRepository.searchByKeyword(keyword).stream()
+                .map(this::toBuildingSummaryReadModel)
+                .toList();
+    }
+
     private BuildingSummaryReadModel toBuildingSummaryReadModel(Building building) {
         return new BuildingSummaryReadModel(
                 building.getId(),
