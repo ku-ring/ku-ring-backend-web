@@ -25,6 +25,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import static com.kustacks.kuring.common.utils.TimeUtils.isWeekend;
+
 @UseCase
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -139,13 +141,6 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
                 .filter(category -> !category.isBlank())
                 .distinct()
                 .toList();
-    }
-
-    private boolean isWeekend(LocalDate date) {
-        return switch (date.getDayOfWeek()) {
-            case SATURDAY, SUNDAY -> true;
-            default -> false;
-        };
     }
 
     private String resolveImageUrl(String imagePath) {
