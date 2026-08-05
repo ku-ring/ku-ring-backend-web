@@ -31,4 +31,17 @@ class CampusPlaceQueryRepositoryImpl implements CampusPlaceQueryRepository {
                 .orderBy(campusPlace.displayOrder.asc(), campusPlace.id.asc())
                 .fetch();
     }
+
+    @Override
+    public List<CampusPlace> findByBuildingId(Long buildingId) {
+        return queryFactory
+                .selectFrom(campusPlace)
+                .join(campusPlace.building, building).fetchJoin()
+                .join(campusPlace.category, campusPlaceCategory).fetchJoin()
+                .leftJoin(campusPlace.operatingHours, operatingHours).fetchJoin()
+                .where(campusPlace.building.id.eq(buildingId))
+                .distinct()
+                .orderBy(campusPlace.displayOrder.asc(), campusPlace.id.asc())
+                .fetch();
+    }
 }

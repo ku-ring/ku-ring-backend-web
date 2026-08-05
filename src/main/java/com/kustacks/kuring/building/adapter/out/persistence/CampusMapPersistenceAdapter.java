@@ -1,6 +1,7 @@
 package com.kustacks.kuring.building.adapter.out.persistence;
 
 import com.kustacks.kuring.building.application.port.out.CampusMapQueryPort;
+import com.kustacks.kuring.building.application.port.out.dto.BuildingDetailReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.BuildingSummaryReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceCategoryReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceReadModel;
@@ -12,6 +13,7 @@ import com.kustacks.kuring.common.annotation.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
@@ -57,6 +59,19 @@ public class CampusMapPersistenceAdapter implements CampusMapQueryPort {
                 .toList();
     }
 
+    @Override
+    public List<CampusPlaceReadModel> findCampusPlacesByBuildingId(Long buildingId) {
+        return campusPlaceRepository.findByBuildingId(buildingId).stream()
+                .map(this::toCampusPlaceReadModel)
+                .toList();
+    }
+
+    @Override
+    public Optional<BuildingDetailReadModel> findBuildingById(Long buildingId) {
+        return buildingRepository.findById(buildingId)
+                .map(this::toBuildingDetailReadModel);
+    }
+
     private CampusPlaceReadModel toCampusPlaceReadModel(CampusPlace place) {
         return new CampusPlaceReadModel(
                 place.getId(),
@@ -83,6 +98,20 @@ public class CampusMapPersistenceAdapter implements CampusMapQueryPort {
                 operatingHours.getStatus(),
                 operatingHours.getOpensAt(),
                 operatingHours.getClosesAt()
+        );
+    }
+
+    private BuildingDetailReadModel toBuildingDetailReadModel(Building building) {
+        return new BuildingDetailReadModel(
+                building.getId(),
+                building.getName(),
+                building.getAddress(),
+                building.getLat(),
+                building.getLon(),
+                building.getImagePath(),
+                building.getOperatingHours().stream()
+                        .map(this::toOperatingHoursReadModel)
+                        .toList()
         );
     }
 
