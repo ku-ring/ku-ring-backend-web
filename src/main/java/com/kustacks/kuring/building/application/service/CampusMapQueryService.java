@@ -17,6 +17,7 @@ import com.kustacks.kuring.building.application.service.model.OperatingContext;
 import com.kustacks.kuring.building.domain.OperatingDayGroup;
 import com.kustacks.kuring.building.domain.OperatingPeriod;
 import com.kustacks.kuring.common.annotation.UseCase;
+import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.storage.application.port.out.StoragePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +27,8 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
+import static com.kustacks.kuring.common.exception.code.ErrorCode.BUILDING_NOT_FOUND;
 import static com.kustacks.kuring.common.utils.TimeUtils.isWeekend;
 
 @UseCase
@@ -74,13 +75,15 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
     }
 
     @Override
-    public Optional<BuildingDetailResult> getBuildingDetail(Long buildingId) {
-        return campusMapQueryPort.findBuildingById(buildingId)
-                .map(building -> toBuildingDetailResult(
-                        building,
-                        campusMapQueryPort.findCampusPlacesByBuildingId(buildingId),
-                        currentOperatingContext()
-                ));
+    public BuildingDetailResult getBuildingDetail(Long buildingId) {
+        BuildingDetailReadModel building = campusMapQueryPort.findBuildingById(buildingId)
+                .orElseThrow(() -> new NotFoundException(BUILDING_NOT_FOUND));
+
+        return toBuildingDetailResult(
+                building,
+                campusMapQueryPort.findCampusPlacesByBuildingId(buildingId),
+                currentOperatingContext()
+        );
     }
 
     private CategoryResult toCategoryResult(CampusPlaceCategoryReadModel category) {

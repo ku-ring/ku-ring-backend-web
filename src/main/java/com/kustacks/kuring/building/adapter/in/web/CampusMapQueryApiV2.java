@@ -6,7 +6,6 @@ import com.kustacks.kuring.building.adapter.in.web.dto.BuildingSearchResponse;
 import com.kustacks.kuring.building.adapter.in.web.dto.CampusPlaceListResponse;
 import com.kustacks.kuring.building.adapter.in.web.dto.CategoryListResponse;
 import com.kustacks.kuring.building.application.port.in.CampusMapQueryUseCase;
-import com.kustacks.kuring.building.application.port.in.dto.BuildingDetailResult;
 import com.kustacks.kuring.common.annotation.RestWebAdapter;
 import com.kustacks.kuring.common.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,11 +21,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_BUILDING_DETAIL_SEARCH_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_BUILDING_LIST_SEARCH_SUCCESS;
-import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_BUILDING_NOT_FOUND;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_BUILDING_SEARCH_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_CATEGORY_LIST_SEARCH_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_PLACE_LIST_SEARCH_SUCCESS;
@@ -89,16 +86,9 @@ public class CampusMapQueryApiV2 {
     public ResponseEntity<BaseResponse<BuildingDetailResponse>> getBuildingDetail(
             @PathVariable Long buildingId
     ) {
-        Optional<BuildingDetailResult> result = campusMapQueryUseCase.getBuildingDetail(buildingId);
-
-        if (result.isEmpty()) {
-            return ResponseEntity.status(CAMPUS_MAP_BUILDING_NOT_FOUND.getCode())
-                    .body(new BaseResponse<>(CAMPUS_MAP_BUILDING_NOT_FOUND, null));
-        }
-
         return ResponseEntity.ok(new BaseResponse<>(
                 CAMPUS_MAP_BUILDING_DETAIL_SEARCH_SUCCESS,
-                BuildingDetailResponse.from(result.get())
+                BuildingDetailResponse.from(campusMapQueryUseCase.getBuildingDetail(buildingId))
         ));
     }
 }

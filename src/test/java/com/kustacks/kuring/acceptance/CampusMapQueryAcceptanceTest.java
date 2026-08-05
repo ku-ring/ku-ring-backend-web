@@ -17,9 +17,9 @@ import java.util.List;
 
 import static com.kustacks.kuring.acceptance.CampusMapStep.assertBuildingListResponse;
 import static com.kustacks.kuring.acceptance.CampusMapStep.assertBuildingDetailResponse;
+import static com.kustacks.kuring.acceptance.CampusMapStep.assertBuildingNotFoundErrorResponse;
 import static com.kustacks.kuring.acceptance.CampusMapStep.assertCampusPlaceListResponse;
 import static com.kustacks.kuring.acceptance.CampusMapStep.assertCategoryListResponse;
-import static com.kustacks.kuring.acceptance.CampusMapStep.assertNotFoundResponse;
 import static com.kustacks.kuring.acceptance.CampusMapStep.requestBuildingSearch;
 import static com.kustacks.kuring.acceptance.CampusMapStep.requestBuildingDetail;
 import static com.kustacks.kuring.acceptance.CampusMapStep.requestBuildings;
@@ -156,7 +156,7 @@ class CampusMapQueryAcceptanceTest extends IntegrationTestSupport {
         var response = requestBuildingDetail(Long.MAX_VALUE);
 
         // then
-        assertNotFoundResponse(response);
+        assertBuildingNotFoundErrorResponse(response);
     }
 
     private Building building(String name, Double latitude, Double longitude) {

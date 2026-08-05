@@ -6,7 +6,6 @@ import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CampusMapQueryUseCase {
 
@@ -18,5 +17,5 @@ public interface CampusMapQueryUseCase {
 
     List<CampusPlaceResult> getCampusPlaces(List<String> categories);
 
-    Optional<BuildingDetailResult> getBuildingDetail(Long buildingId);
+    BuildingDetailResult getBuildingDetail(Long buildingId);
 }

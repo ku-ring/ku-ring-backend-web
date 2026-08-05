@@ -15,6 +15,8 @@ import com.kustacks.kuring.building.domain.CampusPlaceLocationType;
 import com.kustacks.kuring.building.domain.OperatingDayGroup;
 import com.kustacks.kuring.building.domain.OperatingHoursStatus;
 import com.kustacks.kuring.building.domain.OperatingPeriod;
+import com.kustacks.kuring.common.exception.NotFoundException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.storage.application.port.out.StoragePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -261,32 +264,31 @@ class CampusMapQueryServiceTest {
                 .thenReturn("https://storage.example.com/printer.png");
 
         // when
-        Optional<BuildingDetailResult> result = campusMapQueryService.getBuildingDetail(4L);
+        BuildingDetailResult result = campusMapQueryService.getBuildingDetail(4L);
 
         // then
-        assertThat(result)
-                .hasValueSatisfying(detail -> assertAll(
-                        () -> assertThat(detail.name()).isEqualTo("학생회관"),
-                        () -> assertThat(detail.imageUrl())
-                                .isEqualTo("https://storage.example.com/student-center.png"),
-                        () -> assertThat(detail.campusPlaces())
-                                .singleElement()
-                                .satisfies(place -> assertThat(place.name()).isEqualTo("학생회관 프린터"))
-                ));
+        assertAll(
+                () -> assertThat(result.name()).isEqualTo("학생회관"),
+                () -> assertThat(result.imageUrl())
+                        .isEqualTo("https://storage.example.com/student-center.png"),
+                () -> assertThat(result.campusPlaces())
+                        .singleElement()
+                        .satisfies(place -> assertThat(place.name()).isEqualTo("학생회관 프린터"))
+        );
         verify(campusMapQueryPort).findCampusPlacesByBuildingId(4L);
     }
 
     @Test
-    @DisplayName("존재하지 않는 건물 상세 조회 시 빈 결과를 반환한다")
+    @DisplayName("존재하지 않는 건물 상세 조회 시 예외를 발생시킨다")
     void get_building_detail_not_found() {
         // given
         when(campusMapQueryPort.findBuildingById(999L)).thenReturn(Optional.empty());
 
-        // when
-        Optional<BuildingDetailResult> result = campusMapQueryService.getBuildingDetail(999L);
-
-        // then
-        assertThat(result).isEmpty();
+        // when, then
+        assertThatThrownBy(() -> campusMapQueryService.getBuildingDetail(999L))
+                .isInstanceOf(NotFoundException.class)
+                .extracting(exception -> ((NotFoundException) exception).getErrorCode())
+                .isEqualTo(ErrorCode.BUILDING_NOT_FOUND);
         verify(campusMapQueryPort).findBuildingById(999L);
     }
 
