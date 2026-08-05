@@ -4,6 +4,7 @@ import com.kustacks.kuring.building.adapter.in.web.dto.model.BuildingSummary;
 import com.kustacks.kuring.building.adapter.in.web.dto.model.CampusPlaceItem;
 import com.kustacks.kuring.building.adapter.in.web.dto.model.CategoryDto;
 import com.kustacks.kuring.building.application.port.in.CampusMapQueryUseCase;
+import com.kustacks.kuring.building.application.port.in.dto.BuildingDetailResult;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
 import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
@@ -23,6 +24,7 @@ import org.springframework.http.HttpStatus;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -210,6 +212,61 @@ class CampusMapQueryApiV2Test {
                                 () -> assertThat(campusPlace.operatingHours().get(0).opensAt()).isEqualTo("08:00"),
                                 () -> assertThat(campusPlace.building().name()).isEqualTo("학생회관")
                         ))
+        );
+    }
+
+    @Test
+    @DisplayName("캠퍼스맵 건물 상세 정보를 조회한다")
+    void get_building_detail() {
+        // given
+        when(campusMapQueryUseCase.getBuildingDetail(4L)).thenReturn(Optional.of(
+                new BuildingDetailResult(
+                        4L,
+                        "학생회관",
+                        "서울특별시 광진구 능동로 120",
+                        37.5412,
+                        127.0784,
+                        "https://storage.example.com/student-center.png",
+                        List.of(),
+                        List.of()
+                )
+        ));
+
+        // when
+        var response = campusMapQueryApiV2.getBuildingDetail(4L);
+
+        // then
+        var body = response.getBody();
+        assertThat(body).isNotNull();
+
+        assertAll(
+                () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
+                () -> assertThat(body)
+                        .extracting(BaseResponse::getCode, BaseResponse::getMessage)
+                        .containsExactly(200, "캠퍼스 건물 상세 조회에 성공하였습니다"),
+                () -> assertThat(body.getData().name()).isEqualTo("학생회관")
+        );
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 건물 상세 조회 시 404 응답을 반환한다")
+    void get_building_detail_not_found() {
+        // given
+        when(campusMapQueryUseCase.getBuildingDetail(999L)).thenReturn(Optional.empty());
+
+        // when
+        var response = campusMapQueryApiV2.getBuildingDetail(999L);
+
+        // then
+        var body = response.getBody();
+        assertThat(body).isNotNull();
+
+        assertAll(
+                () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND),
+                () -> assertThat(body)
+                        .extracting(BaseResponse::getCode, BaseResponse::getMessage)
+                        .containsExactly(404, "캠퍼스 건물을 찾을 수 없습니다"),
+                () -> assertThat(body.getData()).isNull()
         );
     }
 }

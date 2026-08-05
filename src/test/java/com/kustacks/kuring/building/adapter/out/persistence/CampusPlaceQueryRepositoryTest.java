@@ -79,6 +79,47 @@ class CampusPlaceQueryRepositoryTest extends IntegrationTestSupport {
         );
     }
 
+    @Test
+    @DisplayName("건물에 등록된 모든 캠퍼스 시설을 노출 순서대로 조회한다")
+    void find_campus_places_by_building_id() {
+        // given
+        Building building = buildingRepository.saveAndFlush(new Building(
+                "학생회관",
+                "서울특별시 광진구 능동로 120",
+                37.5412,
+                127.0784,
+                null
+        ));
+        CampusPlaceCategory mainFacility = categoryRepository.save(
+                new CampusPlaceCategory("test_main_facility", "주요시설", 100, false)
+        );
+        CampusPlaceCategory printer = categoryRepository.save(
+                new CampusPlaceCategory("test_printer", "프린터", 1, true)
+        );
+        CampusPlace studentCouncil = campusPlace(building, mainFacility, "총학생회", 2);
+        CampusPlace printerPlace = campusPlace(building, printer, "학생회관 프린터", 1);
+        printerPlace.addOperatingHours(new OperatingHours(
+                OperatingPeriod.SEMESTER,
+                OperatingDayGroup.WEEKDAY,
+                OperatingHoursStatus.SCHEDULED,
+                LocalTime.of(8, 0),
+                LocalTime.of(22, 0)
+        ));
+        campusPlaceRepository.saveAllAndFlush(List.of(studentCouncil, printerPlace));
+
+        // when
+        List<CampusPlace> result = campusPlaceRepository.findByBuildingId(building.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(result)
+                        .extracting(CampusPlace::getName)
+                        .containsExactly("학생회관 프린터", "총학생회"),
+                () -> assertThat(result.get(0).getOperatingHours()).hasSize(1),
+                () -> assertThat(result.get(1).getCategory().isFilterEnabled()).isFalse()
+        );
+    }
+
     private CampusPlace campusPlace(
             Building building,
             CampusPlaceCategory category,

@@ -177,6 +177,65 @@ class CampusMapPersistenceAdapterTest {
         assertThat(result).isEmpty();
     }
 
+    @Test
+    @DisplayName("건물 상세 정보를 조회한다")
+    void find_building_by_id() {
+        // given
+        Building studentCenter = building(4L, "학생회관", 37.5412, 127.0784);
+        studentCenter.addOperatingHours(new OperatingHours(
+                OperatingPeriod.SEMESTER,
+                OperatingDayGroup.WEEKDAY,
+                OperatingHoursStatus.SCHEDULED,
+                LocalTime.of(8, 0),
+                LocalTime.of(22, 0)
+        ));
+        when(buildingRepository.findById(4L)).thenReturn(java.util.Optional.of(studentCenter));
+
+        // when
+        var result = campusMapPersistenceAdapter.findBuildingById(4L);
+
+        // then
+        assertThat(result)
+                .hasValueSatisfying(building -> assertAll(
+                        () -> assertThat(building.name()).isEqualTo("학생회관"),
+                        () -> assertThat(building.operatingHours()).hasSize(1)
+                ));
+        verify(buildingRepository).findById(4L);
+    }
+
+    @Test
+    @DisplayName("건물에 등록된 캠퍼스 시설을 조회한다")
+    void find_campus_places_by_building_id() {
+        // given
+        Building studentCenter = building(4L, "학생회관", 37.5412, 127.0784);
+        CampusPlaceCategory category = new CampusPlaceCategory("printer", "프린터", 1, true);
+        CampusPlace printer = new CampusPlace(
+                studentCenter,
+                category,
+                "학생회관 프린터",
+                null,
+                CampusPlaceLocationType.INDOOR,
+                "1F",
+                null,
+                3,
+                null,
+                1
+        );
+        when(campusPlaceRepository.findByBuildingId(4L)).thenReturn(List.of(printer));
+
+        // when
+        List<CampusPlaceReadModel> result = campusMapPersistenceAdapter.findCampusPlacesByBuildingId(4L);
+
+        // then
+        assertThat(result)
+                .singleElement()
+                .satisfies(place -> assertAll(
+                        () -> assertThat(place.name()).isEqualTo("학생회관 프린터"),
+                        () -> assertThat(place.building().id()).isEqualTo(4L)
+                ));
+        verify(campusPlaceRepository).findByBuildingId(4L);
+    }
+
     private Building building(Long id, String name, Double latitude, Double longitude) {
         Building building = new Building(
                 name,
