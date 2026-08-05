@@ -80,6 +80,45 @@ public final class CampusMapStep {
         );
     }
 
+    public static void assertCategoryListResponse(
+            ExtractableResponse<Response> response,
+            String... categoryNames
+    ) {
+        assertSuccessfulListResponse(response, "data.categories");
+
+        assertThat(response.jsonPath().getList("data.categories.name", String.class))
+                .containsExactly(categoryNames);
+    }
+
+    public static void assertBuildingListResponse(
+            ExtractableResponse<Response> response,
+            String... buildingNames
+    ) {
+        assertSuccessfulListResponse(response, "data.buildings");
+
+        assertThat(response.jsonPath().getList("data.buildings.name", String.class))
+                .containsExactly(buildingNames);
+    }
+
+    public static void assertCampusPlaceListResponse(
+            ExtractableResponse<Response> response,
+            String placeName,
+            String category,
+            String buildingName
+    ) {
+        assertSuccessfulListResponse(response, "data.campusPlaces");
+
+        assertAll(
+                () -> assertThat(response.jsonPath().getList("data.campusPlaces")).hasSize(1),
+                () -> assertThat(response.jsonPath().getString("data.campusPlaces[0].name"))
+                        .isEqualTo(placeName),
+                () -> assertThat(response.jsonPath().getString("data.campusPlaces[0].category"))
+                        .isEqualTo(category),
+                () -> assertThat(response.jsonPath().getString("data.campusPlaces[0].building.name"))
+                        .isEqualTo(buildingName)
+        );
+    }
+
     public static void assertBadRequest(ExtractableResponse<Response> response) {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
