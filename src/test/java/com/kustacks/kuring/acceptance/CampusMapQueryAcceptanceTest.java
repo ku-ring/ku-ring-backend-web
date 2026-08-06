@@ -16,9 +16,12 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.List;
 
 import static com.kustacks.kuring.acceptance.CampusMapStep.assertBuildingListResponse;
+import static com.kustacks.kuring.acceptance.CampusMapStep.assertBuildingDetailResponse;
+import static com.kustacks.kuring.acceptance.CampusMapStep.assertBuildingNotFoundErrorResponse;
 import static com.kustacks.kuring.acceptance.CampusMapStep.assertCampusPlaceListResponse;
 import static com.kustacks.kuring.acceptance.CampusMapStep.assertCategoryListResponse;
 import static com.kustacks.kuring.acceptance.CampusMapStep.requestBuildingSearch;
+import static com.kustacks.kuring.acceptance.CampusMapStep.requestBuildingDetail;
 import static com.kustacks.kuring.acceptance.CampusMapStep.requestBuildings;
 import static com.kustacks.kuring.acceptance.CampusMapStep.requestCampusPlaces;
 import static com.kustacks.kuring.acceptance.CampusMapStep.requestCategories;
@@ -116,6 +119,44 @@ class CampusMapQueryAcceptanceTest extends IntegrationTestSupport {
                 "test_printer",
                 "학생회관"
         );
+    }
+
+    @Test
+    @DisplayName("건물 상세 정보와 등록된 시설을 조회한다")
+    void getBuildingDetail_success() {
+        // given
+        Building building = buildingRepository.saveAndFlush(building("학생회관", 37.5412, 127.0784));
+        CampusPlaceCategory category = categoryRepository.saveAndFlush(
+                new CampusPlaceCategory("test_main_facility", "주요시설", 100, false)
+        );
+        campusPlaceRepository.saveAndFlush(new CampusPlace(
+                building,
+                category,
+                "총학생회",
+                null,
+                CampusPlaceLocationType.INDOOR,
+                "2F",
+                null,
+                null,
+                null,
+                1
+        ));
+
+        // when
+        var response = requestBuildingDetail(building.getId());
+
+        // then
+        assertBuildingDetailResponse(response, "학생회관", "총학생회");
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 건물 상세 조회 시 404 응답을 반환한다")
+    void getBuildingDetail_notFound() {
+        // when
+        var response = requestBuildingDetail(Long.MAX_VALUE);
+
+        // then
+        assertBuildingNotFoundErrorResponse(response);
     }
 
     private Building building(String name, Double latitude, Double longitude) {

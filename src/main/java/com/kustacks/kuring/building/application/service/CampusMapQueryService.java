@@ -1,12 +1,14 @@
 package com.kustacks.kuring.building.application.service;
 
 import com.kustacks.kuring.building.application.port.in.CampusMapQueryUseCase;
+import com.kustacks.kuring.building.application.port.in.dto.BuildingDetailResult;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
 import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
 import com.kustacks.kuring.building.application.port.in.dto.OperatingHoursResult;
 import com.kustacks.kuring.building.application.port.out.AcademicPeriodQueryPort;
 import com.kustacks.kuring.building.application.port.out.CampusMapQueryPort;
+import com.kustacks.kuring.building.application.port.out.dto.BuildingDetailReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.BuildingSummaryReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceCategoryReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceReadModel;
@@ -15,6 +17,7 @@ import com.kustacks.kuring.building.application.service.model.OperatingContext;
 import com.kustacks.kuring.building.domain.OperatingDayGroup;
 import com.kustacks.kuring.building.domain.OperatingPeriod;
 import com.kustacks.kuring.common.annotation.UseCase;
+import com.kustacks.kuring.common.exception.NotFoundException;
 import com.kustacks.kuring.storage.application.port.out.StoragePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import static com.kustacks.kuring.common.exception.code.ErrorCode.BUILDING_NOT_FOUND;
 import static com.kustacks.kuring.common.utils.TimeUtils.isWeekend;
 
 @UseCase
@@ -70,6 +74,18 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
                 .toList();
     }
 
+    @Override
+    public BuildingDetailResult getBuildingDetail(Long buildingId) {
+        BuildingDetailReadModel building = campusMapQueryPort.findBuildingById(buildingId)
+                .orElseThrow(() -> new NotFoundException(BUILDING_NOT_FOUND));
+
+        return toBuildingDetailResult(
+                building,
+                campusMapQueryPort.findCampusPlacesByBuildingId(buildingId),
+                currentOperatingContext()
+        );
+    }
+
     private CategoryResult toCategoryResult(CampusPlaceCategoryReadModel category) {
         return new CategoryResult(
                 category.code(),
@@ -105,6 +121,25 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
                 resolveOperatingHours(place.operatingHours(), context),
                 place.externalUrl(),
                 toBuildingSummaryResult(place.building())
+        );
+    }
+
+    private BuildingDetailResult toBuildingDetailResult(
+            BuildingDetailReadModel building,
+            List<CampusPlaceReadModel> campusPlaces,
+            OperatingContext context
+    ) {
+        return new BuildingDetailResult(
+                building.id(),
+                building.name(),
+                building.address(),
+                building.latitude(),
+                building.longitude(),
+                resolveImageUrl(building.imagePath()),
+                resolveOperatingHours(building.operatingHours(), context),
+                campusPlaces.stream()
+                        .map(place -> toCampusPlaceResult(place, context))
+                        .toList()
         );
     }
 

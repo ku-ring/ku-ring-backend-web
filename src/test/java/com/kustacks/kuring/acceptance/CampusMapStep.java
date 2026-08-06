@@ -80,6 +80,17 @@ public final class CampusMapStep {
         );
     }
 
+    public static void assertBuildingNotFoundErrorResponse(ExtractableResponse<Response> response) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value()),
+                () -> assertThat(response.jsonPath().getBoolean("isSuccess")).isFalse(),
+                () -> assertThat(response.jsonPath().getInt("resultCode"))
+                        .isEqualTo(HttpStatus.NOT_FOUND.value()),
+                () -> assertThat(response.jsonPath().getString("resultMsg"))
+                        .isEqualTo("해당 건물을 찾을 수 없습니다.")
+        );
+    }
+
     public static void assertCategoryListResponse(
             ExtractableResponse<Response> response,
             String... categoryNames
@@ -116,6 +127,21 @@ public final class CampusMapStep {
                         .isEqualTo(category),
                 () -> assertThat(response.jsonPath().getString("data.campusPlaces[0].building.name"))
                         .isEqualTo(buildingName)
+        );
+    }
+
+    public static void assertBuildingDetailResponse(
+            ExtractableResponse<Response> response,
+            String buildingName,
+            String campusPlaceName
+    ) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getString("data.name")).isEqualTo(buildingName),
+                () -> assertThat(response.jsonPath().getList("data.operatingHours")).isNotNull(),
+                () -> assertThat(response.jsonPath().getList("data.campusPlaces.name", String.class))
+                        .containsExactly(campusPlaceName)
         );
     }
 

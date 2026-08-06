@@ -4,6 +4,7 @@ import com.kustacks.kuring.building.adapter.in.web.dto.model.BuildingSummary;
 import com.kustacks.kuring.building.adapter.in.web.dto.model.CampusPlaceItem;
 import com.kustacks.kuring.building.adapter.in.web.dto.model.CategoryDto;
 import com.kustacks.kuring.building.application.port.in.CampusMapQueryUseCase;
+import com.kustacks.kuring.building.application.port.in.dto.BuildingDetailResult;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
 import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
@@ -212,4 +213,38 @@ class CampusMapQueryApiV2Test {
                         ))
         );
     }
+
+    @Test
+    @DisplayName("캠퍼스맵 건물 상세 정보를 조회한다")
+    void get_building_detail() {
+        // given
+        when(campusMapQueryUseCase.getBuildingDetail(4L)).thenReturn(
+                new BuildingDetailResult(
+                        4L,
+                        "학생회관",
+                        "서울특별시 광진구 능동로 120",
+                        37.5412,
+                        127.0784,
+                        "https://storage.example.com/student-center.png",
+                        List.of(),
+                        List.of()
+                )
+        );
+
+        // when
+        var response = campusMapQueryApiV2.getBuildingDetail(4L);
+
+        // then
+        var body = response.getBody();
+        assertThat(body).isNotNull();
+
+        assertAll(
+                () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
+                () -> assertThat(body)
+                        .extracting(BaseResponse::getCode, BaseResponse::getMessage)
+                        .containsExactly(200, "캠퍼스 건물 상세 조회에 성공하였습니다"),
+                () -> assertThat(body.getData().name()).isEqualTo("학생회관")
+        );
+    }
+
 }

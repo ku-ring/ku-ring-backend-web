@@ -1,5 +1,6 @@
 package com.kustacks.kuring.building.adapter.in.web;
 
+import com.kustacks.kuring.building.adapter.in.web.dto.BuildingDetailResponse;
 import com.kustacks.kuring.building.adapter.in.web.dto.BuildingListResponse;
 import com.kustacks.kuring.building.adapter.in.web.dto.BuildingSearchResponse;
 import com.kustacks.kuring.building.adapter.in.web.dto.CampusPlaceListResponse;
@@ -16,10 +17,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
+import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_BUILDING_DETAIL_SEARCH_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_BUILDING_LIST_SEARCH_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_BUILDING_SEARCH_SUCCESS;
 import static com.kustacks.kuring.common.dto.ResponseCodeAndMessages.CAMPUS_MAP_CATEGORY_LIST_SEARCH_SUCCESS;
@@ -75,6 +78,17 @@ public class CampusMapQueryApiV2 {
         return ResponseEntity.ok(new BaseResponse<>(
                 CAMPUS_MAP_PLACE_LIST_SEARCH_SUCCESS,
                 CampusPlaceListResponse.from(campusMapQueryUseCase.getCampusPlaces(categories))
+        ));
+    }
+
+    @Operation(summary = "캠퍼스맵 건물 상세 조회")
+    @GetMapping("/buildings/{buildingId}")
+    public ResponseEntity<BaseResponse<BuildingDetailResponse>> getBuildingDetail(
+            @PathVariable Long buildingId
+    ) {
+        return ResponseEntity.ok(new BaseResponse<>(
+                CAMPUS_MAP_BUILDING_DETAIL_SEARCH_SUCCESS,
+                BuildingDetailResponse.from(campusMapQueryUseCase.getBuildingDetail(buildingId))
         ));
     }
 }

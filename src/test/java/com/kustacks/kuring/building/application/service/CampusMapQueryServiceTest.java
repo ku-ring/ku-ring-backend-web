@@ -1,10 +1,12 @@
 package com.kustacks.kuring.building.application.service;
 
+import com.kustacks.kuring.building.application.port.in.dto.BuildingDetailResult;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
 import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
 import com.kustacks.kuring.building.application.port.out.AcademicPeriodQueryPort;
 import com.kustacks.kuring.building.application.port.out.CampusMapQueryPort;
+import com.kustacks.kuring.building.application.port.out.dto.BuildingDetailReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.BuildingSummaryReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceCategoryReadModel;
 import com.kustacks.kuring.building.application.port.out.dto.CampusPlaceReadModel;
@@ -13,6 +15,8 @@ import com.kustacks.kuring.building.domain.CampusPlaceLocationType;
 import com.kustacks.kuring.building.domain.OperatingDayGroup;
 import com.kustacks.kuring.building.domain.OperatingHoursStatus;
 import com.kustacks.kuring.building.domain.OperatingPeriod;
+import com.kustacks.kuring.common.exception.NotFoundException;
+import com.kustacks.kuring.common.exception.code.ErrorCode;
 import com.kustacks.kuring.storage.application.port.out.StoragePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,8 +30,10 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -231,6 +237,59 @@ class CampusMapQueryServiceTest {
                         () -> assertThat(result.operatingHours().get(1).isCurrent()).isTrue()
                 ));
         verify(campusMapQueryPort).findCampusPlacesByCategories(List.of("printer"));
+    }
+
+    @Test
+    @DisplayName("건물 상세 정보와 등록된 시설을 조회한다")
+    void get_building_detail() {
+        // given
+        BuildingDetailReadModel building = new BuildingDetailReadModel(
+                4L,
+                "학생회관",
+                "서울특별시 광진구 능동로 120",
+                37.5412,
+                127.0784,
+                "campus-map/student-center.png",
+                List.of()
+        );
+        when(campusMapQueryPort.findBuildingById(4L)).thenReturn(Optional.of(building));
+        when(campusMapQueryPort.findCampusPlacesByBuildingId(4L))
+                .thenReturn(List.of(campusPlaceReadModel()));
+        when(academicPeriodQueryPort.determineOperatingPeriod(
+                MONDAY_CLOCK.instant().atZone(MONDAY_CLOCK.getZone()).toLocalDate()
+        )).thenReturn(OperatingPeriod.VACATION);
+        when(storagePort.getPresignedUrl("campus-map/student-center.png"))
+                .thenReturn("https://storage.example.com/student-center.png");
+        when(storagePort.getPresignedUrl("campus-map/printer.png"))
+                .thenReturn("https://storage.example.com/printer.png");
+
+        // when
+        BuildingDetailResult result = campusMapQueryService.getBuildingDetail(4L);
+
+        // then
+        assertAll(
+                () -> assertThat(result.name()).isEqualTo("학생회관"),
+                () -> assertThat(result.imageUrl())
+                        .isEqualTo("https://storage.example.com/student-center.png"),
+                () -> assertThat(result.campusPlaces())
+                        .singleElement()
+                        .satisfies(place -> assertThat(place.name()).isEqualTo("학생회관 프린터"))
+        );
+        verify(campusMapQueryPort).findCampusPlacesByBuildingId(4L);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 건물 상세 조회 시 예외를 발생시킨다")
+    void get_building_detail_not_found() {
+        // given
+        when(campusMapQueryPort.findBuildingById(999L)).thenReturn(Optional.empty());
+
+        // when, then
+        assertThatThrownBy(() -> campusMapQueryService.getBuildingDetail(999L))
+                .isInstanceOf(NotFoundException.class)
+                .extracting(exception -> ((NotFoundException) exception).getErrorCode())
+                .isEqualTo(ErrorCode.BUILDING_NOT_FOUND);
+        verify(campusMapQueryPort).findBuildingById(999L);
     }
 
     private void givenCurrentOperatingPeriod() {
