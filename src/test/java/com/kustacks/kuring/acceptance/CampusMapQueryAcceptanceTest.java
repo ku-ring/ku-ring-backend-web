@@ -11,7 +11,6 @@ import com.kustacks.kuring.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 
@@ -27,7 +26,6 @@ import static com.kustacks.kuring.acceptance.CampusMapStep.requestCampusPlaces;
 import static com.kustacks.kuring.acceptance.CampusMapStep.requestCategories;
 
 @DisplayName("인수 : 캠퍼스맵 조회 API")
-@TestPropertySource(properties = "campus-map.source=database")
 class CampusMapQueryAcceptanceTest extends IntegrationTestSupport {
 
     @Autowired
