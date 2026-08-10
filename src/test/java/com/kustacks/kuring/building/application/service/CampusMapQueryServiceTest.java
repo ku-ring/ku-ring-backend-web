@@ -1,6 +1,7 @@
 package com.kustacks.kuring.building.application.service;
 
 import com.kustacks.kuring.building.application.port.in.dto.BuildingDetailResult;
+import com.kustacks.kuring.building.application.port.in.dto.BuildingOverviewResult;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
 import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
@@ -98,38 +99,31 @@ class CampusMapQueryServiceTest {
                         "행정관",
                         "서울특별시 광진구 능동로 120",
                         37.54241,
-                        127.07382
+                        127.07382,
+                        1
                 ),
                 new BuildingSummaryReadModel(
                         2L,
                         "경영관",
                         "서울특별시 광진구 능동로 120",
                         37.54196,
-                        127.07531
+                        127.07531,
+                        2
                 )
         ));
 
         // when
-        List<BuildingSummaryResult> result = campusMapQueryService.getBuildings();
+        List<BuildingOverviewResult> result = campusMapQueryService.getBuildings();
 
         // then
-        assertThat(result).containsExactly(
-                new BuildingSummaryResult(
-                        1L,
-                        "행정관",
-                        "서울특별시 광진구 능동로 120",
-                        37.54241,
-                        127.07382
-                ),
-                new BuildingSummaryResult(
-                        2L,
-                        "경영관",
-                        "서울특별시 광진구 능동로 120",
-                        37.54196,
-                        127.07531
-                )
+        assertAll(
+                () -> assertThat(result).hasSize(2),
+                () -> assertThat(result.get(0).name()).isEqualTo("행정관"),
+                () -> assertThat(result.get(0).displayOrder()).isEqualTo(1),
+                () -> assertThat(result.get(1).name()).isEqualTo("경영관"),
+                () -> assertThat(result.get(1).displayOrder()).isEqualTo(2),
+                () -> verify(campusMapQueryPort).findBuildings()
         );
-        verify(campusMapQueryPort).findBuildings();
     }
 
     @Test
@@ -142,7 +136,8 @@ class CampusMapQueryServiceTest {
                         "학생회관",
                         "서울특별시 광진구 능동로 120",
                         37.5412,
-                        127.0784
+                        127.0784,
+                        4
                 )
         ));
 
@@ -331,7 +326,8 @@ class CampusMapQueryServiceTest {
                         "학생회관",
                         "서울특별시 광진구 능동로 120",
                         37.5412,
-                        127.0784
+                        127.0784,
+                        4
                 )
         );
     }

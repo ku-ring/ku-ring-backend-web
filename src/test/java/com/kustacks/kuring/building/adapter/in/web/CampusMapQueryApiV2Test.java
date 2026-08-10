@@ -1,10 +1,11 @@
 package com.kustacks.kuring.building.adapter.in.web;
 
+import com.kustacks.kuring.building.adapter.in.web.dto.model.BuildingOverview;
 import com.kustacks.kuring.building.adapter.in.web.dto.model.BuildingSummary;
-import com.kustacks.kuring.building.adapter.in.web.dto.model.CampusPlaceItem;
 import com.kustacks.kuring.building.adapter.in.web.dto.model.CategoryDto;
 import com.kustacks.kuring.building.application.port.in.CampusMapQueryUseCase;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingDetailResult;
+import com.kustacks.kuring.building.application.port.in.dto.BuildingOverviewResult;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
 import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
@@ -79,19 +80,21 @@ class CampusMapQueryApiV2Test {
     void get_buildings() {
         // given
         when(campusMapQueryUseCase.getBuildings()).thenReturn(List.of(
-                new BuildingSummaryResult(
+                new BuildingOverviewResult(
                         1L,
                         "행정관",
                         "서울특별시 광진구 능동로 120",
                         37.54241,
-                        127.07382
+                        127.07382,
+                        1
                 ),
-                new BuildingSummaryResult(
+                new BuildingOverviewResult(
                         2L,
                         "경영관",
                         "서울특별시 광진구 능동로 120",
                         37.54196,
-                        127.07531
+                        127.07531,
+                        2
                 )
         ));
 
@@ -101,22 +104,21 @@ class CampusMapQueryApiV2Test {
         // then
         var body = response.getBody();
         assertThat(body).isNotNull();
+        List<BuildingOverview> buildings = body.getData().buildings();
 
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
-                () -> assertThat(body)
-                        .extracting(BaseResponse::getCode, BaseResponse::getMessage)
-                        .containsExactly(200, "캠퍼스 건물 목록 조회에 성공하였습니다"),
-                () -> assertThat(body.getData().buildings())
-                        .extracting(
-                                BuildingSummary::id,
-                                BuildingSummary::name,
-                                BuildingSummary::address
-                        )
-                        .containsExactly(
-                                tuple(1L, "행정관", "서울특별시 광진구 능동로 120"),
-                                tuple(2L, "경영관", "서울특별시 광진구 능동로 120")
-                        )
+                () -> assertThat(body.getCode()).isEqualTo(200),
+                () -> assertThat(body.getMessage()).isEqualTo("캠퍼스 건물 목록 조회에 성공하였습니다"),
+                () -> assertThat(buildings).hasSize(2),
+                () -> assertThat(buildings.get(0).id()).isEqualTo(1L),
+                () -> assertThat(buildings.get(0).name()).isEqualTo("행정관"),
+                () -> assertThat(buildings.get(0).address()).isEqualTo("서울특별시 광진구 능동로 120"),
+                () -> assertThat(buildings.get(0).displayOrder()).isEqualTo(1),
+                () -> assertThat(buildings.get(1).id()).isEqualTo(2L),
+                () -> assertThat(buildings.get(1).name()).isEqualTo("경영관"),
+                () -> assertThat(buildings.get(1).address()).isEqualTo("서울특별시 광진구 능동로 120"),
+                () -> assertThat(buildings.get(1).displayOrder()).isEqualTo(2)
         );
     }
 
