@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface BuildingQueryRepository {
 
+    List<Building> findAllSortedByDisplayOrder();
+
     List<Building> searchByKeyword(String keyword);
 }
