@@ -27,6 +27,3 @@ decorator:
   datasource:
     p6spy:
       enable-logging: true
-
-campus-map:
-  source: database

@@ -178,6 +178,3 @@ ip:
 
 staff:
   each-dept-url: https://{department}.konkuk.ac.kr/{department}/{siteId}/subview.do
-
-campus-map:
-  source: ${CAMPUS_MAP_SOURCE:mock}
