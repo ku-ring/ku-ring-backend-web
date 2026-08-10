@@ -1,17 +1,17 @@
 package com.kustacks.kuring.building.adapter.in.web.dto;
 
-import com.kustacks.kuring.building.adapter.in.web.dto.model.BuildingSummary;
-import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
+import com.kustacks.kuring.building.adapter.in.web.dto.model.BuildingOverview;
+import com.kustacks.kuring.building.application.port.in.dto.BuildingOverviewResult;
 
 import java.util.List;
 
 public record BuildingListResponse(
-        List<BuildingSummary> buildings
+        List<BuildingOverview> buildings
 ) {
 
-    public static BuildingListResponse from(List<BuildingSummaryResult> results) {
+    public static BuildingListResponse from(List<BuildingOverviewResult> results) {
         return new BuildingListResponse(results.stream()
-                .map(BuildingSummary::from)
+                .map(BuildingOverview::from)
                 .toList());
     }
 }

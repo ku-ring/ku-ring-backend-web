@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface BuildingRepository extends JpaRepository<Building, Long>, BuildingQueryRepository {
 
-    List<Building> findAllByOrderByIdAsc();
+    List<Building> findAllByOrderByDisplayOrderAscIdAsc();
 }

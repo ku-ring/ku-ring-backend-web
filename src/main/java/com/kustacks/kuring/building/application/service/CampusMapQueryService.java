@@ -2,6 +2,7 @@ package com.kustacks.kuring.building.application.service;
 
 import com.kustacks.kuring.building.application.port.in.CampusMapQueryUseCase;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingDetailResult;
+import com.kustacks.kuring.building.application.port.in.dto.BuildingOverviewResult;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
 import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
@@ -49,9 +50,9 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
     }
 
     @Override
-    public List<BuildingSummaryResult> getBuildings() {
+    public List<BuildingOverviewResult> getBuildings() {
         return campusMapQueryPort.findBuildings().stream()
-                .map(this::toBuildingSummaryResult)
+                .map(this::toBuildingOverviewResult)
                 .toList();
     }
 
@@ -101,6 +102,17 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
                 building.address(),
                 building.latitude(),
                 building.longitude()
+        );
+    }
+
+    private BuildingOverviewResult toBuildingOverviewResult(BuildingSummaryReadModel building) {
+        return new BuildingOverviewResult(
+                building.id(),
+                building.name(),
+                building.address(),
+                building.latitude(),
+                building.longitude(),
+                building.displayOrder()
         );
     }
 

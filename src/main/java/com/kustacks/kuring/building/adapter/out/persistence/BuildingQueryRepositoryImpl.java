@@ -22,7 +22,7 @@ class BuildingQueryRepositoryImpl implements BuildingQueryRepository {
                                 .or(building.address.containsIgnoreCase(keyword))
                                 .or(building.keywords.any().keyword.containsIgnoreCase(keyword))
                 )
-                .orderBy(building.id.asc())
+                .orderBy(building.displayOrder.asc(), building.id.asc())
                 .fetch();
     }
 }
