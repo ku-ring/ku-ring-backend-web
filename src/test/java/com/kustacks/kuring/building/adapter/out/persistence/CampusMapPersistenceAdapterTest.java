@@ -71,7 +71,7 @@ class CampusMapPersistenceAdapterTest {
         // given
         Building administration = building(1L, "행정관", 37.54241, 127.07382);
         Building business = building(2L, "경영관", 37.54196, 127.07531);
-        when(buildingRepository.findAllByOrderByDisplayOrderAscIdAsc())
+        when(buildingRepository.findAllSortedByDisplayOrder())
                 .thenReturn(List.of(administration, business));
 
         // when
@@ -84,7 +84,7 @@ class CampusMapPersistenceAdapterTest {
                 () -> assertThat(result.get(0).displayOrder()).isEqualTo(1),
                 () -> assertThat(result.get(1).name()).isEqualTo("경영관"),
                 () -> assertThat(result.get(1).displayOrder()).isEqualTo(2),
-                () -> verify(buildingRepository).findAllByOrderByDisplayOrderAscIdAsc()
+                () -> verify(buildingRepository).findAllSortedByDisplayOrder()
         );
     }
 

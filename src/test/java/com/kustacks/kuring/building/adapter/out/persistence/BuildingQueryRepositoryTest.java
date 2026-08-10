@@ -5,6 +5,7 @@ import com.kustacks.kuring.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
@@ -71,6 +72,28 @@ class BuildingQueryRepositoryTest extends IntegrationTestSupport {
                 () -> assertThat(buildingRepository.searchByKeyword("\\"))
                         .extracting(Building::getName)
                         .containsExactly("A\\B관")
+        );
+    }
+
+    @Test
+    @DisplayName("노출 우선순위가 없는 건물을 우선순위가 있는 건물 뒤에 정렬한다")
+    void sort_null_display_order_last() {
+        // given
+        Building first = building("우선순위 1관");
+        Building second = building("우선순위 2관");
+        Building unordered = building("우선순위 미지정관");
+        ReflectionTestUtils.setField(first, "displayOrder", 1);
+        ReflectionTestUtils.setField(second, "displayOrder", 2);
+        buildingRepository.saveAllAndFlush(List.of(unordered, second, first));
+
+        // when & then
+        assertAll(
+                () -> assertThat(buildingRepository.findAllSortedByDisplayOrder())
+                        .extracting(Building::getName)
+                        .containsExactly("우선순위 1관", "우선순위 2관", "우선순위 미지정관"),
+                () -> assertThat(buildingRepository.searchByKeyword("우선순위"))
+                        .extracting(Building::getName)
+                        .containsExactly("우선순위 1관", "우선순위 2관", "우선순위 미지정관")
         );
     }
 
