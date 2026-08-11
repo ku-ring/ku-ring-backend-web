@@ -49,6 +49,13 @@ public class CampusMapPersistenceAdapter implements CampusMapQueryPort {
     }
 
     @Override
+    public List<CampusPlaceReadModel> searchCampusPlaces(String keyword) {
+        return campusPlaceRepository.searchByKeyword(keyword).stream()
+                .map(this::toCampusPlaceReadModel)
+                .toList();
+    }
+
+    @Override
     public List<CampusPlaceReadModel> findCampusPlacesByCategories(List<String> categoryCodes) {
         if (categoryCodes.isEmpty()) {
             return List.of();
