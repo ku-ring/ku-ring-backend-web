@@ -8,6 +8,7 @@ import com.kustacks.kuring.building.application.port.in.dto.BuildingDetailResult
 import com.kustacks.kuring.building.application.port.in.dto.BuildingOverviewResult;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
 import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
+import com.kustacks.kuring.building.application.port.in.dto.CampusMapSearchResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
 import com.kustacks.kuring.building.application.port.in.dto.OperatingHoursResult;
 import com.kustacks.kuring.building.domain.CampusPlaceLocationType;
@@ -123,21 +124,24 @@ class CampusMapQueryApiV2Test {
     }
 
     @Test
-    @DisplayName("캠퍼스맵 건물을 키워드로 검색한다")
-    void search_buildings() {
+    @DisplayName("캠퍼스맵 건물과 시설을 키워드로 검색한다")
+    void search_campus_map() {
         // given
-        when(campusMapQueryUseCase.searchBuildings("학관")).thenReturn(List.of(
-                new BuildingSummaryResult(
-                        4L,
-                        "학생회관",
-                        "서울특별시 광진구 능동로 120",
-                        37.5412,
-                        127.0784
+        when(campusMapQueryUseCase.searchCampusMap("학관")).thenReturn(
+                new CampusMapSearchResult(
+                        List.of(new BuildingSummaryResult(
+                                4L,
+                                "학생회관",
+                                "서울특별시 광진구 능동로 120",
+                                37.5412,
+                                127.0784
+                        )),
+                        List.of(campusPlaceResult())
                 )
-        ));
+        );
 
         // when
-        var response = campusMapQueryApiV2.searchBuildings("학관");
+        var response = campusMapQueryApiV2.searchCampusMap("학관");
 
         // then
         var body = response.getBody();
@@ -145,9 +149,8 @@ class CampusMapQueryApiV2Test {
 
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
-                () -> assertThat(body)
-                        .extracting(BaseResponse::getCode, BaseResponse::getMessage)
-                        .containsExactly(200, "캠퍼스 건물 검색에 성공하였습니다"),
+                () -> assertThat(body.getCode()).isEqualTo(200),
+                () -> assertThat(body.getMessage()).isEqualTo("캠퍼스맵 검색에 성공하였습니다"),
                 () -> assertThat(body.getData().buildings())
                         .extracting(
                                 BuildingSummary::id,
@@ -156,7 +159,10 @@ class CampusMapQueryApiV2Test {
                         )
                         .containsExactly(
                                 tuple(4L, "학생회관", "서울특별시 광진구 능동로 120")
-                        )
+                        ),
+                () -> assertThat(body.getData().campusPlaces()).hasSize(1),
+                () -> assertThat(body.getData().campusPlaces().get(0).name())
+                        .isEqualTo("학생회관 프린터")
         );
     }
 
@@ -164,35 +170,8 @@ class CampusMapQueryApiV2Test {
     @DisplayName("카테고리 기반 캠퍼스 시설 목록을 조회한다")
     void get_campus_places() {
         // given
-        when(campusMapQueryUseCase.getCampusPlaces(List.of("printer"))).thenReturn(List.of(
-                new CampusPlaceResult(
-                        10L,
-                        "학생회관 프린터",
-                        "printer",
-                        "프린터",
-                        "https://storage.example.com/printer.png",
-                        CampusPlaceLocationType.INDOOR,
-                        "1F",
-                        "라운지 안쪽",
-                        3,
-                        List.of(new OperatingHoursResult(
-                                OperatingPeriod.SEMESTER,
-                                OperatingDayGroup.WEEKDAY,
-                                OperatingHoursStatus.SCHEDULED,
-                                LocalTime.of(8, 0),
-                                LocalTime.of(22, 0),
-                                true
-                        )),
-                        null,
-                        new BuildingSummaryResult(
-                                4L,
-                                "학생회관",
-                                "서울특별시 광진구 능동로 120",
-                                37.5412,
-                                127.0784
-                        )
-                )
-        ));
+        when(campusMapQueryUseCase.getCampusPlaces(List.of("printer")))
+                .thenReturn(List.of(campusPlaceResult()));
 
         // when
         var response = campusMapQueryApiV2.getCampusPlaces(List.of("printer"));
@@ -246,6 +225,36 @@ class CampusMapQueryApiV2Test {
                         .extracting(BaseResponse::getCode, BaseResponse::getMessage)
                         .containsExactly(200, "캠퍼스 건물 상세 조회에 성공하였습니다"),
                 () -> assertThat(body.getData().name()).isEqualTo("학생회관")
+        );
+    }
+
+    private CampusPlaceResult campusPlaceResult() {
+        return new CampusPlaceResult(
+                10L,
+                "학생회관 프린터",
+                "printer",
+                "프린터",
+                "https://storage.example.com/printer.png",
+                CampusPlaceLocationType.INDOOR,
+                "1F",
+                "라운지 안쪽",
+                3,
+                List.of(new OperatingHoursResult(
+                        OperatingPeriod.SEMESTER,
+                        OperatingDayGroup.WEEKDAY,
+                        OperatingHoursStatus.SCHEDULED,
+                        LocalTime.of(8, 0),
+                        LocalTime.of(22, 0),
+                        true
+                )),
+                null,
+                new BuildingSummaryResult(
+                        4L,
+                        "학생회관",
+                        "서울특별시 광진구 능동로 120",
+                        37.5412,
+                        127.0784
+                )
         );
     }
 
