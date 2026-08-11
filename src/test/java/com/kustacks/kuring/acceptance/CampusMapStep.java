@@ -111,6 +111,21 @@ public final class CampusMapStep {
                 .containsExactly(buildingNames);
     }
 
+    public static void assertBuildingListResponse(
+            ExtractableResponse<Response> response,
+            List<String> buildingNames,
+            List<Integer> displayOrders
+    ) {
+        assertSuccessfulListResponse(response, "data.buildings");
+
+        assertAll(
+                () -> assertThat(response.jsonPath().getList("data.buildings.name", String.class))
+                        .isEqualTo(buildingNames),
+                () -> assertThat(response.jsonPath().getList("data.buildings.displayOrder", Integer.class))
+                        .isEqualTo(displayOrders)
+        );
+    }
+
     public static void assertCampusPlaceListResponse(
             ExtractableResponse<Response> response,
             String placeName,

@@ -36,7 +36,7 @@ public class CampusMapPersistenceAdapter implements CampusMapQueryPort {
 
     @Override
     public List<BuildingSummaryReadModel> findBuildings() {
-        return buildingRepository.findAllByOrderByIdAsc().stream()
+        return buildingRepository.findAllSortedByDisplayOrder().stream()
                 .map(this::toBuildingSummaryReadModel)
                 .toList();
     }
@@ -121,7 +121,8 @@ public class CampusMapPersistenceAdapter implements CampusMapQueryPort {
                 building.getName(),
                 building.getAddress(),
                 building.getLat(),
-                building.getLon()
+                building.getLon(),
+                building.getDisplayOrder()
         );
     }
 }

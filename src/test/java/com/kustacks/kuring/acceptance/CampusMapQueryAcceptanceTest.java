@@ -11,6 +11,7 @@ import com.kustacks.kuring.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
@@ -59,15 +60,19 @@ class CampusMapQueryAcceptanceTest extends IntegrationTestSupport {
     void getBuildings_success() {
         // given
         buildingRepository.saveAllAndFlush(List.of(
-                building("행정관", 37.54241, 127.07382),
-                building("경영관", 37.54196, 127.07531)
+                building("행정관", 37.54241, 127.07382, 2),
+                building("경영관", 37.54196, 127.07531, 1)
         ));
 
         // when
         var response = requestBuildings();
 
         // then
-        assertBuildingListResponse(response, "행정관", "경영관");
+        assertBuildingListResponse(
+                response,
+                List.of("경영관", "행정관"),
+                List.of(1, 2)
+        );
     }
 
     @Test
@@ -165,5 +170,11 @@ class CampusMapQueryAcceptanceTest extends IntegrationTestSupport {
                 longitude,
                 null
         );
+    }
+
+    private Building building(String name, Double latitude, Double longitude, Integer displayOrder) {
+        Building building = building(name, latitude, longitude);
+        ReflectionTestUtils.setField(building, "displayOrder", displayOrder);
+        return building;
     }
 }

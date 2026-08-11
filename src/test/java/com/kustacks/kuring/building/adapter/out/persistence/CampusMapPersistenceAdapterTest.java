@@ -66,35 +66,26 @@ class CampusMapPersistenceAdapterTest {
     }
 
     @Test
-    @DisplayName("캠퍼스 건물을 ID 순서대로 조회한다")
+    @DisplayName("캠퍼스 건물을 노출 우선순위대로 조회한다")
     void find_buildings() {
         // given
         Building administration = building(1L, "행정관", 37.54241, 127.07382);
         Building business = building(2L, "경영관", 37.54196, 127.07531);
-        when(buildingRepository.findAllByOrderByIdAsc())
+        when(buildingRepository.findAllSortedByDisplayOrder())
                 .thenReturn(List.of(administration, business));
 
         // when
         List<BuildingSummaryReadModel> result = campusMapPersistenceAdapter.findBuildings();
 
         // then
-        assertThat(result).containsExactly(
-                new BuildingSummaryReadModel(
-                        1L,
-                        "행정관",
-                        "서울특별시 광진구 능동로 120",
-                        37.54241,
-                        127.07382
-                ),
-                new BuildingSummaryReadModel(
-                        2L,
-                        "경영관",
-                        "서울특별시 광진구 능동로 120",
-                        37.54196,
-                        127.07531
-                )
+        assertAll(
+                () -> assertThat(result).hasSize(2),
+                () -> assertThat(result.get(0).name()).isEqualTo("행정관"),
+                () -> assertThat(result.get(0).displayOrder()).isEqualTo(1),
+                () -> assertThat(result.get(1).name()).isEqualTo("경영관"),
+                () -> assertThat(result.get(1).displayOrder()).isEqualTo(2),
+                () -> verify(buildingRepository).findAllSortedByDisplayOrder()
         );
-        verify(buildingRepository).findAllByOrderByIdAsc();
     }
 
     @Test
@@ -115,7 +106,8 @@ class CampusMapPersistenceAdapterTest {
                         "학생회관",
                         "서울특별시 광진구 능동로 120",
                         37.5412,
-                        127.0784
+                        127.0784,
+                        4
                 )
         );
         verify(buildingRepository).searchByKeyword("학관");
@@ -245,6 +237,7 @@ class CampusMapPersistenceAdapterTest {
                 null
         );
         ReflectionTestUtils.setField(building, "id", id);
+        ReflectionTestUtils.setField(building, "displayOrder", id.intValue());
         return building;
     }
 }

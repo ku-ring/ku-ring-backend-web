@@ -48,6 +48,9 @@ public class Building {
     @Column(name = "image_path")
     private String imagePath;
 
+    @Column(name = "display_order")
+    private Integer displayOrder;
+
     @OneToMany(
             mappedBy = "building",
             cascade = CascadeType.ALL,

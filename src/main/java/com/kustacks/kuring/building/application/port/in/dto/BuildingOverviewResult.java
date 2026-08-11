@@ -1,6 +1,6 @@
-package com.kustacks.kuring.building.application.port.out.dto;
+package com.kustacks.kuring.building.application.port.in.dto;
 
-public record BuildingSummaryReadModel(
+public record BuildingOverviewResult(
         Long id,
         String name,
         String address,
