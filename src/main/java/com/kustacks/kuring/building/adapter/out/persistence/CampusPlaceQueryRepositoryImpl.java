@@ -1,6 +1,7 @@
 package com.kustacks.kuring.building.adapter.out.persistence;
 
 import com.kustacks.kuring.building.domain.CampusPlace;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -27,17 +28,7 @@ class CampusPlaceQueryRepositoryImpl implements CampusPlaceQueryRepository {
                 .join(campusPlace.building, building).fetchJoin()
                 .join(campusPlace.category, campusPlaceCategory).fetchJoin()
                 .where(matchesKeyword(keyword))
-                .orderBy(
-                        new CaseBuilder()
-                                .when(building.displayOrder.isNull())
-                                .then(1)
-                                .otherwise(0)
-                                .asc(),
-                        building.displayOrder.asc(),
-                        building.id.asc(),
-                        campusPlace.displayOrder.asc(),
-                        campusPlace.id.asc()
-                )
+                .orderBy(searchOrder())
                 .fetch();
 
         fetchOperatingHours(places);
@@ -76,6 +67,23 @@ class CampusPlaceQueryRepositoryImpl implements CampusPlaceQueryRepository {
     private BooleanExpression matchesKeyword(String keyword) {
         return campusPlace.name.containsIgnoreCase(keyword)
                 .or(campusPlaceCategory.korName.containsIgnoreCase(keyword));
+    }
+
+    /**
+     * 건물 노출 순서가 지정된 시설을 먼저 배치하고 건물, 시설의 노출 순서와 ID 순으로 정렬한다.
+     */
+    private OrderSpecifier<?>[] searchOrder() {
+        return new OrderSpecifier<?>[]{
+                new CaseBuilder()
+                        .when(building.displayOrder.isNull())
+                        .then(1)
+                        .otherwise(0)
+                        .asc(),
+                building.displayOrder.asc(),
+                building.id.asc(),
+                campusPlace.displayOrder.asc(),
+                campusPlace.id.asc()
+        };
     }
 
     private void fetchOperatingHours(List<CampusPlace> places) {
