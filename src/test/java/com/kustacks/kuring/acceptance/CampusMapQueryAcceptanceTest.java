@@ -19,6 +19,7 @@ import static com.kustacks.kuring.acceptance.CampusMapStep.assertBuildingListRes
 import static com.kustacks.kuring.acceptance.CampusMapStep.assertBuildingDetailResponse;
 import static com.kustacks.kuring.acceptance.CampusMapStep.assertBuildingNotFoundErrorResponse;
 import static com.kustacks.kuring.acceptance.CampusMapStep.assertCampusPlaceListResponse;
+import static com.kustacks.kuring.acceptance.CampusMapStep.assertCampusMapSearchResponse;
 import static com.kustacks.kuring.acceptance.CampusMapStep.assertCategoryListResponse;
 import static com.kustacks.kuring.acceptance.CampusMapStep.requestBuildingSearch;
 import static com.kustacks.kuring.acceptance.CampusMapStep.requestBuildingDetail;
@@ -89,6 +90,34 @@ class CampusMapQueryAcceptanceTest extends IntegrationTestSupport {
 
         // then
         assertBuildingListResponse(response, "법학관");
+    }
+
+    @Test
+    @DisplayName("건물과 캠퍼스 시설을 키워드로 검색한다")
+    void searchCampusMap_success() {
+        // given
+        Building building = buildingRepository.saveAndFlush(building("법학관", 37.54174, 127.07649));
+        CampusPlaceCategory category = categoryRepository.saveAndFlush(
+                new CampusPlaceCategory("test_printer", "프린터", 1, true)
+        );
+        campusPlaceRepository.saveAndFlush(new CampusPlace(
+                building,
+                category,
+                "법학관 프린터",
+                null,
+                CampusPlaceLocationType.INDOOR,
+                "1F",
+                null,
+                1,
+                null,
+                1
+        ));
+
+        // when
+        var response = requestBuildingSearch("법학관");
+
+        // then
+        assertCampusMapSearchResponse(response, "법학관", "법학관 프린터");
     }
 
     @Test
