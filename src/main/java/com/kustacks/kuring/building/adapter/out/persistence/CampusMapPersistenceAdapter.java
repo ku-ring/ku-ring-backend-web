@@ -78,7 +78,7 @@ public class CampusMapPersistenceAdapter implements CampusMapQueryPort {
                 place.getName(),
                 place.getCategory().getCode(),
                 place.getCategory().getKorName(),
-                place.getImagePath(),
+                place.getBuilding().getImagePath(),
                 place.getLocationType(),
                 place.getFloor(),
                 place.getLocationDetail(),

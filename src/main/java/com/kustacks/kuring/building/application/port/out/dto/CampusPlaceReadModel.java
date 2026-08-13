@@ -9,7 +9,7 @@ public record CampusPlaceReadModel(
         String name,
         String categoryCode,
         String categoryKorName,
-        String imagePath,
+        String buildingImagePath,
         CampusPlaceLocationType locationType,
         String floor,
         String locationDetail,

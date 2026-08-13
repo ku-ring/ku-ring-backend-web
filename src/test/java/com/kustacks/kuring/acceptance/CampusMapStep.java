@@ -130,7 +130,8 @@ public final class CampusMapStep {
             ExtractableResponse<Response> response,
             String placeName,
             String category,
-            String buildingName
+            String buildingName,
+            String imageUrl
     ) {
         assertSuccessfulListResponse(response, "data.campusPlaces");
 
@@ -140,6 +141,8 @@ public final class CampusMapStep {
                         .isEqualTo(placeName),
                 () -> assertThat(response.jsonPath().getString("data.campusPlaces[0].category"))
                         .isEqualTo(category),
+                () -> assertThat(response.jsonPath().getString("data.campusPlaces[0].imageUrl"))
+                        .isEqualTo(imageUrl),
                 () -> assertThat(response.jsonPath().getString("data.campusPlaces[0].building.name"))
                         .isEqualTo(buildingName)
         );
@@ -148,15 +151,19 @@ public final class CampusMapStep {
     public static void assertBuildingDetailResponse(
             ExtractableResponse<Response> response,
             String buildingName,
-            String campusPlaceName
+            String campusPlaceName,
+            String imageUrl
     ) {
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(response.jsonPath().getString("data.name")).isEqualTo(buildingName),
+                () -> assertThat(response.jsonPath().getString("data.imageUrl")).isEqualTo(imageUrl),
                 () -> assertThat(response.jsonPath().getList("data.operatingHours")).isNotNull(),
                 () -> assertThat(response.jsonPath().getList("data.campusPlaces.name", String.class))
-                        .containsExactly(campusPlaceName)
+                        .containsExactly(campusPlaceName),
+                () -> assertThat(response.jsonPath().getList("data.campusPlaces.imageUrl", String.class))
+                        .containsExactly(imageUrl)
         );
     }
 

@@ -142,7 +142,6 @@ class BuildingTest {
                 building,
                 new CampusPlaceCategory("printer", "프린터", 1, true),
                 "학생회관 1층 프린터",
-                null,
                 CampusPlaceLocationType.INDOOR,
                 "1F",
                 "라운지 안쪽",

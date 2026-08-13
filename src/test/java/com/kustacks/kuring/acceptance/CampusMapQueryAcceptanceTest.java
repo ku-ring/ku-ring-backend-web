@@ -95,7 +95,12 @@ class CampusMapQueryAcceptanceTest extends IntegrationTestSupport {
     @DisplayName("카테고리에 해당하는 캠퍼스 시설을 조회한다")
     void getCampusPlaces_success() {
         // given
-        Building building = buildingRepository.saveAndFlush(building("학생회관", 37.5412, 127.0784));
+        Building building = buildingRepository.saveAndFlush(buildingWithImage(
+                "학생회관",
+                37.5412,
+                127.0784,
+                "campus-map/student-center.png"
+        ));
         CampusPlaceCategory category = categoryRepository.saveAndFlush(
                 new CampusPlaceCategory("test_printer", "프린터", 1, true)
         );
@@ -103,7 +108,6 @@ class CampusMapQueryAcceptanceTest extends IntegrationTestSupport {
                 building,
                 category,
                 "학생회관 프린터",
-                null,
                 CampusPlaceLocationType.INDOOR,
                 "1F",
                 "라운지 안쪽",
@@ -120,7 +124,8 @@ class CampusMapQueryAcceptanceTest extends IntegrationTestSupport {
                 response,
                 "학생회관 프린터",
                 "test_printer",
-                "학생회관"
+                "학생회관",
+                "https://mock.ku-ring.com/campus-map/student-center.png"
         );
     }
 
@@ -128,7 +133,12 @@ class CampusMapQueryAcceptanceTest extends IntegrationTestSupport {
     @DisplayName("건물 상세 정보와 등록된 시설을 조회한다")
     void getBuildingDetail_success() {
         // given
-        Building building = buildingRepository.saveAndFlush(building("학생회관", 37.5412, 127.0784));
+        Building building = buildingRepository.saveAndFlush(buildingWithImage(
+                "학생회관",
+                37.5412,
+                127.0784,
+                "campus-map/student-center.png"
+        ));
         CampusPlaceCategory category = categoryRepository.saveAndFlush(
                 new CampusPlaceCategory("test_main_facility", "주요시설", 100, false)
         );
@@ -136,7 +146,6 @@ class CampusMapQueryAcceptanceTest extends IntegrationTestSupport {
                 building,
                 category,
                 "총학생회",
-                null,
                 CampusPlaceLocationType.INDOOR,
                 "2F",
                 null,
@@ -149,7 +158,12 @@ class CampusMapQueryAcceptanceTest extends IntegrationTestSupport {
         var response = requestBuildingDetail(building.getId());
 
         // then
-        assertBuildingDetailResponse(response, "학생회관", "총학생회");
+        assertBuildingDetailResponse(
+                response,
+                "학생회관",
+                "총학생회",
+                "https://mock.ku-ring.com/campus-map/student-center.png"
+        );
     }
 
     @Test
@@ -169,6 +183,16 @@ class CampusMapQueryAcceptanceTest extends IntegrationTestSupport {
                 latitude,
                 longitude,
                 null
+        );
+    }
+
+    private Building buildingWithImage(String name, Double latitude, Double longitude, String imagePath) {
+        return new Building(
+                name,
+                "서울특별시 광진구 능동로 120",
+                latitude,
+                longitude,
+                imagePath
         );
     }
 

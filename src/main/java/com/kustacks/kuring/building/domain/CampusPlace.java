@@ -42,9 +42,6 @@ public class CampusPlace {
     @Column(length = 100, nullable = false)
     private String name;
 
-    @Column(name = "image_path")
-    private String imagePath;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "location_type", length = 20, nullable = false)
     private CampusPlaceLocationType locationType;
@@ -74,7 +71,6 @@ public class CampusPlace {
             Building building,
             CampusPlaceCategory category,
             String name,
-            String imagePath,
             CampusPlaceLocationType locationType,
             String floor,
             String locationDetail,
@@ -88,7 +84,6 @@ public class CampusPlace {
         this.building = building;
         this.category = category;
         this.name = name;
-        this.imagePath = imagePath;
         this.locationType = locationType;
         this.floor = floor;
         this.locationDetail = locationDetail;

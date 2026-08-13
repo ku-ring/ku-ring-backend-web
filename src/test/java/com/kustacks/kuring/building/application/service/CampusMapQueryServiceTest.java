@@ -206,8 +206,8 @@ class CampusMapQueryServiceTest {
         )).thenReturn(OperatingPeriod.VACATION);
         when(campusMapQueryPort.findCampusPlacesByCategories(List.of("printer")))
                 .thenReturn(List.of(place));
-        when(storagePort.getPresignedUrl("campus-map/printer.png"))
-                .thenReturn("https://storage.example.com/printer.png");
+        when(storagePort.getPresignedUrl("campus-map/student-center.png"))
+                .thenReturn("https://storage.example.com/student-center.png");
 
         // when
         List<CampusPlaceResult> results = campusMapQueryService.getCampusPlaces(
@@ -215,22 +215,22 @@ class CampusMapQueryServiceTest {
         );
 
         // then
-        assertThat(results)
-                .singleElement()
-                .satisfies(result -> assertAll(
-                        () -> assertThat(result.imageUrl()).isEqualTo("https://storage.example.com/printer.png"),
-                        () -> assertThat(result.operatingHours()).hasSize(2),
-                        () -> assertThat(result.operatingHours().get(0).period())
-                                .isEqualTo(OperatingPeriod.SEMESTER),
-                        () -> assertThat(result.operatingHours().get(0).isCurrent()).isFalse(),
-                        () -> assertThat(result.operatingHours().get(1).period())
-                                .isEqualTo(OperatingPeriod.VACATION),
-                        () -> assertThat(result.operatingHours().get(1).dayGroup())
-                                .isEqualTo(OperatingDayGroup.WEEKDAY),
-                        () -> assertThat(result.operatingHours().get(1).status())
-                                .isEqualTo(OperatingHoursStatus.OPEN_24_HOURS),
-                        () -> assertThat(result.operatingHours().get(1).isCurrent()).isTrue()
-                ));
+        assertThat(results).hasSize(1);
+        CampusPlaceResult result = results.get(0);
+        assertAll(
+                () -> assertThat(result.imageUrl()).isEqualTo("https://storage.example.com/student-center.png"),
+                () -> assertThat(result.operatingHours()).hasSize(2),
+                () -> assertThat(result.operatingHours().get(0).period())
+                        .isEqualTo(OperatingPeriod.SEMESTER),
+                () -> assertThat(result.operatingHours().get(0).isCurrent()).isFalse(),
+                () -> assertThat(result.operatingHours().get(1).period())
+                        .isEqualTo(OperatingPeriod.VACATION),
+                () -> assertThat(result.operatingHours().get(1).dayGroup())
+                        .isEqualTo(OperatingDayGroup.WEEKDAY),
+                () -> assertThat(result.operatingHours().get(1).status())
+                        .isEqualTo(OperatingHoursStatus.OPEN_24_HOURS),
+                () -> assertThat(result.operatingHours().get(1).isCurrent()).isTrue()
+        );
         verify(campusMapQueryPort).findCampusPlacesByCategories(List.of("printer"));
     }
 
@@ -255,20 +255,20 @@ class CampusMapQueryServiceTest {
         )).thenReturn(OperatingPeriod.VACATION);
         when(storagePort.getPresignedUrl("campus-map/student-center.png"))
                 .thenReturn("https://storage.example.com/student-center.png");
-        when(storagePort.getPresignedUrl("campus-map/printer.png"))
-                .thenReturn("https://storage.example.com/printer.png");
 
         // when
         BuildingDetailResult result = campusMapQueryService.getBuildingDetail(4L);
 
         // then
+        assertThat(result.campusPlaces()).hasSize(1);
+        CampusPlaceResult campusPlace = result.campusPlaces().get(0);
         assertAll(
                 () -> assertThat(result.name()).isEqualTo("학생회관"),
                 () -> assertThat(result.imageUrl())
                         .isEqualTo("https://storage.example.com/student-center.png"),
-                () -> assertThat(result.campusPlaces())
-                        .singleElement()
-                        .satisfies(place -> assertThat(place.name()).isEqualTo("학생회관 프린터"))
+                () -> assertThat(campusPlace.name()).isEqualTo("학생회관 프린터"),
+                () -> assertThat(campusPlace.imageUrl())
+                        .isEqualTo("https://storage.example.com/student-center.png")
         );
         verify(campusMapQueryPort).findCampusPlacesByBuildingId(4L);
     }
@@ -299,7 +299,7 @@ class CampusMapQueryServiceTest {
                 "학생회관 프린터",
                 "printer",
                 "프린터",
-                "campus-map/printer.png",
+                "campus-map/student-center.png",
                 CampusPlaceLocationType.INDOOR,
                 "1F",
                 "라운지 안쪽",

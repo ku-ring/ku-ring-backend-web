@@ -125,7 +125,7 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
                 place.name(),
                 place.categoryCode(),
                 place.categoryKorName(),
-                resolveImageUrl(place.imagePath()),
+                resolveImageUrl(place.buildingImagePath()),
                 place.locationType(),
                 place.floor(),
                 place.locationDetail(),
