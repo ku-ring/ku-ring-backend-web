@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface CampusPlaceQueryRepository {
 
+    List<CampusPlace> searchByKeyword(String keyword);
+
     List<CampusPlace> findByFilterCategories(List<String> categoryCodes);
 
     List<CampusPlace> findByBuildingId(Long buildingId);

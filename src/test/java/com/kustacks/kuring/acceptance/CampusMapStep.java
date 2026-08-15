@@ -145,6 +145,22 @@ public final class CampusMapStep {
         );
     }
 
+    public static void assertCampusMapSearchResponse(
+            ExtractableResponse<Response> response,
+            String buildingName,
+            String campusPlaceName
+    ) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getString("message")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getList("data.buildings.name", String.class))
+                        .containsExactly(buildingName),
+                () -> assertThat(response.jsonPath().getList("data.campusPlaces.name", String.class))
+                        .containsExactly(campusPlaceName)
+        );
+    }
+
     public static void assertBuildingDetailResponse(
             ExtractableResponse<Response> response,
             String buildingName,
