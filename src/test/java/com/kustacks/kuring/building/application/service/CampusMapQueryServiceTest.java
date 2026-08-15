@@ -164,10 +164,13 @@ class CampusMapQueryServiceTest {
                 () -> assertThat(result.campusPlaces()).hasSize(1),
                 () -> assertThat(result.campusPlaces().get(0).name()).isEqualTo("학생회관 프린터"),
                 () -> assertThat(result.campusPlaces().get(0).category()).isEqualTo("printer"),
+                () -> assertThat(result.campusPlaces().get(0).imageUrl())
+                        .isEqualTo("https://storage.example.com/student-center.png"),
                 () -> assertThat(result.campusPlaces().get(0).building().name()).isEqualTo("학생회관")
         );
         verify(campusMapQueryPort).searchBuildings("학생회관");
         verify(campusMapQueryPort).searchCampusPlaces("학생회관");
+        verify(storagePort).getPresignedUrl("campus-map/student-center.png");
     }
 
     @Test
