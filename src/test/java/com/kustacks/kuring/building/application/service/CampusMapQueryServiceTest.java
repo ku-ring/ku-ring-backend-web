@@ -4,6 +4,7 @@ import com.kustacks.kuring.building.application.port.in.dto.BuildingDetailResult
 import com.kustacks.kuring.building.application.port.in.dto.BuildingOverviewResult;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
 import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
+import com.kustacks.kuring.building.application.port.in.dto.CampusMapSearchResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
 import com.kustacks.kuring.building.application.port.out.AcademicPeriodQueryPort;
 import com.kustacks.kuring.building.application.port.out.CampusMapQueryPort;
@@ -127,10 +128,10 @@ class CampusMapQueryServiceTest {
     }
 
     @Test
-    @DisplayName("건물 검색어의 앞뒤 공백을 제거하여 조회한다")
-    void search_buildings_with_trimmed_keyword() {
+    @DisplayName("검색어의 앞뒤 공백을 제거하여 건물과 시설을 각각 조회한다")
+    void search_campus_map_with_trimmed_keyword() {
         // given
-        when(campusMapQueryPort.searchBuildings("학관")).thenReturn(List.of(
+        when(campusMapQueryPort.searchBuildings("학생회관")).thenReturn(List.of(
                 new BuildingSummaryReadModel(
                         4L,
                         "학생회관",
@@ -140,21 +141,33 @@ class CampusMapQueryServiceTest {
                         4
                 )
         ));
+        when(campusMapQueryPort.searchCampusPlaces("학생회관"))
+                .thenReturn(List.of(campusPlaceReadModel()));
+        when(storagePort.getPresignedUrl("campus-map/student-center.png"))
+                .thenReturn("https://storage.example.com/student-center.png");
+        givenCurrentOperatingPeriod();
 
         // when
-        List<BuildingSummaryResult> result = campusMapQueryService.searchBuildings("  학관  ");
+        CampusMapSearchResult result = campusMapQueryService.searchCampusMap("  학생회관  ");
 
         // then
-        assertThat(result).containsExactly(
-                new BuildingSummaryResult(
-                        4L,
-                        "학생회관",
-                        "서울특별시 광진구 능동로 120",
-                        37.5412,
-                        127.0784
-                )
+        assertAll(
+                () -> assertThat(result.buildings()).containsExactly(
+                        new BuildingSummaryResult(
+                                4L,
+                                "학생회관",
+                                "서울특별시 광진구 능동로 120",
+                                37.5412,
+                                127.0784
+                        )
+                ),
+                () -> assertThat(result.campusPlaces()).hasSize(1),
+                () -> assertThat(result.campusPlaces().get(0).name()).isEqualTo("학생회관 프린터"),
+                () -> assertThat(result.campusPlaces().get(0).category()).isEqualTo("printer"),
+                () -> assertThat(result.campusPlaces().get(0).building().name()).isEqualTo("학생회관")
         );
-        verify(campusMapQueryPort).searchBuildings("학관");
+        verify(campusMapQueryPort).searchBuildings("학생회관");
+        verify(campusMapQueryPort).searchCampusPlaces("학생회관");
     }
 
     @Test

@@ -5,6 +5,7 @@ import com.kustacks.kuring.building.application.port.in.dto.BuildingDetailResult
 import com.kustacks.kuring.building.application.port.in.dto.BuildingOverviewResult;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingSummaryResult;
 import com.kustacks.kuring.building.application.port.in.dto.CampusPlaceResult;
+import com.kustacks.kuring.building.application.port.in.dto.CampusMapSearchResult;
 import com.kustacks.kuring.building.application.port.in.dto.CategoryResult;
 import com.kustacks.kuring.building.application.port.in.dto.OperatingHoursResult;
 import com.kustacks.kuring.building.application.port.out.AcademicPeriodQueryPort;
@@ -57,12 +58,20 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
     }
 
     @Override
-    public List<BuildingSummaryResult> searchBuildings(String keyword) {
+    public CampusMapSearchResult searchCampusMap(String keyword) {
         String normalizedKeyword = keyword.trim();
+        List<BuildingSummaryReadModel> buildings = campusMapQueryPort.searchBuildings(normalizedKeyword);
+        List<CampusPlaceReadModel> campusPlaces = campusMapQueryPort.searchCampusPlaces(normalizedKeyword);
+        OperatingContext context = currentOperatingContext();
 
-        return campusMapQueryPort.searchBuildings(normalizedKeyword).stream()
-                .map(this::toBuildingSummaryResult)
-                .toList();
+        return new CampusMapSearchResult(
+                buildings.stream()
+                        .map(this::toBuildingSummaryResult)
+                        .toList(),
+                campusPlaces.stream()
+                        .map(place -> toCampusPlaceResult(place, context))
+                        .toList()
+        );
     }
 
     @Override

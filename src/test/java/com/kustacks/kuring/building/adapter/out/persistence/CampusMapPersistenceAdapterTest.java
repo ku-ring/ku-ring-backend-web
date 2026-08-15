@@ -114,6 +114,40 @@ class CampusMapPersistenceAdapterTest {
     }
 
     @Test
+    @DisplayName("검색어에 해당하는 캠퍼스 시설을 조회한다")
+    void search_campus_places() {
+        // given
+        Building studentCenter = building(4L, "학생회관", 37.5412, 127.0784);
+        CampusPlaceCategory category = new CampusPlaceCategory("printer", "프린터", 1, true);
+        CampusPlace printer = new CampusPlace(
+                studentCenter,
+                category,
+                "학생회관 프린터",
+                CampusPlaceLocationType.INDOOR,
+                "1F",
+                null,
+                3,
+                null,
+                1
+        );
+        when(campusPlaceRepository.searchByKeyword("프린터"))
+                .thenReturn(List.of(printer));
+
+        // when
+        List<CampusPlaceReadModel> result = campusMapPersistenceAdapter.searchCampusPlaces("프린터");
+
+        // then
+        assertAll(
+                () -> assertThat(result).hasSize(1),
+                () -> assertThat(result.get(0).name()).isEqualTo("학생회관 프린터"),
+                () -> assertThat(result.get(0).categoryCode()).isEqualTo("printer"),
+                () -> assertThat(result.get(0).building().name()).isEqualTo("학생회관")
+        );
+
+        verify(campusPlaceRepository).searchByKeyword("프린터");
+    }
+
+    @Test
     @DisplayName("선택한 카테고리에 해당하는 캠퍼스 시설을 조회한다")
     void find_campus_places_by_categories() {
         // given

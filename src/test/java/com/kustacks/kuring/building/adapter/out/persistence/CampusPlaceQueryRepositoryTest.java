@@ -11,6 +11,8 @@ import com.kustacks.kuring.building.domain.OperatingPeriod;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalTime;
@@ -30,6 +32,49 @@ class CampusPlaceQueryRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
     private CampusPlaceRepository campusPlaceRepository;
+
+    @DisplayName("시설명과 카테고리명으로 캠퍼스 시설을 검색한다")
+    @ParameterizedTest
+    @ValueSource(strings = {"푸드코트", "식당"})
+    void search_campus_places_by_keyword(String keyword) {
+        // given
+        Building building = buildingRepository.saveAndFlush(new Building(
+                "학생회관",
+                "서울특별시 광진구 능동로 120",
+                37.5412,
+                127.0784,
+                null
+        ));
+        CampusPlaceCategory restaurant = categoryRepository.save(
+                new CampusPlaceCategory("test_restaurant", "식당", 1, true)
+        );
+        CampusPlaceCategory printer = categoryRepository.save(
+                new CampusPlaceCategory("test_printer", "프린터", 2, true)
+        );
+        CampusPlace restaurantPlace = campusPlace(building, restaurant, "학생회관 푸드코트", 1);
+        restaurantPlace.addOperatingHours(new OperatingHours(
+                OperatingPeriod.SEMESTER,
+                OperatingDayGroup.WEEKDAY,
+                OperatingHoursStatus.SCHEDULED,
+                LocalTime.of(9, 0),
+                LocalTime.of(18, 0)
+        ));
+        campusPlaceRepository.saveAllAndFlush(List.of(
+                restaurantPlace,
+                campusPlace(building, printer, "학생회관 프린터", 2)
+        ));
+
+        // when
+        List<CampusPlace> result = campusPlaceRepository.searchByKeyword(keyword);
+
+        // then
+        assertAll(
+                () -> assertThat(result)
+                        .extracting(CampusPlace::getName)
+                        .containsExactly("학생회관 푸드코트"),
+                () -> assertThat(result.get(0).getOperatingHours()).hasSize(1)
+        );
+    }
 
     @Test
     @DisplayName("필터에 노출되는 카테고리의 캠퍼스 시설을 노출 순서대로 조회한다")

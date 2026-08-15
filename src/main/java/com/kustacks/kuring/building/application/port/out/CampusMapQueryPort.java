@@ -16,6 +16,8 @@ public interface CampusMapQueryPort {
 
     List<BuildingSummaryReadModel> searchBuildings(String keyword);
 
+    List<CampusPlaceReadModel> searchCampusPlaces(String keyword);
+
     List<CampusPlaceReadModel> findCampusPlacesByCategories(List<String> categoryCodes);
 
     List<CampusPlaceReadModel> findCampusPlacesByBuildingId(Long buildingId);
