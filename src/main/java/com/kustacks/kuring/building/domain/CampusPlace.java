@@ -142,4 +142,8 @@ public class CampusPlace {
             throw new IllegalArgumentException(ErrorCode.OPERATING_HOURS_DUPLICATED.getMessage());
         }
     }
+
+    public String getImagePath() {
+        return this.building.getImagePath();
+    }
 }
