@@ -2,6 +2,7 @@ package com.kustacks.kuring.building.adapter.in.web;
 
 import com.kustacks.kuring.building.adapter.in.web.dto.model.BuildingOverview;
 import com.kustacks.kuring.building.adapter.in.web.dto.model.BuildingSummary;
+import com.kustacks.kuring.building.adapter.in.web.dto.model.CampusPlaceItem;
 import com.kustacks.kuring.building.adapter.in.web.dto.model.CategoryDto;
 import com.kustacks.kuring.building.application.port.in.CampusMapQueryUseCase;
 import com.kustacks.kuring.building.application.port.in.dto.BuildingDetailResult;
@@ -179,19 +180,20 @@ class CampusMapQueryApiV2Test {
         // then
         var body = response.getBody();
         assertThat(body).isNotNull();
+        List<CampusPlaceItem> campusPlaces = body.getData().campusPlaces();
+        assertThat(campusPlaces).hasSize(1);
+        CampusPlaceItem campusPlace = campusPlaces.get(0);
         assertAll(
                 () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
                 () -> assertThat(body)
                         .extracting(BaseResponse::getCode, BaseResponse::getMessage)
                         .containsExactly(200, "카테고리 기반 시설 목록 조회에 성공하였습니다"),
-                () -> assertThat(body.getData().campusPlaces())
-                        .singleElement()
-                        .satisfies(campusPlace -> assertAll(
-                                () -> assertThat(campusPlace.name()).isEqualTo("학생회관 프린터"),
-                                () -> assertThat(campusPlace.operatingHours().get(0).isCurrent()).isTrue(),
-                                () -> assertThat(campusPlace.operatingHours().get(0).opensAt()).isEqualTo("08:00"),
-                                () -> assertThat(campusPlace.building().name()).isEqualTo("학생회관")
-                        ))
+                () -> assertThat(campusPlace.name()).isEqualTo("학생회관 프린터"),
+                () -> assertThat(campusPlace.imageUrl())
+                        .isEqualTo("https://storage.example.com/student-center.png"),
+                () -> assertThat(campusPlace.operatingHours().get(0).isCurrent()).isTrue(),
+                () -> assertThat(campusPlace.operatingHours().get(0).opensAt()).isEqualTo("08:00"),
+                () -> assertThat(campusPlace.building().name()).isEqualTo("학생회관")
         );
     }
 
@@ -234,7 +236,7 @@ class CampusMapQueryApiV2Test {
                 "학생회관 프린터",
                 "printer",
                 "프린터",
-                "https://storage.example.com/printer.png",
+                "https://storage.example.com/student-center.png",
                 CampusPlaceLocationType.INDOOR,
                 "1F",
                 "라운지 안쪽",

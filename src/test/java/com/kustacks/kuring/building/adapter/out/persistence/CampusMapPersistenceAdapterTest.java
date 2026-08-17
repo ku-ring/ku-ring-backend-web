@@ -123,7 +123,6 @@ class CampusMapPersistenceAdapterTest {
                 studentCenter,
                 category,
                 "학생회관 프린터",
-                null,
                 CampusPlaceLocationType.INDOOR,
                 "1F",
                 null,
@@ -158,7 +157,6 @@ class CampusMapPersistenceAdapterTest {
                 studentCenter,
                 category,
                 "학생회관 프린터",
-                "campus-map/printer.png",
                 CampusPlaceLocationType.INDOOR,
                 "1F",
                 "라운지 안쪽",
@@ -183,14 +181,15 @@ class CampusMapPersistenceAdapterTest {
         );
 
         // then
-        assertThat(result).singleElement().satisfies(place -> {
-            assertAll(
-                    () -> assertThat(place.name()).isEqualTo("학생회관 프린터"),
-                    () -> assertThat(place.categoryCode()).isEqualTo("printer"),
-                    () -> assertThat(place.operatingHours()).hasSize(1),
-                    () -> assertThat(place.building().name()).isEqualTo("학생회관")
-            );
-        });
+        assertThat(result).hasSize(1);
+        CampusPlaceReadModel place = result.get(0);
+        assertAll(
+                () -> assertThat(place.name()).isEqualTo("학생회관 프린터"),
+                () -> assertThat(place.categoryCode()).isEqualTo("printer"),
+                () -> assertThat(place.buildingImagePath()).isEqualTo("campus-map/student-center.png"),
+                () -> assertThat(place.operatingHours()).hasSize(1),
+                () -> assertThat(place.building().name()).isEqualTo("학생회관")
+        );
         verify(campusPlaceRepository).findByFilterCategories(List.of("printer"));
     }
 
@@ -240,7 +239,6 @@ class CampusMapPersistenceAdapterTest {
                 studentCenter,
                 category,
                 "학생회관 프린터",
-                null,
                 CampusPlaceLocationType.INDOOR,
                 "1F",
                 null,
@@ -254,12 +252,13 @@ class CampusMapPersistenceAdapterTest {
         List<CampusPlaceReadModel> result = campusMapPersistenceAdapter.findCampusPlacesByBuildingId(4L);
 
         // then
-        assertThat(result)
-                .singleElement()
-                .satisfies(place -> assertAll(
-                        () -> assertThat(place.name()).isEqualTo("학생회관 프린터"),
-                        () -> assertThat(place.building().id()).isEqualTo(4L)
-                ));
+        assertThat(result).hasSize(1);
+        CampusPlaceReadModel place = result.get(0);
+        assertAll(
+                () -> assertThat(place.name()).isEqualTo("학생회관 프린터"),
+                () -> assertThat(place.buildingImagePath()).isEqualTo("campus-map/student-center.png"),
+                () -> assertThat(place.building().id()).isEqualTo(4L)
+        );
         verify(campusPlaceRepository).findByBuildingId(4L);
     }
 
@@ -269,7 +268,7 @@ class CampusMapPersistenceAdapterTest {
                 "서울특별시 광진구 능동로 120",
                 latitude,
                 longitude,
-                null
+                "campus-map/student-center.png"
         );
         ReflectionTestUtils.setField(building, "id", id);
         ReflectionTestUtils.setField(building, "displayOrder", id.intValue());

@@ -175,7 +175,6 @@ class CampusPlaceQueryRepositoryTest extends IntegrationTestSupport {
                 building,
                 category,
                 name,
-                null,
                 CampusPlaceLocationType.INDOOR,
                 "1F",
                 null,
