@@ -110,7 +110,22 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
                 building.name(),
                 building.address(),
                 building.latitude(),
-                building.longitude()
+                building.longitude(),
+                resolveImageUrl(building.imagePath())
+        );
+    }
+
+    private BuildingSummaryResult toBuildingSummaryResult(
+            BuildingSummaryReadModel building,
+            String imageUrl
+    ) {
+        return new BuildingSummaryResult(
+                building.id(),
+                building.name(),
+                building.address(),
+                building.latitude(),
+                building.longitude(),
+                imageUrl
         );
     }
 
@@ -129,19 +144,21 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
             CampusPlaceReadModel place,
             OperatingContext context
     ) {
+        String imageUrl = resolveImageUrl(place.buildingImagePath());
+
         return new CampusPlaceResult(
                 place.id(),
                 place.name(),
                 place.categoryCode(),
                 place.categoryKorName(),
-                resolveImageUrl(place.buildingImagePath()),
+                imageUrl,
                 place.locationType(),
                 place.floor(),
                 place.locationDetail(),
                 place.quantity(),
                 resolveOperatingHours(place.operatingHours(), context),
                 place.externalUrl(),
-                toBuildingSummaryResult(place.building())
+                toBuildingSummaryResult(place.building(), imageUrl)
         );
     }
 

@@ -7,7 +7,8 @@ public record BuildingSummary(
         String name,
         String address,
         Double latitude,
-        Double longitude
+        Double longitude,
+        String imageUrl
 ) {
 
     public static BuildingSummary from(BuildingSummaryResult result) {
@@ -16,7 +17,8 @@ public record BuildingSummary(
                 result.name(),
                 result.address(),
                 result.latitude(),
-                result.longitude()
+                result.longitude(),
+                result.imageUrl()
         );
     }
 }
