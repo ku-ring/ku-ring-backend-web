@@ -37,6 +37,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -101,6 +102,7 @@ class CampusMapQueryServiceTest {
                         "서울특별시 광진구 능동로 120",
                         37.54241,
                         127.07382,
+                        "campus-map/administration.png",
                         1
                 ),
                 new BuildingSummaryReadModel(
@@ -109,6 +111,7 @@ class CampusMapQueryServiceTest {
                         "서울특별시 광진구 능동로 120",
                         37.54196,
                         127.07531,
+                        "campus-map/business.png",
                         2
                 )
         ));
@@ -138,6 +141,7 @@ class CampusMapQueryServiceTest {
                         "서울특별시 광진구 능동로 120",
                         37.5412,
                         127.0784,
+                        "campus-map/student-center.png",
                         4
                 )
         ));
@@ -158,7 +162,8 @@ class CampusMapQueryServiceTest {
                                 "학생회관",
                                 "서울특별시 광진구 능동로 120",
                                 37.5412,
-                                127.0784
+                                127.0784,
+                                "https://storage.example.com/student-center.png"
                         )
                 ),
                 () -> assertThat(result.campusPlaces()).hasSize(1),
@@ -170,7 +175,7 @@ class CampusMapQueryServiceTest {
         );
         verify(campusMapQueryPort).searchBuildings("학생회관");
         verify(campusMapQueryPort).searchCampusPlaces("학생회관");
-        verify(storagePort).getPresignedUrl("campus-map/student-center.png");
+        verify(storagePort, times(2)).getPresignedUrl("campus-map/student-center.png");
     }
 
     @Test
@@ -343,6 +348,7 @@ class CampusMapQueryServiceTest {
                         "서울특별시 광진구 능동로 120",
                         37.5412,
                         127.0784,
+                        "campus-map/student-center.png",
                         4
                 )
         );
