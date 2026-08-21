@@ -27,8 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static com.kustacks.kuring.common.exception.code.ErrorCode.BUILDING_NOT_FOUND;
 import static com.kustacks.kuring.common.utils.TimeUtils.isWeekend;
@@ -63,13 +65,21 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
         List<BuildingSummaryReadModel> buildings = campusMapQueryPort.searchBuildings(normalizedKeyword);
         List<CampusPlaceReadModel> campusPlaces = campusMapQueryPort.searchCampusPlaces(normalizedKeyword);
         OperatingContext context = currentOperatingContext();
+        Map<String, String> imageUrlsByPath = new HashMap<>();
 
         return new CampusMapSearchResult(
                 buildings.stream()
-                        .map(this::toBuildingSummaryResult)
+                        .map(building -> toBuildingSummaryResult(
+                                building,
+                                resolveImageUrl(building.imagePath(), imageUrlsByPath)
+                        ))
                         .toList(),
                 campusPlaces.stream()
-                        .map(place -> toCampusPlaceResult(place, context))
+                        .map(place -> toCampusPlaceResult(
+                                place,
+                                context,
+                                resolveImageUrl(place.buildingImagePath(), imageUrlsByPath)
+                        ))
                         .toList()
         );
     }
@@ -144,8 +154,14 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
             CampusPlaceReadModel place,
             OperatingContext context
     ) {
-        String imageUrl = resolveImageUrl(place.buildingImagePath());
+        return toCampusPlaceResult(place, context, resolveImageUrl(place.buildingImagePath()));
+    }
 
+    private CampusPlaceResult toCampusPlaceResult(
+            CampusPlaceReadModel place,
+            OperatingContext context,
+            String imageUrl
+    ) {
         return new CampusPlaceResult(
                 place.id(),
                 place.name(),
@@ -221,6 +237,16 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
             return null;
         }
         return storagePort.getPresignedUrl(imagePath);
+    }
+
+    private String resolveImageUrl(String imagePath, Map<String, String> imageUrlsByPath) {
+        if (imagePath == null || imagePath.isBlank()) {
+            return null;
+        }
+        if (!imageUrlsByPath.containsKey(imagePath)) {
+            imageUrlsByPath.put(imagePath, resolveImageUrl(imagePath));
+        }
+        return imageUrlsByPath.get(imagePath);
     }
 
 }

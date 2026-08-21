@@ -37,7 +37,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -175,7 +174,7 @@ class CampusMapQueryServiceTest {
         );
         verify(campusMapQueryPort).searchBuildings("학생회관");
         verify(campusMapQueryPort).searchCampusPlaces("학생회관");
-        verify(storagePort, times(2)).getPresignedUrl("campus-map/student-center.png");
+        verify(storagePort).getPresignedUrl("campus-map/student-center.png");
     }
 
     @Test
