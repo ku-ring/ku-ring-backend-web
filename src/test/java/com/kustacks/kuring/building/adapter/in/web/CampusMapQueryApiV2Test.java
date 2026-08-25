@@ -135,7 +135,8 @@ class CampusMapQueryApiV2Test {
                                 "학생회관",
                                 "서울특별시 광진구 능동로 120",
                                 37.5412,
-                                127.0784
+                                127.0784,
+                                "https://storage.example.com/student-center.png"
                         )),
                         List.of(campusPlaceResult())
                 )
@@ -156,10 +157,16 @@ class CampusMapQueryApiV2Test {
                         .extracting(
                                 BuildingSummary::id,
                                 BuildingSummary::name,
-                                BuildingSummary::address
+                                BuildingSummary::address,
+                                BuildingSummary::imageUrl
                         )
                         .containsExactly(
-                                tuple(4L, "학생회관", "서울특별시 광진구 능동로 120")
+                                tuple(
+                                        4L,
+                                        "학생회관",
+                                        "서울특별시 광진구 능동로 120",
+                                        "https://storage.example.com/student-center.png"
+                                )
                         ),
                 () -> assertThat(body.getData().campusPlaces()).hasSize(1),
                 () -> assertThat(body.getData().campusPlaces().get(0).name())
@@ -255,7 +262,8 @@ class CampusMapQueryApiV2Test {
                         "학생회관",
                         "서울특별시 광진구 능동로 120",
                         37.5412,
-                        127.0784
+                        127.0784,
+                        "https://storage.example.com/student-center.png"
                 )
         );
     }

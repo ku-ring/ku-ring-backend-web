@@ -5,6 +5,7 @@ public record BuildingSummaryResult(
         String name,
         String address,
         Double latitude,
-        Double longitude
+        Double longitude,
+        String imageUrl
 ) {
 }

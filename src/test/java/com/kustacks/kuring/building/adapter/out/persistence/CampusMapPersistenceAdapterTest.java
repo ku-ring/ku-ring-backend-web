@@ -107,6 +107,7 @@ class CampusMapPersistenceAdapterTest {
                         "서울특별시 광진구 능동로 120",
                         37.5412,
                         127.0784,
+                        "campus-map/student-center.png",
                         4
                 )
         );

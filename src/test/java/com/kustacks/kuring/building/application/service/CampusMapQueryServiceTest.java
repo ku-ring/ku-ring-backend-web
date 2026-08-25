@@ -101,6 +101,7 @@ class CampusMapQueryServiceTest {
                         "서울특별시 광진구 능동로 120",
                         37.54241,
                         127.07382,
+                        "campus-map/administration.png",
                         1
                 ),
                 new BuildingSummaryReadModel(
@@ -109,6 +110,7 @@ class CampusMapQueryServiceTest {
                         "서울특별시 광진구 능동로 120",
                         37.54196,
                         127.07531,
+                        "campus-map/business.png",
                         2
                 )
         ));
@@ -138,6 +140,7 @@ class CampusMapQueryServiceTest {
                         "서울특별시 광진구 능동로 120",
                         37.5412,
                         127.0784,
+                        "campus-map/student-center.png",
                         4
                 )
         ));
@@ -158,7 +161,8 @@ class CampusMapQueryServiceTest {
                                 "학생회관",
                                 "서울특별시 광진구 능동로 120",
                                 37.5412,
-                                127.0784
+                                127.0784,
+                                "https://storage.example.com/student-center.png"
                         )
                 ),
                 () -> assertThat(result.campusPlaces()).hasSize(1),
@@ -343,6 +347,7 @@ class CampusMapQueryServiceTest {
                         "서울특별시 광진구 능동로 120",
                         37.5412,
                         127.0784,
+                        "campus-map/student-center.png",
                         4
                 )
         );

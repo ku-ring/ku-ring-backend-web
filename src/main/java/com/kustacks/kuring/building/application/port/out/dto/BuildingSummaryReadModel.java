@@ -6,6 +6,7 @@ public record BuildingSummaryReadModel(
         String address,
         Double latitude,
         Double longitude,
+        String imagePath,
         Integer displayOrder
 ) {
 }
