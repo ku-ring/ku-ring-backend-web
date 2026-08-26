@@ -49,6 +49,25 @@ class AcademicEventPeriodAdapterTest {
     }
 
     @Test
+    @DisplayName("계절학기 개강은 정규 학기 시작으로 판단하지 않는다")
+    void ignore_seasonal_semester_start() {
+        // given
+        LocalDate today = LocalDate.of(2026, 7, 20);
+        when(academicEventQueryUseCase.getAcademicEventsByDateRange(
+                new AcademicEventLookupCommand(null, today)
+        )).thenReturn(List.of(
+                event(1L, "하계 방학", LocalDateTime.of(2026, 6, 22, 0, 0)),
+                event(2L, "하계 계절학기 개강", LocalDateTime.of(2026, 7, 1, 0, 0))
+        ));
+
+        // when
+        OperatingPeriod period = academicEventPeriodAdapter.determineOperatingPeriod(today);
+
+        // then
+        assertThat(period).isEqualTo(OperatingPeriod.VACATION);
+    }
+
+    @Test
     @DisplayName("판단할 학사일정이 없으면 날짜를 기준으로 운영기간을 판단한다")
     void determine_semester_when_boundary_does_not_exist() {
         // given

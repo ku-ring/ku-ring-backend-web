@@ -42,7 +42,7 @@ public class AcademicEventPeriodAdapter implements AcademicPeriodQueryPort {
                 .replaceAll("\\s", "")
                 .toLowerCase(Locale.ROOT);
 
-        if (summary.contains("개강")) {
+        if (summary.contains("개강") && !summary.contains("계절")) {
             return Optional.of(new PeriodBoundary(event.startTime(), OperatingPeriod.SEMESTER));
         }
 
