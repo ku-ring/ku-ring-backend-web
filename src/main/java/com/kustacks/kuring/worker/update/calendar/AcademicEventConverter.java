@@ -83,6 +83,12 @@ public class AcademicEventConverter {
                 }
             }
 
+            if (endTime.isBefore(startTime)) {
+                log.warn("DTEND가 DTSTART보다 이전입니다. (uid={}, dtstart={}, dtend={})",
+                        uid, icsEvent.dtstart(), icsEvent.dtend());
+                    return Optional.empty();
+            }
+
             AcademicEventCategory category = AcademicEventCategorizer.categorize(summary);
             Transparent transparent = convertToTransparent(icsEvent.transp());
             Integer sequence = convertToSequence(icsEvent.sequence());
