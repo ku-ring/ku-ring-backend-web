@@ -388,4 +388,35 @@ class AcademicEventConverterTest {
         // then
         assertThat(academicEvent).isNull();
     }
+
+    @DisplayName("일반 이벤트의 시작 시간과 종료 시간이 같으면 변환에서 제외")
+    @Test
+    void convert_non_all_day_event_with_same_start_and_end_time() {
+        // given
+        IcsEvent icsEvent = new IcsEvent(
+                "test-uid",
+                "테스트 일정",
+                "설명",
+                "20260818T093000",
+                "20260818T093000",
+                "PUBLIC",
+                "0",
+                "20260818T093000Z",
+                "TRANSPARENT",
+                "CONFIRMED",
+                "0",
+                ""
+        );
+
+        // when
+        AcademicEvent academicEvent =
+                AcademicEventConverter.convertToAcademicEvent(icsEvent).orElse(null);
+
+        // then
+        assertThat(academicEvent).isNotNull();
+        assertThat(academicEvent.getStartTime())
+                .isEqualTo(LocalDateTime.of(2026, 8, 18, 9, 30));
+        assertThat(academicEvent.getEndTime())
+                .isEqualTo(LocalDateTime.of(2026, 8, 18, 9, 30));
+    }
 }
