@@ -225,7 +225,6 @@ jacocoTestReport {
                             '**/*Storage.*',
                             '**/KuringApplication.*',
                             '**/*Token.*',
-                            '**/*Converter.*',
                             '**/*AdminController.*',
                             '**/*Dialect.*'
                     ] + Qdomains)
@@ -259,7 +258,6 @@ jacocoTestCoverageVerification {
                     '**.*Storage.*',
                     '**.KuringApplication.*',
                     '**.*Token.*',
-                    '**.*Converter.*',
                     '**.*AdminController.*',
                     '**.*Dialect.*'
             ] + Qdomains

@@ -53,10 +53,7 @@ public class AcademicEventConverter {
 
             boolean isAllDayEvent = isAllDayEvent(icsEvent.dtstart()); // 종일 일정을 판단하기 위한 boolean 변수
 
-            if (icsEvent.dtend() != null
-                    && !icsEvent.dtend().isBlank()
-                    && isAllDayEvent != isAllDayEvent(icsEvent.dtend())) {
-
+            if (hasMismatchedDateTimeFormat(icsEvent, isAllDayEvent)) {
                 log.warn(
                         "DTSTART와 DTEND의 형식이 다릅니다. (uid={}, dtstart={}, dtend={})",
                         uid,
@@ -67,26 +64,13 @@ public class AcademicEventConverter {
             }
 
             LocalDateTime startTime = StringToDateTimeConverter.convert(icsEvent.dtstart());
-            LocalDateTime endTime;
 
-            if (icsEvent.dtend() == null || icsEvent.dtend().isBlank()) { // DTEND가 존재하지 않을 경우
-                if (isAllDayEvent) {
-                    endTime = startTime.plusDays(1).minusSeconds(1);
-                } else {
-                    endTime = startTime;
-                }
-            } else { // DTEND가 정상적으로 존재할 경우
-                endTime = StringToDateTimeConverter.convert(icsEvent.dtend());
-
-                if (isAllDayEvent) {
-                    endTime = adjustAllDayEndTime(endTime);
-                }
-            }
+            LocalDateTime endTime = calculateEndTime(icsEvent, startTime, isAllDayEvent);
 
             if (endTime.isBefore(startTime)) {
                 log.warn("DTEND가 DTSTART보다 이전입니다. (uid={}, dtstart={}, dtend={})",
                         uid, icsEvent.dtstart(), icsEvent.dtend());
-                    return Optional.empty();
+                return Optional.empty();
             }
 
             AcademicEventCategory category = AcademicEventCategorizer.categorize(summary);
@@ -162,6 +146,36 @@ public class AcademicEventConverter {
      */
     private static LocalDateTime adjustAllDayEndTime(LocalDateTime endTime) {
         return endTime.minusSeconds(1);
+    }
+
+    /**
+     * 날짜 형식이 다른지 판별하는 메서드
+     */
+    private static boolean hasMismatchedDateTimeFormat(IcsEvent icsEvent, boolean isAllDayEvent) {
+        if (icsEvent.dtend() == null || icsEvent.dtend().isBlank()) {
+            return false;
+        }
+        return isAllDayEvent != isAllDayEvent(icsEvent.dtend());
+    }
+
+    /**
+     * 종료 일자를 계산하는 메서드
+     */
+    private static LocalDateTime calculateEndTime(IcsEvent icsEvent, LocalDateTime startTime, boolean isAllDayEvent) {
+        if (icsEvent.dtend() == null || icsEvent.dtend().isBlank()) {
+            if (isAllDayEvent) {
+                return startTime.plusDays(1).minusSeconds(1);
+            }
+            return startTime;
+        }
+
+        LocalDateTime endTime = StringToDateTimeConverter.convert(icsEvent.dtend());
+
+        if (isAllDayEvent) {
+            return adjustAllDayEndTime(endTime);
+        }
+
+        return endTime;
     }
 
 }
