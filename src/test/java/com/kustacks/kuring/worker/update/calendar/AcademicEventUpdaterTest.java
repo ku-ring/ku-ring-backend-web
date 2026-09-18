@@ -83,12 +83,12 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
         // 하계방학 이벤트 검증
         assertEventFields(event1, "하계방학", 0, Transparent.TRANSPARENT, false,
                 LocalDateTime.of(2024, 6, 22, 0, 0),
-                LocalDateTime.of(2024, 9, 2, 0, 0));
+                LocalDateTime.of(2024, 9, 1, 23, 59, 59));
 
         // 폐강교과목 공지 이벤트 검증
         assertEventFields(event2, "폐강교과목 공지(1차)", 0, Transparent.TRANSPARENT, false,
                 LocalDateTime.of(2024, 9, 2, 0, 0),
-                LocalDateTime.of(2024, 9, 3, 0, 0));
+                LocalDateTime.of(2024, 9, 2, 23, 59, 59));
     }
 
     @Test
@@ -125,17 +125,17 @@ class AcademicEventUpdaterTest extends IntegrationTestSupport {
         // 하계방학 이벤트 검증
         assertEventFields(event1, "하계방학", 0, Transparent.TRANSPARENT, false,
                 LocalDateTime.of(2024, 6, 22, 0, 0),
-                LocalDateTime.of(2024, 9, 2, 0, 0));
+                LocalDateTime.of(2024, 9, 1, 23, 59, 59));
 
         // 폐강교과목 공지 이벤트 검증
         assertEventFields(event2, "폐강교과목 공지(1차)", 1, Transparent.OPAQUE, true,
                 LocalDateTime.of(2024, 9, 3, 0, 0),
-                LocalDateTime.of(2024, 9, 4, 0, 0));
+                LocalDateTime.of(2024, 9, 3, 23, 59, 59));
 
         // 신규 공지 이벤트 검증
         assertEventFields(event3, "김한주가넣은가짜학사일정", 0, Transparent.OPAQUE, true,
                 LocalDateTime.of(2028, 2, 29, 0, 0),
-                LocalDateTime.of(2028, 2, 29, 0, 0));
+                LocalDateTime.of(2028, 2, 29, 23, 59, 59));
     }
 
     @Test
