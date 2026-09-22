@@ -1,6 +1,7 @@
 package com.kustacks.kuring.worker.scrap.calendar;
 
 import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Component;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -25,6 +26,7 @@ class IcsScraperCanaryTest {
                 scraper::scrapAcademicCalendar
         );
 
-        assertThat(calendar).isNotNull();
+        assertThat(calendar.getComponentList().getAll())
+                .anyMatch(component -> Component.VEVENT.equals(component.getName()));
     }
 }
