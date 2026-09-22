@@ -30,6 +30,8 @@ jobs:
 
       - name: Run test task
         id: test_task
+        env:
+          RUN_EXTERNAL_TESTS: true
         run: ./gradlew test --info
 
       - name: Notify Discord on failure
