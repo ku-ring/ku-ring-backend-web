@@ -51,21 +51,13 @@ public class AcademicEventConverter {
                 return Optional.empty();
             }
 
-            boolean isAllDayEvent = isAllDayEvent(icsEvent.dtstart()); // 종일 일정을 판단하기 위한 boolean 변수
-
-            if (hasMismatchedDateTimeFormat(icsEvent, isAllDayEvent)) {
-                log.warn(
-                        "DTSTART와 DTEND의 형식이 다릅니다. (uid={}, dtstart={}, dtend={})",
-                        uid,
-                        icsEvent.dtstart(),
-                        icsEvent.dtend()
-                );
-                return Optional.empty();
-            }
-
             LocalDateTime startTime = StringToDateTimeConverter.convert(icsEvent.dtstart());
+            LocalDateTime endTime = calculateEndTime(icsEvent, startTime);
 
-            LocalDateTime endTime = calculateEndTime(icsEvent, startTime, isAllDayEvent);
+            AcademicEventCategory category = AcademicEventCategorizer.categorize(summary);
+            Transparent transparent = convertToTransparent(icsEvent.transp());
+            Integer sequence = convertToSequence(icsEvent.sequence());
+            boolean notifyEnabled = AcademicEventNotificationClassifier.proceed(transparent, summary);
 
             if (endTime.isBefore(startTime)) {
                 log.warn("DTEND가 DTSTART보다 이전입니다. (uid={}, dtstart={}, dtend={})",
@@ -73,17 +65,9 @@ public class AcademicEventConverter {
                 return Optional.empty();
             }
 
-            AcademicEventCategory category = AcademicEventCategorizer.categorize(summary);
-            Transparent transparent = convertToTransparent(icsEvent.transp());
-            Integer sequence = convertToSequence(icsEvent.sequence());
-
-            boolean notifyEnabled =
-                    AcademicEventNotificationClassifier.proceed(transparent, summary);
-
             return Optional.of(
                     AcademicEvent.from(uid, summary, description, category,
-                            transparent, sequence, notifyEnabled, startTime, endTime
-                    )
+                            transparent, sequence, notifyEnabled, startTime, endTime)
             );
         } catch (Exception e) {
             log.warn("ICS event 변환에 실패했습니다.(uid={}, summary={}): {}", uid, summary, e.toString());
@@ -135,13 +119,6 @@ public class AcademicEventConverter {
     }
 
     /**
-     * 종일 일정인지 판별하는 메서드
-     */
-    private static boolean isAllDayEvent(String dateTime) {
-        return dateTime != null && dateTime.matches("^\\d{8}$");
-    }
-
-    /**
      * 종일 일정일 때 endTime의 날짜를 1초 당기는 메서드
      */
     private static LocalDateTime adjustAllDayEndTime(LocalDateTime endTime) {
@@ -149,21 +126,11 @@ public class AcademicEventConverter {
     }
 
     /**
-     * 날짜 형식이 다른지 판별하는 메서드
-     */
-    private static boolean hasMismatchedDateTimeFormat(IcsEvent icsEvent, boolean isAllDayEvent) {
-        if (icsEvent.dtend() == null || icsEvent.dtend().isBlank()) {
-            return false;
-        }
-        return isAllDayEvent != isAllDayEvent(icsEvent.dtend());
-    }
-
-    /**
      * 종료 일자를 계산하는 메서드
      */
-    private static LocalDateTime calculateEndTime(IcsEvent icsEvent, LocalDateTime startTime, boolean isAllDayEvent) {
+    private static LocalDateTime calculateEndTime(IcsEvent icsEvent, LocalDateTime startTime) {
         if (icsEvent.dtend() == null || icsEvent.dtend().isBlank()) {
-            if (isAllDayEvent) {
+            if (icsEvent.dtstartAllDay()) {
                 return startTime.plusDays(1).minusSeconds(1);
             }
             return startTime;
@@ -171,7 +138,7 @@ public class AcademicEventConverter {
 
         LocalDateTime endTime = StringToDateTimeConverter.convert(icsEvent.dtend());
 
-        if (isAllDayEvent) {
+        if (icsEvent.dtstartAllDay() && icsEvent.dtendAllDay()) {
             return adjustAllDayEndTime(endTime);
         }
 

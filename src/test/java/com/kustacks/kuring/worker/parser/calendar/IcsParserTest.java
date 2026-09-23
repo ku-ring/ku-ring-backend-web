@@ -131,6 +131,8 @@ class IcsParserTest {
                 () -> assertThat(summerVacation.uid()).startsWith("040000008200E00074C5B7101A82E0080000000033C0B88EDFBAD901"),
                 () -> assertThat(summerVacation.dtstart()).isEqualTo("20240622"),
                 () -> assertThat(summerVacation.dtend()).isEqualTo("20240902"),
+                () -> assertThat(summerVacation.dtstartAllDay()).isTrue(),
+                () -> assertThat(summerVacation.dtendAllDay()).isTrue(),
                 () -> assertThat(summerVacation.classType()).isEqualTo("PUBLIC"),
                 () -> assertThat(summerVacation.priority()).isEqualTo("5"),
                 () -> assertThat(summerVacation.transp()).isEqualTo("TRANSPARENT"),
@@ -157,7 +159,9 @@ class IcsParserTest {
         assertAll(
                 () -> assertThat(dateOnlyEvents).isNotEmpty(),
                 () -> assertThat(dateOnlyEvent.dtstart()).matches(dateOnlyRegex),
-                () -> assertThat(dateOnlyEvent.dtend()).matches(dateOnlyRegex)
+                () -> assertThat(dateOnlyEvent.dtend()).matches(dateOnlyRegex),
+                () -> assertThat(dateOnlyEvent.dtstartAllDay()).isTrue(),
+                () -> assertThat(dateOnlyEvent.dtendAllDay()).isTrue()
         );
     }
 
@@ -178,7 +182,9 @@ class IcsParserTest {
         assertAll(
                 () -> assertThat(timeIncludedEvents).isNotEmpty(),
                 () -> assertThat(timeEvent.dtstart()).matches(timeIncludedRegex),
-                () -> assertThat(timeEvent.dtend()).matches(timeIncludedRegex)
+                () -> assertThat(timeEvent.dtend()).matches(timeIncludedRegex),
+                () -> assertThat(timeEvent.dtstartAllDay()).isFalse(),
+                () -> assertThat(timeEvent.dtendAllDay()).isFalse()
         );
     }
 }

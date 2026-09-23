@@ -13,6 +13,7 @@ import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.Observance;
 import net.fortuna.ical4j.model.component.VTimeZone;
+import net.fortuna.ical4j.model.Parameter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -98,7 +99,9 @@ public class IcsParser {
                 getPropertyValue(vEvent, Property.TRANSP),
                 getPropertyValue(vEvent, Property.STATUS),
                 getPropertyValue(vEvent, Property.SEQUENCE),
-                getPropertyValue(vEvent, Property.LOCATION)
+                getPropertyValue(vEvent, Property.LOCATION),
+                isAllDayProperty(vEvent, Property.DTSTART),
+                isAllDayProperty(vEvent, Property.DTEND)
         );
     }
 
@@ -120,5 +123,23 @@ public class IcsParser {
         } else {
             return null;
         }
+    }
+
+    private boolean isAllDayProperty(Component component, String propertyName) {
+        Property property = component.getProperty(propertyName)
+                .orElse(null);
+
+        if (Objects.isNull(property)) {
+            return false;
+        }
+
+        Parameter valueParameter = property.getParameter("VALUE")
+                .orElse(null);
+
+        if (Objects.isNull(valueParameter)) {
+            return false;
+        }
+
+        return "DATE".equalsIgnoreCase(valueParameter.getValue());
     }
 }
