@@ -31,7 +31,10 @@ class AcademicEventConverterTest {
                     "TRANSPARENT",
                     "CONFIRMED",
                     "0",
-                    "\n"
+                    "\n",
+                    true,
+                    true
+
             ),
             new IcsEvent(
                     "040000008200E00074C5B7101A82E0080000000014125995CCA1DA01000000000000000010000000FA658BFA03493F4A9597C68E4BF868BF",
@@ -45,7 +48,9 @@ class AcademicEventConverterTest {
                     "TRANSPARENT",
                     "CONFIRMED",
                     "0",
-                    ""
+                    "",
+                    true,
+                    true
             )
     );
 
@@ -105,7 +110,9 @@ class AcademicEventConverterTest {
                 "TRANSPARENT",
                 "CONFIRMED",
                 "0",
-                ""
+                "",
+                true,
+                true
         );
 
         // when
@@ -139,7 +146,9 @@ class AcademicEventConverterTest {
                 "TRANSPARENT",
                 "CONFIRMED",
                 "0",
-                ""
+                "",
+                true,
+                true
         );
 
         // when
@@ -167,7 +176,9 @@ class AcademicEventConverterTest {
                 "TRANSPARENT",
                 "CONFIRMED",
                 "0",
-                ""
+                "",
+                true,
+                true
         );
 
         // when
@@ -193,7 +204,9 @@ class AcademicEventConverterTest {
                 "TRANSPARENT",
                 "CONFIRMED",
                 "0",
-                ""
+                "",
+                true,
+                true
         );
 
         // when
@@ -217,7 +230,7 @@ class AcademicEventConverterTest {
     }
 
     @Test
-    @DisplayName("DTEND가 없는 종일 일정은 해당 날짜의 23시 59분 59초로 종료 시간을 설정한다")
+    @DisplayName("DTEND가 없는 종일 일정은 해당 날짜의 23시 59분 59초로 종료 시간을 설정한다.")
     void convert_all_day_event_without_dtend() {
         // given
         IcsEvent icsEvent = IcsEvent.builder()
@@ -225,6 +238,7 @@ class AcademicEventConverterTest {
                 .summary("개강")
                 .dtstart("20260831")
                 .dtend(null)
+                .dtstartAllDay(true)
                 .build();
 
         // when
@@ -236,15 +250,16 @@ class AcademicEventConverterTest {
 
         AcademicEvent event = result.get();
 
-        assertThat(event.getStartTime())
-                .isEqualTo(LocalDateTime.of(2026, 8, 31, 0, 0, 0));
-
-        assertThat(event.getEndTime())
-                .isEqualTo(LocalDateTime.of(2026, 8, 31, 23, 59, 59));
+        assertAll(
+                () -> assertThat(event.getStartTime())
+                        .isEqualTo(LocalDateTime.of(2026, 8, 31, 0, 0, 0)),
+                () -> assertThat(event.getEndTime())
+                        .isEqualTo(LocalDateTime.of(2026, 8, 31, 23, 59, 59))
+        );
     }
 
     @Test
-    @DisplayName("DTEND가 없는 일반 일정은 시작 시간과 종료 시간을 동일하게 설정한다")
+    @DisplayName("DTEND가 없는 종일 일정이 아닌 일정은 시작 시간과 종료 시간을 동일하게 설정한다")
     void convert_non_all_day_event_without_dtend() {
         // given
         IcsEvent icsEvent = IcsEvent.builder()
@@ -252,6 +267,7 @@ class AcademicEventConverterTest {
                 .summary("수강신청")
                 .dtstart("20260818T093000")
                 .dtend(null)
+                .dtstartAllDay(false)
                 .build();
 
         // when
@@ -263,11 +279,12 @@ class AcademicEventConverterTest {
 
         AcademicEvent event = result.get();
 
-        assertThat(event.getStartTime())
-                .isEqualTo(LocalDateTime.of(2026, 8, 18, 9, 30));
-
-        assertThat(event.getEndTime())
-                .isEqualTo(LocalDateTime.of(2026, 8, 18, 9, 30));
+        assertAll(
+                () -> assertThat(event.getStartTime())
+                        .isEqualTo(LocalDateTime.of(2026, 8, 18, 9, 30)),
+                () -> assertThat(event.getEndTime())
+                        .isEqualTo(LocalDateTime.of(2026, 8, 18, 9, 30))
+        );
     }
 
     @Test
@@ -279,6 +296,7 @@ class AcademicEventConverterTest {
                 .summary("개강")
                 .dtstart(null)
                 .dtend("20260818")
+                .dtendAllDay(true)
                 .build();
 
         // when
@@ -290,14 +308,15 @@ class AcademicEventConverterTest {
     }
 
     @Test
-    @DisplayName("DTSTART와 DTEND의 형식이 다르면 변환하지 않는다")
-    void convert_different_dtstart_dtend_format() {
+    @DisplayName("DTSTART가 빈 문자열이면 변환하지 않는다")
+    void convert_with_blank_dtstart() {
         // given
         IcsEvent icsEvent = IcsEvent.builder()
                 .uid("test-uid")
                 .summary("개강")
-                .dtstart("20260831")
-                .dtend("20260901T090000")
+                .dtstart("   ")
+                .dtend("20260818")
+                .dtendAllDay(true)
                 .build();
 
         // when
@@ -309,7 +328,7 @@ class AcademicEventConverterTest {
     }
 
     @Test
-    @DisplayName("종일 일정은 종료 시간을 1초 앞당겨 변환한다")
+    @DisplayName("DTEND가 있는 종일 일정은 종료 날짜 0시에서 1초를 차감하여 23시 59분 59초로 종료 시간을 설정한다.")
     void convert_all_day_event() {
         // given
         IcsEvent icsEvent = IcsEvent.builder()
@@ -317,6 +336,8 @@ class AcademicEventConverterTest {
                 .summary("개강")
                 .dtstart("20260817")
                 .dtend("20260818")
+                .dtstartAllDay(true)
+                .dtendAllDay(true)
                 .build();
 
         // when
@@ -328,22 +349,25 @@ class AcademicEventConverterTest {
 
         AcademicEvent event = result.get();
 
-        assertThat(event.getStartTime())
-                .isEqualTo(LocalDateTime.of(2026, 8, 17, 0, 0, 0));
-
-        assertThat(event.getEndTime())
-                .isEqualTo(LocalDateTime.of(2026, 8, 17, 23, 59, 59));
+        assertAll(
+                () -> assertThat(event.getStartTime())
+                        .isEqualTo(LocalDateTime.of(2026, 8, 17, 0, 0, 0)),
+                () -> assertThat(event.getEndTime())
+                        .isEqualTo(LocalDateTime.of(2026, 8, 17, 23, 59, 59))
+        );
     }
 
     @Test
-    @DisplayName("종일 일정이 아닌 경우 시작 시간과 종료 시간을 그대로 유지한다")
-    void convert_non_all_day_event() {
+    @DisplayName("DTSTART만 종일 일정인 경우 DTEND의 시간을 변경하지 않는다.")
+    void convert_event_when_only_dtstart_is_all_day() {
         // given
         IcsEvent icsEvent = IcsEvent.builder()
                 .uid("test-uid")
-                .summary("수강신청")
-                .dtstart("20260818T093000")
-                .dtend("20260818T170000")
+                .summary("테스트 일정")
+                .dtstart("20260817")
+                .dtend("20260818T090000")
+                .dtstartAllDay(true)
+                .dtendAllDay(false)
                 .build();
 
         // when
@@ -355,14 +379,15 @@ class AcademicEventConverterTest {
 
         AcademicEvent event = result.get();
 
-        assertThat(event.getStartTime())
-                .isEqualTo(LocalDateTime.of(2026, 8, 18, 9, 30));
-
-        assertThat(event.getEndTime())
-                .isEqualTo(LocalDateTime.of(2026, 8, 18, 17, 0));
+        assertAll(
+                () -> assertThat(event.getStartTime())
+                        .isEqualTo(LocalDateTime.of(2026, 8, 17, 0, 0)),
+                () -> assertThat(event.getEndTime())
+                        .isEqualTo(LocalDateTime.of(2026, 8, 18, 9, 0))
+        );
     }
 
-    @DisplayName("종일 이벤트의 종료 시간이 시작 시간보다 이전이면 변환에서 제외")
+    @DisplayName("종일 이벤트의 종료 시간이 시작 시간보다 이전이면 변환하지 않는다.")
     @Test
     void convert_exclude_all_day_event_when_end_time_is_before_start_time() {
         // given
@@ -378,7 +403,9 @@ class AcademicEventConverterTest {
                 "TRANSPARENT",
                 "CONFIRMED",
                 "0",
-                ""
+                "",
+                true,
+                true
         );
 
         // when
@@ -389,7 +416,7 @@ class AcademicEventConverterTest {
         assertThat(academicEvent).isNull();
     }
 
-    @DisplayName("일반 이벤트의 시작 시간과 종료 시간이 같으면 변환에서 제외")
+    @DisplayName("종일 일정이 아닌 이벤트의 시작 시간과 종료 시간이 같으면 정상 변환한다.")
     @Test
     void convert_non_all_day_event_with_same_start_and_end_time() {
         // given
@@ -405,7 +432,9 @@ class AcademicEventConverterTest {
                 "TRANSPARENT",
                 "CONFIRMED",
                 "0",
-                ""
+                "",
+                false,
+                false
         );
 
         // when
@@ -414,9 +443,11 @@ class AcademicEventConverterTest {
 
         // then
         assertThat(academicEvent).isNotNull();
-        assertThat(academicEvent.getStartTime())
-                .isEqualTo(LocalDateTime.of(2026, 8, 18, 9, 30));
-        assertThat(academicEvent.getEndTime())
-                .isEqualTo(LocalDateTime.of(2026, 8, 18, 9, 30));
+        assertAll(
+                () -> assertThat(academicEvent.getStartTime())
+                        .isEqualTo(LocalDateTime.of(2026, 8, 18, 9, 30)),
+                () -> assertThat(academicEvent.getEndTime())
+                        .isEqualTo(LocalDateTime.of(2026, 8, 18, 9, 30))
+        );
     }
 }
