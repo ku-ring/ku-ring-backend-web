@@ -391,22 +391,14 @@ class AcademicEventConverterTest {
     @Test
     void convert_exclude_all_day_event_when_end_time_is_before_start_time() {
         // given
-        IcsEvent icsEvent = new IcsEvent(
-                "test-uid",
-                "테스트 일정",
-                "설명",
-                "20260817",
-                "20260817",
-                "PUBLIC",
-                "0",
-                "20260817T000000Z",
-                "TRANSPARENT",
-                "CONFIRMED",
-                "0",
-                "",
-                true,
-                true
-        );
+        IcsEvent icsEvent = IcsEvent.builder()
+                .uid("test-uid")
+                .summary("테스트 일정")
+                .dtstart("20260817")
+                .dtend("20260817")
+                .dtstartAllDay(true)
+                .dtendAllDay(true)
+                .build();
 
         // when
         AcademicEvent academicEvent =
@@ -420,22 +412,14 @@ class AcademicEventConverterTest {
     @Test
     void convert_non_all_day_event_with_same_start_and_end_time() {
         // given
-        IcsEvent icsEvent = new IcsEvent(
-                "test-uid",
-                "테스트 일정",
-                "설명",
-                "20260818T093000",
-                "20260818T093000",
-                "PUBLIC",
-                "0",
-                "20260818T093000Z",
-                "TRANSPARENT",
-                "CONFIRMED",
-                "0",
-                "",
-                false,
-                false
-        );
+        IcsEvent icsEvent = IcsEvent.builder()
+                .uid("test-uid")
+                .summary("테스트 일정")
+                .dtstart("20260818T093000")
+                .dtend("20260818T093000")
+                .dtstartAllDay(false)
+                .dtendAllDay(false)
+                .build();
 
         // when
         AcademicEvent academicEvent =
