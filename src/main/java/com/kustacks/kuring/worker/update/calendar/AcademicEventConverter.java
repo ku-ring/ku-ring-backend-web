@@ -119,10 +119,11 @@ public class AcademicEventConverter {
     }
 
     /**
-     * 종일 일정일 때 endTime의 날짜를 1초 당기는 메서드
+     * 종일 일정의 종료 시간을 해당 날짜의 23시 59분 59초로 설정하는 메서드
      */
     private static LocalDateTime adjustAllDayEndTime(LocalDateTime endTime) {
-        return endTime.minusSeconds(1);
+        return endTime.toLocalDate()
+                .atTime(23, 59, 59);
     }
 
     /**
@@ -131,7 +132,7 @@ public class AcademicEventConverter {
     private static LocalDateTime calculateEndTime(IcsEvent icsEvent, LocalDateTime startTime) {
         if (icsEvent.dtend() == null || icsEvent.dtend().isBlank()) {
             if (icsEvent.dtstartAllDay()) {
-                return startTime.plusDays(1).minusSeconds(1);
+                return adjustAllDayEndTime(startTime);
             }
             return startTime;
         }
@@ -139,7 +140,7 @@ public class AcademicEventConverter {
         LocalDateTime endTime = StringToDateTimeConverter.convert(icsEvent.dtend());
 
         if (icsEvent.dtstartAllDay() && icsEvent.dtendAllDay()) {
-            return adjustAllDayEndTime(endTime);
+            return adjustAllDayEndTime(endTime.minusDays(1));
         }
 
         return endTime;
