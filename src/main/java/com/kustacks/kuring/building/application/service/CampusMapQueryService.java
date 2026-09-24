@@ -114,6 +114,17 @@ public class CampusMapQueryService implements CampusMapQueryUseCase {
         );
     }
 
+    private BuildingSummaryResult toBuildingSummaryResult(BuildingSummaryReadModel building) {
+        return new BuildingSummaryResult(
+                building.id(),
+                building.name(),
+                building.address(),
+                building.latitude(),
+                building.longitude(),
+                resolveImageUrl(building.imagePath())
+        );
+    }
+
     private BuildingSummaryResult toBuildingSummaryResult(
             BuildingSummaryReadModel building,
             String imageUrl
