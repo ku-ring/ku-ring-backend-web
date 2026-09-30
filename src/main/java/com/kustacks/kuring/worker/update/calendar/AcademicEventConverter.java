@@ -43,13 +43,33 @@ public class AcademicEventConverter {
 
         // 2. summary 전처리 (괄호 안 날짜/시간 제거 등)
         String summary = AcademicEventSummaryNormalizer.normalize(rawSummary);
-        LocalDateTime startTime = StringToDateTimeConverter.convert(icsEvent.dtstart());
-        LocalDateTime endTime = StringToDateTimeConverter.convert(icsEvent.dtend());
+
+        // 3. 일정 시작/종료 시간 변환 및 유효성 검증
+        if (icsEvent.dtstart() == null || icsEvent.dtstart().isBlank()) {
+            log.warn("DTSTART가 존재하지 않습니다. (uid={}, summary={})", uid, summary);
+            return Optional.empty();
+        }
+
+        LocalDateTime startTime;
+        LocalDateTime endTime;
+
+        try {
+            startTime = StringToDateTimeConverter.convert(icsEvent.dtstart());
+            endTime = calculateEndTime(icsEvent, startTime);
+        } catch (Exception e) {
+            log.warn("ICS event 변환에 실패했습니다.(uid={}, summary={}): {}", uid, summary, e.toString());
+            return Optional.empty();
+        }
+
+        if (endTime.isBefore(startTime)) {
+            log.warn("DTEND가 DTSTART보다 이전입니다. (uid={}, dtstart={}, dtend={})",
+                    uid, icsEvent.dtstart(), icsEvent.dtend());
+            return Optional.empty();
+        }
 
         AcademicEventCategory category = AcademicEventCategorizer.categorize(summary);
         Transparent transparent = convertToTransparent(icsEvent.transp());
         Integer sequence = convertToSequence(icsEvent.sequence());
-
         boolean notifyEnabled = AcademicEventNotificationClassifier.proceed(transparent, summary);
 
         try {
@@ -58,7 +78,6 @@ public class AcademicEventConverter {
                             transparent, sequence, notifyEnabled, startTime, endTime)
             );
         } catch (Exception e) {
-            log.warn("ICS event 변환에 실패했습니다.(uid={}, summary={}): {}", uid, summary, e.toString());
             return Optional.empty();
         }
     }
@@ -104,6 +123,34 @@ public class AcademicEventConverter {
 
     private static boolean isHolidayEvent(String summary) {
         return HOLIDAY_PATTERN.matcher(summary).matches();
+    }
+
+    /**
+     * 종료 일자를 계산하는 메서드
+     */
+    private static LocalDateTime calculateEndTime(IcsEvent icsEvent, LocalDateTime startTime) {
+        if (icsEvent.dtend() == null || icsEvent.dtend().isBlank()) {
+            if (icsEvent.dtstartAllDay()) {
+                return adjustAllDayEndTime(startTime);
+            }
+            return startTime;
+        }
+
+        LocalDateTime endTime = StringToDateTimeConverter.convert(icsEvent.dtend());
+
+        if (icsEvent.dtstartAllDay() && icsEvent.dtendAllDay()) {
+            return adjustAllDayEndTime(endTime.minusDays(1));
+        }
+
+        return endTime;
+    }
+
+    /**
+     * 종일 일정의 종료 시간을 해당 날짜의 23시 59분 59초로 설정하는 메서드
+     */
+    private static LocalDateTime adjustAllDayEndTime(LocalDateTime endTime) {
+        return endTime.toLocalDate()
+                .atTime(23, 59, 59);
     }
 
 }

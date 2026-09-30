@@ -15,6 +15,8 @@ public record IcsEvent(
         String transp,
         String status,
         String sequence,
-        String location
+        String location,
+        boolean dtstartAllDay,
+        boolean dtendAllDay
 ) {
 }
