@@ -328,7 +328,7 @@ class AcademicEventConverterTest {
     }
 
     @Test
-    @DisplayName("DTEND가 있는 종일 일정은 종료 날짜 0시에서 1초를 차감하여 23시 59분 59초로 종료 시간을 설정한다.")
+    @DisplayName("DTEND가 있는 종일 일정은 종료 날짜를 23시 59분 59초로 종료 시간을 설정한다.")
     void convert_all_day_event() {
         // given
         IcsEvent icsEvent = IcsEvent.builder()
