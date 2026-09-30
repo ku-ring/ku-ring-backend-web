@@ -72,10 +72,14 @@ public class AcademicEventConverter {
         Integer sequence = convertToSequence(icsEvent.sequence());
         boolean notifyEnabled = AcademicEventNotificationClassifier.proceed(transparent, summary);
 
-        return Optional.of(
-                AcademicEvent.from(uid, summary, description, category,
-                        transparent, sequence, notifyEnabled, startTime, endTime)
-        );
+        try {
+            return Optional.of(
+                    AcademicEvent.from(uid, summary, description, category,
+                            transparent, sequence, notifyEnabled, startTime, endTime)
+            );
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     private static String parseString(String string) {
