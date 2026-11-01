@@ -1,11 +1,20 @@
 package com.kustacks.kuring.acceptance;
 
+import com.kustacks.kuring.notice.application.port.in.NoticeWeeklyRankingUseCase;
+import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
+import com.kustacks.kuring.notice.domain.Notice;
 import com.kustacks.kuring.support.IntegrationTestSupport;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 import static com.kustacks.kuring.acceptance.CategoryStep.지원하는_카테고리_조회_요청;
 import static com.kustacks.kuring.acceptance.NoticeStep.*;
@@ -17,6 +26,15 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class NoticeAcceptanceTest extends IntegrationTestSupport {
 
     public static final String NEW_EMAIL = "new-client@konkuk.ac.kr";
+
+    @Autowired
+    private NoticeCommandPort noticeCommandPort;
+
+    @Autowired
+    private NoticeWeeklyRankingUseCase noticeWeeklyRankingUseCase;
+
+    @Autowired
+    private Clock clock;
 
     /**
      * Given : 쿠링앱이 실행중이다
@@ -147,6 +165,43 @@ class NoticeAcceptanceTest extends IntegrationTestSupport {
 
         // then
         공지_조회_응답_확인(공지_조회_응답);
+    }
+
+    /**
+     * Given : 지난 집계 이후 공지들의 조회수가 늘어났고, 주간 인기 공지가 집계되었다
+     * When : 주간 인기 공지를 요청하면
+     * Then : 누적 조회수가 아닌 늘어난 조회수가 높은 순으로 상위 5개 공지가 조회된다
+     */
+    @DisplayName("[v2] 한 주 동안 조회수가 가장 많이 늘어난 상위 5개 공지를 조회한다")
+    @Test
+    void look_up_weekly_top_notices() {
+        // given
+        String today = LocalDate.now(clock) + " 00:00:00";
+        List<Notice> notices = IntStream.rangeClosed(1, 6)
+                .mapToObj(i -> new Notice("weekly_" + i, today, today, "weekly_subject_" + i,
+                        CategoryName.BACHELOR, false, "https://www.example.com/" + i))
+                .toList();
+        noticeCommandPort.saveAllCategoryNotices(notices);
+        noticeCommandPort.updateNoticeViewCounts(CategoryName.BACHELOR, Map.of(
+                "weekly_1", 1000, "weekly_2", 900, "weekly_3", 800,
+                "weekly_4", 700, "weekly_5", 600, "weekly_6", 500
+        ));
+        noticeWeeklyRankingUseCase.rankWeeklyTopNotices();
+
+        noticeCommandPort.updateNoticeViewCounts(CategoryName.BACHELOR, Map.of(
+                "weekly_1", 1010, "weekly_2", 960, "weekly_3", 830,
+                "weekly_4", 750, "weekly_5", 620, "weekly_6", 540
+        ));
+        noticeWeeklyRankingUseCase.rankWeeklyTopNotices();
+
+        // when
+        var 주간_인기_공지_조회_응답 = 주간_인기_공지_조회_요청();
+
+        // then
+        주간_인기_공지_조회_응답_확인(
+                주간_인기_공지_조회_응답,
+                List.of("weekly_subject_2", "weekly_subject_4", "weekly_subject_6", "weekly_subject_3", "weekly_subject_5")
+        );
     }
 
     /**
