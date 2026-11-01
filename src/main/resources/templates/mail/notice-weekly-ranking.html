@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>쿠링 주간 인기 공지</title>
+</head>
+<body style="font-family: 'Arial', sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+<div style="max-width: 680px; margin: 20px auto; background: #ffffff; border-radius: 8px; overflow: hidden;">
+    <div style="padding: 20px; background: #4caf50; color: #ffffff; text-align: center;">
+        <h1 style="margin: 0; font-size: 22px;">쿠링 주간 인기 공지</h1>
+        <p style="margin: 8px 0 0;" th:text="|${weekStartDate} ~ ${weekEndDate}|">2026-10-26 ~ 2026-11-01</p>
+    </div>
+    <div style="padding: 20px; color: #333333;">
+        <p style="margin: 0 0 12px;">한 주 동안 조회수가 가장 많이 늘어난 학교 공지입니다. (학과 공지 제외)</p>
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+            <tr style="background: #f0f0f0;">
+                <th style="padding: 8px; border-bottom: 1px solid #dddddd; white-space: nowrap;">순위</th>
+                <th style="padding: 8px; border-bottom: 1px solid #dddddd; white-space: nowrap;">카테고리</th>
+                <th style="padding: 8px; border-bottom: 1px solid #dddddd; text-align: left;">제목</th>
+                <th style="padding: 8px; border-bottom: 1px solid #dddddd; white-space: nowrap;">게시일</th>
+                <th style="padding: 8px; border-bottom: 1px solid #dddddd; white-space: nowrap;">주간 조회수</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="ranking, status : ${rankings}">
+                <td style="padding: 8px; border-bottom: 1px solid #eeeeee; text-align: center;"
+                    th:text="${status.count}">1
+                </td>
+                <td style="padding: 8px; border-bottom: 1px solid #eeeeee; text-align: center; white-space: nowrap;"
+                    th:text="${ranking.categoryKorName()}">학사
+                </td>
+                <td style="padding: 8px; border-bottom: 1px solid #eeeeee;">
+                    <a style="color: #1a73e8; text-decoration: none;" th:href="${ranking.url()}"
+                       th:text="${ranking.subject()}">공지 제목</a>
+                </td>
+                <td style="padding: 8px; border-bottom: 1px solid #eeeeee; text-align: center; white-space: nowrap;"
+                    th:text="${ranking.postedDate()}">2026-10-20
+                </td>
+                <td style="padding: 8px; border-bottom: 1px solid #eeeeee; text-align: right; white-space: nowrap;"
+                    th:text="${#numbers.formatInteger(ranking.viewCount(), 1, 'COMMA')}">893
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p style="margin: 16px 0 0; font-size: 12px; color: #999999;">같은 내용을 엑셀 파일로 첨부했습니다.</p>
+    </div>
+</div>
+</body>
+</html>
