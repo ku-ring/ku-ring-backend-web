@@ -1,8 +1,10 @@
 package com.kustacks.kuring.notice.adapter.out.persistence;
 
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.Notice;
+import com.kustacks.kuring.notice.domain.NoticeViewSnapshot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,7 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,7 +27,7 @@ class NoticeJdbcRepository {
 
     @Transactional
     public void saveAllCategoryNotices(List<Notice> notices) {
-        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, graduated, dtype) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, graduated, dtype, view_count) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -37,6 +42,7 @@ class NoticeJdbcRepository {
                         ps.setString(8, notice.getUrl());
                         ps.setNull(9, Types.BOOLEAN);
                         ps.setString(10, "Notice");
+                        ps.setInt(11, notice.getViewCount());
                     }
 
                     @Override
@@ -49,8 +55,8 @@ class NoticeJdbcRepository {
     @Transactional
     public void saveAllDepartmentNotices(List<DepartmentNotice> departmentNotices) {
         jdbcTemplate.batchUpdate(
-                "INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, department_name, graduated, dtype) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, department_name, graduated, dtype, view_count) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -66,6 +72,7 @@ class NoticeJdbcRepository {
                         ps.setString(9, DepartmentName.fromName(departmentNotice.getDepartmentName()).name());
                         ps.setBoolean(10, departmentNotice.getGraduated());
                         ps.setString(11, "DepartmentNotice");
+                        ps.setInt(12, departmentNotice.getViewCount());
                     }
 
                     @Override

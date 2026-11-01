@@ -41,6 +41,10 @@ public class Notice {
     @Column(name = "category_name", nullable = false)
     private CategoryName categoryName;
 
+    @Getter(AccessLevel.PUBLIC)
+    @Column(name = "view_count", nullable = false)
+    private Integer viewCount = 0;
+
     public Notice(String articleId, String postedDate, String updatedDate,
                   String subject, CategoryName categoryName, Boolean important,
                   String fullUrl) {
@@ -51,6 +55,7 @@ public class Notice {
         this.noticeDateTime = new NoticeDateTime(postedDate, updatedDate);
         this.url = new Url(fullUrl);
         this.embedded = Boolean.FALSE;
+        this.viewCount = 0;
     }
 
     public boolean isImportant() {
