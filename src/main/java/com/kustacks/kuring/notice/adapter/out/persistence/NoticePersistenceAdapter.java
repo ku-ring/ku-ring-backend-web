@@ -92,6 +92,11 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
     }
 
     @Override
+    public List<NoticeViewCountDto> findAllViewCountsExceptDepartment() {
+        return this.noticeRepository.findAllViewCountsExceptDepartment();
+    }
+
+    @Override
     public List<String> findNormalArticleIdsByCategory(CategoryName categoryName) {
         return this.noticeRepository.findNormalArticleIdsByCategory(categoryName);
     }

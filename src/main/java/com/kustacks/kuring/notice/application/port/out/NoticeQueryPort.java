@@ -2,6 +2,7 @@ package com.kustacks.kuring.notice.application.port.out;
 
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeSearchDto;
+import com.kustacks.kuring.notice.application.port.out.dto.NoticeViewCountDto;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.user.application.port.out.dto.BookmarkDto;
@@ -38,4 +39,6 @@ public interface NoticeQueryPort {
     List<NoticeDto> findNotYetEmbeddingNotice(CategoryName categoryName, LocalDateTime now);
 
     Optional<NoticeDto> findNoticeById(Long id);
+
+    List<NoticeViewCountDto> findAllViewCountsExceptDepartment();
 }
