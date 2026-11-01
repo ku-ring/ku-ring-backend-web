@@ -103,6 +103,9 @@ dependencies {
     // iCal4j
     implementation 'org.mnode.ical4j:ical4j:4.1.1'
 
+    // Excel (주간 인기 공지 리포트)
+    implementation 'org.apache.poi:poi-ooxml:5.4.1'
+
     // Firebase
     implementation 'com.google.firebase:firebase-admin:9.3.0'
 
