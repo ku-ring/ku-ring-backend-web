@@ -82,4 +82,44 @@ class NoticeJdbcRepository {
                 });
     }
 
+    @Transactional
+    public void saveAllViewSnapshots(List<NoticeViewSnapshot> snapshots) {
+        jdbcTemplate.batchUpdate("INSERT INTO notice_view_snapshot (category_name, article_id, view_count) VALUES (?, ?, ?)",
+                new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        NoticeViewSnapshot snapshot = snapshots.get(i);
+                        ps.setString(1, snapshot.getCategoryName().name());
+                        ps.setString(2, snapshot.getArticleId());
+                        ps.setInt(3, snapshot.getViewCount());
+                    }
+
+                    @Override
+                    public int getBatchSize() {
+                        return snapshots.size();
+                    }
+                });
+    }
+
+    @Transactional
+    public void updateViewCounts(CategoryName categoryName, Map<String, Integer> viewCounts) {
+        if (viewCounts.isEmpty()) {
+            return;
+        }
+
+        String whenClauses = String.join(" ", Collections.nCopies(viewCounts.size(), "WHEN ? THEN ?"));
+        String inPlaceholders = String.join(", ", Collections.nCopies(viewCounts.size(), "?"));
+        String sql = "UPDATE notice SET view_count = CASE article_id " + whenClauses + " ELSE view_count END " +
+                "WHERE category_name = ? AND article_id IN (" + inPlaceholders + ")";
+
+        List<Object> params = new ArrayList<>();
+        viewCounts.forEach((articleId, viewCount) -> {
+            params.add(articleId);
+            params.add(viewCount);
+        });
+        params.add(categoryName.name());
+        params.addAll(viewCounts.keySet());
+
+        jdbcTemplate.update(sql, params.toArray());
+    }
 }

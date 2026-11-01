@@ -6,15 +6,25 @@ import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.Notice;
 
 import java.util.List;
+import java.util.Map;
 
 public interface NoticeCommandPort {
 
     void saveAllCategoryNotices(List<Notice> notices);
+
     void saveAllDepartmentNotices(List<DepartmentNotice> departmentNotices);
+
     List<Notice> saveAllCategoryNoticesAndReturn(List<Notice> notices);
+
     List<DepartmentNotice> saveAllDepartmentNoticesAndReturn(List<DepartmentNotice> notices);
+
     void deleteAllByIdsAndCategory(CategoryName categoryName, List<String> articleIds);
+
     void deleteAllByIdsAndDepartment(DepartmentName departmentName, List<String> articleIds);
+
     void changeNoticeImportantToFalseByArticleId(CategoryName categoryName, List<String> articleIds);
+
     void updateNoticeEmbeddingStatus(CategoryName categoryName, List<String> articleIds);
+
+    void updateNoticeViewCounts(CategoryName categoryName, Map<String, Integer> viewCountsByArticleId);
 }

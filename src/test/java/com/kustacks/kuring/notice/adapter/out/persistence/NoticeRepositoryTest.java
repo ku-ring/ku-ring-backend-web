@@ -3,6 +3,7 @@ package com.kustacks.kuring.notice.adapter.out.persistence;
 import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;
+import com.kustacks.kuring.notice.application.port.out.dto.NoticeViewCountDto;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -204,6 +206,66 @@ class NoticeRepositoryTest extends IntegrationTestSupport {
                 () -> assertThat(results).extracting("articleId")
                         .contains("2", "3")
         );
+    }
+
+    @DisplayName("스크랩한 조회수로 같은 카테고리의 공지 조회수만 한 번에 갱신한다")
+    @Test
+    void updateNoticeViewCounts() {
+        // given
+        noticeRepository.deleteAll();
+        Notice bachelor1 = new Notice("1", "2026-10-20 10:00:00", "2026-10-20 10:00:00",
+                "bachelor1", CategoryName.BACHELOR, false, "https://www.example.com");
+        Notice bachelor2 = new Notice("2", "2026-10-21 10:00:00", "2026-10-21 10:00:00",
+                "bachelor2", CategoryName.BACHELOR, false, "https://www.example.com");
+        Notice scholarship1 = new Notice("1", "2026-10-22 10:00:00", "2026-10-22 10:00:00",
+                "scholarship1", CategoryName.SCHOLARSHIP, false, "https://www.example.com");
+        noticeCommandPort.saveAllCategoryNotices(List.of(bachelor1, bachelor2, scholarship1));
+
+        // when
+        noticeCommandPort.updateNoticeViewCounts(CategoryName.BACHELOR, Map.of("1", 100, "2", 200));
+
+        // then
+        List<Notice> notices = noticeRepository.findAll();
+        assertThat(notices)
+                .extracting("subject", "viewCount")
+                .containsExactlyInAnyOrder(
+                        tuple("bachelor1", 100),
+                        tuple("bachelor2", 200),
+                        tuple("scholarship1", 0)
+                );
+    }
+
+    @DisplayName("학과 공지를 제외한 공지의 현재 누적 조회수를 조회하며, 중복 저장된 공지는 하나로 묶는다")
+    @Test
+    void findAllViewCountsExceptDepartment() {
+        // given
+        noticeRepository.deleteAll();
+        Notice bachelor = new Notice("1", "2026-10-25 10:00:00", "2026-10-25 10:00:00",
+                "bachelor", CategoryName.BACHELOR, false, "https://www.example.com/1");
+        Notice duplicatedBachelor = new Notice("1", "2026-10-25 10:00:00", "2026-10-25 10:00:00",
+                "bachelor", CategoryName.BACHELOR, true, "https://www.example.com/1");
+        Notice scholarship = new Notice("1", "2024-07-25 10:00:00", "2024-07-25 10:00:00",
+                "scholarship", CategoryName.SCHOLARSHIP, false, "https://www.example.com/2");
+        noticeCommandPort.saveAllCategoryNotices(List.of(bachelor, duplicatedBachelor, scholarship));
+
+        DepartmentNotice departmentNotice = new DepartmentNotice("5", "2026-10-25 10:00:00", "2026-10-25 10:00:00",
+                "department", CategoryName.DEPARTMENT, false, "https://www.example.com/5", DepartmentName.COMPUTER, false);
+        noticeCommandPort.saveAllDepartmentNotices(List.of(departmentNotice));
+
+        noticeCommandPort.updateNoticeViewCounts(CategoryName.BACHELOR, Map.of("1", 300));
+        noticeCommandPort.updateNoticeViewCounts(CategoryName.SCHOLARSHIP, Map.of("1", 22000));
+        noticeCommandPort.updateNoticeViewCounts(CategoryName.DEPARTMENT, Map.of("5", 9999));
+
+        // when
+        List<NoticeViewCountDto> results = noticeQueryPort.findAllViewCountsExceptDepartment();
+
+        // then
+        assertThat(results)
+                .extracting("articleId", "subject", "categoryName", "viewCount")
+                .containsExactlyInAnyOrder(
+                        tuple("1", "bachelor", CategoryName.BACHELOR, 300),
+                        tuple("1", "scholarship", CategoryName.SCHOLARSHIP, 22000)
+                );
     }
 
     private List<Notice> creatNotices(int count) {

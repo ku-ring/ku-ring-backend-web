@@ -112,6 +112,8 @@ public class KuisHomepageNoticeUpdater {
             noticeCommandPort.deleteAllByIdsAndCategory(categoryName, deletedNoticesArticleIds);
         }
 
+        updateViewCounts(scrapResults, categoryName);
+
         return savedNotices;
     }
 
@@ -140,6 +142,8 @@ public class KuisHomepageNoticeUpdater {
             // db와 싱크를 맞춘다
             List<Notice> newNormalNotices = saveNewNotices(scrapResult.getNormalNoticeList(), savedNormalArticleIds, categoryName, false);
             newNoticeList.addAll(newNormalNotices);
+
+            updateViewCounts(scrapResult.getAllNoticeList(), categoryName);
         }
 
         return newNoticeList;
@@ -163,6 +167,8 @@ public class KuisHomepageNoticeUpdater {
 
             // db와 싱크를 맞춘다
             synchronizationWithDb(scrapResult.getNormalNoticeList(), savedNormalArticleIds, categoryName, false);
+
+            updateViewCounts(scrapResult.getAllNoticeList(), categoryName);
         }
     }
 
@@ -210,6 +216,15 @@ public class KuisHomepageNoticeUpdater {
 
         if (!deletedNoticesArticleIds.isEmpty()) {
             noticeCommandPort.deleteAllByIdsAndCategory(categoryName, deletedNoticesArticleIds);
+        }
+    }
+
+    // 조회수 갱신에 실패하더라도 신규 공지 저장과 알림 발송은 계속 진행되어야 한다
+    private void updateViewCounts(List<CommonNoticeFormatDto> scrapResults, CategoryName categoryName) {
+        try {
+            noticeCommandPort.updateNoticeViewCounts(categoryName, noticeUpdateSupport.extractViewCounts(scrapResults));
+        } catch (RuntimeException e) {
+            log.warn("[{}] 공지 조회수 갱신에 실패했습니다", categoryName.getName(), e);
         }
     }
 }

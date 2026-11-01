@@ -4,6 +4,7 @@ import com.kustacks.kuring.worker.update.notice.dto.response.CommonNoticeFormatD
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -24,6 +25,12 @@ public class ComplexNoticeFormatDto {
 
     public int getNormalNoticeSize() {
         return normalNoticeList.size();
+    }
+
+    public List<CommonNoticeFormatDto> getAllNoticeList() {
+        List<CommonNoticeFormatDto> allNotices = new ArrayList<>(importantNoticeList);
+        allNotices.addAll(normalNoticeList);
+        return allNotices;
     }
 
     private void deleteDuplicatedArticleInOnlyNormal() {

@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -87,6 +90,17 @@ public class NoticeUpdateSupport {
                 .map(scrap -> Integer.parseInt(scrap.getArticleId()))
                 .sorted()
                 .toList();
+    }
+
+    // 목록을 나눠 요청하는 사이 새 글이 올라오면 같은 공지가 중복될 수 있으므로 중복된 공지는 더 큰 최신 조회수를 사용한다
+    public Map<String, Integer> extractViewCounts(List<CommonNoticeFormatDto> scrapResults) {
+        return scrapResults.stream()
+                .filter(scrap -> Objects.nonNull(scrap.getViewCount()))
+                .collect(Collectors.toMap(
+                        CommonNoticeFormatDto::getArticleId,
+                        CommonNoticeFormatDto::getViewCount,
+                        Math::max
+                ));
     }
 
     public List<String> filteringSoonDeleteNoticeIds(
