@@ -13,6 +13,7 @@ import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeCategoryNameResponse;
 import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeContentSearchResponse;
 import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeDepartmentNameResponse;
 import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeRangeLookupResponse;
+import com.kustacks.kuring.notice.adapter.in.web.dto.NoticeWeeklyTopResponse;
 import com.kustacks.kuring.notice.application.port.in.NoticeCommentReadingUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeQueryUseCase;
 import com.kustacks.kuring.notice.application.port.in.dto.NoticeContentSearchResult;
@@ -77,6 +78,17 @@ public class NoticeQueryApiV2 {
         List<NoticeContentSearchResult> response = noticeQueryUseCase.findAllNoticeByContent(content);
         NoticeContentSearchResponse noticeContentSearchResponse = new NoticeContentSearchResponse(response);
         return ResponseEntity.ok().body(new BaseResponse<>(NOTICE_SEARCH_SUCCESS, noticeContentSearchResponse));
+    }
+
+    @Operation(summary = "주간 인기 공지 조회", description = "가장 최근에 집계된 한 주(월요일 ~ 일요일) 동안 조회수가 가장 많이 늘어난 학교 공지 5개를 조회합니다. 매주 일요일 밤에 집계되며, 학과 공지는 제외됩니다")
+    @GetMapping("/weekly-top")
+    public ResponseEntity<BaseResponse<List<NoticeWeeklyTopResponse>>> getWeeklyTopNotices() {
+        List<NoticeWeeklyTopResponse> weeklyTopNotices = noticeQueryUseCase.getWeeklyTopNotices()
+                .stream()
+                .map(NoticeWeeklyTopResponse::from)
+                .toList();
+
+        return ResponseEntity.ok().body(new BaseResponse<>(NOTICE_SEARCH_SUCCESS, weeklyTopNotices));
     }
 
     @Operation(summary = "일반 공지 카테고리", description = "서버가 지원하는 일반공지 카테고리 목록을 조회합니다")
