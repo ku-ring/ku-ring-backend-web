@@ -2,6 +2,7 @@ package com.kustacks.kuring.worker.update.notice;
 
 import com.kustacks.kuring.common.featureflag.FeatureFlags;
 import com.kustacks.kuring.common.featureflag.KuringFeatures;
+import com.kustacks.kuring.notice.application.port.in.NoticeWeeklyRankingReportUseCase;
 import com.kustacks.kuring.notice.application.port.in.NoticeWeeklyRankingUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class NoticeWeeklyRankingUpdater {
 
     private final NoticeWeeklyRankingUseCase noticeWeeklyRankingUseCase;
+    private final NoticeWeeklyRankingReportUseCase noticeWeeklyRankingReportUseCase;
     private final FeatureFlags featureFlags;
 
     /*
@@ -43,6 +45,20 @@ public class NoticeWeeklyRankingUpdater {
                 noticeWeeklyRankingUseCase.initializeViewSnapshotsIfAbsent();
             } catch (Exception e) {
                 log.error("공지 조회수 기준값 기록 중 오류가 발생했습니다.", e);
+            }
+        }
+    }
+
+    /*
+    일요일 오후 11시 집계가 끝난 뒤, 이번 주 인기 공지 순위를 엑셀로 첨부해 지정된 수신자에게 메일로 보낸다.
+    */
+    @Scheduled(cron = "0 30 23 * * SUN", zone = "Asia/Seoul")
+    public void sendWeeklyRankingReport() {
+        if (featureFlags.isEnabled(KuringFeatures.UPDATE_KUIS_HOMEPAGE_NOTICE.getFeature())) {
+            try {
+                noticeWeeklyRankingReportUseCase.sendWeeklyRankingReport();
+            } catch (Exception e) {
+                log.error("주간 인기 공지 리포트 메일 발송 중 오류가 발생했습니다.", e);
             }
         }
     }
