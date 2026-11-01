@@ -20,10 +20,12 @@ public class CommonNoticeFormatDto {
 
     private Boolean important;
 
+    private Integer viewCount;
+
     @Builder
     private CommonNoticeFormatDto(
             String articleId, String updatedDate, String subject,
-            String postedDate, String fullUrl, Boolean important
+            String postedDate, String fullUrl, Boolean important, Integer viewCount
     ) {
         this.articleId = articleId;
         this.updatedDate = updatedDate;
@@ -31,5 +33,6 @@ public class CommonNoticeFormatDto {
         this.postedDate = postedDate;
         this.fullUrl = fullUrl;
         this.important = important;
+        this.viewCount = viewCount;
     }
 }

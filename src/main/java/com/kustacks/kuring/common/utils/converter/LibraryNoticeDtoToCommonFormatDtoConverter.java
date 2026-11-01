@@ -21,6 +21,19 @@ public class LibraryNoticeDtoToCommonFormatDtoConverter implements DtoConverter 
                 .updatedDate(libraryNoticeDto.getLastUpdated())
                 .subject(libraryNoticeDto.getTitle())
                 .fullUrl(libraryBaseUrl + "/" + libraryNoticeDto.getId())
+                .viewCount(parseHitCount(libraryNoticeDto.getHitCnt()))
                 .build();
+    }
+
+    private Integer parseHitCount(String hitCnt) {
+        if (hitCnt == null || hitCnt.isBlank()) {
+            return null;
+        }
+
+        try {
+            return Integer.valueOf(hitCnt.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }

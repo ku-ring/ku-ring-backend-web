@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
 
 public class RowsDto {
 
+    private static final int VIEW_COUNT_INDEX = 3;
+    private static final String NON_DIGIT_REGEX = "[^0-9]";
+
     private final List<String[]> importantRowList;
     private final List<String[]> normalRowList;
 
@@ -31,6 +34,7 @@ public class RowsDto {
                                         .toUriString()
                         )
                         .important(true)
+                        .viewCount(parseViewCount(row))
                         .build())
                 .collect(Collectors.toList());
     }
@@ -49,7 +53,26 @@ public class RowsDto {
                                         .toUriString()
                         )
                         .important(false)
+                        .viewCount(parseViewCount(row))
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    // 조회수 컬럼을 제공하지 않는 파서도 있으므로, 값이 없거나 숫자가 아니면 null로 처리한다
+    private static Integer parseViewCount(String[] row) {
+        if (row.length <= VIEW_COUNT_INDEX) {
+            return null;
+        }
+
+        String digits = row[VIEW_COUNT_INDEX].replaceAll(NON_DIGIT_REGEX, "");
+        if (digits.isEmpty()) {
+            return null;
+        }
+
+        try {
+            return Integer.valueOf(digits);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }
