@@ -45,7 +45,7 @@ public class AcademicEventConverter {
         String summary = AcademicEventSummaryNormalizer.normalize(rawSummary);
 
         // 3. 일정 시작/종료 시간 변환 및 유효성 검증
-        if (icsEvent.dtstart() == null || icsEvent.dtstart().isBlank()) {
+        if (icsEvent.dtstart() == null || icsEvent.dtstart().getValue().isBlank()) {
             log.warn("DTSTART가 존재하지 않습니다. (uid={}, summary={})", uid, summary);
             return Optional.empty();
         }
@@ -54,7 +54,7 @@ public class AcademicEventConverter {
         LocalDateTime endTime;
 
         try {
-            startTime = StringToDateTimeConverter.convert(icsEvent.dtstart());
+            startTime = StringToDateTimeConverter.convert(icsEvent.dtstart().getValue());
             endTime = calculateEndTime(icsEvent, startTime);
         } catch (Exception e) {
             log.warn("ICS event 변환에 실패했습니다.(uid={}, summary={}): {}", uid, summary, e.toString());
@@ -129,16 +129,16 @@ public class AcademicEventConverter {
      * 종료 일자를 계산하는 메서드
      */
     private static LocalDateTime calculateEndTime(IcsEvent icsEvent, LocalDateTime startTime) {
-        if (icsEvent.dtend() == null || icsEvent.dtend().isBlank()) {
-            if (icsEvent.dtstartAllDay()) {
+        if (icsEvent.dtend() == null || icsEvent.dtend().getValue().isBlank()) {
+            if (icsEvent.isDtstartAllDay()) {
                 return adjustAllDayEndTime(startTime);
             }
             return startTime;
         }
 
-        LocalDateTime endTime = StringToDateTimeConverter.convert(icsEvent.dtend());
+        LocalDateTime endTime = StringToDateTimeConverter.convert(icsEvent.dtend().getValue());
 
-        if (icsEvent.dtstartAllDay() && icsEvent.dtendAllDay()) {
+        if (icsEvent.isDtstartAllDay() && icsEvent.isDtendAllDay()) {
             return adjustAllDayEndTime(endTime.minusDays(1));
         }
 

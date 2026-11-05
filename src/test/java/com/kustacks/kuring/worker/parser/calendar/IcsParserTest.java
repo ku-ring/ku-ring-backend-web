@@ -129,10 +129,10 @@ class IcsParserTest {
 
         assertAll(
                 () -> assertThat(summerVacation.uid()).startsWith("040000008200E00074C5B7101A82E0080000000033C0B88EDFBAD901"),
-                () -> assertThat(summerVacation.dtstart()).isEqualTo("20240622"),
-                () -> assertThat(summerVacation.dtend()).isEqualTo("20240902"),
-                () -> assertThat(summerVacation.dtstartAllDay()).isTrue(),
-                () -> assertThat(summerVacation.dtendAllDay()).isTrue(),
+                () -> assertThat(summerVacation.dtstart().getValue()).isEqualTo("20240622"),
+                () -> assertThat(summerVacation.dtend().getValue()).isEqualTo("20240902"),
+                () -> assertThat(summerVacation.isDtstartAllDay()).isTrue(),
+                () -> assertThat(summerVacation.isDtendAllDay()).isTrue(),
                 () -> assertThat(summerVacation.classType()).isEqualTo("PUBLIC"),
                 () -> assertThat(summerVacation.priority()).isEqualTo("5"),
                 () -> assertThat(summerVacation.transp()).isEqualTo("TRANSPARENT"),
@@ -152,16 +152,16 @@ class IcsParserTest {
         // then
         String dateOnlyRegex = "\\d{8}";
         List<IcsEvent> dateOnlyEvents = events.stream()
-                .filter(event -> event.dtstart() != null && event.dtstart().matches(dateOnlyRegex))
+                .filter(event -> event.dtstart() != null && event.dtstart().getValue().matches(dateOnlyRegex))
                 .toList();
 
         IcsEvent dateOnlyEvent = dateOnlyEvents.get(0);
         assertAll(
                 () -> assertThat(dateOnlyEvents).isNotEmpty(),
-                () -> assertThat(dateOnlyEvent.dtstart()).matches(dateOnlyRegex),
-                () -> assertThat(dateOnlyEvent.dtend()).matches(dateOnlyRegex),
-                () -> assertThat(dateOnlyEvent.dtstartAllDay()).isTrue(),
-                () -> assertThat(dateOnlyEvent.dtendAllDay()).isTrue()
+                () -> assertThat(dateOnlyEvent.dtstart().getValue()).matches(dateOnlyRegex),
+                () -> assertThat(dateOnlyEvent.dtend().getValue()).matches(dateOnlyRegex),
+                () -> assertThat(dateOnlyEvent.isDtstartAllDay()).isTrue(),
+                () -> assertThat(dateOnlyEvent.isDtendAllDay()).isTrue()
         );
     }
 
@@ -175,16 +175,16 @@ class IcsParserTest {
         // then
         String timeIncludedRegex = "\\d{8}T\\d{6}(Z)?";
         List<IcsEvent> timeIncludedEvents = events.stream()
-                .filter(event -> event.dtstart() != null && event.dtstart().matches(timeIncludedRegex))
+                .filter(event -> event.dtstart() != null && event.dtstart().getValue().matches(timeIncludedRegex))
                 .toList();
 
         IcsEvent timeEvent = timeIncludedEvents.get(0);
         assertAll(
                 () -> assertThat(timeIncludedEvents).isNotEmpty(),
-                () -> assertThat(timeEvent.dtstart()).matches(timeIncludedRegex),
-                () -> assertThat(timeEvent.dtend()).matches(timeIncludedRegex),
-                () -> assertThat(timeEvent.dtstartAllDay()).isFalse(),
-                () -> assertThat(timeEvent.dtendAllDay()).isFalse()
+                () -> assertThat(timeEvent.dtstart().getValue()).matches(timeIncludedRegex),
+                () -> assertThat(timeEvent.dtend().getValue()).matches(timeIncludedRegex),
+                () -> assertThat(timeEvent.isDtstartAllDay()).isFalse(),
+                () -> assertThat(timeEvent.isDtendAllDay()).isFalse()
         );
     }
 }

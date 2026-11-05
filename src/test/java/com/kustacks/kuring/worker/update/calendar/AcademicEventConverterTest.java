@@ -3,6 +3,10 @@ package com.kustacks.kuring.worker.update.calendar;
 import com.kustacks.kuring.calendar.domain.AcademicEvent;
 import com.kustacks.kuring.calendar.domain.Transparent;
 import com.kustacks.kuring.worker.parser.calendar.dto.IcsEvent;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.DtStart;
+import net.fortuna.ical4j.model.parameter.Value;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,43 +18,61 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 class AcademicEventConverterTest {
+
+    private Property dtstart(String value, boolean allDay) {
+        DtStart<?> property = new DtStart<>(value);
+
+        if (allDay) {
+            property.add(Value.DATE);
+        }
+
+        return property;
+    }
+
+    private Property dtend(String value, boolean allDay) {
+        DtEnd<?> property = new DtEnd<>(value);
+
+        if (allDay) {
+            property.add(Value.DATE);
+        }
+
+        return property;
+    }
 
     private List<IcsEvent> testIcsEvents = List.of(
             new IcsEvent(
                     "040000008200E00074C5B7101A82E0080000000033C0B88EDFBAD9010000000000000000100000006ECC99F08500CA4096B671977C2912F7",
                     "하계방학",
                     "\n",
-                    "20240622",
-                    "20240902",
+                    dtstart("20240622",true),
+                    dtend("20240902",true),
                     "PUBLIC",
                     "5",
                     "20250826T143707Z",
                     "TRANSPARENT",
                     "CONFIRMED",
                     "0",
-                    "\n",
-                    true,
-                    true
+                    "\n"
 
             ),
             new IcsEvent(
                     "040000008200E00074C5B7101A82E0080000000014125995CCA1DA01000000000000000010000000FA658BFA03493F4A9597C68E4BF868BF",
                     "폐강교과목 공지(1차)(9:00~)",
                     "\n",
-                    "20240902",
-                    "20240903",
+                    dtstart("20240902",true),
+                    dtend("20240903",true),
                     "PUBLIC",
                     "5",
                     "20250826T143707Z",
                     "TRANSPARENT",
                     "CONFIRMED",
                     "0",
-                    "",
-                    true,
-                    true
+                    ""
             )
     );
 
@@ -102,17 +124,15 @@ class AcademicEventConverterTest {
                 "test-uid",
                 holidaySummary,
                 "설명",
-                "20240101",
-                "20240102",
+                dtstart("20240101",true),
+                dtend("20240102",true),
                 "PUBLIC",
                 "0",
                 "20250826T143707Z",
                 "TRANSPARENT",
                 "CONFIRMED",
                 "0",
-                "",
-                true,
-                true
+                ""
         );
 
         // when
@@ -138,17 +158,15 @@ class AcademicEventConverterTest {
                 "test-uid",
                 normalSummary,
                 "설명",
-                "20240101",
-                "20240102",
+                dtstart("20240101",true),
+                dtend("20240102",true),
                 "PUBLIC",
                 "0",
                 "20250826T143707Z",
                 "TRANSPARENT",
                 "CONFIRMED",
                 "0",
-                "",
-                true,
-                true
+                ""
         );
 
         // when
@@ -168,17 +186,15 @@ class AcademicEventConverterTest {
                 "test-uid",
                 emptySummary,
                 "설명",
-                "20240101",
-                "20240102",
+                dtstart("20240101",true),
+                dtend("20240102",true),
                 "PUBLIC",
                 "0",
                 "20250826T143707Z",
                 "TRANSPARENT",
                 "CONFIRMED",
                 "0",
-                "",
-                true,
-                true
+                ""
         );
 
         // when
@@ -196,17 +212,15 @@ class AcademicEventConverterTest {
                 "test-uid",
                 null,
                 "설명",
-                "20240101",
-                "20240102",
+                dtstart("20240101",true),
+                dtend("20240102",true),
                 "PUBLIC",
                 "0",
                 "20250826T143707Z",
                 "TRANSPARENT",
                 "CONFIRMED",
                 "0",
-                "",
-                true,
-                true
+                ""
         );
 
         // when
@@ -236,9 +250,8 @@ class AcademicEventConverterTest {
         IcsEvent icsEvent = IcsEvent.builder()
                 .uid("test-uid")
                 .summary("개강")
-                .dtstart("20260831")
+                .dtstart(dtstart("20260831",true))
                 .dtend(null)
-                .dtstartAllDay(true)
                 .build();
 
         // when
@@ -265,9 +278,8 @@ class AcademicEventConverterTest {
         IcsEvent icsEvent = IcsEvent.builder()
                 .uid("test-uid")
                 .summary("수강신청")
-                .dtstart("20260818T093000")
+                .dtstart(dtstart("20260818T093000",false))
                 .dtend(null)
-                .dtstartAllDay(false)
                 .build();
 
         // when
@@ -295,8 +307,7 @@ class AcademicEventConverterTest {
                 .uid("test-uid")
                 .summary("개강")
                 .dtstart(null)
-                .dtend("20260818")
-                .dtendAllDay(true)
+                .dtend(dtstart("20260818",true))
                 .build();
 
         // when
@@ -311,12 +322,13 @@ class AcademicEventConverterTest {
     @DisplayName("DTSTART가 빈 문자열이면 변환하지 않는다")
     void convert_with_blank_dtstart() {
         // given
+        Property blankDtstart = mock(Property.class);
+        when(blankDtstart.getValue()).thenReturn("   ");
         IcsEvent icsEvent = IcsEvent.builder()
                 .uid("test-uid")
                 .summary("개강")
-                .dtstart("   ")
-                .dtend("20260818")
-                .dtendAllDay(true)
+                .dtstart(blankDtstart)
+                .dtend(dtend("20260818",false))
                 .build();
 
         // when
@@ -334,10 +346,8 @@ class AcademicEventConverterTest {
         IcsEvent icsEvent = IcsEvent.builder()
                 .uid("test-uid")
                 .summary("개강")
-                .dtstart("20260817")
-                .dtend("20260818")
-                .dtstartAllDay(true)
-                .dtendAllDay(true)
+                .dtstart(dtstart("20260817",true))
+                .dtend(dtend("20260818",true))
                 .build();
 
         // when
@@ -364,10 +374,8 @@ class AcademicEventConverterTest {
         IcsEvent icsEvent = IcsEvent.builder()
                 .uid("test-uid")
                 .summary("테스트 일정")
-                .dtstart("20260817")
-                .dtend("20260818T090000")
-                .dtstartAllDay(true)
-                .dtendAllDay(false)
+                .dtstart(dtstart("20260817",true))
+                .dtend(dtend("20260818T090000",false))
                 .build();
 
         // when
@@ -394,10 +402,8 @@ class AcademicEventConverterTest {
         IcsEvent icsEvent = IcsEvent.builder()
                 .uid("test-uid")
                 .summary("테스트 일정")
-                .dtstart("20260817")
-                .dtend("20260817")
-                .dtstartAllDay(true)
-                .dtendAllDay(true)
+                .dtstart(dtstart("20260817",true))
+                .dtend(dtstart("20260817",true))
                 .build();
 
         // when
@@ -415,10 +421,8 @@ class AcademicEventConverterTest {
         IcsEvent icsEvent = IcsEvent.builder()
                 .uid("test-uid")
                 .summary("테스트 일정")
-                .dtstart("20260818T093000")
-                .dtend("20260818T093000")
-                .dtstartAllDay(false)
-                .dtendAllDay(false)
+                .dtstart(dtstart("20260818T093000",false))
+                .dtend(dtstart("20260818T093000",false))
                 .build();
 
         // when

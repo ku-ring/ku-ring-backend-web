@@ -13,7 +13,6 @@ import net.fortuna.ical4j.model.PropertyList;
 import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.fortuna.ical4j.model.component.Observance;
 import net.fortuna.ical4j.model.component.VTimeZone;
-import net.fortuna.ical4j.model.Parameter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -91,17 +90,15 @@ public class IcsParser {
                 getPropertyValue(vEvent, Property.UID),
                 getPropertyValue(vEvent, Property.SUMMARY),
                 getPropertyValue(vEvent, Property.DESCRIPTION),
-                getPropertyValue(vEvent, Property.DTSTART),
-                getPropertyValue(vEvent, Property.DTEND),
+                getProperty(vEvent, Property.DTSTART),
+                getProperty(vEvent, Property.DTEND),
                 getPropertyValue(vEvent, Property.CLASS),
                 getPropertyValue(vEvent, Property.PRIORITY),
                 getPropertyValue(vEvent, Property.DTSTAMP),
                 getPropertyValue(vEvent, Property.TRANSP),
                 getPropertyValue(vEvent, Property.STATUS),
                 getPropertyValue(vEvent, Property.SEQUENCE),
-                getPropertyValue(vEvent, Property.LOCATION),
-                isAllDayProperty(vEvent, Property.DTSTART),
-                isAllDayProperty(vEvent, Property.DTEND)
+                getPropertyValue(vEvent, Property.LOCATION)
         );
     }
 
@@ -125,21 +122,7 @@ public class IcsParser {
         }
     }
 
-    private boolean isAllDayProperty(Component component, String propertyName) {
-        Property property = component.getProperty(propertyName)
-                .orElse(null);
-
-        if (Objects.isNull(property)) {
-            return false;
-        }
-
-        Parameter valueParameter = property.getParameter("VALUE")
-                .orElse(null);
-
-        if (Objects.isNull(valueParameter)) {
-            return false;
-        }
-
-        return "DATE".equalsIgnoreCase(valueParameter.getValue());
+    private Property getProperty(Component component, String propertyName) {
+        return component.getProperty(propertyName).orElse(null);
     }
 }
