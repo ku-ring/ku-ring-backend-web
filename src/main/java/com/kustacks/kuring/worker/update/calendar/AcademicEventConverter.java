@@ -45,19 +45,23 @@ public class AcademicEventConverter {
         String summary = AcademicEventSummaryNormalizer.normalize(rawSummary);
 
         // 3. 일정 시작/종료 시간 변환 및 유효성 검증
-        if (icsEvent.dtstart() == null || icsEvent.dtstart().getValue().isBlank()) {
-            log.warn("DTSTART가 존재하지 않습니다. (uid={}, summary={})", uid, summary);
-            return Optional.empty();
-        }
-
         LocalDateTime startTime;
         LocalDateTime endTime;
 
         try {
+            if (icsEvent.dtstart() == null
+                    || icsEvent.dtstart().getValue() == null
+                    || icsEvent.dtstart().getValue().isBlank()) {
+                log.warn("DTSTART가 존재하지 않습니다. (uid={}, summary={})", uid, summary);
+                return Optional.empty();
+            }
+
             startTime = StringToDateTimeConverter.convert(icsEvent.dtstart().getValue());
             endTime = calculateEndTime(icsEvent, startTime);
+
         } catch (Exception e) {
-            log.warn("ICS event 변환에 실패했습니다.(uid={}, summary={}): {}", uid, summary, e.toString());
+            log.warn("ICS event 변환에 실패했습니다.(uid={}, summary={}): {}",
+                    uid, summary, e.toString());
             return Optional.empty();
         }
 
