@@ -133,20 +133,38 @@ public class AcademicEventConverter {
      * 종료 일자를 계산하는 메서드
      */
     private static LocalDateTime calculateEndTime(IcsEvent icsEvent, LocalDateTime startTime) {
-        if (icsEvent.dtend() == null || icsEvent.dtend().getValue().isBlank()) {
-            if (icsEvent.isDtstartAllDay()) {
-                return adjustAllDayEndTime(startTime);
-            }
-            return startTime;
+        if (icsEvent.dtend() == null) {
+            return defaultEndTime(icsEvent, startTime);
         }
 
-        LocalDateTime endTime = StringToDateTimeConverter.convert(icsEvent.dtend().getValue());
+        String dtEndValue;
+
+        try {
+            dtEndValue = icsEvent.dtend().getValue();
+        } catch (IllegalArgumentException e) {
+            log.warn("DTEND 값을 읽을 수 없습니다. (uid={})", icsEvent.uid());
+            return defaultEndTime(icsEvent, startTime);
+        }
+
+        if (dtEndValue == null || dtEndValue.isBlank()) {
+            return defaultEndTime(icsEvent, startTime);
+        }
+
+        LocalDateTime endTime = StringToDateTimeConverter.convert(dtEndValue);
 
         if (icsEvent.isDtstartAllDay() && icsEvent.isDtendAllDay()) {
             return adjustAllDayEndTime(endTime.minusDays(1));
         }
 
         return endTime;
+    }
+
+    private static LocalDateTime defaultEndTime(IcsEvent icsEvent, LocalDateTime startTime) {
+        if (icsEvent.isDtstartAllDay()) {
+            return adjustAllDayEndTime(startTime);
+        }
+
+        return startTime;
     }
 
     /**
