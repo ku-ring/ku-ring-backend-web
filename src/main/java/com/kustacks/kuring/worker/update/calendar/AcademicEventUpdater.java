@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.DateTimeException;
 
 @Slf4j
 @Service
@@ -35,7 +36,7 @@ public class AcademicEventUpdater {
                 academicEventDbSynchronizer.compareAndUpdateDb(result);
             } catch (IOException e) {
                 log.error("학교 Outlook 캘린더 연결에 실패하였습니다.");
-            } catch (ParserException e) {
+            } catch (ParserException | DateTimeException e) {
                 log.error("ICS 파싱에 실패하였습니다.");
             }
             log.info("******** 학사일정 업데이트 완료 ********");

@@ -90,8 +90,8 @@ public class IcsParser {
                 getPropertyValue(vEvent, Property.UID),
                 getPropertyValue(vEvent, Property.SUMMARY),
                 getPropertyValue(vEvent, Property.DESCRIPTION),
-                getPropertyValue(vEvent, Property.DTSTART),
-                getPropertyValue(vEvent, Property.DTEND),
+                getProperty(vEvent, Property.DTSTART),
+                getProperty(vEvent, Property.DTEND),
                 getPropertyValue(vEvent, Property.CLASS),
                 getPropertyValue(vEvent, Property.PRIORITY),
                 getPropertyValue(vEvent, Property.DTSTAMP),
@@ -120,5 +120,9 @@ public class IcsParser {
         } else {
             return null;
         }
+    }
+
+    private Property getProperty(Component component, String propertyName) {
+        return component.getProperty(propertyName).orElse(null);
     }
 }

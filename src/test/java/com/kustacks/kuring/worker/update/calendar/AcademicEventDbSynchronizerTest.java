@@ -8,6 +8,10 @@ import com.kustacks.kuring.calendar.domain.Transparent;
 import com.kustacks.kuring.worker.parser.calendar.dto.IcsCalendarProperties;
 import com.kustacks.kuring.worker.parser.calendar.dto.IcsCalendarResult;
 import com.kustacks.kuring.worker.parser.calendar.dto.IcsEvent;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.parameter.Value;
+import net.fortuna.ical4j.model.property.DtEnd;
+import net.fortuna.ical4j.model.property.DtStart;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,12 +55,32 @@ class AcademicEventDbSynchronizerTest {
         setupTestData();
     }
 
+    private Property dtstart(String value, boolean allDay) {
+        DtStart<?> property = new DtStart<>(value);
+
+        if (allDay) {
+            property.add(Value.DATE);
+        }
+
+        return property;
+    }
+
+    private Property dtend(String value, boolean allDay) {
+        DtEnd<?> property = new DtEnd<>(value);
+
+        if (allDay) {
+            property.add(Value.DATE);
+        }
+
+        return property;
+    }
+
     private void setupTestData() {
         IcsEvent event1 = IcsEvent.builder()
                 .uid("UID001")
                 .summary("테스트 이벤트 1")
-                .dtstart("20240901T090000")
-                .dtend("20240901T180000")
+                .dtstart(dtstart("20240901T090000",false))
+                .dtend(dtend("20240901T180000",false))
                 .transp("OPAQUE")
                 .sequence("0")
                 .description("테스트 이벤트 1 설명")
@@ -65,8 +89,8 @@ class AcademicEventDbSynchronizerTest {
         IcsEvent event2 = IcsEvent.builder()
                 .uid("UID002")
                 .summary("테스트 이벤트 2")
-                .dtstart("20240901T090000")
-                .dtend("20240901T180000")
+                .dtstart(dtstart("20240901T090000",false))
+                .dtend(dtend("20240901T180000",false))
                 .transp("OPAQUE")
                 .sequence("1")
                 .description("테스트 이벤트 2 설명")
