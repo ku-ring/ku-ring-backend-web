@@ -67,7 +67,7 @@ class NoticeWeeklyRankingReportServiceTest {
 
     @DisplayName("이번 주 순위를 메일 본문과 엑셀 첨부로 만들어 모든 수신자에게 보낸다")
     @Test
-    void sendWeeklyRankingReport() throws Exception {
+    void sendWeeklyRankingReport() {
         // given
         List<NoticeWeeklyRanking> rankings = List.of(ranking(WEEK_START_DATE, 1), ranking(WEEK_START_DATE, 2));
         when(noticeRankingQueryPort.findLatestWeeklyRankings()).thenReturn(rankings);
