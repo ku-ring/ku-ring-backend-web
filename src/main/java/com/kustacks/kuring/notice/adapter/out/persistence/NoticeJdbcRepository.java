@@ -14,8 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -107,19 +105,22 @@ class NoticeJdbcRepository {
             return;
         }
 
-        String whenClauses = String.join(" ", Collections.nCopies(viewCounts.size(), "WHEN ? THEN ?"));
-        String inPlaceholders = String.join(", ", Collections.nCopies(viewCounts.size(), "?"));
-        String sql = "UPDATE notice SET view_count = CASE article_id " + whenClauses + " ELSE view_count END " +
-                "WHERE category_name = ? AND article_id IN (" + inPlaceholders + ")";
+        // (category_name, article_id) 인덱스로 공지마다 바로 찾아 갱신한다
+        List<Map.Entry<String, Integer>> viewCountEntries = List.copyOf(viewCounts.entrySet());
+        jdbcTemplate.batchUpdate("UPDATE notice SET view_count = ? WHERE category_name = ? AND article_id = ?",
+                new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        Map.Entry<String, Integer> viewCountEntry = viewCountEntries.get(i);
+                        ps.setInt(1, viewCountEntry.getValue());
+                        ps.setString(2, categoryName.name());
+                        ps.setString(3, viewCountEntry.getKey());
+                    }
 
-        List<Object> params = new ArrayList<>();
-        viewCounts.forEach((articleId, viewCount) -> {
-            params.add(articleId);
-            params.add(viewCount);
-        });
-        params.add(categoryName.name());
-        params.addAll(viewCounts.keySet());
-
-        jdbcTemplate.update(sql, params.toArray());
+                    @Override
+                    public int getBatchSize() {
+                        return viewCountEntries.size();
+                    }
+                });
     }
 }
