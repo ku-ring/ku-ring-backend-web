@@ -143,6 +143,8 @@ springdoc:
     - /api/v2/**
 
 notice:
+  weekly-ranking-report:
+    recipients: ${NOTICE_WEEKLY_RANKING_REPORT_RECIPIENTS:}
   kuis:
     request-url: https://kuis.konkuk.ac.kr/CmmnOneStop/find.do
     referer-url: https://kuis.konkuk.ac.kr/index.do

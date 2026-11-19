@@ -206,4 +206,57 @@ class NoticeHtmlParserTemplateTest {
                         )
         );
     }
+
+    @DisplayName("학교 홈페이지 공지 목록에서 공지별 조회수를 함께 분석한다")
+    @Test
+    void KuisHomepageNoticeHtmlParserViewCount() throws IOException {
+        // given
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/student-notice-2024.html"));
+        String viewUrl = "https://www.konkuk.ac.kr/bbs/konkuk/238/{noticeId}/artclView.do";
+
+        // when
+        RowsDto rowsDto = new KuisHomepageNoticeHtmlParser().parse(doc);
+        List<CommonNoticeFormatDto> important = rowsDto.buildImportantRowList(viewUrl);
+        List<CommonNoticeFormatDto> normal = rowsDto.buildNormalRowList(viewUrl);
+
+        // then
+        assertAll(
+                () -> assertThat(important).extracting("viewCount").doesNotContainNull(),
+                () -> assertThat(important)
+                        .extracting("articleId", "viewCount")
+                        .contains(
+                                tuple("5400", 7551),
+                                tuple("924945", 5010)
+                        ),
+                () -> assertThat(normal)
+                        .extracting("articleId", "viewCount")
+                        .containsExactlyInAnyOrder(
+                                tuple("1115719", 483),
+                                tuple("1116631", 112),
+                                tuple("1116544", 223),
+                                tuple("1116114", 158),
+                                tuple("1115984", 223),
+                                tuple("1115956", 131),
+                                tuple("1115854", 222),
+                                tuple("1115717", 217),
+                                tuple("5408", 1543),
+                                tuple("5407", 781)
+                        )
+        );
+    }
+
+    @DisplayName("조회수를 분석하지 않는 학과 공지 파서는 조회수를 비워둔다")
+    @Test
+    void LatestPageNoticeHtmlParserViewCountIsNull() throws IOException {
+        // given
+        Document doc = Jsoup.parse(TestFileLoader.loadHtmlFile("src/test/resources/notice/cse-notice-2024.html"));
+        String viewUrl = "https://cse.konkuk.ac.kr/bbs/cse/775/{uniqueNoticeId}/artclView.do";
+
+        // when
+        RowsDto rowsDto = new LatestPageNoticeHtmlParser().parse(doc);
+        List<CommonNoticeFormatDto> normal = rowsDto.buildNormalRowList(viewUrl);
+
+        // then
+        assertThat(normal).extracting("viewCount").containsOnlyNulls();
+    }
 }

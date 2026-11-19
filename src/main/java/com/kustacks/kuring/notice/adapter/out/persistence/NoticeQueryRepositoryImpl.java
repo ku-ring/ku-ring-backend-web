@@ -2,8 +2,10 @@ package com.kustacks.kuring.notice.adapter.out.persistence;
 
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeSearchDto;
+import com.kustacks.kuring.notice.application.port.out.dto.NoticeViewCountDto;
 import com.kustacks.kuring.notice.application.port.out.dto.QNoticeDto;
 import com.kustacks.kuring.notice.application.port.out.dto.QNoticeSearchDto;
+import com.kustacks.kuring.notice.application.port.out.dto.QNoticeViewCountDto;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.QComment;
@@ -166,6 +168,26 @@ class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .fetchOne();
 
         return Optional.ofNullable(noticeDto);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<NoticeViewCountDto> findAllViewCountsExceptDepartment() {
+        return queryFactory
+                .select(
+                        new QNoticeViewCountDto(
+                                notice.id.min(),
+                                notice.articleId,
+                                notice.subject.max(),
+                                notice.categoryName,
+                                notice.viewCount.max(),
+                                notice.noticeDateTime.postedDate.max(),
+                                notice.url.value.max()
+                        )
+                ).from(notice)
+                .where(notice.categoryName.ne(CategoryName.DEPARTMENT))
+                .groupBy(notice.categoryName, notice.articleId)
+                .fetch();
     }
 
     @Transactional(readOnly = true)

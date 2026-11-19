@@ -14,8 +14,10 @@ import com.kustacks.kuring.notice.application.port.in.dto.NoticeContentSearchRes
 import com.kustacks.kuring.notice.application.port.in.dto.NoticeDepartmentNameResult;
 import com.kustacks.kuring.notice.application.port.in.dto.NoticeRangeLookupCommand;
 import com.kustacks.kuring.notice.application.port.in.dto.NoticeRangeLookupResult;
+import com.kustacks.kuring.notice.application.port.in.dto.NoticeWeeklyTopResult;
 import com.kustacks.kuring.notice.application.port.out.CommentQueryPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
+import com.kustacks.kuring.notice.application.port.out.NoticeRankingQueryPort;
 import com.kustacks.kuring.notice.application.port.out.dto.CommentReadModel;
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;
 import com.kustacks.kuring.notice.domain.CategoryName;
@@ -46,6 +48,7 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
 
     private static final String SPACE_REGEX = "[\\s+]";
     private final NoticeQueryPort noticeQueryPort;
+    private final NoticeRankingQueryPort noticeRankingQueryPort;
     private final CommentQueryPort commentQueryPort;
     private final RootUserQueryPort rootUserQueryPort;
     private final List<CategoryName> supportedCategoryNameList;
@@ -53,11 +56,13 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
 
     public NoticeQueryService(
             NoticeQueryPort noticeQueryPort,
+            NoticeRankingQueryPort noticeRankingQueryPort,
             CommentQueryPort commentQueryPort,
             RootUserQueryPort rootUserQueryPort,
             List<DeptInfo> deptInfoList
     ) {
         this.noticeQueryPort = noticeQueryPort;
+        this.noticeRankingQueryPort = noticeRankingQueryPort;
         this.commentQueryPort = commentQueryPort;
         this.rootUserQueryPort = rootUserQueryPort;
         this.supportedCategoryNameList = Arrays.asList(CategoryName.values());
@@ -90,6 +95,14 @@ public class NoticeQueryService implements NoticeQueryUseCase, NoticeCommentRead
     @Override
     public List<NoticeDepartmentNameResult> lookupSupportedDepartments() {
         return convertDepartmentNameDtos(deptInfoList);
+    }
+
+    @Override
+    public List<NoticeWeeklyTopResult> getWeeklyTopNotices() {
+        return noticeRankingQueryPort.findLatestWeeklyRankings()
+                .stream()
+                .map(NoticeWeeklyTopResult::from)
+                .toList();
     }
 
     @Override

@@ -7,6 +7,8 @@ import io.restassured.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -23,6 +25,28 @@ public class NoticeStep {
                 () -> assertThat(response.jsonPath().getString("data[0].subject")).isNotBlank(),
                 () -> assertThat(response.jsonPath().getString("data[0].category")).isEqualTo(category),
                 () -> assertThat(response.jsonPath().getString("data[0].commentCount")).isNotBlank()
+        );
+    }
+
+    public static ExtractableResponse<Response> 주간_인기_공지_조회_요청() {
+        return RestAssured
+                .given().log().all()
+                .when().get("/api/v2/notices/weekly-top")
+                .then().log().all()
+                .extract();
+    }
+
+    public static void 주간_인기_공지_조회_응답_확인(ExtractableResponse<Response> response, List<String> expectedSubjects) {
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getInt("code")).isEqualTo(200),
+                () -> assertThat(response.jsonPath().getString("message")).isEqualTo("공지 조회에 성공하였습니다"),
+                () -> assertThat(response.jsonPath().getList("data.subject", String.class)).containsExactlyElementsOf(expectedSubjects),
+                () -> assertThat(response.jsonPath().getInt("data[0].viewCount")).isEqualTo(60),
+                () -> assertThat(response.jsonPath().getString("data[0].category")).isEqualTo("bachelor"),
+                () -> assertThat(response.jsonPath().getString("data[0].categoryKorName")).isEqualTo("학사"),
+                () -> assertThat(response.jsonPath().getString("data[0].postedDate")).isNotBlank(),
+                () -> assertThat(response.jsonPath().getString("data[0].url")).isNotBlank()
         );
     }
 

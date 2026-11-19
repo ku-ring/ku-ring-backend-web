@@ -5,6 +5,7 @@ import com.kustacks.kuring.notice.application.port.out.NoticeCommandPort;
 import com.kustacks.kuring.notice.application.port.out.NoticeQueryPort;
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeDto;
 import com.kustacks.kuring.notice.application.port.out.dto.NoticeSearchDto;
+import com.kustacks.kuring.notice.application.port.out.dto.NoticeViewCountDto;
 import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @PersistenceAdapter
@@ -65,6 +67,11 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
     }
 
     @Override
+    public void updateNoticeViewCounts(CategoryName categoryName, Map<String, Integer> viewCountsByArticleId) {
+        this.noticeJdbcRepository.updateViewCounts(categoryName, viewCountsByArticleId);
+    }
+
+    @Override
     public List<NoticeDto> findNoticesByCategoryWithOffset(CategoryName categoryName, Pageable pageable) {
         return this.noticeRepository.findNoticesByCategoryWithOffset(categoryName, pageable);
     }
@@ -82,6 +89,11 @@ public class NoticePersistenceAdapter implements NoticeCommandPort, NoticeQueryP
     @Override
     public Optional<NoticeDto> findNoticeById(Long id) {
         return this.noticeRepository.findNoticeReadModelByArticleId(id);
+    }
+
+    @Override
+    public List<NoticeViewCountDto> findAllViewCountsExceptDepartment() {
+        return this.noticeRepository.findAllViewCountsExceptDepartment();
     }
 
     @Override

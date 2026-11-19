@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -162,5 +163,27 @@ class NoticeUpdateSupportTest {
         // then
         assertThat(results).hasSize(5)
                 .containsExactly(1, 2, 3, 4, 5);
+    }
+
+    @DisplayName("스크랩한 공지에서 조회수를 추출하며, 조회수가 없는 공지는 제외하고 중복된 공지는 더 큰 최신 조회수를 사용한다")
+    @Test
+    void extractViewCounts() {
+        // given
+        CommonNoticeFormatDto importantNotice = CommonNoticeFormatDto.builder().articleId("1").subject("notice1")
+                .postedDate("2026-10-20").important(true).viewCount(100).build();
+        CommonNoticeFormatDto duplicatedNotice = CommonNoticeFormatDto.builder().articleId("1").subject("notice1")
+                .postedDate("2026-10-20").important(false).viewCount(120).build();
+        CommonNoticeFormatDto normalNotice = CommonNoticeFormatDto.builder().articleId("2").subject("notice2")
+                .postedDate("2026-10-21").important(false).viewCount(30).build();
+        CommonNoticeFormatDto noViewCountNotice = CommonNoticeFormatDto.builder().articleId("3").subject("notice3")
+                .postedDate("2026-10-22").important(false).build();
+
+        // when
+        Map<String, Integer> viewCounts = noticeUpdateSupport.extractViewCounts(
+                List.of(importantNotice, duplicatedNotice, normalNotice, noViewCountNotice)
+        );
+
+        // then
+        assertThat(viewCounts).containsExactlyInAnyOrderEntriesOf(Map.of("1", 120, "2", 30));
     }
 }

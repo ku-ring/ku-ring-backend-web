@@ -28,7 +28,7 @@ public class KuisHomepageNoticeHtmlParser extends NoticeHtmlParserTemplate {
     protected String[] extractNoticeFromRow(Element row) {
         Elements tds = row.getElementsByTag("td"); // jf_viewArtcl('job', '4083', '1116603')
 
-        // articleId, postedDate, subject
+        // articleId, postedDate, subject, viewCount
         String[] splitResults = tds.get(1).select("a").attr("onclick")
                 .replace("jf_viewArtcl('", "")
                 .replace("')", "")
@@ -37,7 +37,14 @@ public class KuisHomepageNoticeHtmlParser extends NoticeHtmlParserTemplate {
         String number = splitResults[2];
         String date = tds.get(3).text();
         String title = tds.get(1).select("strong").text();
+        String viewCount = extractViewCount(row);
 
-        return new String[]{number, date, title};
+        return new String[]{number, date, title, viewCount};
+    }
+
+    // 조회수는 부가 정보이므로, 컬럼이 없더라도 공지 파싱 자체는 실패하지 않도록 빈 값을 반환한다
+    private String extractViewCount(Element row) {
+        Element viewCountTd = row.selectFirst("td.td-access");
+        return viewCountTd == null ? "" : viewCountTd.text();
     }
 }

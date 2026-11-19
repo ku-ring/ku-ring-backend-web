@@ -1,8 +1,10 @@
 package com.kustacks.kuring.notice.adapter.out.persistence;
 
+import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.DepartmentName;
 import com.kustacks.kuring.notice.domain.DepartmentNotice;
 import com.kustacks.kuring.notice.domain.Notice;
+import com.kustacks.kuring.notice.domain.NoticeViewSnapshot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,7 +25,7 @@ class NoticeJdbcRepository {
 
     @Transactional
     public void saveAllCategoryNotices(List<Notice> notices) {
-        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, graduated, dtype) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        jdbcTemplate.batchUpdate("INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, graduated, dtype, view_count) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -37,6 +40,7 @@ class NoticeJdbcRepository {
                         ps.setString(8, notice.getUrl());
                         ps.setNull(9, Types.BOOLEAN);
                         ps.setString(10, "Notice");
+                        ps.setInt(11, notice.getViewCount());
                     }
 
                     @Override
@@ -49,8 +53,8 @@ class NoticeJdbcRepository {
     @Transactional
     public void saveAllDepartmentNotices(List<DepartmentNotice> departmentNotices) {
         jdbcTemplate.batchUpdate(
-                "INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, department_name, graduated, dtype) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO notice (article_id, category_name, important, embedded, posted_dt, subject, updated_dt, url, department_name, graduated, dtype, view_count) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 new BatchPreparedStatementSetter() {
                     @Override
                     public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -66,6 +70,7 @@ class NoticeJdbcRepository {
                         ps.setString(9, DepartmentName.fromName(departmentNotice.getDepartmentName()).name());
                         ps.setBoolean(10, departmentNotice.getGraduated());
                         ps.setString(11, "DepartmentNotice");
+                        ps.setInt(12, departmentNotice.getViewCount());
                     }
 
                     @Override
@@ -75,4 +80,47 @@ class NoticeJdbcRepository {
                 });
     }
 
+    @Transactional
+    public void saveAllViewSnapshots(List<NoticeViewSnapshot> snapshots) {
+        jdbcTemplate.batchUpdate("INSERT INTO notice_view_snapshot (category_name, article_id, view_count) VALUES (?, ?, ?)",
+                new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        NoticeViewSnapshot snapshot = snapshots.get(i);
+                        ps.setString(1, snapshot.getCategoryName().name());
+                        ps.setString(2, snapshot.getArticleId());
+                        ps.setInt(3, snapshot.getViewCount());
+                    }
+
+                    @Override
+                    public int getBatchSize() {
+                        return snapshots.size();
+                    }
+                });
+    }
+
+    @Transactional
+    public void updateViewCounts(CategoryName categoryName, Map<String, Integer> viewCounts) {
+        if (viewCounts.isEmpty()) {
+            return;
+        }
+
+        // (category_name, article_id) 인덱스로 공지마다 바로 찾아 갱신한다
+        List<Map.Entry<String, Integer>> viewCountEntries = List.copyOf(viewCounts.entrySet());
+        jdbcTemplate.batchUpdate("UPDATE notice SET view_count = ? WHERE category_name = ? AND article_id = ?",
+                new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        Map.Entry<String, Integer> viewCountEntry = viewCountEntries.get(i);
+                        ps.setInt(1, viewCountEntry.getValue());
+                        ps.setString(2, categoryName.name());
+                        ps.setString(3, viewCountEntry.getKey());
+                    }
+
+                    @Override
+                    public int getBatchSize() {
+                        return viewCountEntries.size();
+                    }
+                });
+    }
 }
