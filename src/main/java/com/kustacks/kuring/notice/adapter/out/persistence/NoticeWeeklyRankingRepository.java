@@ -16,6 +16,8 @@ interface NoticeWeeklyRankingRepository extends JpaRepository<NoticeWeeklyRankin
 
     List<NoticeWeeklyRanking> findAllByWeekStartDateOrderByRankingAsc(LocalDate weekStartDate);
 
+    boolean existsByWeekStartDate(LocalDate weekStartDate);
+
     @Modifying
     @Query("DELETE FROM NoticeWeeklyRanking r WHERE r.weekStartDate = :weekStartDate")
     void deleteAllByWeekStartDate(@Param("weekStartDate") LocalDate weekStartDate);

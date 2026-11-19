@@ -10,6 +10,7 @@ import com.kustacks.kuring.notice.domain.CategoryName;
 import com.kustacks.kuring.notice.domain.NoticeViewSnapshot;
 import com.kustacks.kuring.notice.domain.NoticeWeeklyRanking;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Slf4j
 @UseCase
 @Transactional
 @RequiredArgsConstructor
@@ -38,6 +40,13 @@ public class NoticeWeeklyRankingService implements NoticeWeeklyRankingUseCase {
     @Override
     public void rankWeeklyTopNotices() {
         LocalDate weekStartDate = LocalDate.now(clock).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+
+        // 이미 집계한 주에 다시 실행되면 기준값이 이번 주 값으로 바뀌어 있어 증가분이 모두 0이 된다.
+        // 그대로 저장하면 이번 주 순위가 빈 목록으로 덮어써지므로, 순위와 기준값을 건드리지 않고 건너뛴다
+        if (noticeRankingQueryPort.existsWeeklyRankings(weekStartDate)) {
+            log.info("{} 주의 인기 공지가 이미 집계되어 있어 다시 집계하지 않습니다", weekStartDate);
+            return;
+        }
 
         List<NoticeViewCountDto> currentViewCounts = noticeQueryPort.findAllViewCountsExceptDepartment();
         Map<NoticeKey, Integer> previousViewCounts = noticeRankingQueryPort.findAllViewSnapshots()

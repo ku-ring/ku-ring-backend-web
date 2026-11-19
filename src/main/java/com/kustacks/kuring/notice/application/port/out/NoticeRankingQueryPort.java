@@ -3,6 +3,7 @@ package com.kustacks.kuring.notice.application.port.out;
 import com.kustacks.kuring.notice.domain.NoticeViewSnapshot;
 import com.kustacks.kuring.notice.domain.NoticeWeeklyRanking;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface NoticeRankingQueryPort {
@@ -12,4 +13,6 @@ public interface NoticeRankingQueryPort {
     boolean existsViewSnapshots();
 
     List<NoticeWeeklyRanking> findLatestWeeklyRankings();
+
+    boolean existsWeeklyRankings(LocalDate weekStartDate);
 }

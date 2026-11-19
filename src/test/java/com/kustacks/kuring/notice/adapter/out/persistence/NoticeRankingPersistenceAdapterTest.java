@@ -50,6 +50,18 @@ class NoticeRankingPersistenceAdapterTest extends IntegrationTestSupport {
                 );
     }
 
+    @DisplayName("주 단위로 순위가 집계되어 있는지 확인한다")
+    @Test
+    void existsWeeklyRankings() {
+        // given
+        LocalDate thisWeek = LocalDate.of(2026, 10, 19);
+        noticeRankingCommandPort.saveWeeklyRankings(thisWeek, List.of(ranking(thisWeek, 1, "first")));
+
+        // when & then
+        assertThat(noticeRankingQueryPort.existsWeeklyRankings(thisWeek)).isTrue();
+        assertThat(noticeRankingQueryPort.existsWeeklyRankings(thisWeek.plusWeeks(1))).isFalse();
+    }
+
     @DisplayName("같은 주의 순위를 다시 저장하면 기존 순위를 덮어쓴다")
     @Test
     void saveWeeklyRankingsOverwriteSameWeek() {

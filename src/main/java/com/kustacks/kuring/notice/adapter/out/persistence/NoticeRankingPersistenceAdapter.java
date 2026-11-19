@@ -37,6 +37,11 @@ public class NoticeRankingPersistenceAdapter implements NoticeRankingQueryPort, 
                 .orElse(Collections.emptyList());
     }
 
+    @Override
+    public boolean existsWeeklyRankings(LocalDate weekStartDate) {
+        return noticeWeeklyRankingRepository.existsByWeekStartDate(weekStartDate);
+    }
+
     @Transactional
     @Override
     public void saveWeeklyRankings(LocalDate weekStartDate, List<NoticeWeeklyRanking> rankings) {

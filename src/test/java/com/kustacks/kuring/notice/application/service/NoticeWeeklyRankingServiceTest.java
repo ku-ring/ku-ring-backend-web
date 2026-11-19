@@ -127,6 +127,19 @@ class NoticeWeeklyRankingServiceTest {
         );
     }
 
+    @DisplayName("이번 주 순위가 이미 집계되어 있으면 다시 집계하지 않고 순위와 기준값을 그대로 둔다")
+    @Test
+    void doNotRankAgainInSameWeek() {
+        // given
+        when(noticeRankingQueryPort.existsWeeklyRankings(WEEK_START_DATE)).thenReturn(true);
+
+        // when
+        noticeWeeklyRankingService.rankWeeklyTopNotices();
+
+        // then
+        verifyNoInteractions(noticeQueryPort, noticeRankingCommandPort);
+    }
+
     @DisplayName("이번 주 조회수가 같으면 더 최근에 게시된 공지가 높은 순위를 가진다")
     @Test
     void rankWeeklyTopNoticesOrderByPostedDateWhenTied() {
